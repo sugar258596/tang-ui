@@ -1,0 +1,92 @@
+/**
+ * Tang UI - UniApp X UI 组件库
+ * @description 基于 uni-app x 的移动端 UI 组件库
+ * @version 1.0.2
+ * @author sugar258596
+ */
+
+/**
+ * 注意：uni-app x 项目推荐使用 easycom 自动导入组件
+ * 
+ * 在 pages.json 中配置：
+ * {
+ *   "easycom": {
+ *     "autoscan": true,
+ *     "custom": {
+ *       "^T(.*)": "tang-ui-x/components/T$1/index.uvue"
+ *     }
+ *   }
+ * }
+ * 
+ * 然后在页面中直接使用：
+ * <TButton type="primary">按钮</TButton>
+ */
+
+// 导出工具函数
+export * from './utils/index.uts'
+
+// 导出 composables
+export { useTheme } from './composables/useTheme.uts'
+export { useToast } from './composables/useToast.uts'
+export { useModal } from './composables/useModal.uts'
+
+// 版本信息
+export const version: string = '1.0.3'
+
+// 组件列表（用于文档和类型提示）
+export const components: string[] = [
+  // 基础组件
+  'TButton',
+  'TIcon',
+  'TText',
+  'TImage',
+  'TDivider',
+
+  // 布局组件
+  'TCard',
+  'TList',
+  'TListItem',
+  'TCell',
+  'TGrid',
+  'TGridItem',
+  'TRow',
+  'TCol',
+
+  // 表单组件
+  'TInput',
+  'TNumberInput',
+  'TTextarea',
+  'TSearchBar',
+  'TSwitch',
+  'TCheckbox',
+  'TCheckboxGroup',
+  'TRadioButton',
+  'TRadioGroup',
+  'TSelect',
+  'TSlider',
+  'TRate',
+  'TPicker',
+
+  // 数据展示
+  'Tags',
+  'TBadge',
+  'TAvatar',
+  'TProgress',
+  'TNoticeBar',
+  'TCollapse',
+  'TCollapseItem',
+  'TEmpty',
+  'TErrorState',
+  'TSwiper',
+
+  // 反馈组件
+  'TLoading',
+  'TToast',
+  'TDialog',
+  'TPopup',
+  'TActionSheet',
+
+  // 导航组件
+  'Tabs',
+  'TNavBar'
+]

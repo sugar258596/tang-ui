@@ -1,5 +1,5 @@
 <script  setup lang="uts" >
-	import Icon from '@/components/TIcon'
+	import Icon from '../TIcon'
 	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue } from './type.uts'
 
 	// 双向绑定值 - 根据 multiple 属性动态类型

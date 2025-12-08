@@ -1,5 +1,5 @@
 <script setup lang="uts">
-import TPopup from '@/components/TPopup/index.uvue'
+import TPopup from '../TPopup/index.uvue'
 import type { ActionSheetAction, TActionSheetProps } from './type.uts'
 
 /**

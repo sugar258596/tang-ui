@@ -1,7 +1,7 @@
 <script  setup lang="uts" >
 
-	import RadioButton from '@/components/RadioButton/index'
-	import CheckboxButton from '@/components/CheckboxButton/index'
+	import RadioButton from '../RadioButton/index'
+	import CheckboxButton from '../CheckboxButton/index'
 
 	type FormOption = { label : string; value : string | number }
 	type FormSchema = {

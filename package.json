@@ -1,9 +1,9 @@
 {
-  "name": "tang-ui",
-  "version": "1.0.0",
+  "name": "tang-ui-x",
+  "version": "1.0.3",
   "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.uts",
+  "module": "index.uts",
   "types": "types/index.d.ts",
   "files": [
     "components",
@@ -12,7 +12,7 @@
     "types",
     "style",
     "uni.scss",
-    "index.js",
+    "index.uts",
     "README.md",
     "LICENSE"
   ],

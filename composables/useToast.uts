@@ -4,7 +4,7 @@
  */
 
 import { ref } from 'vue'
-import type { ToastOptions, ComponentType, PositionType } from '@/types/index.uts'
+import type { ToastOptions, ComponentType, PositionType } from '../types/index.uts'
 
 /** Toast 队列 */
 const toastQueue = ref<ToastOptions[]>([])

@@ -15,11 +15,11 @@
 ## 📦 安装
 
 ```bash
-npm install tang-ui
+npm install tang-ui-x
 # 或
-yarn add tang-ui
+yarn add tang-ui-x
 # 或
-pnpm add tang-ui
+pnpm add tang-ui-x
 ```
 
 ## 🔨 使用
@@ -33,7 +33,8 @@ pnpm add tang-ui
   "easycom": {
     "autoscan": true,
     "custom": {
-      "^T(.*)": "tang-ui/components/T$1/T$1.vue"
+      "^T(.*)": "tang-ui-x/components/T$1/index.uvue",
+      "^Tabs$": "tang-ui-x/components/Tabs/index.uvue"
     }
   }
 }
@@ -50,19 +51,41 @@ pnpm add tang-ui
 </template>
 ```
 
-### 方式二：按需引入
+### 方式二：手动引入组件
 
 ```vue
-<script setup>
-import { TButton, TInput } from 'tang-ui'
+<script setup lang="uts">
+// 直接引入组件文件
 </script>
 
 <template>
   <view>
     <TButton type="primary">按钮</TButton>
-    <TInput v-model="value" placeholder="请输入" />
   </view>
 </template>
+
+<script module="TButton" lang="uts">
+  import TButton from 'tang-ui-x/components/TButton/index.uvue'
+  export default TButton
+</script>
+```
+
+### 方式三：使用工具函数和 Composables
+
+```vue
+<script setup lang="uts">
+import { useToast, useTheme, useModal } from 'tang-ui-x'
+
+const toast = useToast()
+const theme = useTheme()
+
+function showMessage() {
+  toast.show({
+    message: '操作成功',
+    type: 'success'
+  })
+}
+</script>
 ```
 
 ## 📚 组件列表
@@ -134,7 +157,7 @@ import { TButton, TInput } from 'tang-ui'
 
 - [GitHub](https://github.com/sugar258596/tang-ui)
 - [Issues](https://github.com/sugar258596/tang-ui/issues)
-- [NPM](https://www.npmjs.com/package/tang-ui)
+- [NPM](https://www.npmjs.com/package/tang-ui-x)
 
 ## 📄 License
 

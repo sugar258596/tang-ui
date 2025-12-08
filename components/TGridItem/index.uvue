@@ -1,6 +1,6 @@
 <script setup lang="uts">
 import { inject, computed } from 'vue'
-import TBadge from '@/components/TBadge'
+import TBadge from '../TBadge'
 
 /**
  * TGridItem 宫格项组件
