@@ -14,7 +14,12 @@ pnpm-debug.log*
 
 docs/*
 
+# 开发文档（不上传到 GitHub）
 todo.md
+BUGFIX_REPORT.md
+CLAUDE.md
+COMPONENT_STATUS.md
+NPM_PUBLISH_GUIDE.md
 
 
 # Editor directories and files
