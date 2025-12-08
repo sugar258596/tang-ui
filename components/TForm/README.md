@@ -31,7 +31,7 @@ const schemas = [
   {
     field: 'name',
     label: '姓名',
-    component: 'input',
+    component: 'Input',
     required: true,
     componentProps: {
       placeholder: '请输入姓名',
@@ -42,7 +42,7 @@ const schemas = [
   {
     field: 'age',
     label: '年龄',
-    component: 'number',
+    component: 'InputNumber',
     required: true,
     componentProps: {
       placeholder: '请输入年龄',
@@ -53,7 +53,7 @@ const schemas = [
   {
     field: 'gender',
     label: '性别',
-    component: 'radio',
+    component: 'Radio',
     required: true,
     componentProps: {
       options: [
@@ -74,23 +74,23 @@ const handleSubmit = (values) => {
 
 ### 输入类
 
-- `input` - 文本输入框
-- `number` - 数字输入框
-- `textarea` - 多行文本
+- `Input` - 文本输入框
+- `InputNumber` - 数字输入框
+- `Textarea` - 多行文本
 
 ### 选择类
 
-- `select` - 下拉选择
-- `date` - 日期选择
-- `time` - 时间选择
-- `radio` - 单选框
-- `checkbox` - 多选框
+- `Select` - 下拉选择
+- `Date` - 日期选择
+- `Time` - 时间选择
+- `Radio` - 单选框
+- `Checkbox` - 多选框
 
 ### 交互类
 
-- `switch` - 开关
-- `rate` - 评分
-- `slider` - 滑块
+- `Switch` - 开关
+- `Rate` - 评分
+- `Slider` - 滑块
 
 ## componentProps 属性
 
@@ -155,11 +155,11 @@ const handleSubmit = (values) => {
 ### 常用属性示例
 
 ```javascript
-// input 组件
+// Input 组件
 {
   field: 'username',
   label: '用户名',
-  component: 'input',
+  component: 'Input',
   componentProps: {
     placeholder: '请输入用户名',
     type: 'text',
@@ -170,11 +170,11 @@ const handleSubmit = (values) => {
   }
 }
 
-// number 组件
+// InputNumber 组件
 {
   field: 'age',
   label: '年龄',
-  component: 'number',
+  component: 'InputNumber',
   componentProps: {
     min: 0,
     max: 150,
@@ -182,11 +182,11 @@ const handleSubmit = (values) => {
   }
 }
 
-// textarea 组件
+// Textarea 组件
 {
   field: 'description',
   label: '描述',
-  component: 'textarea',
+  component: 'Textarea',
   componentProps: {
     placeholder: '请输入描述',
     maxlength: 500,
@@ -196,11 +196,11 @@ const handleSubmit = (values) => {
   }
 }
 
-// select 组件
+// Select 组件
 {
   field: 'city',
   label: '城市',
-  component: 'select',
+  component: 'Select',
   componentProps: {
     options: [
       { label: '北京', value: 'beijing' },
@@ -211,11 +211,11 @@ const handleSubmit = (values) => {
   }
 }
 
-// radio 组件
+// Radio 组件
 {
   field: 'gender',
   label: '性别',
-  component: 'radio',
+  component: 'Radio',
   componentProps: {
     options: [
       { label: '男', value: 'male' },
@@ -225,11 +225,11 @@ const handleSubmit = (values) => {
   }
 }
 
-// checkbox 组件
+// Checkbox 组件
 {
   field: 'hobbies',
   label: '爱好',
-  component: 'checkbox',
+  component: 'Checkbox',
   componentProps: {
     options: [
       { label: '阅读', value: 'reading' },

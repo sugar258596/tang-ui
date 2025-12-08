@@ -57,7 +57,7 @@ export type FormSchema = {
   /** 标签文本 */
   label: string
   /** 组件类型 */
-  component: 'input' | 'textarea' | 'select' | 'date' | 'time' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'slider' | 'number'
+  component: 'Input' | 'Textarea' | 'Select' | 'Date' | 'Time' | 'Radio' | 'Checkbox' | 'Switch' | 'Rate' | 'Slider' | 'InputNumber'
   /** 是否必填 */
   required?: boolean
   /** 组件属性 */
