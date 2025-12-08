@@ -1,0 +1,25 @@
+/**
+ * TRadioGroup 组件类型定义
+ */
+
+export type RadioDirection = 'horizontal' | 'vertical'
+
+export interface RadioOption {
+  label: string
+  value: string | number
+  disabled?: boolean
+}
+
+export interface TRadioGroupProps {
+  modelValue?: string | number
+  options?: RadioOption[]
+  direction?: RadioDirection
+  disabled?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TRadioGroupEmits {
+  'update:modelValue': (value: string | number) => void
+  change: (value: string | number) => void
+}

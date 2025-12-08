@@ -1,0 +1,398 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TPicker from '@/components/TPicker'
+import type { TPickerOption } from '@/components/TPicker/type.uts'
+
+/**
+ * TPicker 选择器示例页面
+ */
+
+// 单列选择器
+const singleVisible = ref<boolean>(false)
+const singleValue = ref<any>(null)
+const singleText = ref<string>('请选择')
+
+// 多列选择器
+const multiVisible = ref<boolean>(false)
+const multiValue = ref<any>(null)
+const multiText = ref<string>('请选择')
+
+// 城市选择器
+const cityVisible = ref<boolean>(false)
+const cityValue = ref<any>(null)
+const cityText = ref<string>('请选择')
+
+// 日期选择器
+const dateVisible = ref<boolean>(false)
+const dateValue = ref<any>(null)
+const dateText = ref<string>('请选择')
+
+// 单列选项数据
+const fruitOptions = ref<TPickerOption[]>([
+  { label: '苹果', value: 'apple' },
+  { label: '香蕉', value: 'banana' },
+  { label: '橙子', value: 'orange' },
+  { label: '葡萄', value: 'grape' },
+  { label: '西瓜', value: 'watermelon' },
+  { label: '草莓', value: 'strawberry' },
+  { label: '芒果', value: 'mango' },
+  { label: '樱桃', value: 'cherry' }
+])
+
+// 多列选项数据
+const sizeColumns = ref<TPickerOption[][]>([
+  [
+    { label: '特小', value: 'xs' },
+    { label: '小', value: 's' },
+    { label: '中', value: 'm' },
+    { label: '大', value: 'l' },
+    { label: '特大', value: 'xl' }
+  ],
+  [
+    { label: '红色', value: 'red' },
+    { label: '蓝色', value: 'blue' },
+    { label: '绿色', value: 'green' },
+    { label: '黄色', value: 'yellow' },
+    { label: '黑色', value: 'black' },
+    { label: '白色', value: 'white' }
+  ]
+])
+
+// 城市数据
+const cityColumns = ref<TPickerOption[][]>([
+  [
+    { label: '北京市', value: 'beijing' },
+    { label: '上海市', value: 'shanghai' },
+    { label: '广东省', value: 'guangdong' },
+    { label: '浙江省', value: 'zhejiang' },
+    { label: '江苏省', value: 'jiangsu' }
+  ],
+  [
+    { label: '北京市', value: 'beijing' },
+    { label: '东城区', value: 'dongcheng' },
+    { label: '西城区', value: 'xicheng' },
+    { label: '朝阳区', value: 'chaoyang' },
+    { label: '海淀区', value: 'haidian' }
+  ]
+])
+
+// 生成年月日数据
+const years: TPickerOption[] = []
+const months: TPickerOption[] = []
+const days: TPickerOption[] = []
+
+for (let i = 2020; i <= 2030; i++) {
+  years.push({ label: `${i}年`, value: i })
+}
+
+for (let i = 1; i <= 12; i++) {
+  months.push({ label: `${i}月`, value: i })
+}
+
+for (let i = 1; i <= 31; i++) {
+  days.push({ label: `${i}日`, value: i })
+}
+
+const dateColumns = ref<TPickerOption[][]>([years, months, days])
+
+/**
+ * 显示单列选择器
+ */
+const showSinglePicker = (): void => {
+  singleVisible.value = true
+}
+
+/**
+ * 单列选择器确认
+ */
+const handleSingleConfirm = (value: any, index: number, option: TPickerOption): void => {
+  singleValue.value = value
+  singleText.value = option.label
+  console.log('单列选择:', value, index, option)
+}
+
+/**
+ * 显示多列选择器
+ */
+const showMultiPicker = (): void => {
+  multiVisible.value = true
+}
+
+/**
+ * 多列选择器确认
+ */
+const handleMultiConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
+  multiValue.value = value
+  multiText.value = options.map((opt: TPickerOption) => opt.label).join(' - ')
+  console.log('多列选择:', value, index, options)
+}
+
+/**
+ * 显示城市选择器
+ */
+const showCityPicker = (): void => {
+  cityVisible.value = true
+}
+
+/**
+ * 城市选择器确认
+ */
+const handleCityConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
+  cityValue.value = value
+  cityText.value = options.map((opt: TPickerOption) => opt.label).join(' - ')
+  console.log('城市选择:', value, index, options)
+}
+
+/**
+ * 显示日期选择器
+ */
+const showDatePicker = (): void => {
+  dateVisible.value = true
+}
+
+/**
+ * 日期选择器确认
+ */
+const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
+  dateValue.value = value
+  dateText.value = options.map((opt: TPickerOption) => opt.label).join('')
+  console.log('日期选择:', value, index, options)
+}
+</script>
+
+<template>
+  <view class="page">
+    <view class="page-header">
+      <text class="page-title">Picker 选择器</text>
+      <text class="page-desc">通用的数据选择组件</text>
+    </view>
+
+    <view class="page-content">
+      <!-- 单列选择器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">单列选择器</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showSinglePicker">
+            <text class="picker-trigger-text">{{ singleText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="singleValue" class="result-text">
+            <text class="result-label">选中值：{{ singleValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 多列选择器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">多列选择器</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showMultiPicker">
+            <text class="picker-trigger-text">{{ multiText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="multiValue" class="result-text">
+            <text class="result-label">选中值：{{ multiValue.join(', ') }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 城市选择器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">省市选择器</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showCityPicker">
+            <text class="picker-trigger-text">{{ cityText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="cityValue" class="result-text">
+            <text class="result-label">选中值：{{ cityValue.join(', ') }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 日期选择器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">日期选择器</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showDatePicker">
+            <text class="picker-trigger-text">{{ dateText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="dateValue" class="result-text">
+            <text class="result-label">选中值：{{ dateValue.join('-') }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 使用说明 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">使用说明</text>
+        </view>
+        <view class="section-content">
+          <view class="tip-box">
+            <text class="tip-text">• 支持单列和多列选择</text>
+            <text class="tip-text">• 使用 defineModel 管理选中值</text>
+            <text class="tip-text">• 支持自定义标题和按钮文字</text>
+            <text class="tip-text">• 支持禁用选项</text>
+            <text class="tip-text">• 点击遮罩层关闭选择器</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 单列选择器组件 -->
+    <TPicker
+      v-model="singleVisible"
+      v-model:selectedValue="singleValue"
+      title="选择水果"
+      :options="fruitOptions"
+      @confirm="handleSingleConfirm"
+    />
+
+    <!-- 多列选择器组件 -->
+    <TPicker
+      v-model="multiVisible"
+      v-model:selectedValue="multiValue"
+      title="选择尺码和颜色"
+      :columns="sizeColumns"
+      @confirm="handleMultiConfirm"
+    />
+
+    <!-- 城市选择器组件 -->
+    <TPicker
+      v-model="cityVisible"
+      v-model:selectedValue="cityValue"
+      title="选择省市"
+      :columns="cityColumns"
+      @confirm="handleCityConfirm"
+    />
+
+    <!-- 日期选择器组件 -->
+    <TPicker
+      v-model="dateVisible"
+      v-model:selectedValue="dateValue"
+      title="选择日期"
+      :columns="dateColumns"
+      @confirm="handleDateConfirm"
+    />
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+
+  &-header {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  &-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #303133;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    color: #909399;
+    display: block;
+  }
+
+  &-content {
+    padding: 0;
+  }
+}
+
+.section {
+  margin-bottom: 12px;
+
+  &-title {
+    padding: 12px 20px;
+    background-color: transparent;
+
+    &-text {
+      font-size: 14px;
+      color: #909399;
+    }
+  }
+
+  &-content {
+    background-color: #ffffff;
+    padding: 20px;
+  }
+}
+
+.picker-trigger {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:active {
+    background-color: #e4e7ed;
+  }
+
+  &-text {
+    font-size: 15px;
+    color: #303133;
+    flex: 1;
+  }
+
+  &-arrow {
+    font-size: 20px;
+    color: #909399;
+    margin-left: 12px;
+  }
+}
+
+.result-text {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #ecf5ff;
+  border-radius: 4px;
+}
+
+.result-label {
+  font-size: 14px;
+  color: #409eff;
+  display: block;
+}
+
+.tip-box {
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.tip-text {
+  display: block;
+  font-size: 14px;
+  color: #606266;
+  line-height: 1.8;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+</style>

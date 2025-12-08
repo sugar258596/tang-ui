@@ -1,0 +1,140 @@
+/**
+ * TSearchBar 组件类型定义
+ */
+
+/**
+ * 搜索框形状
+ */
+export type SearchBarShape = 'square' | 'round'
+
+/**
+ * TSearchBar Props 接口
+ */
+export interface TSearchBarProps {
+  /**
+   * 搜索值
+   */
+  modelValue?: string
+
+  /**
+   * 占位符
+   * @default '请输入搜索关键词'
+   */
+  placeholder?: string
+
+  /**
+   * 形状
+   * @default 'square'
+   */
+  shape?: SearchBarShape
+
+  /**
+   * 背景色
+   * @default '#f5f5f5'
+   */
+  background?: string
+
+  /**
+   * 最大输入长度
+   * @default -1
+   */
+  maxlength?: number
+
+  /**
+   * 是否显示清除按钮
+   * @default true
+   */
+  clearable?: boolean
+
+  /**
+   * 是否显示取消按钮
+   * @default false
+   */
+  showCancel?: boolean
+
+  /**
+   * 取消按钮文字
+   * @default '取消'
+   */
+  cancelText?: string
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 是否只读
+   * @default false
+   */
+  readonly?: boolean
+
+  /**
+   * 是否自动聚焦
+   * @default false
+   */
+  autoFocus?: boolean
+
+  /**
+   * 左侧图标
+   * @default '🔍'
+   */
+  leftIcon?: string
+
+  /**
+   * 防抖延迟（毫秒）
+   * @default 300
+   */
+  debounce?: number
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * TSearchBar 事件接口
+ */
+export interface TSearchBarEmits {
+  /**
+   * 更新值
+   */
+  'update:modelValue': (value: string) => void
+
+  /**
+   * 搜索事件
+   */
+  search: (value: string) => void
+
+  /**
+   * 输入事件
+   */
+  input: (value: string) => void
+
+  /**
+   * 取消事件
+   */
+  cancel: () => void
+
+  /**
+   * 清空事件
+   */
+  clear: () => void
+
+  /**
+   * 聚焦事件
+   */
+  focus: (event: Event) => void
+
+  /**
+   * 失焦事件
+   */
+  blur: (event: Event) => void
+}

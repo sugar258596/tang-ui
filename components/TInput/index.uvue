@@ -1,0 +1,376 @@
+<script  setup lang="uts" >
+import { computed, ref } from 'vue'
+import type {TInputProps, InputType, InputSize } from './type.uts'
+
+/**
+ * TInput 输入框组件
+ * @description 支持多种类型、尺寸的输入框组件
+ */
+
+const props = withDefaults(defineProps<TInputProps>(), {
+  type: 'text',
+  size: 'medium',
+  placeholder: '',
+  disabled: false,
+  readonly: false,
+  clearable: false,
+  showCount: false,
+  maxlength: -1,
+  prefixIcon: '',
+  suffixIcon: '',
+  rows: 3,
+  autoHeight: false,
+  autoFocus: false,
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel
+const model = defineModel<string | number>({ default: '' })
+
+// Emits 定义
+const emit = defineEmits<{
+  input: [value: string | number]
+  change: [value: string | number]
+  focus: []
+  blur: []
+  clear: []
+  confirm: []
+}>()
+
+// 是否聚焦
+const isFocused = ref(false)
+
+/**
+ * 计算输入框包装类名
+ */
+const inputWrapperClasses = computed((): string => {
+  const classes: string[] = []
+
+  // 尺寸样式
+  classes.push(`t-input--${props.size}`)
+
+  // 类型样式
+  if (props.type === 'textarea') {
+    classes.push('t-input--textarea')
+  }
+
+  // 禁用状态
+  if (props.disabled) {
+    classes.push('t-input--disabled')
+  }
+
+  // 只读状态
+  if (props.readonly) {
+    classes.push('t-input--readonly')
+  }
+
+  // 聚焦状态
+  if (isFocused.value) {
+    classes.push('t-input--focused')
+  }
+
+  // 前缀图标
+  if (props.prefixIcon) {
+    classes.push('t-input--prefix')
+  }
+
+  // 后缀图标或清除按钮
+  if (props.suffixIcon || props.clearable) {
+    classes.push('t-input--suffix')
+  }
+
+  // 自定义类名
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算当前输入长度
+ */
+const currentLength = computed((): number => {
+  const value = model.value?.toString() || ''
+  return value.length
+})
+
+/**
+ * 处理输入事件
+ */
+const handleInput = (e: any) => {
+  const value = e.detail.value
+  model.value = value
+  emit('input', value)
+}
+
+/**
+ * 处理聚焦事件
+ */
+const handleFocus = () => {
+  isFocused.value = true
+  emit('focus')
+}
+
+/**
+ * 处理失焦事件
+ */
+const handleBlur = () => {
+  isFocused.value = false
+  emit('blur')
+  emit('change', model.value)
+}
+
+/**
+ * 处理清除事件
+ */
+const handleClear = () => {
+  model.value = ''
+  emit('input', '')
+  emit('change', '')
+  emit('clear')
+}
+
+/**
+ * 处理确认事件
+ */
+const handleConfirm = () => {
+  emit('confirm')
+}
+</script>
+
+<template>
+  <view class="t-input" :class="inputWrapperClasses" :style="customStyle">
+    <!-- 前缀图标 -->
+    <view v-if="prefixIcon" class="t-input__prefix">
+      <text class="t-input__icon">{{ prefixIcon }}</text>
+    </view>
+
+    <!-- 输入框 -->
+    <input
+      v-if="type !== 'textarea'"
+      class="t-input__inner"
+      :type="type"
+      :value="model"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :maxlength="maxlength"
+      :focus="autoFocus"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+      @confirm="handleConfirm"
+    />
+
+    <!-- 文本域 -->
+    <textarea
+      v-else
+      class="t-input__textarea"
+      :value="model"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :maxlength="maxlength"
+      :auto-height="autoHeight"
+      :focus="autoFocus"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+    />
+
+    <!-- 清除按钮 -->
+    <view
+      v-if="clearable && model && !disabled && !readonly"
+      class="t-input__suffix t-input__clear"
+      @click="handleClear"
+    >
+      <text class="t-input__icon">✕</text>
+    </view>
+
+    <!-- 后缀图标 -->
+    <view v-else-if="suffixIcon" class="t-input__suffix">
+      <text class="t-input__icon">{{ suffixIcon }}</text>
+    </view>
+
+    <!-- 字数统计 -->
+    <view v-if="showCount && maxlength > 0" class="t-input__count">
+      <text class="t-input__count-text">{{ currentLength }}/{{ maxlength }}</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+  .t-input {
+  // 重置 uni-view 的默认样式
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: auto;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+
+  &__prefix,
+  &__suffix {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    color: #909399;
+  }
+
+  &__clear {
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #606266;
+    }
+  }
+
+  &__icon {
+    font-size: 16px;
+  }
+
+  &__inner,
+  &__textarea {
+    flex: 1;
+    width: 100%;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #606266;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #c0c4cc;
+    }
+  }
+
+  &__inner {
+    height: 100%;
+  }
+
+  &__textarea {
+    padding: 8px 12px;
+    line-height: 1.5;
+    resize: none;
+  }
+
+  &__count {
+    position: absolute;
+    right: 8px;
+    bottom: 4px;
+    font-size: 12px;
+    color: #909399;
+  }
+
+  // 尺寸样式
+  &--large {
+    height: 44px;
+
+    .t-input__inner {
+      font-size: 16px;
+    }
+  }
+
+  &--medium {
+    height: 36px;
+
+    .t-input__inner {
+      font-size: 14px;
+    }
+  }
+
+  &--small {
+    height: 28px;
+
+    .t-input__inner {
+      font-size: 12px;
+      padding: 0 8px;
+    }
+
+    .t-input__prefix,
+    .t-input__suffix {
+      padding: 0 6px;
+    }
+  }
+
+  &--mini {
+    height: 24px;
+
+    .t-input__inner {
+      font-size: 12px;
+      padding: 0 8px;
+    }
+
+    .t-input__prefix,
+    .t-input__suffix {
+      padding: 0 6px;
+    }
+  }
+
+  // 文本域样式
+  &--textarea {
+    height: auto;
+    padding: 0;
+
+    .t-input__textarea {
+      min-height: 60px;
+    }
+  }
+
+  // 聚焦状态
+  &--focused {
+    border-color: #409eff;
+  }
+
+  // 禁用状态
+  &--disabled {
+    background-color: #f5f7fa;
+    border-color: #e4e7ed;
+    color: #c0c4cc;
+    cursor: not-allowed;
+
+    .t-input__inner,
+    .t-input__textarea {
+      color: #c0c4cc;
+      cursor: not-allowed;
+    }
+  }
+
+  // 只读状态
+  &--readonly {
+    .t-input__inner,
+    .t-input__textarea {
+      cursor: default;
+    }
+  }
+
+  // 前缀图标
+  &--prefix {
+    .t-input__inner {
+      padding-left: 0;
+    }
+  }
+
+  // 后缀图标
+  &--suffix {
+    .t-input__inner {
+      padding-right: 0;
+    }
+  }
+}
+</style>

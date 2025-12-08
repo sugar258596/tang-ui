@@ -1,0 +1,35 @@
+# 开发文件
+.git
+.gitignore
+.kiro
+.claude
+node_modules
+.DS_Store
+
+# 示例和文档
+pages
+App.uvue
+main.uts
+index.html
+manifest.json
+pages.json
+platformConfig.json
+
+# 构建产物
+unpackage
+dist
+
+# 文档
+docs
+BUGFIX_REPORT.md
+CLAUDE.md
+COMPONENT_STATUS.md
+todo.md
+
+# 静态资源（根据需要调整）
+static
+
+# 测试文件
+*.test.js
+*.spec.js
+__tests__

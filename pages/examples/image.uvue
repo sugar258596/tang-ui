@@ -1,0 +1,258 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TImage from '@/components/TImage'
+import TCard from '@/components/TCard'
+import TText from '@/components/TText'
+import TDivider from '@/components/TDivider'
+
+/**
+ * TImage 组件示例页面
+ */
+
+// 示例图片
+const demoImage = ref<string>('https://picsum.photos/400/300')
+const demoImages = ref<string[]>([
+  'https://picsum.photos/400/300?random=1',
+  'https://picsum.photos/400/300?random=2',
+  'https://picsum.photos/400/300?random=3'
+])
+
+// 错误图片
+const errorImage = ref<string>('https://invalid-image-url.com/error.jpg')
+
+/**
+ * 图片加载完成
+ */
+const handleLoad = (event: Event): void => {
+  console.log('图片加载完成', event)
+  uni.showToast({
+    title: '图片加载完成',
+    icon: 'success',
+    duration: 1500
+  })
+}
+
+/**
+ * 图片加载失败
+ */
+const handleError = (event: Event): void => {
+  console.log('图片加载失败', event)
+  uni.showToast({
+    title: '图片加载失败',
+    icon: 'error',
+    duration: 1500
+  })
+}
+
+/**
+ * 点击图片
+ */
+const handleClick = (): void => {
+  console.log('点击图片')
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <!-- 基础用法 -->
+    <TCard title="基础用法" padding="medium">
+      <view class="demo-section">
+        <TImage
+          :src="demoImage"
+          width="100%"
+          height="200px"
+          @load="handleLoad"
+          @click="handleClick"
+        />
+      </view>
+    </TCard>
+
+    <!-- 图片形状 -->
+    <TCard title="图片形状" padding="medium">
+      <view class="demo-section">
+        <view class="demo-row">
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" shape="square" />
+            <TText text="方形" size="small" align="center" />
+          </view>
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" shape="round" />
+            <TText text="圆角" size="small" align="center" />
+          </view>
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" shape="circle" />
+            <TText text="圆形" size="small" align="center" />
+          </view>
+        </view>
+      </view>
+    </TCard>
+
+    <!-- 裁剪模式 -->
+    <TCard title="裁剪模式" padding="medium">
+      <view class="demo-section">
+        <view class="demo-grid">
+          <view class="demo-grid-item">
+            <TImage :src="demoImage" width="100%" height="80px" mode="scaleToFill" />
+            <TText text="scaleToFill" size="small" align="center" />
+          </view>
+          <view class="demo-grid-item">
+            <TImage :src="demoImage" width="100%" height="80px" mode="aspectFit" />
+            <TText text="aspectFit" size="small" align="center" />
+          </view>
+          <view class="demo-grid-item">
+            <TImage :src="demoImage" width="100%" height="80px" mode="aspectFill" />
+            <TText text="aspectFill" size="small" align="center" />
+          </view>
+          <view class="demo-grid-item">
+            <TImage :src="demoImage" width="100%" height="80px" mode="widthFix" />
+            <TText text="widthFix" size="small" align="center" />
+          </view>
+        </view>
+      </view>
+    </TCard>
+
+    <!-- 自定义圆角 -->
+    <TCard title="自定义圆角" padding="medium">
+      <view class="demo-section">
+        <view class="demo-row">
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" :radius="4" />
+            <TText text="4px" size="small" align="center" />
+          </view>
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" :radius="8" />
+            <TText text="8px" size="small" align="center" />
+          </view>
+          <view class="demo-col">
+            <TImage :src="demoImage" width="100px" height="100px" :radius="16" />
+            <TText text="16px" size="small" align="center" />
+          </view>
+        </view>
+      </view>
+    </TCard>
+
+    <!-- 加载失败 -->
+    <TCard title="加载失败" padding="medium">
+      <view class="demo-section">
+        <TImage
+          :src="errorImage"
+          width="100%"
+          height="150px"
+          error-text="图片加载失败"
+          @error="handleError"
+        />
+      </view>
+    </TCard>
+
+    <!-- 图片预览 -->
+    <TCard title="图片预览" padding="medium">
+      <view class="demo-section">
+        <view class="demo-row">
+          <view class="demo-col" v-for="(img, index) in demoImages" :key="index">
+            <TImage
+              :src="img"
+              width="100px"
+              height="100px"
+              shape="round"
+              :previewable="true"
+              :preview-list="demoImages"
+              :preview-index="index"
+            />
+          </view>
+        </view>
+        <TText
+          text="点击图片可预览"
+          size="small"
+          color="secondary"
+          align="center"
+          custom-style="margin-top: 12px"
+        />
+      </view>
+    </TCard>
+
+    <!-- 懒加载 -->
+    <TCard title="懒加载" padding="medium">
+      <view class="demo-section">
+        <TImage
+          :src="demoImage"
+          width="100%"
+          height="200px"
+          :lazy-load="true"
+          loading-text="懒加载中..."
+        />
+        <TText
+          text="向下滚动时才会加载图片"
+          size="small"
+          color="secondary"
+          align="center"
+          custom-style="margin-top: 12px"
+        />
+      </view>
+    </TCard>
+
+    <!-- 自定义加载提示 -->
+    <TCard title="自定义提示文本" padding="medium">
+      <view class="demo-section">
+        <view class="demo-row">
+          <view class="demo-col">
+            <TImage
+              src="https://picsum.photos/200/200?t=1"
+              width="100px"
+              height="100px"
+              loading-text="请稍候..."
+            />
+            <TText text="自定义加载文本" size="small" align="center" />
+          </view>
+          <view class="demo-col">
+            <TImage
+              :src="errorImage"
+              width="100px"
+              height="100px"
+              error-text="无法加载"
+            />
+            <TText text="自定义错误文本" size="small" align="center" />
+          </view>
+        </view>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.demo-section {
+  width: 100%;
+}
+
+.demo-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.demo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.demo-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+</style>

@@ -1,0 +1,153 @@
+<script  setup lang="uts" >
+import { computed } from 'vue'
+import type { TLoadingProps } from './type.uts'
+
+/**
+ * TLoading 加载组件
+ * @description 用于显示加载状态
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TLoadingProps>(), {
+  loading: false,
+  text: '',
+  size: 'medium',
+  color: '#409eff',
+  fullscreen: false,
+  mask: true,
+  maskBgColor: 'rgba(255, 255, 255, 0.9)'
+})
+
+/**
+ * 计算加载容器样式类
+ */
+const loadingClass = computed<string>(() => {
+  const classes: string[] = ['t-loading']
+
+  if (props.fullscreen) {
+    classes.push('t-loading--fullscreen')
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算遮罩层样式
+ */
+const maskStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  if (props.maskBgColor != '') {
+    styles.push(`background-color: ${props.maskBgColor}`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算加载图标样式类
+ */
+const spinnerClass = computed<string>(() => {
+  const classes: string[] = ['t-loading__spinner']
+
+  classes.push(`t-loading__spinner--${props.size}`)
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算加载图标样式
+ */
+const spinnerStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  if (props.color != '') {
+    styles.push(`border-color: ${props.color}`)
+    styles.push(`border-top-color: transparent`)
+  }
+
+  return styles.join('; ')
+})
+</script>
+
+<template>
+  <view v-if="loading" :class="loadingClass">
+    <view v-if="mask" class="t-loading__mask" :style="maskStyle"></view>
+    <view class="t-loading__content">
+      <view :class="spinnerClass" :style="spinnerStyle"></view>
+      <text v-if="text" class="t-loading__text">{{ text }}</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-loading {
+  position: relative;
+
+  &--fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  &__content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+  }
+
+  &__spinner {
+    border: 2px solid #409eff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+
+    &--small {
+      width: 20px;
+      height: 20px;
+    }
+
+    &--medium {
+      width: 30px;
+      height: 30px;
+    }
+
+    &--large {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  &__text {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #606266;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+</style>

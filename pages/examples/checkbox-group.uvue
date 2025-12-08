@@ -1,0 +1,54 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TCheckboxGroup from '@/components/TCheckboxGroup'
+import type { CheckboxOption } from '@/components/TCheckboxGroup/type.uts'
+import TCard from '@/components/TCard'
+
+const value1 = ref<(string | number)[]>(['1'])
+const value2 = ref<(string | number)[]>(['1', '2'])
+const value3 = ref<(string | number)[]>([])
+
+const options: CheckboxOption[] = [
+  { label: '选项一', value: '1' },
+  { label: '选项二', value: '2' },
+  { label: '选项三', value: '3' }
+]
+
+const options2: CheckboxOption[] = [
+  { label: '选项一', value: '1' },
+  { label: '选项二（禁用）', value: '2', disabled: true },
+  { label: '选项三', value: '3' }
+]
+</script>
+
+<template>
+  <view class="demo-page">
+    <TCard title="基础用法" padding="medium">
+      <TCheckboxGroup v-model="value1" :options="options" />
+    </TCard>
+
+    <TCard title="水平排列" padding="medium">
+      <TCheckboxGroup v-model="value2" :options="options" direction="horizontal" />
+    </TCard>
+
+    <TCard title="禁用选项" padding="medium">
+      <TCheckboxGroup v-model="value1" :options="options2" />
+    </TCard>
+
+    <TCard title="限制最多选择" padding="medium">
+      <TCheckboxGroup v-model="value3" :options="options" :max="2" />
+    </TCard>
+
+    <TCard title="禁用所有" padding="medium">
+      <TCheckboxGroup v-model="value1" :options="options" :disabled="true" />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+</style>

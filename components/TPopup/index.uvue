@@ -1,0 +1,442 @@
+<script  setup lang="uts" >
+/**
+ * Popup 弹出层组件
+ * 支持 bottom、top、left、right、center 五种位置
+ */
+
+/**
+ * 组件属性
+ */
+type PopupProps = {
+	/** 弹窗高度，支持百分比或具体数值（rpx） */
+	height ?: string | number
+	/** 弹窗宽度，支持百分比或具体数值（rpx） */
+	width ?: string | number
+	/** 弹出位置 */
+	position ?: 'bottom' | 'top' | 'left' | 'right' | 'center'
+	/** 是否显示标题栏 */
+	showTitle ?: boolean
+	/** 标题文本 */
+	title ?: string
+	/** 是否显示关闭按钮 */
+	showClose ?: boolean
+	/** 是否显示圆角 */
+	round ?: boolean
+	/** 圆角大小 */
+	borderRadius ?: string | number
+	/** 点击遮罩层是否关闭 */
+	closeOnClickOverlay ?: boolean
+	/** 弹窗层级 */
+	zIndex ?: number
+	/** 背景色 */
+	background ?: string
+}
+
+const model = defineModel<boolean>({ default: false })
+// 内部渲染状态，用于控制 DOM 显示
+const rendered = ref(false)
+// 是否显示遮罩层和内容
+const showOverlay = ref(false)
+
+const props = withDefaults(defineProps<PopupProps>(), {
+	height: '50%',
+	width: '100%',
+	position: 'bottom',
+	showTitle: true,
+	title: '',
+	showClose: true,
+	round: true,
+	borderRadius: 32,
+	closeOnClickOverlay: true,
+	zIndex: 999,
+	background: '#ffffff'
+})
+
+/**
+ * 事件
+ */
+const emit = defineEmits<{
+	close : []
+	open : []
+}>()
+
+// 计算弹窗高度
+const popupHeight = computed(() : string => {
+	if (typeof props.height === 'number') {
+		return props.height + 'rpx'
+	}
+	return props.height
+})
+
+// 计算弹窗宽度
+const popupWidth = computed(() : string => {
+	if (typeof props.width === 'number') {
+		return props.width + 'rpx'
+	}
+	return props.width
+})
+
+// 计算圆角大小
+const popupBorderRadius = computed(() : string => {
+	if (typeof props.borderRadius === 'number') {
+		return props.borderRadius + 'rpx'
+	}
+	return props.borderRadius
+})
+
+// 计算弹窗样式
+const popupStyle = computed(() : string => {
+	const styles : string[] = []
+
+	// 根据位置设置尺寸
+	if (props.position === 'left' || props.position === 'right' || props.position === 'center') {
+		styles.push(`width: ${popupWidth.value}`)
+		styles.push(`height: 100%`)
+	} else {
+		styles.push(`height: ${popupHeight.value}`)
+		styles.push(`width: 100%`)
+	}
+
+	styles.push(`z-index: ${props.zIndex}`)
+	styles.push(`background-color: ${props.background}`)
+
+	// 根据位置设置圆角
+	if (props.round) {
+		switch (props.position) {
+			case 'bottom':
+				styles.push(`border-top-left-radius: ${popupBorderRadius.value}`)
+				styles.push(`border-top-right-radius: ${popupBorderRadius.value}`)
+				break
+			case 'top':
+				styles.push(`border-bottom-left-radius: ${popupBorderRadius.value}`)
+				styles.push(`border-bottom-right-radius: ${popupBorderRadius.value}`)
+				break
+			case 'left':
+				styles.push(`border-top-right-radius: ${popupBorderRadius.value}`)
+				styles.push(`border-bottom-right-radius: ${popupBorderRadius.value}`)
+				break
+			case 'right':
+				styles.push(`border-top-left-radius: ${popupBorderRadius.value}`)
+				styles.push(`border-bottom-left-radius: ${popupBorderRadius.value}`)
+				break
+			case 'center':
+				styles.push(`border-radius: ${popupBorderRadius.value}`)
+				break
+		}
+	}
+
+	return styles.join('; ')
+})
+
+// 计算遮罩层样式
+const overlayStyle = computed(() : string => {
+	return `z-index: ${props.zIndex - 1}`
+})
+
+// 计算内容动画类名
+const contentClass = computed(() => {
+	const classes : string[] = ['popup-content']
+	if (!showOverlay.value) {
+		classes.push('popup-content-hidden')
+	}
+	classes.push(`popup-position-${props.position}`)
+	return classes.join(' ')
+})
+
+// 计算容器样式类名
+const wrapperClass = computed(() => {
+	return `popup-wrapper popup-wrapper-${props.position}`
+})
+
+/**
+ * 点击遮罩层
+ */
+const handleOverlayClick = () => {
+	if (props.closeOnClickOverlay) {
+		handleClose()
+	}
+}
+
+/**
+ * 阻止事件冒泡
+ */
+const stopPropagation = (e : any) => {
+	// 阻止点击弹窗内容时触发遮罩层点击事件
+}
+
+/**
+ * 禁止底部滚动
+ */
+const disableBodyScroll = () => {
+	// H5 环境
+	// #ifdef H5
+	document.body.style.overflow = 'hidden'
+	document.body.style.touchAction = 'none'
+	// #endif
+
+	// 小程序、App 端自动通过遮罩层阻止滚动
+}
+
+/**
+ * 恢复底部滚动
+ */
+const enableBodyScroll = () => {
+	// #ifdef H5
+	document.body.style.overflow = ''
+	document.body.style.touchAction = ''
+	// #endif
+}
+
+/**
+ * 关闭弹窗
+ */
+const handleClose = () => {
+	// 隐藏遮罩层和内容，触发动画
+	showOverlay.value = false
+
+	// 等待关闭动画完成后再卸载 DOM
+	setTimeout(() => {
+		rendered.value = false
+		enableBodyScroll()
+		model.value = false  // 同步更新 model 状态
+		emit('close')
+	}, 350) // 稍长于动画时长，确保动画完整播放
+}
+
+watch(model, (newVal : boolean) => {
+	if (newVal) {
+		// 打开时立即渲染 DOM
+		rendered.value = true
+		// 初始状态为隐藏
+		showOverlay.value = false
+		// 下一帧显示遮罩层和内容，触发动画
+		nextTick(() => {
+			// 使用 setTimeout 确保 DOM 已渲染
+			setTimeout(() => {
+				showOverlay.value = true
+				emit('open')
+				disableBodyScroll()
+			}, 10)
+		})
+	} else {
+		// 外部关闭时触发关闭动画
+		if (rendered.value) {
+			handleClose()
+		}
+	}
+})
+</script>
+
+<template>
+  <view v-if="rendered" :class="wrapperClass">
+    <!-- 遮罩层 -->
+    <view
+      class="popup-overlay"
+      :class="{ 'popup-overlay-hidden': !showOverlay }"
+      :style="overlayStyle"
+      @click="handleOverlayClick"
+    ></view>
+
+    <!-- 弹窗主体 -->
+    <view
+      :class="contentClass"
+      :style="popupStyle"
+      @click="stopPropagation"
+    >
+      <!-- 标题栏 -->
+      <view v-if="showTitle" class="popup-header">
+        <view class="popup-title-wrapper">
+          <slot name="title">
+            <text class="popup-title">{{ title }}</text>
+          </slot>
+        </view>
+
+        <!-- 关闭按钮 -->
+        <view v-if="showClose" class="popup-close" @click="handleClose">
+          <text class="popup-close-icon">✕</text>
+        </view>
+      </view>
+
+      <!-- 内容区域 -->
+      <view class="popup-body">
+        <slot></slot>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+/* 通用样式 */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.popup-overlay-hidden {
+  opacity: 0;
+}
+
+.popup-content {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.popup-content-hidden {
+  // 默认隐藏，通过位置特定类控制
+}
+
+/* 位置特定样式 - Bottom */
+.popup-wrapper-bottom {
+  align-items: flex-end;
+}
+
+.popup-position-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(0);
+}
+
+.popup-wrapper-bottom .popup-content-hidden {
+  transform: translateY(100%);
+}
+
+/* 位置特定样式 - Top */
+.popup-wrapper-top {
+  align-items: flex-start;
+}
+
+.popup-position-top {
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(0);
+}
+
+.popup-wrapper-top .popup-content-hidden {
+  transform: translateY(-100%);
+}
+
+/* 位置特定样式 - Left */
+.popup-wrapper-left {
+  justify-content: flex-start;
+}
+
+.popup-position-left {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  transform: translateX(0);
+}
+
+.popup-wrapper-left .popup-content-hidden {
+  transform: translateX(-100%);
+}
+
+/* 位置特定样式 - Right */
+.popup-wrapper-right {
+  justify-content: flex-end;
+}
+
+.popup-position-right {
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transform: translateX(0);
+}
+
+.popup-wrapper-right .popup-content-hidden {
+  transform: translateX(100%);
+}
+
+/* 位置特定样式 - Center */
+.popup-wrapper-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-position-center {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.popup-wrapper-center .popup-content-hidden {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.popup-wrapper-center .popup-content:not(.popup-content-hidden) {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* 标题栏样式 */
+.popup-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100rpx;
+  padding: 0 32rpx;
+  border-bottom: 1rpx solid $uni-border-color;
+  flex-shrink: 0;
+}
+
+.popup-title-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: $uni-text-color;
+}
+
+.popup-close {
+  position: absolute;
+  right: 32rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.popup-close:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.popup-close-icon {
+  font-size: 40rpx;
+  color: $uni-text-color-grey;
+  line-height: 1;
+}
+
+.popup-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32rpx;
+}
+</style>

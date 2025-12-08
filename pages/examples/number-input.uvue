@@ -1,0 +1,125 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TNumberInput from '@/components/TNumberInput'
+import TCard from '@/components/TCard'
+
+/**
+ * 数字输入框组件示例页面
+ */
+
+const value1 = ref<number>(0)
+const value2 = ref<number>(5)
+const value3 = ref<number>(10)
+const value4 = ref<number>(1)
+
+const handleChange = (value: number): void => {
+  console.log('数值变化:', value)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TNumberInput 数字输入组件</text>
+      <text class="example-desc">用于输入数字的增强组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TNumberInput v-model="value1" />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        当前值: {{ value1 }}
+      </text>
+    </TCard>
+
+    <TCard title="设置范围" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <view>
+          <TNumberInput v-model="value2" :min="0" :max="10" />
+          <text style="font-size: 12px; color: #909399;">范围: 0-10</text>
+        </view>
+        <view>
+          <TNumberInput v-model="value3" :min="-10" :max="100" />
+          <text style="font-size: 12px; color: #909399;">范围: -10-100</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="步长设置" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <view>
+          <TNumberInput :step="1" />
+          <text style="font-size: 12px; color: #909399;">步长: 1</text>
+        </view>
+        <view>
+          <TNumberInput :step="5" />
+          <text style="font-size: 12px; color: #909399;">步长: 5</text>
+        </view>
+        <view>
+          <TNumberInput :step="0.1" />
+          <text style="font-size: 12px; color: #909399;">步长: 0.1</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="精度控制" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <view>
+          <TNumberInput :precision="0" />
+          <text style="font-size: 12px; color: #909399;">整数</text>
+        </view>
+        <view>
+          <TNumberInput :precision="2" :step="0.01" />
+          <text style="font-size: 12px; color: #909399;">保留2位小数</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <TNumberInput size="small" />
+        <TNumberInput size="medium" />
+        <TNumberInput size="large" />
+      </view>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <TNumberInput :value="100" disabled />
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <TNumberInput v-model="value4" @change="handleChange" />
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        查看控制台了解数值变化
+      </text>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

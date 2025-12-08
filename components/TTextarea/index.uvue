@@ -1,0 +1,239 @@
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+import type { TTextareaProps } from './type.uts'
+
+/**
+ * TTextarea 多行文本输入组件
+ * @description 支持自动高度、字数统计、清空等功能的多行文本输入框
+ */
+
+// Props 定义 (从 type.uts 导入，排除 modelValue)
+type Props = Omit<TTextareaProps, 'modelValue'>
+
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: '请输入内容',
+  placeholderStyle: '',
+  disabled: false,
+  maxlength: -1,
+  showCount: false,
+  autoHeight: false,
+  rows: 3,
+  autoFocus: false,
+  clearable: false,
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel 管理双向绑定
+const modelValue = defineModel<string>({ default: '' })
+
+// Emits 定义
+const emit = defineEmits<{
+  input: [value: string]
+  focus: [event: Event]
+  blur: [event: Event]
+  clear: []
+}>()
+
+// 状态管理
+const isFocused = ref<boolean>(false)
+
+/**
+ * 计算当前字符数
+ */
+const currentLength = computed((): number => {
+  return modelValue.value.length
+})
+
+/**
+ * 计算容器类名
+ */
+const containerClasses = computed((): string => {
+  const classes: string[] = ['t-textarea']
+
+  if (props.disabled) {
+    classes.push('t-textarea--disabled')
+  }
+
+  if (isFocused.value) {
+    classes.push('t-textarea--focused')
+  }
+
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算容器样式
+ */
+const containerStyle = computed((): string => {
+  const styles: string[] = []
+
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算 textarea 样式
+ */
+const textareaStyle = computed((): string => {
+  const styles: string[] = []
+
+  if (!props.autoHeight && props.rows > 0) {
+    // 固定行数时计算高度（每行约 24px + 12px 行间距）
+    const height = props.rows * 36
+    styles.push(`height: ${height}px`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 输入事件处理
+ */
+const handleInput = (event: any): void => {
+  const value = event.detail.value as string
+  modelValue.value = value
+  emit('input', value)
+}
+
+/**
+ * 聚焦事件处理
+ */
+const handleFocus = (event: Event): void => {
+  isFocused.value = true
+  emit('focus', event)
+}
+
+/**
+ * 失焦事件处理
+ */
+const handleBlur = (event: Event): void => {
+  isFocused.value = false
+  emit('blur', event)
+}
+
+/**
+ * 清空输入
+ */
+const handleClear = (): void => {
+  modelValue.value = ''
+  emit('clear')
+}
+</script>
+
+<template>
+  <view :class="containerClasses" :style="containerStyle">
+    <!-- 文本域 -->
+    <textarea
+      class="t-textarea__input"
+      :style="textareaStyle"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :placeholder-style="placeholderStyle"
+      :disabled="disabled"
+      :maxlength="maxlength"
+      :auto-height="autoHeight"
+      :focus="autoFocus"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+    />
+
+    <!-- 底部操作栏 -->
+    <view v-if="showCount || clearable" class="t-textarea__footer">
+      <!-- 字数统计 -->
+      <text v-if="showCount" class="t-textarea__count">
+        {{ currentLength }}{{ maxlength > 0 ? `/${maxlength}` : '' }}
+      </text>
+
+      <!-- 清空按钮 -->
+      <view
+        v-if="clearable && modelValue.length > 0 && !disabled"
+        class="t-textarea__clear"
+        @click="handleClear"
+      >
+        <text class="t-textarea__clear-icon">✕</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-textarea {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition: border-color 0.2s;
+
+  &--focused {
+    border-color: #1890ff;
+  }
+
+  &--disabled {
+    background-color: #f5f7fa;
+    border-color: #e4e7ed;
+    cursor: not-allowed;
+
+    .t-textarea__input {
+      color: #c0c4cc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.t-textarea__input {
+  width: 100%;
+  font-size: 14px;
+  color: #303133;
+  line-height: 1.5;
+  box-sizing: border-box;
+  resize: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.t-textarea__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.t-textarea__count {
+  font-size: 12px;
+  color: #909399;
+}
+
+.t-textarea__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #c0c4cc;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #909399;
+  }
+}
+
+.t-textarea__clear-icon {
+  font-size: 12px;
+  color: #fff;
+}
+</style>

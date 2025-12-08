@@ -1,0 +1,233 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TCard from '@/components/TCard'
+import TList from '@/components/TList'
+import TListItem from '@/components/TListItem'
+
+/**
+ * UI组件库首页导航
+ */
+
+// 组件列表
+interface ComponentGroup {
+  title: string
+  components: ComponentItem[]
+}
+
+interface ComponentItem {
+  name: string
+  title: string
+  description: string
+  path: string
+}
+
+const componentGroups = ref<ComponentGroup[]>([
+  {
+    title: '基础组件',
+    components: [
+      { name: 'TButton', title: '按钮 Button', description: '按钮用于触发操作', path: '/pages/examples/button' },
+      { name: 'TIcon', title: '图标 Icon', description: '语义化图标', path: '/pages/examples/icon' },
+      { name: 'TText', title: '文本 Text', description: '文本展示组件', path: '/pages/examples/text' },
+      { name: 'TImage', title: '图片 Image', description: '增强的图片组件', path: '/pages/examples/image' },
+      { name: 'TDivider', title: '分割线 Divider', description: '内容分割线', path: '/pages/examples/divider' },
+    ]
+  },
+  {
+    title: '布局组件',
+    components: [
+      { name: 'TCard', title: '卡片 Card', description: '卡片容器', path: '/pages/examples/card' },
+      { name: 'TList', title: '列表 List', description: '列表展示', path: '/pages/examples/list' },
+      { name: 'TCell', title: '单元格 Cell', description: '单元格组件', path: '/pages/examples/cell' },
+      { name: 'TGrid', title: '宫格 Grid', description: '宫格布局', path: '/pages/examples/grid' },
+      { name: 'TRow/TCol', title: '栅格 Layout', description: '24栅格布局', path: '/pages/examples/layout' },
+    ]
+  },
+  {
+    title: '表单组件',
+    components: [
+      { name: 'TInput', title: '输入框 Input', description: '文本输入', path: '/pages/examples/input' },
+      { name: 'TTextarea', title: '多行输入 Textarea', description: '多行文本输入', path: '/pages/examples/textarea' },
+      { name: 'TSearchBar', title: '搜索框 SearchBar', description: '搜索输入框', path: '/pages/examples/search-bar' },
+      { name: 'TNumberInput', title: '数字输入 NumberInput', description: '数字输入框', path: '/pages/examples/number-input' },
+      { name: 'TSwitch', title: '开关 Switch', description: '开关选择器', path: '/pages/examples/switch' },
+      { name: 'TCheckbox', title: '复选框 Checkbox', description: '多选框', path: '/pages/examples/checkbox' },
+      { name: 'TCheckboxGroup', title: '复选组 CheckboxGroup', description: '复选框组', path: '/pages/examples/checkbox-group' },
+      { name: 'TRadioButton', title: '单选 Radio', description: '单选按钮', path: '/pages/examples/radio' },
+      { name: 'TRadioGroup', title: '单选组 RadioGroup', description: '单选框组', path: '/pages/examples/radio-group' },
+      { name: 'TSelect', title: '选择器 Select', description: '下拉选择', path: '/pages/examples/select' },
+      { name: 'TPicker', title: '通用选择器 Picker', description: '多列数据选择', path: '/pages/examples/picker' },
+      { name: 'TSlider', title: '滑块 Slider', description: '滑动选择器', path: '/pages/examples/slider' },
+      { name: 'TRate', title: '评分 Rate', description: '评分组件', path: '/pages/examples/rate' },
+    ]
+  },
+  {
+    title: '数据展示',
+    components: [
+      { name: 'Tags', title: '标签 Tags', description: '标记分类', path: '/pages/examples/tags' },
+      { name: 'TBadge', title: '徽标 Badge', description: '数字角标', path: '/pages/examples/badge' },
+      { name: 'TAvatar', title: '头像 Avatar', description: '用户头像', path: '/pages/examples/avatar' },
+      { name: 'TProgress', title: '进度条 Progress', description: '进度指示器', path: '/pages/examples/progress' },
+      { name: 'TNoticeBar', title: '通知栏 NoticeBar', description: '滚动通知', path: '/pages/examples/notice-bar' },
+      { name: 'TCollapse', title: '折叠面板 Collapse', description: '可折叠内容区域', path: '/pages/examples/collapse' },
+      { name: 'TSwiper', title: '轮播图 Swiper', description: '图片/内容轮播', path: '/pages/examples/swiper' },
+      { name: 'TEmpty', title: '空状态 Empty', description: '空数据展示', path: '/pages/examples/empty' },
+      { name: 'TErrorState', title: '错误状态 Error', description: '错误提示', path: '/pages/examples/error' },
+    ]
+  },
+  {
+    title: '反馈组件',
+    components: [
+      { name: 'TLoading', title: '加载 Loading', description: '加载状态', path: '/pages/examples/loading' },
+      { name: 'TToast', title: '轻提示 Toast', description: '轻量级提示', path: '/pages/examples/toast' },
+      { name: 'TDialog', title: '对话框 Dialog', description: '模态对话框', path: '/pages/examples/dialog' },
+      { name: 'TPopup', title: '弹出层 Popup', description: '弹出层容器', path: '/pages/examples/popup' },
+      { name: 'TActionSheet', title: '动作面板 ActionSheet', description: '底部动作面板', path: '/pages/examples/action-sheet' },
+    ]
+  },
+  {
+    title: '导航组件',
+    components: [
+      { name: 'Tabs', title: '标签页 Tabs', description: '选项卡切换', path: '/pages/examples/tabs' },
+      { name: 'TNavBar', title: '导航栏 NavBar', description: '顶部导航栏', path: '/pages/examples/navbar' },
+    ]
+  }
+])
+
+// 跳转到组件示例页面
+const navigateToComponent = (path: string): void => {
+  uni.navigateTo({
+    url: path
+  })
+}
+</script>
+
+<template>
+  <view class="index-page">
+    <!-- 头部 -->
+    <view class="header">
+      <view class="header-bg"></view>
+      <view class="header-content">
+        <text class="title">UniApp X UI</text>
+        <text class="subtitle">基于 UniApp X 的组件库</text>
+        <text class="version">v1.0.0</text>
+      </view>
+    </view>
+
+    <!-- 组件列表 -->
+    <view class="component-list">
+      <view v-for="(group, index) in componentGroups" :key="index" class="component-group">
+        <text class="group-title">{{ group.title }}</text>
+        <TCard class="group-card" :shadow="true" padding="small">
+          <TList :border="false" spacing="none">
+            <TListItem
+              v-for="(item, idx) in group.components"
+              :key="idx"
+              :title="item.title"
+              :description="item.description"
+              :arrow="true"
+              :clickable="true"
+              @click="() => navigateToComponent(item.path)"
+            />
+          </TList>
+        </TCard>
+      </view>
+    </view>
+
+    <!-- 底部信息 -->
+    <view class="footer">
+      <text class="footer-text">UniApp X UI Component Library</text>
+      <text class="footer-text">Powered by UniApp X</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.index-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.header {
+  position: relative;
+  padding: 40px 20px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  &-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.1) 10px,
+      rgba(255, 255, 255, 0.1) 20px
+    );
+  }
+
+  &-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffffff;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .version {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+}
+
+.component-list {
+  padding: 20px;
+}
+
+.component-group {
+  margin-bottom: 24px;
+
+  .group-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #303133;
+    margin-bottom: 12px;
+    display: block;
+    padding-left: 4px;
+  }
+
+  .group-card {
+    margin-bottom: 16px;
+  }
+}
+
+.footer {
+  padding: 30px 20px;
+  text-align: center;
+
+  &-text {
+    display: block;
+    font-size: 12px;
+    color: #909399;
+    line-height: 1.8;
+  }
+}
+</style>

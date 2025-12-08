@@ -1,0 +1,114 @@
+/**
+ * TText 组件类型定义
+ */
+
+/**
+ * 文本类型
+ */
+export type TextType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default'
+
+/**
+ * 文本尺寸
+ */
+export type TextSize = 'large' | 'medium' | 'small' | 'mini'
+
+/**
+ * 文本粗细
+ */
+export type TextWeight = 'lighter' | 'normal' | 'medium' | 'bold'
+
+/**
+ * 文本对齐
+ */
+export type TextAlign = 'left' | 'center' | 'right' | 'justify'
+
+/**
+ * 文本 Props 接口
+ */
+export interface TTextProps {
+  /**
+   * 文本内容
+   */
+  text?: string
+
+  /**
+   * 文本类型
+   * @default 'default'
+   */
+  type?: TextType
+
+  /**
+   * 文本尺寸
+   * @default 'medium'
+   */
+  size?: TextSize
+
+  /**
+   * 文本粗细
+   * @default 'normal'
+   */
+  weight?: TextWeight
+
+  /**
+   * 文本对齐
+   * @default 'left'
+   */
+  align?: TextAlign
+
+  /**
+   * 自定义颜色
+   */
+  color?: string
+
+  /**
+   * 行高
+   * @default 1.5
+   */
+  lineHeight?: number | string
+
+  /**
+   * 最大行数
+   * @default 0
+   */
+  maxLines?: number
+
+  /**
+   * 是否显示省略号
+   * @default false
+   */
+  ellipsis?: boolean
+
+  /**
+   * 是否加粗
+   * @default false
+   */
+  bold?: boolean
+
+  /**
+   * 是否斜体
+   * @default false
+   */
+  italic?: boolean
+
+  /**
+   * 是否显示下划线
+   * @default false
+   */
+  underline?: boolean
+
+  /**
+   * 是否显示删除线
+   * @default false
+   */
+  strikethrough?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}

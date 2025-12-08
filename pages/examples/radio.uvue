@@ -1,0 +1,115 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TRadioButton from '@/components/TRadioButton'
+import TCard from '@/components/TCard'
+
+/**
+ * 单选按钮组件示例页面
+ */
+
+const radioValue1 = ref<string>('option1')
+const radioValue2 = ref<string>('')
+const radioValue3 = ref<string>('apple')
+const radioValue4 = ref<number>(1)
+
+const handleChange = (value: string | number): void => {
+  console.log('选中值:', value)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TRadioButton 单选组件</text>
+      <text class="example-desc">单选按钮组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton v-model="radioValue1" name="radio1" value="option1">选项一</TRadioButton>
+        <TRadioButton v-model="radioValue1" name="radio1" value="option2">选项二</TRadioButton>
+        <TRadioButton v-model="radioValue1" name="radio1" value="option3">选项三</TRadioButton>
+      </view>
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ radioValue1 }}
+      </text>
+    </TCard>
+
+    <TCard title="单选组" class="example-section">
+      <radio-group v-model="radioValue2">
+        <view style="display: flex; flex-direction: column; gap: 10px;">
+          <TRadioButton value="A">选项 A</TRadioButton>
+          <TRadioButton value="B">选项 B</TRadioButton>
+          <TRadioButton value="C">选项 C</TRadioButton>
+          <TRadioButton value="D">选项 D</TRadioButton>
+        </view>
+      </radio-group>
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ radioValue2 || '未选择' }}
+      </text>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton value="1" disabled>禁用未选中</TRadioButton>
+        <TRadioButton v-model="radioValue4" :value="2" disabled>禁用已选中</TRadioButton>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton size="small" value="small">小尺寸</TRadioButton>
+        <TRadioButton size="medium" value="medium">中等尺寸</TRadioButton>
+        <TRadioButton size="large" value="large">大尺寸</TRadioButton>
+      </view>
+    </TCard>
+
+    <TCard title="自定义颜色" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton v-model="radioValue3" value="apple" color="#f56c6c">红色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="banana" color="#67c23a">绿色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="orange" color="#e6a23c">橙色</TRadioButton>
+      </view>
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton v-model="radioValue4" :value="1" @change="handleChange">选项 1</TRadioButton>
+        <TRadioButton v-model="radioValue4" :value="2" @change="handleChange">选项 2</TRadioButton>
+        <TRadioButton v-model="radioValue4" :value="3" @change="handleChange">选项 3</TRadioButton>
+      </view>
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        切换选项查看控制台
+      </text>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

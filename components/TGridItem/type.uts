@@ -1,0 +1,64 @@
+/**
+ * TGridItem 组件类型定义
+ */
+
+/**
+ * TGridItem Props 接口
+ */
+export interface TGridItemProps {
+  /**
+   * 图标名称
+   */
+  icon?: string
+
+  /**
+   * 图标颜色
+   */
+  iconColor?: string
+
+  /**
+   * 图片链接
+   */
+  image?: string
+
+  /**
+   * 文字内容
+   */
+  text?: string
+
+  /**
+   * 文字颜色
+   */
+  textColor?: string
+
+  /**
+   * 徽标内容
+   */
+  badge?: string | number
+
+  /**
+   * 徽标是否显示为小红点
+   * @default false
+   */
+  dot?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * TGridItem 事件接口
+ */
+export interface TGridItemEmits {
+  /**
+   * 点击事件
+   */
+  click: () => void
+}

@@ -1,0 +1,170 @@
+<script setup lang="uts">
+import TPopup from '@/components/TPopup/index.uvue'
+import type { ActionSheetAction, TActionSheetProps } from './type.uts'
+
+/**
+ * TActionSheet 动作面板组件
+ * @description 底部弹出的动作菜单，基于 TPopup 组件实现
+ */
+
+// Props 定义 (从 type.uts 导入，排除 show)
+type Props = Omit<TActionSheetProps, 'show'>
+
+const props = withDefaults(defineProps<Props>(), {
+  actions: () => [] as ActionSheetAction[],
+  title: '',
+  description: '',
+  cancelText: '取消',
+  closeOnClickAction: true,
+  closeOnClickOverlay: true,
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel 管理显示状态 (v-model)
+const visible = defineModel<boolean>({ default: false })
+
+const emit = defineEmits<{
+  select: [action: ActionSheetAction, index: number]
+  cancel: []
+  close: []
+}>()
+
+const handleSelect = (action: ActionSheetAction, index: number): void => {
+  if (action.disabled || action.loading) return
+
+  emit('select', action, index)
+  if (props.closeOnClickAction) {
+    visible.value = false
+  }
+}
+
+const handleCancel = (): void => {
+  emit('cancel')
+  visible.value = false
+}
+
+const handleClose = (): void => {
+  emit('close')
+}
+</script>
+
+<template>
+  <TPopup
+    v-model="visible"
+    position="bottom"
+    :show-title="false"
+    :show-close="false"
+    :close-on-click-overlay="closeOnClickOverlay"
+    :border-radius="16"
+    height="auto"
+    @close="handleClose"
+  >
+    <view class="t-action-sheet" :class="customClass" :style="customStyle">
+      <!-- 头部：标题和描述 -->
+      <view v-if="title || description" class="t-action-sheet__header">
+        <text v-if="title" class="t-action-sheet__title">{{ title }}</text>
+        <text v-if="description" class="t-action-sheet__description">{{ description }}</text>
+      </view>
+
+      <!-- 操作列表 -->
+      <view class="t-action-sheet__actions">
+        <view
+          v-for="(action, index) in actions"
+          :key="index"
+          class="t-action-sheet__action"
+          :class="{
+            't-action-sheet__action--disabled': action.disabled,
+            't-action-sheet__action--loading': action.loading
+          }"
+          @click="() => handleSelect(action, index)"
+        >
+          <text
+            class="t-action-sheet__action-text"
+            :style="action.color ? `color: ${action.color}` : ''"
+          >
+            {{ action.name }}
+          </text>
+        </view>
+      </view>
+
+      <!-- 取消按钮 -->
+      <view class="t-action-sheet__cancel" @click="handleCancel">
+        <text class="t-action-sheet__cancel-text">{{ cancelText }}</text>
+      </view>
+    </view>
+  </TPopup>
+</template>
+
+<style lang="scss" scoped>
+.t-action-sheet {
+  background-color: transparent;
+  padding: 0;
+}
+
+.t-action-sheet__header {
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #ebedf0;
+}
+
+.t-action-sheet__title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #323233;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.t-action-sheet__description {
+  font-size: 14px;
+  color: #969799;
+  display: block;
+}
+
+.t-action-sheet__actions {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.t-action-sheet__action {
+  padding: 16px;
+  display: flex;;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid #ebedf0;
+  cursor: pointer;
+
+  &:active {
+    background-color: #f5f5f5;
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.t-action-sheet__action-text {
+  font-size: 16px;
+  color: #323233;
+}
+
+.t-action-sheet__cancel {
+  padding: 16px;
+  display: flex;;
+  align-items: center;
+  text-align: center;
+  border-top: 8px solid #f5f5f5;
+  cursor: pointer;
+
+  &:active {
+    background-color: #f5f5f5;
+  }
+}
+
+.t-action-sheet__cancel-text {
+  font-size: 16px;
+  color: #323233;
+}
+</style>

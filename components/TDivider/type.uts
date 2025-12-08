@@ -1,0 +1,91 @@
+/**
+ * TDivider 组件类型定义
+ */
+
+/**
+ * 分割线方向
+ */
+export type DividerDirection = 'horizontal' | 'vertical'
+
+/**
+ * 分割线类型
+ */
+export type DividerType = 'solid' | 'dashed' | 'dotted'
+
+/**
+ * 文字位置
+ */
+export type DividerContentPosition = 'left' | 'center' | 'right'
+
+/**
+ * TDivider Props 接口
+ */
+export interface TDividerProps {
+  /**
+   * 分割线方向
+   * @default 'horizontal'
+   */
+  direction?: DividerDirection
+
+  /**
+   * 分割线类型
+   * @default 'solid'
+   */
+  type?: DividerType
+
+  /**
+   * 分割线颜色
+   * @default '#e0e0e0'
+   */
+  color?: string
+
+  /**
+   * 分割线粗细
+   * @default 1
+   */
+  thickness?: number
+
+  /**
+   * 是否显示分割线
+   * @default true
+   */
+  hairline?: boolean
+
+  /**
+   * 文字内容
+   */
+  content?: string
+
+  /**
+   * 文字位置（仅水平方向有效）
+   * @default 'center'
+   */
+  contentPosition?: DividerContentPosition
+
+  /**
+   * 文字样式
+   */
+  contentStyle?: string
+
+  /**
+   * 内边距
+   * @default '16px'
+   */
+  padding?: string | number
+
+  /**
+   * 外边距
+   * @default '16px'
+   */
+  margin?: string | number
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}

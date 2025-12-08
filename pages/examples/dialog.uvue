@@ -1,0 +1,141 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TDialog from '@/components/TDialog'
+import TCard from '@/components/TCard'
+import TButton from '@/components/TButton'
+
+/**
+ * 对话框组件示例页面
+ */
+
+const dialog1Visible = ref<boolean>(false)
+const dialog2Visible = ref<boolean>(false)
+const dialog3Visible = ref<boolean>(false)
+const dialog4Visible = ref<boolean>(false)
+const dialog5Visible = ref<boolean>(false)
+
+const handleConfirm = (): void => {
+  console.log('确认按钮被点击')
+}
+
+const handleCancel = (): void => {
+  console.log('取消按钮被点击')
+}
+
+const handleClose = (): void => {
+  console.log('对话框关闭')
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TDialog 对话框组件</text>
+      <text class="example-desc">模态对话框，用于消息提示、确认消息和提交内容</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TButton type="primary" @click="dialog1Visible = true">
+        打开对话框
+      </TButton>
+      <TDialog
+        v-model="dialog1Visible"
+        title="提示"
+        content="这是一个基础对话框"
+        @confirm="handleConfirm"
+        @cancel="handleCancel"
+      />
+    </TCard>
+
+    <TCard title="自定义内容" class="example-section">
+      <TButton type="primary" @click="dialog2Visible = true">
+        自定义内容
+      </TButton>
+      <TDialog
+        v-model="dialog2Visible"
+        title="用户信息"
+      >
+        <view style="padding: 10px 0;">
+          <text style="display: block; margin-bottom: 10px;">用户名：张三</text>
+          <text style="display: block; margin-bottom: 10px;">邮箱：zhangsan@example.com</text>
+          <text style="display: block;">电话：13800138000</text>
+        </view>
+      </TDialog>
+    </TCard>
+
+    <TCard title="不同按钮类型" class="example-section">
+      <view style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <TButton type="success" @click="dialog3Visible = true">
+          成功类型
+        </TButton>
+        <TButton type="warning" @click="dialog4Visible = true">
+          警告类型
+        </TButton>
+        <TButton type="danger" @click="dialog5Visible = true">
+          危险类型
+        </TButton>
+      </view>
+
+      <TDialog
+        v-model="dialog3Visible"
+        title="成功"
+        content="操作成功！"
+        confirmType="success"
+        :showCancel="false"
+      />
+
+      <TDialog
+        v-model="dialog4Visible"
+        title="警告"
+        content="确定要执行此操作吗？"
+        confirmType="warning"
+      />
+
+      <TDialog
+        v-model="dialog5Visible"
+        title="危险操作"
+        content="此操作不可恢复，是否继续？"
+        confirmType="danger"
+        confirmText="删除"
+      />
+    </TCard>
+
+    <TCard title="自定义按钮文字" class="example-section">
+      <TButton type="primary" @click="() => {
+        const dialog = ref(true)
+        dialog1Visible = dialog.value
+      }">
+        自定义按钮文字
+      </TButton>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

@@ -1,0 +1,118 @@
+<script  setup lang="uts" >
+import TEmpty from '@/components/TEmpty'
+import TCard from '@/components/TCard'
+import TButton from '@/components/TButton'
+
+/**
+ * 空状态组件示例页面
+ */
+
+const handleClick = (): void => {
+  console.log('按钮被点击')
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TEmpty 空状态组件</text>
+      <text class="example-desc">空数据时的占位提示</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TEmpty />
+    </TCard>
+
+    <TCard title="自定义描述" class="example-section">
+      <TEmpty description="暂无相关数据" />
+    </TCard>
+
+    <TCard title="自定义图片" class="example-section">
+      <TEmpty image="📭" description="收件箱为空" />
+    </TCard>
+
+    <TCard title="不同类型" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 30px;">
+        <TEmpty type="data" description="暂无数据" />
+        <TEmpty type="search" description="没有搜索结果" />
+        <TEmpty type="network" description="网络连接失败" />
+        <TEmpty type="message" description="暂无消息" />
+      </view>
+    </TCard>
+
+    <TCard title="图片大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 30px;">
+        <TEmpty imageSize="small" description="小尺寸图片" />
+        <TEmpty imageSize="medium" description="中等尺寸图片" />
+        <TEmpty imageSize="large" description="大尺寸图片" />
+      </view>
+    </TCard>
+
+    <TCard title="带操作按钮" class="example-section">
+      <TEmpty description="暂无数据">
+        <template #footer>
+          <TButton type="primary" size="small" @click="handleClick">
+            刷新数据
+          </TButton>
+        </template>
+      </TEmpty>
+    </TCard>
+
+    <TCard title="自定义内容" class="example-section">
+      <TEmpty>
+        <template #image>
+          <text style="font-size: 60px;">🎯</text>
+        </template>
+        <template #description>
+          <view style="text-align: center;">
+            <text style="font-size: 16px; color: #303133; display: block; margin-bottom: 8px;">
+              没有找到相关内容
+            </text>
+            <text style="font-size: 14px; color: #909399;">
+              试试调整搜索条件
+            </text>
+          </view>
+        </template>
+        <template #footer>
+          <view style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <TButton size="small">返回</TButton>
+            <TButton type="primary" size="small">重新搜索</TButton>
+          </view>
+        </template>
+      </TEmpty>
+    </TCard>
+
+    <TCard title="简洁模式" class="example-section">
+      <TEmpty simple description="暂无内容" />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

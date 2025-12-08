@@ -1,0 +1,96 @@
+<script  setup lang="uts" >
+	/**
+ * Icon 图标组件
+ * 支持 iconfont 字体图标
+ */
+
+	/**
+	 * 组件属性
+	 */
+	type IconProps = {
+		/** 图标名称 */
+		name : string
+		/** 图标大小 */
+		size ?: string | number
+		/** 图标颜色 */
+		color ?: string
+		/** 是否加粗 */
+		bold ?: boolean
+		/** 自定义类名 */
+		customClass ?: string
+		/** 自定义样式 */
+		customStyle ?: string
+	}
+
+	const props = withDefaults(defineProps<IconProps>(), {
+		name: '',
+		size: 48,
+		color: '#333333',
+		bold: false,
+		customClass: '',
+		customStyle: ''
+	})
+
+	/**
+	 * 事件
+	 */
+	const emit = defineEmits<{
+		click : []
+	}>()
+
+	// 计算图标大小
+	const iconSize = computed(() : string => {
+		if (typeof props.size === 'number') {
+			return props.size + 'rpx'
+		}
+		return props.size
+	})
+
+	// 计算图标样式
+	const iconStyle = computed(() : string => {
+		const styles : string[] = []
+
+		styles.push(`font-size: ${iconSize.value}`)
+		styles.push(`color: ${props.color}`)
+
+		if (props.bold) {
+			styles.push('font-weight: bold')
+		}
+
+		if (props.customStyle) {
+			styles.push(props.customStyle)
+		}
+
+		return styles.join('; ')
+	})
+
+	// 计算图标类名
+	const iconClass = computed(() : string => {
+		const classes : string[] = ['icon', 'iconfont']
+
+		if (props.name) {
+			classes.push(props.name)
+		}
+
+		if (props.customClass) {
+			classes.push(props.customClass)
+		}
+
+		return classes.join(' ')
+	})
+
+	/**
+	 * 图标点击事件
+	 */
+	const handleClick = () => {
+		emit('click')
+	}
+</script>
+
+<template>
+	<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
+</template>
+
+<style lang="scss" scoped>
+	 
+</style>

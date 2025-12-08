@@ -1,0 +1,64 @@
+/**
+ * TProgress 组件类型定义
+ */
+
+/**
+ * 进度条类型
+ */
+export type ProgressType = 'line' | 'circle'
+
+/**
+ * TProgress Props 接口
+ */
+export interface TProgressProps {
+  /**
+   * 进度百分比
+   * @default 0
+   */
+  percentage?: number
+
+  /**
+   * 进度条类型
+   * @default 'line'
+   */
+  type?: ProgressType
+
+  /**
+   * 进度条颜色
+   * @default '#1890ff'
+   */
+  color?: string
+
+  /**
+   * 进度条粗细
+   * @default 6
+   */
+  strokeWidth?: number
+
+  /**
+   * 是否显示文字
+   * @default true
+   */
+  showText?: boolean
+
+  /**
+   * 文字颜色
+   */
+  textColor?: string
+
+  /**
+   * 是否显示动画
+   * @default true
+   */
+  animated?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}

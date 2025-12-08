@@ -1,0 +1,115 @@
+<script setup lang="uts">
+import { provide, computed } from 'vue'
+
+/**
+ * TGrid 宫格容器组件
+ * @description 宫格布局容器，配合 TGridItem 使用
+ */
+
+// Props 定义
+interface Props {
+  columns?: number
+  gap?: number | string
+  border?: boolean
+  borderColor?: string
+  square?: boolean
+  center?: boolean
+  clickable?: boolean
+  iconSize?: string | number
+  customClass?: string
+  customStyle?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  columns: 4,
+  gap: 0,
+  border: false,
+  borderColor: '#e0e0e0',
+  square: false,
+  center: true,
+  clickable: false,
+  iconSize: '28px',
+  customClass: '',
+  customStyle: ''
+})
+
+// Emits 定义
+const emit = defineEmits<{
+  click: [index: number]
+}>()
+
+// 提供配置给子组件
+provide('gridColumns', props.columns)
+provide('gridBorder', props.border)
+provide('gridBorderColor', props.borderColor)
+provide('gridSquare', props.square)
+provide('gridCenter', props.center)
+provide('gridClickable', props.clickable)
+provide('gridIconSize', props.iconSize)
+
+/**
+ * 计算容器样式
+ */
+const containerStyle = computed((): string => {
+  const styles: string[] = []
+
+  // 列数
+  styles.push(`grid-template-columns: repeat(${props.columns}, 1fr)`)
+
+  // 间距
+  if (typeof props.gap === 'number') {
+    styles.push(`gap: ${props.gap}px`)
+  } else if (props.gap) {
+    styles.push(`gap: ${props.gap}`)
+  }
+
+  // 边框颜色
+  if (props.border) {
+    styles.push(`border-color: ${props.borderColor}`)
+  }
+
+  // 自定义样式
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算容器类名
+ */
+const containerClasses = computed((): string => {
+  const classes: string[] = ['t-grid']
+
+  if (props.border) {
+    classes.push('t-grid--border')
+  }
+
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+</script>
+
+<template>
+  <view :class="containerClasses" :style="containerStyle">
+    <slot></slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-grid {
+  display: grid;
+  width: 100%;
+
+  &--border {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-left-width: 1px;
+    border-left-style: solid;
+  }
+}
+</style>

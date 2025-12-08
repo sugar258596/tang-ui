@@ -1,0 +1,68 @@
+/**
+ * TList 列表组件属性类型定义
+ */
+export type TListProps = {
+  /**
+   * 列表标题
+   */
+  title?: string
+
+  /**
+   * 是否显示边框
+   * @default true
+   */
+  border?: boolean
+
+  /**
+   * 列表项间距
+   * @default "medium"
+   */
+  spacing?: 'none' | 'small' | 'medium' | 'large'
+}
+
+export type TListItemProps = {
+  /**
+   * 列表项标题
+   */
+  title?: string
+
+  /**
+   * 列表项描述
+   */
+  description?: string
+
+  /**
+   * 左侧图标
+   */
+  icon?: string
+
+  /**
+   * 右侧文字
+   */
+  extra?: string
+
+  /**
+   * 是否显示右侧箭头
+   * @default false
+   */
+  arrow?: boolean
+
+  /**
+   * 是否可点击
+   * @default false
+   */
+  clickable?: boolean
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+}
+
+export type TListItemEmits = {
+  /**
+   * 点击列表项时触发
+   */
+  click: () => void
+}

@@ -1,0 +1,93 @@
+<script setup lang="uts">
+import { provide, computed } from 'vue'
+import type { TCollapseProps, TCollapseContext } from './type.uts'
+
+/**
+ * TCollapse 折叠面板容器组件
+ * @description 可折叠的内容面板，支持手风琴模式
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TCollapseProps>(), {
+  accordion: false,
+  border: true
+})
+
+// 使用 defineModel 管理当前展开的面板名称
+// 手风琴模式下为字符串，多选模式下为字符串数组
+const activeNames = defineModel<string | string[]>({ default: [] })
+
+/**
+ * 计算当前展开的面板名称数组
+ */
+const activeNamesArray = computed<string[]>(() => {
+  if (typeof activeNames.value === 'string') {
+    return activeNames.value === '' ? [] : [activeNames.value]
+  }
+  return activeNames.value as string[]
+})
+
+/**
+ * 切换面板展开/收起状态
+ */
+const toggle = (name: string): void => {
+  const currentActive = activeNamesArray.value
+  const index = currentActive.indexOf(name)
+
+  if (props.accordion) {
+    // 手风琴模式：只能展开一个
+    activeNames.value = index > -1 ? '' : name
+  } else {
+    // 多选模式：可以展开多个
+    const newActive = [...currentActive]
+    if (index > -1) {
+      newActive.splice(index, 1)
+    } else {
+      newActive.push(name)
+    }
+    activeNames.value = newActive
+  }
+}
+
+/**
+ * 提供给子组件的上下文
+ */
+const collapseContext: TCollapseContext = {
+  activeNames: activeNamesArray.value,
+  accordion: props.accordion,
+  toggle
+}
+
+// 向子组件提供上下文
+provide('TCollapse', collapseContext)
+
+/**
+ * 计算容器样式类
+ */
+const collapseClass = computed<string>(() => {
+  const classes: string[] = ['t-collapse']
+
+  if (props.border) {
+    classes.push('t-collapse--border')
+  }
+
+  return classes.join(' ')
+})
+</script>
+
+<template>
+  <view :class="collapseClass">
+    <slot></slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-collapse {
+  background-color: #ffffff;
+
+  &--border {
+    border-top: 1px solid #ebeef5;
+    border-bottom: 1px solid #ebeef5;
+  }
+}
+</style>

@@ -1,0 +1,189 @@
+<script setup lang="uts">
+import TDivider from '@/components/TDivider'
+import TCard from '@/components/TCard'
+import TText from '@/components/TText'
+
+/**
+ * TDivider 组件示例页面
+ */
+</script>
+
+<template>
+  <view class="demo-page">
+    <!-- 基础用法 -->
+    <TCard title="基础用法" padding="medium">
+      <view class="demo-section">
+        <TText text="默认分割线" />
+        <TDivider />
+        <TText text="第二部分内容" />
+      </view>
+    </TCard>
+
+    <!-- 虚线样式 -->
+    <TCard title="虚线样式" padding="medium">
+      <view class="demo-section">
+        <TText text="虚线分割" />
+        <TDivider type="dashed" />
+        <TText text="点线分割" />
+        <TDivider type="dotted" />
+        <TText text="实线分割" />
+        <TDivider type="solid" />
+      </view>
+    </TCard>
+
+    <!-- 自定义颜色 -->
+    <TCard title="自定义颜色" padding="medium">
+      <view class="demo-section">
+        <TText text="蓝色分割线" />
+        <TDivider color="#1890ff" />
+        <TText text="红色分割线" />
+        <TDivider color="#f5222d" />
+        <TText text="绿色分割线" />
+        <TDivider color="#52c41a" />
+      </view>
+    </TCard>
+
+    <!-- 自定义粗细 -->
+    <TCard title="自定义粗细" padding="medium">
+      <view class="demo-section">
+        <TText text="细线 (hairline)" />
+        <TDivider :hairline="true" />
+        <TText text="1px" />
+        <TDivider :thickness="1" :hairline="false" />
+        <TText text="2px" />
+        <TDivider :thickness="2" :hairline="false" />
+        <TText text="4px" />
+        <TDivider :thickness="4" :hairline="false" color="#1890ff" />
+      </view>
+    </TCard>
+
+    <!-- 文字分割线 -->
+    <TCard title="文字分割线" padding="medium">
+      <view class="demo-section">
+        <TText text="上方内容" />
+        <TDivider content="默认居中" />
+        <TText text="中间内容" />
+        <TDivider content="左对齐" content-position="left" />
+        <TText text="中间内容" />
+        <TDivider content="右对齐" content-position="right" />
+        <TText text="下方内容" />
+      </view>
+    </TCard>
+
+    <!-- 自定义文字样式 -->
+    <TCard title="自定义文字样式" padding="medium">
+      <view class="demo-section">
+        <TText text="上方内容" />
+        <TDivider
+          content="蓝色文字"
+          color="#1890ff"
+          content-style="color: #1890ff; font-weight: bold"
+        />
+        <TText text="中间内容" />
+        <TDivider
+          content="大号文字"
+          content-style="font-size: 16px; color: #f5222d"
+          color="#f5222d"
+        />
+        <TText text="下方内容" />
+      </view>
+    </TCard>
+
+    <!-- 自定义间距 -->
+    <TCard title="自定义间距" padding="medium">
+      <view class="demo-section">
+        <TText text="小间距" />
+        <TDivider :margin="8" />
+        <TText text="默认间距" />
+        <TDivider />
+        <TText text="大间距" />
+        <TDivider :margin="32" />
+        <TText text="底部内容" />
+      </view>
+    </TCard>
+
+    <!-- 垂直分割线 -->
+    <TCard title="垂直分割线" padding="medium">
+      <view class="demo-section">
+        <view class="demo-vertical-row">
+          <TText text="选项一" />
+          <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
+          <TText text="选项二" />
+          <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
+          <TText text="选项三" />
+          <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
+          <TText text="选项四" />
+        </view>
+      </view>
+    </TCard>
+
+    <!-- 垂直分割线样式 -->
+    <TCard title="垂直分割线样式" padding="medium">
+      <view class="demo-section">
+        <view class="demo-vertical-row">
+          <TText text="实线" />
+          <TDivider
+            direction="vertical"
+            type="solid"
+            :margin="12"
+            custom-style="height: 20px"
+          />
+          <TText text="虚线" />
+          <TDivider
+            direction="vertical"
+            type="dashed"
+            :margin="12"
+            custom-style="height: 20px"
+          />
+          <TText text="点线" />
+          <TDivider
+            direction="vertical"
+            type="dotted"
+            :margin="12"
+            custom-style="height: 20px"
+          />
+          <TText text="彩色" />
+          <TDivider
+            direction="vertical"
+            color="#1890ff"
+            :thickness="2"
+            :hairline="false"
+            :margin="12"
+            custom-style="height: 20px"
+          />
+          <TText text="结束" />
+        </view>
+      </view>
+    </TCard>
+
+    <!-- 插槽用法 -->
+    <TCard title="插槽用法" padding="medium">
+      <view class="demo-section">
+        <TText text="上方内容" />
+        <TDivider>
+          <text style="color: #1890ff; font-weight: bold">自定义插槽内容</text>
+        </TDivider>
+        <TText text="下方内容" />
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.demo-section {
+  width: 100%;
+}
+
+.demo-vertical-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+</style>

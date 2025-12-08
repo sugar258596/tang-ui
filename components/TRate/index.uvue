@@ -1,0 +1,182 @@
+<script  setup lang="uts" >
+/**
+ * 评分组件属性类型
+ */
+type RateProps = {
+  /** 最大评分 */
+  max?: number
+  /** 是否只读 */
+  readonly?: boolean
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 星星大小 */
+  size?: number
+  /** 星星间距 */
+  gap?: number
+  /** 激活颜色 */
+  activeColor?: string
+  /** 未激活颜色 */
+  inactiveColor?: string
+  /** 是否显示评分 */
+  showScore?: boolean
+  /** 是否允许清除 */
+  allowClear?: boolean
+  /** 精度 */
+  precision?: number
+  /** 星星字符 */
+  starChar?: string
+  /** 是否震动 */
+  vibrate?: boolean
+}
+
+const props = withDefaults(defineProps<RateProps>(), {
+  max: 5,
+  readonly: false,
+  disabled: false,
+  size: 40,
+  gap: 2,
+  activeColor: '#ffc107',
+  inactiveColor: '#e4e7eb',
+  showScore: false,
+  allowClear: false,
+  precision: 0, // ⭐ 无半星 → 只允许整数
+  starChar: '★',
+  vibrate: false
+})
+
+const emit = defineEmits<{
+  change: [value: number]
+  click: [value: number]
+  hoverChange: [value: number]
+}>()
+
+const model = defineModel({ default: 0 })
+
+/** 格式化评分显示 */
+const formatScore = computed(() => {
+  const value = model.value.toFixed(props.precision)
+  return `${value}/${props.max}`
+})
+
+/** 每颗星的填充比例（仅 0% 或 100%） */
+const stars = computed(() => {
+  return Array.from({ length: props.max }, (_, i) => {
+    const index = i + 1
+    return { index, percentage: index <= model.value ? 100 : 0 }
+  })
+})
+
+/** 基础星样式 */
+const baseStarStyle = computed(() => ({
+  fontSize: `${props.size}rpx`,
+  marginRight: `${props.gap}rpx`,
+  color: props.inactiveColor,
+  cursor: props.readonly || props.disabled ? 'default' : 'pointer'
+}))
+
+/** 更新评分 */
+const updateRating = (newRating: number) => {
+  model.value = newRating
+  emit('change', newRating)
+
+  if (props.vibrate) {
+    try {
+      uni.vibrateShort()
+    } catch {}
+  }
+}
+
+/** 点击事件（整星） */
+const handleStarClick = (index: number) => {
+  if (props.readonly || props.disabled) return
+
+  let newRating = index
+
+  // 再次点击相同评分 → 清空
+  if (props.allowClear && newRating === model.value) {
+    newRating = 0
+  }
+
+  updateRating(newRating)
+  emit('click', newRating)
+}
+
+</script>
+
+<template>
+  <view class="rate-wrapper">
+    <view class="rate-stars">
+      <view
+        v-for="star in stars"
+        :key="star.index"
+        class="star-item"
+        :style="baseStarStyle"
+        @tap="handleStarClick(star.index)"
+        @click="handleStarClick(star.index)"
+      >
+        <text
+          class="star-fill"
+          :style="{
+            color: star.percentage === 100 ? props.activeColor : props.inactiveColor
+          }"
+        >
+          {{ props.starChar }}
+        </text>
+      </view>
+    </view>
+
+    <view v-if="props.showScore" class="rate-score">
+      <text class="score-text">
+        {{ formatScore }}
+      </text>
+    </view>
+  </view>
+</template>
+
+<style scoped lang="scss">
+.rate-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4rpx;
+  align-items: center;
+  user-select: none;
+}
+
+.rate-stars {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.star-item {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:last-child {
+    margin-right: 0 !important;
+  }
+}
+
+.star-fill {
+  display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.25s ease;
+}
+
+.rate-score {
+  margin-left: 16rpx;
+}
+
+.score-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #374151;
+}
+</style>

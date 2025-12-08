@@ -1,0 +1,52 @@
+/**
+ * TRow 组件类型定义
+ */
+
+/**
+ * 水平对齐方式
+ */
+export type RowJustify = 'start' | 'end' | 'center' | 'space-around' | 'space-between' | 'space-evenly'
+
+/**
+ * 垂直对齐方式
+ */
+export type RowAlign = 'top' | 'middle' | 'bottom'
+
+/**
+ * TRow Props 接口
+ */
+export interface TRowProps {
+  /**
+   * 列间距（单位 px）
+   * @default 0
+   */
+  gutter?: number
+
+  /**
+   * 水平对齐方式
+   * @default 'start'
+   */
+  justify?: RowJustify
+
+  /**
+   * 垂直对齐方式
+   * @default 'top'
+   */
+  align?: RowAlign
+
+  /**
+   * 是否自动换行
+   * @default true
+   */
+  wrap?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}

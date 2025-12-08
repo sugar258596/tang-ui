@@ -1,0 +1,177 @@
+<script  setup lang="uts" >
+import { computed, ref, watch } from 'vue'
+import type { TSwitchProps } from './type.uts'
+
+/**
+ * TSwitch 开关组件
+ * @description 用于两种状态之间的切换
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TSwitchProps>(), {
+  disabled: false,
+  size: 'medium',
+  activeColor: '#409eff',
+  inactiveColor: '#dcdfe6',
+  activeText: '',
+  inactiveText: '',
+  showText: false
+})
+
+// 使用 defineModel
+const model = defineModel<boolean>({ default: false })
+
+// 定义 emits
+const emit = defineEmits<{
+  change: [value: boolean]
+}>()
+
+// 内部状态
+const checked = ref<boolean>(model.value)
+
+// 监听外部值变化
+watch(() => model.value, (newVal: boolean) => {
+  checked.value = newVal
+})
+
+/**
+ * 计算开关样式类
+ */
+const switchClass = computed<string>(() => {
+  const classes: string[] = ['t-switch']
+
+  classes.push(`t-switch--${props.size}`)
+
+  if (checked.value) {
+    classes.push('t-switch--checked')
+  }
+
+  if (props.disabled) {
+    classes.push('t-switch--disabled')
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算开关背景样式
+ */
+const switchStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  const bgColor = checked.value ? props.activeColor : props.inactiveColor
+  if (bgColor != '') {
+    styles.push(`background-color: ${bgColor}`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 处理开关点击
+ */
+const handleClick = (): void => {
+  if (props.disabled) {
+    return
+  }
+
+  const newValue = !checked.value
+  checked.value = newValue
+  model.value = newValue
+  emit('change', newValue)
+}
+</script>
+
+<template>
+  <view class="t-switch-wrapper" @click="handleClick">
+    <text v-if="showText && inactiveText" class="t-switch__text t-switch__text--inactive">
+      {{ inactiveText }}
+    </text>
+    <view :class="switchClass" :style="switchStyle">
+      <view class="t-switch__button"></view>
+    </view>
+    <text v-if="showText && activeText" class="t-switch__text t-switch__text--active">
+      {{ activeText }}
+    </text>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-switch-wrapper {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.t-switch {
+  position: relative;
+  background-color: #dcdfe6;
+  border-radius: 100px;
+  transition: background-color 0.3s;
+
+  &--small {
+    width: 32px;
+    height: 18px;
+
+    .t-switch__button {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &--medium {
+    width: 40px;
+    height: 20px;
+
+    .t-switch__button {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &--large {
+    width: 50px;
+    height: 24px;
+
+    .t-switch__button {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &--checked {
+    .t-switch__button {
+      transform: translateX(100%);
+    }
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &__button {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #606266;
+
+    &--inactive {
+      margin-right: 8px;
+    }
+
+    &--active {
+      margin-left: 8px;
+    }
+  }
+}
+</style>

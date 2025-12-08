@@ -1,0 +1,322 @@
+/**
+ * Toast 提示管理组合式函数
+ * @module composables/useToast
+ */
+
+import { ref } from 'vue'
+import type { ToastOptions, ComponentType, PositionType } from '@/types/index.uts'
+
+/** Toast 队列 */
+const toastQueue = ref<ToastOptions[]>([])
+
+/** 当前显示的 Toast */
+const currentToast = ref<ToastOptions | null>(null)
+
+/** 是否正在显示 */
+const isShowing = ref(false)
+
+/** 默认配置 */
+const defaultOptions: Partial<ToastOptions> = {
+  duration: 2000,
+  position: 'center',
+  type: 'default',
+  mask: false
+}
+
+/**
+ * Toast 管理组合式函数
+ * @returns {Object} Toast 管理对象
+ */
+export function useToast() {
+  /**
+   * 显示 Toast
+   * @param {string | ToastOptions} options - 提示内容或配置
+   * @returns {void}
+   */
+  const show = (options: string | ToastOptions): void => {
+    try {
+      // 处理参数
+      const toastOptions: ToastOptions = typeof options === 'string'
+        ? { message: options }
+        : options
+
+      // 合并默认配置
+      const config = { ...defaultOptions, ...toastOptions }
+
+      // 添加到队列
+      toastQueue.value.push(config)
+
+      // 如果当前没有显示，则开始显示
+      if (!isShowing.value) {
+        showNext()
+      }
+    } catch (error) {
+      console.error('显示 Toast 失败:', error)
+    }
+  }
+
+  /**
+   * 显示成功提示
+   * @param {string} message - 提示内容
+   * @param {number} duration - 显示时长
+   */
+  const success = (message: string, duration?: number): void => {
+    show({
+      message,
+      type: 'success',
+      duration: duration || defaultOptions.duration
+    })
+  }
+
+  /**
+   * 显示错误提示
+   * @param {string} message - 提示内容
+   * @param {number} duration - 显示时长
+   */
+  const error = (message: string, duration?: number): void => {
+    show({
+      message,
+      type: 'danger',
+      duration: duration || defaultOptions.duration
+    })
+  }
+
+  /**
+   * 显示警告提示
+   * @param {string} message - 提示内容
+   * @param {number} duration - 显示时长
+   */
+  const warning = (message: string, duration?: number): void => {
+    show({
+      message,
+      type: 'warning',
+      duration: duration || defaultOptions.duration
+    })
+  }
+
+  /**
+   * 显示信息提示
+   * @param {string} message - 提示内容
+   * @param {number} duration - 显示时长
+   */
+  const info = (message: string, duration?: number): void => {
+    show({
+      message,
+      type: 'info',
+      duration: duration || defaultOptions.duration
+    })
+  }
+
+  /**
+   * 显示加载提示
+   * @param {string} message - 提示内容
+   * @returns {Function} 关闭函数
+   */
+  const loading = (message: string = '加载中...'): (() => void) => {
+    uni.showToast({
+      title: message,
+      icon: 'loading',
+      duration: 100000,  // 设置一个很长的时间
+      mask: true
+    })
+
+    return () => {
+      uni.hideToast()
+    }
+  }
+
+  /**
+   * 显示下一个 Toast
+   */
+  const showNext = (): void => {
+    if (toastQueue.value.length === 0) {
+      isShowing.value = false
+      return
+    }
+
+    isShowing.value = true
+    currentToast.value = toastQueue.value.shift() || null
+
+    if (!currentToast.value) {
+      isShowing.value = false
+      return
+    }
+
+    // 根据类型选择图标
+    let icon: 'success' | 'error' | 'loading' | 'none' = 'none'
+    let image: string | undefined = undefined
+
+    switch (currentToast.value.type) {
+      case 'success':
+        icon = 'success'
+        break
+      case 'danger':
+        icon = 'error'
+        break
+      case 'warning':
+      case 'info':
+        // 使用自定义图标
+        // image = '/static/icons/warning.png'  // 需要准备图标文件
+        icon = 'none'
+        break
+      default:
+        icon = 'none'
+        break
+    }
+
+    // 处理位置（uni.showToast 不支持自定义位置，这里仅作记录）
+    // 实际项目中可以使用自定义组件来支持更多位置选项
+
+    // 显示 Toast
+    uni.showToast({
+      title: currentToast.value.message,
+      icon,
+      image,
+      duration: currentToast.value.duration,
+      mask: currentToast.value.mask,
+      success: () => {
+        // 设置定时器，在 duration 后显示下一个
+        setTimeout(() => {
+          currentToast.value = null
+          showNext()
+        }, currentToast.value?.duration || 2000)
+      },
+      fail: (error) => {
+        console.error('Toast 显示失败:', error)
+        currentToast.value = null
+        isShowing.value = false
+
+        // 尝试显示下一个
+        setTimeout(() => showNext(), 100)
+      }
+    })
+  }
+
+  /**
+   * 隐藏当前 Toast
+   */
+  const hide = (): void => {
+    uni.hideToast()
+    currentToast.value = null
+
+    // 清理后显示下一个
+    if (toastQueue.value.length > 0) {
+      setTimeout(() => showNext(), 100)
+    } else {
+      isShowing.value = false
+    }
+  }
+
+  /**
+   * 清空 Toast 队列
+   */
+  const clear = (): void => {
+    toastQueue.value = []
+    currentToast.value = null
+    isShowing.value = false
+    uni.hideToast()
+  }
+
+  /**
+   * 设置默认配置
+   * @param {Partial<ToastOptions>} options - 配置项
+   */
+  const setDefaults = (options: Partial<ToastOptions>): void => {
+    Object.assign(defaultOptions, options)
+  }
+
+  /**
+   * 获取队列长度
+   * @returns {number} 队列长度
+   */
+  const getQueueLength = (): number => {
+    return toastQueue.value.length
+  }
+
+  return {
+    // 状态
+    isShowing,
+    currentToast,
+    toastQueue,
+
+    // 方法
+    show,
+    success,
+    error,
+    warning,
+    info,
+    loading,
+    hide,
+    clear,
+    setDefaults,
+    getQueueLength
+  }
+}
+
+/**
+ * 获取 Toast 实例（单例模式）
+ */
+let toastInstance: ReturnType<typeof useToast> | null = null
+
+export function getToastInstance() {
+  if (!toastInstance) {
+    toastInstance = useToast()
+  }
+  return toastInstance
+}
+
+/**
+ * 快捷方法：显示 Toast
+ */
+export function showToast(options: string | ToastOptions): void {
+  getToastInstance().show(options)
+}
+
+/**
+ * 快捷方法：显示成功提示
+ */
+export function showSuccess(message: string, duration?: number): void {
+  getToastInstance().success(message, duration)
+}
+
+/**
+ * 快捷方法：显示错误提示
+ */
+export function showError(message: string, duration?: number): void {
+  getToastInstance().error(message, duration)
+}
+
+/**
+ * 快捷方法：显示警告提示
+ */
+export function showWarning(message: string, duration?: number): void {
+  getToastInstance().warning(message, duration)
+}
+
+/**
+ * 快捷方法：显示信息提示
+ */
+export function showInfo(message: string, duration?: number): void {
+  getToastInstance().info(message, duration)
+}
+
+/**
+ * 快捷方法：显示加载提示
+ */
+export function showLoadingToast(message?: string): () => void {
+  return getToastInstance().loading(message)
+}
+
+/**
+ * 快捷方法：隐藏 Toast
+ */
+export function hideToast(): void {
+  getToastInstance().hide()
+}
+
+/**
+ * 快捷方法：清空 Toast 队列
+ */
+export function clearToast(): void {
+  getToastInstance().clear()
+}

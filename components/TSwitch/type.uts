@@ -1,0 +1,52 @@
+/**
+ * TSwitch 开关组件属性类型定义
+ * 注意：使用 defineModel 进行双向绑定，无需显式定义
+ */
+export type TSwitchProps = {
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 开关大小
+   * @default "medium"
+   */
+  size?: 'small' | 'medium' | 'large'
+
+  /**
+   * 打开时的颜色
+   * @default "#409eff"
+   */
+  activeColor?: string
+
+  /**
+   * 关闭时的颜色
+   * @default "#dcdfe6"
+   */
+  inactiveColor?: string
+
+  /**
+   * 打开时的文字
+   */
+  activeText?: string
+
+  /**
+   * 关闭时的文字
+   */
+  inactiveText?: string
+
+  /**
+   * 是否显示文字
+   * @default false
+   */
+  showText?: boolean
+}
+
+export type TSwitchEmits = {
+  /**
+   * 状态改变时触发
+   */
+  change: (value: boolean) => void
+}

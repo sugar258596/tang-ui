@@ -1,0 +1,57 @@
+/**
+ * TSelect 选择器组件类型定义
+ */
+
+/**
+ * 选项数据结构
+ */
+export type SelectOption = {
+	/** 选项显示的文本 */
+	label : string
+	/** 选项的值，支持字符串或数字类型 */
+	value : string | number
+	/** 是否禁用该选项，默认为 false */
+	disabled ?: boolean
+}
+
+/**
+ * 单选模式下的值类型
+ */
+export type SingleSelectValue = string | number | null
+
+/**
+ * 多选模式下的值类型
+ */
+export type MultipleSelectValue = (string | number)[]
+
+/**
+ * Props 类型定义
+ */
+export type SelectProps = {
+	/** 选项列表，SelectOption 数组 */
+	options ?: SelectOption[]
+	/** 未选择时的占位符文本，默认为 '请选择' */
+	placeholder ?: string
+	/** 是否禁用整个选择器，默认为 false */
+	disabled ?: boolean
+	/** 是否为只读状态，默认为 false */
+	readonly ?: boolean
+	/** 是否支持多选，默认为 false */
+	multiple ?: boolean
+	/** 选择器高度，支持数字(rpx)或字符串，默认为 55 */
+	height ?: string | number
+	/** 选择器背景颜色，默认为 '#ffffff' */
+	background ?: string
+	/** 选择器边框颜色，默认为 '#eff0f2ff' */
+	borderColor ?: string
+	/** 是否显示清空按钮，默认为 true */
+	showClear ?: boolean
+	/** 多选时显示的最大标签数量，超过则显示数量，默认为 3 */
+	maxDisplayCount ?: number
+	/** 下拉列表展开方向，支持 top/bottom，默认为 'bottom'（向下） */
+	placement ?: 'top' | 'bottom'
+	/** 选择器尺寸大小，支持 small/medium/large，默认为 'medium' */
+	size ?: 'small' | 'medium' | 'large'
+	/** 文本对齐方式，支持 left/center/right，默认为 'left' */
+	align ?: 'left' | 'center' | 'right'
+}

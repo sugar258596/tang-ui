@@ -1,0 +1,54 @@
+/**
+ * TAvatar 头像组件属性类型定义
+ */
+export type TAvatarProps = {
+  /**
+   * 头像图片地址
+   */
+  src?: string
+
+  /**
+   * 头像大小
+   * @default "medium"
+   */
+  size?: 'small' | 'medium' | 'large' | number
+
+  /**
+   * 头像形状
+   * @default "circle"
+   */
+  shape?: 'circle' | 'square'
+
+  /**
+   * 替代文字（无图片时显示）
+   */
+  alt?: string
+
+  /**
+   * 背景色
+   */
+  bgColor?: string
+
+  /**
+   * 文字颜色
+   */
+  color?: string
+
+  /**
+   * 图片填充模式
+   * @default "cover"
+   */
+  fit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down'
+}
+
+export type TAvatarEmits = {
+  /**
+   * 点击头像时触发
+   */
+  click: () => void
+
+  /**
+   * 图片加载失败时触发
+   */
+  error: () => void
+}

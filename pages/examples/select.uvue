@@ -1,0 +1,164 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TSelect from '@/components/TSelect'
+import TCard from '@/components/TCard'
+
+/**
+ * 选择器组件示例页面
+ */
+
+const value1 = ref<string>('')
+const value2 = ref<string>('option2')
+const value3 = ref<number>(1)
+const multiValue = ref<string[]>([])
+
+const options = [
+  { label: '选项一', value: 'option1' },
+  { label: '选项二', value: 'option2' },
+  { label: '选项三', value: 'option3' },
+  { label: '选项四', value: 'option4' },
+  { label: '选项五', value: 'option5' }
+]
+
+const numberOptions = [
+  { label: '第一项', value: 1 },
+  { label: '第二项', value: 2 },
+  { label: '第三项', value: 3 }
+]
+
+const handleChange = (value: any): void => {
+  console.log('选择值:', value)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TSelect 选择器组件</text>
+      <text class="example-desc">下拉选择器组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TSelect v-model="value1" :options="options" placeholder="请选择" />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ value1 || '未选择' }}
+      </text>
+    </TCard>
+
+    <TCard title="向上展开" class="example-section">
+        <TSelect
+          v-model="value2"
+          :options="options"
+          placement="top"
+          placeholder="向上展开"
+        />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        设置 placement="top" 可以让下拉列表向上展开
+      </text>
+    </TCard>
+
+    <TCard title="默认值" class="example-section">
+      <TSelect v-model="value2" :options="options" />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ value2 }}
+      </text>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <TSelect :options="options" disabled placeholder="禁用状态" />
+        <TSelect :options="options" value="option1" disabled />
+      </view>
+    </TCard>
+
+    <TCard title="禁用选项" class="example-section">
+      <TSelect
+        :options="[
+          { label: '可选项一', value: '1' },
+          { label: '禁用项', value: '2', disabled: true },
+          { label: '可选项二', value: '3' },
+          { label: '禁用项', value: '4', disabled: true },
+          { label: '可选项三', value: '5' }
+        ]"
+        placeholder="部分选项禁用"
+      />
+    </TCard>
+
+    <TCard title="可清空" class="example-section">
+      <TSelect
+        v-model="value3"
+        :options="numberOptions"
+        clearable
+        placeholder="可清空选择"
+      />
+    </TCard>
+
+    <TCard title="可搜索" class="example-section">
+      <TSelect
+        :options="options"
+        filterable
+        placeholder="可搜索选项"
+      />
+    </TCard>
+
+    <TCard title="多选" class="example-section">
+      <TSelect
+        v-model="multiValue"
+        :options="options"
+        multiple
+        placeholder="请选择多个选项"
+      />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ multiValue.join(', ') || '未选择' }}
+      </text>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px; overflow: visible;">
+        <TSelect :options="options" size="small" placeholder="小尺寸" />
+        <TSelect :options="options" size="medium" placeholder="中等尺寸" />
+        <TSelect :options="options" size="large" placeholder="大尺寸" />
+      </view>
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <TSelect
+        :options="options"
+        placeholder="选择查看控制台"
+        @change="handleChange"
+      />
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        选择选项查看控制台
+      </text>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

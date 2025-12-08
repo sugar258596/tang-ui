@@ -1,0 +1,136 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TRate from '@/components/TRate'
+import TCard from '@/components/TCard'
+
+/**
+ * 评分组件示例页面
+ */
+
+const value1 = ref<number>(3)
+const value2 = ref<number>(2.5)
+const value3 = ref<number>(4)
+const value4 = ref<number>(0)
+
+const handleChange = (value: number): void => {
+  console.log('评分值:', value)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TRate 评分组件</text>
+      <text class="example-desc">用于评分的星级组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TRate v-model="value1" />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        当前评分: {{ value1 }}
+      </text>
+    </TCard>
+
+    <TCard title="半星" class="example-section">
+      <TRate v-model="value2" allowHalf />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        支持半星评分: {{ value2 }}
+      </text>
+    </TCard>
+
+    <TCard title="只读" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRate :value="3.5" readonly allowHalf />
+        <TRate :value="4" readonly />
+        <TRate :value="2.3" readonly allowHalf />
+      </view>
+    </TCard>
+
+    <TCard title="禁用" class="example-section">
+      <TRate :value="3" disabled />
+    </TCard>
+
+    <TCard title="不同数量" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <view>
+          <TRate :count="3" />
+          <text style="font-size: 12px; color: #909399;">3颗星</text>
+        </view>
+        <view>
+          <TRate :count="5" />
+          <text style="font-size: 12px; color: #909399;">5颗星（默认）</text>
+        </view>
+        <view>
+          <TRate :count="10" />
+          <text style="font-size: 12px; color: #909399;">10颗星</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRate size="small" />
+        <TRate size="medium" />
+        <TRate size="large" />
+      </view>
+    </TCard>
+
+    <TCard title="自定义颜色" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRate color="#f56c6c" />
+        <TRate color="#67c23a" />
+        <TRate color="#e6a23c" />
+      </view>
+    </TCard>
+
+    <TCard title="自定义图标" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRate icon="♥" voidIcon="♡" />
+        <TRate icon="👍" voidIcon="👍" />
+      </view>
+    </TCard>
+
+    <TCard title="显示文字" class="example-section">
+      <TRate v-model="value3" showText />
+      <view style="margin-top: 15px;">
+        <TRate v-model="value4" showText :texts="['极差', '失望', '一般', '满意', '惊喜']" />
+      </view>
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <TRate @change="handleChange" />
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        点击星星查看控制台
+      </text>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

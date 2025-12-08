@@ -1,0 +1,95 @@
+/**
+ * TButton 组件类型定义
+ */
+
+/**
+ * 按钮类型
+ */
+export type ButtonType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default'
+
+/**
+ * 按钮尺寸
+ */
+export type ButtonSize = 'large' | 'medium' | 'small' | 'mini'
+
+/**
+ * 按钮形状
+ */
+export type ButtonShape = 'square' | 'round' | 'circle'
+
+/**
+ * 按钮 Props 接口
+ */
+export interface TButtonProps {
+  /**
+   * 按钮类型
+   * @default 'default'
+   */
+  type?: ButtonType
+
+  /**
+   * 按钮尺寸
+   * @default 'medium'
+   */
+  size?: ButtonSize
+
+  /**
+   * 按钮形状
+   * @default 'square'
+   */
+  shape?: ButtonShape
+
+  /**
+   * 是否为朴素按钮
+   * @default false
+   */
+  plain?: boolean
+
+  /**
+   * 是否为禁用状态
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 是否为加载状态
+   * @default false
+   */
+  loading?: boolean
+
+  /**
+   * 是否为块级按钮
+   * @default false
+   */
+  block?: boolean
+
+  /**
+   * 按钮文本
+   */
+  text?: string
+
+  /**
+   * 图标名称
+   */
+  icon?: string
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * 按钮事件接口
+ */
+export interface TButtonEmits {
+  /**
+   * 点击事件
+   */
+  click: () => void
+}

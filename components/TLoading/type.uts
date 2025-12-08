@@ -1,0 +1,43 @@
+/**
+ * TLoading 加载组件属性类型定义
+ */
+export type TLoadingProps = {
+  /**
+   * 是否显示加载
+   * @default false
+   */
+  loading?: boolean
+
+  /**
+   * 加载文字提示
+   */
+  text?: string
+
+  /**
+   * 加载图标大小
+   * @default "medium"
+   */
+  size?: 'small' | 'medium' | 'large'
+
+  /**
+   * 加载图标颜色
+   */
+  color?: string
+
+  /**
+   * 是否全屏加载
+   * @default false
+   */
+  fullscreen?: boolean
+
+  /**
+   * 是否显示遮罩层
+   * @default true
+   */
+  mask?: boolean
+
+  /**
+   * 遮罩层背景色
+   */
+  maskBgColor?: string
+}

@@ -1,0 +1,178 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TCheckbox from '@/components/TCheckbox'
+import TCard from '@/components/TCard'
+
+/**
+ * 复选框组件示例页面
+ */
+
+const checked1 = ref<boolean>(false)
+const checked2 = ref<boolean>(true)
+const checkedList = ref<string[]>(['option1', 'option3'])
+const checkedFruits = ref<string[]>([])
+
+const handleChange = (value: boolean): void => {
+  console.log('复选框状态:', value)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TCheckbox 复选框组件</text>
+      <text class="example-desc">多选框组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <view style="display: flex; flex-direction: row; align-items: center;">
+        <TCheckbox v-model="checked1" />
+        <text style="margin-left: 8px;">复选框</text>
+      </view>
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中状态: {{ checked1 }}
+      </text>
+    </TCard>
+
+    <TCard title="默认选中" class="example-section">
+      <view style="display: flex; flex-direction: row; align-items: center;">
+        <TCheckbox v-model="checked2" />
+        <text style="margin-left: 8px;">默认选中的复选框</text>
+      </view>
+    </TCard>
+
+    <TCard title="复选框组" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox
+            :model-value="checkedList.includes('option1')"
+            @change="(val: boolean) => {
+              if(val) checkedList.push('option1')
+              else checkedList = checkedList.filter(item => item !== 'option1')
+            }"
+          />
+          <text style="margin-left: 8px;">选项一</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox
+            :model-value="checkedList.includes('option2')"
+            @change="(val: boolean) => {
+              if(val) checkedList.push('option2')
+              else checkedList = checkedList.filter(item => item !== 'option2')
+            }"
+          />
+          <text style="margin-left: 8px;">选项二</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox
+            :model-value="checkedList.includes('option3')"
+            @change="(val: boolean) => {
+              if(val) checkedList.push('option3')
+              else checkedList = checkedList.filter(item => item !== 'option3')
+            }"
+          />
+          <text style="margin-left: 8px;">选项三</text>
+        </view>
+      </view>
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ checkedList.join(', ') || '未选择' }}
+      </text>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox disabled />
+          <text style="margin-left: 8px;">禁用未选中</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox :model-value="true" disabled />
+          <text style="margin-left: 8px;">禁用已选中</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox size="small" />
+          <text style="margin-left: 8px;">小尺寸</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox size="medium" />
+          <text style="margin-left: 8px;">中等尺寸</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox size="large" />
+          <text style="margin-left: 8px;">大尺寸</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="自定义颜色" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox activeColor="#f56c6c" />
+          <text style="margin-left: 8px;">红色复选框</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox activeColor="#67c23a" />
+          <text style="margin-left: 8px;">绿色复选框</text>
+        </view>
+        <view style="display: flex; flex-direction: row; align-items: center;">
+          <TCheckbox activeColor="#e6a23c" />
+          <text style="margin-left: 8px;">橙色复选框</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="中间状态" class="example-section">
+      <view style="display: flex; flex-direction: row; align-items: center;">
+        <TCheckbox />
+        <text style="margin-left: 8px;">半选状态</text>
+      </view>
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        用于表示部分选中状态
+      </text>
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <view style="display: flex; flex-direction: row; align-items: center;">
+        <TCheckbox @change="handleChange" />
+        <text style="margin-left: 8px;">点击查看控制台</text>
+      </view>
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        切换复选框查看控制台
+      </text>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

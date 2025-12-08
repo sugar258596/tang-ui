@@ -1,0 +1,226 @@
+<script  setup lang="uts" >
+type NumberInputProps = {
+	/** 最小值 */
+	min?: number
+	/** 最大值 */
+	max?: number
+	/** 步长 */
+	step?: number
+	/** 是否禁用 */
+	disabled?: boolean
+	/** 占位符 */
+	placeholder?: string
+	/** 输入框宽度 */
+	width?: string | number
+	/** 按钮大小 */
+	buttonSize?: string | number
+}
+
+const model = defineModel({ default: 0 })
+
+const props = withDefaults(defineProps<NumberInputProps>(), {
+	min: 0,
+	max: 999999,
+	step: 1,
+	disabled: false,
+	placeholder: '',
+	width: 60,
+	buttonSize: 64
+})
+
+const emit = defineEmits<{
+	change: [value: number]
+}>()
+
+/**
+ * 处理输入值改变
+ */
+const handleInput = (e: any) => {
+	const value = parseFloat(e.target.value || '0')
+
+	// 如果输入无效，使用最小值
+	if (isNaN(value)) {
+		model.value = props.min
+	} else {
+		model.value = value
+	}
+
+	// 触发 change 事件
+	emit('change', model.value)
+}
+
+/**
+ * 处理输入框失去焦点
+ */
+const handleBlur = () => {
+	// 边界检查
+	if (model.value < props.min) {
+		model.value = props.min
+	} else if (model.value > props.max) {
+		model.value = props.max
+	}
+	emit('change', model.value)
+}
+
+/**
+ * 减少
+ */
+const handleDecrease = () => {
+	if (props.disabled) return
+
+	const newValue = model.value - props.step
+	if (newValue >= props.min) {
+		model.value = newValue
+		emit('change', model.value)
+	}
+}
+
+/**
+ * 增加
+ */
+const handleIncrease = () => {
+	if (props.disabled) return
+
+	const newValue = model.value + props.step
+	if (newValue <= props.max) {
+		model.value = newValue
+		emit('change', model.value)
+	}
+}
+
+/**
+ * 处理键盘事件
+ */
+const handleKeyDown = (e: any) => {
+	if (props.disabled) return
+
+	// 上箭头增加
+	if (e.keyCode === 38) {
+		e.preventDefault()
+		handleIncrease()
+	}
+	// 下箭头减少
+	else if (e.keyCode === 40) {
+		e.preventDefault()
+		handleDecrease()
+	}
+}
+
+/**
+ * 格式化输入框宽度
+ */
+const inputWidth = computed(() => {
+	return typeof props.width === 'number' ? props.width + 'rpx' : props.width
+})
+
+/**
+ * 格式化按钮尺寸
+ */
+const buttonSizeComputed = computed(() => {
+	return typeof props.buttonSize === 'number' ? props.buttonSize + 'rpx' : props.buttonSize
+})
+</script>
+
+<template>
+	<view class="number-input-wrapper">
+		<!-- 减少按钮 -->
+		<view
+			class="number-input-button"
+			:class="{ 'number-input-button-disabled': disabled || model <= min }"
+			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
+			@tap="handleDecrease">
+			<text class="number-input-button-icon">-</text>
+		</view>
+
+		<!-- 输入框 -->
+		<input
+			class="number-input"
+			:class="{ 'number-input-disabled': disabled }"
+			:style="{ width: inputWidth }"
+			type="number"
+			:placeholder="placeholder"
+			:value="model"
+			:disabled="disabled"
+			@input="handleInput"
+			@blur="handleBlur"
+			@keydown="handleKeyDown" />
+
+		<!-- 增加按钮 -->
+		<view
+			class="number-input-button"
+			:class="{ 'number-input-button-disabled': disabled || model >= max }"
+			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
+			@tap="handleIncrease">
+			<text class="number-input-button-icon">+</text>
+		</view>
+	</view>
+</template>
+
+<style lang="scss" scoped>
+.number-input-wrapper {
+	display: flex;
+	flex-direction: row;	
+	align-items: center;
+	gap: 8rpx;
+}
+
+.number-input-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f5f5f5;
+	border-radius: 8rpx;
+	transition: all 0.3s;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.number-input-button:active:not(.number-input-button-disabled) {
+	background-color: #e0e0e0;
+	transform: scale(0.95);
+}
+
+.number-input-button-disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.number-input-button-icon {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	line-height: 1;
+}
+
+.number-input {
+	height: 64rpx;
+	background-color: #f5f5f5;
+	border-radius: 8rpx;
+	text-align: center;
+	font-size: 28rpx;
+	color: #333;
+	border: 2rpx solid transparent;
+	transition: all 0.3s;
+}
+
+.number-input:focus {
+	border-color: #007aff;
+	background-color: #fff;
+	outline: none;
+}
+
+.number-input-disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+</style>

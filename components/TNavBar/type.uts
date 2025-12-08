@@ -1,0 +1,22 @@
+/**
+ * TNavBar 组件类型定义
+ */
+
+export interface TNavBarProps {
+  title?: string
+  leftText?: string
+  rightText?: string
+  leftIcon?: string
+  rightIcon?: string
+  fixed?: boolean
+  placeholder?: boolean
+  zIndex?: number
+  safeAreaInsetTop?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TNavBarEmits {
+  'click-left': () => void
+  'click-right': () => void
+}

@@ -1,0 +1,222 @@
+<script setup lang="uts">
+import { computed, ref, watch } from 'vue'
+import type { TSwiperProps } from './type.uts'
+
+/**
+ * TSwiper 轮播图组件
+ * @description 基于 UniApp 原生 swiper 封装的轮播图组件
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TSwiperProps>(), {
+  height: '200px',
+  autoplay: true,
+  interval: 3000,
+  duration: 300,
+  circular: true,
+  indicatorType: 'dots',
+  indicatorPosition: 'bottom',
+  indicatorColor: 'rgba(0, 0, 0, 0.3)',
+  indicatorActiveColor: '#ffffff',
+  direction: 'horizontal'
+})
+
+// 使用 defineModel 管理当前索引
+const currentIndex = defineModel<number>({ default: 0 })
+
+// 定义 emits
+const emit = defineEmits<{
+  change: [index: number]
+  click: [index: number]
+}>()
+
+// 轮播项总数（通过插槽统计）
+const swiperItemCount = ref<number>(0)
+
+/**
+ * 计算容器样式
+ */
+const swiperStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  if (props.height != '') {
+    styles.push(`height: ${props.height}`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算指示器容器样式类
+ */
+const indicatorClass = computed<string>(() => {
+  const classes: string[] = ['t-swiper__indicator']
+
+  classes.push(`t-swiper__indicator--${props.indicatorPosition}`)
+  classes.push(`t-swiper__indicator--${props.direction}`)
+
+  return classes.join(' ')
+})
+
+/**
+ * 获取指示器点样式
+ */
+const getDotStyle = (index: number): string => {
+  const isActive = index === currentIndex.value
+  const bgColor = isActive ? props.indicatorActiveColor : props.indicatorColor
+
+  return `background-color: ${bgColor}`
+}
+
+/**
+ * 处理轮播改变事件
+ */
+const handleChange = (e: any): void => {
+  const detail = e.detail
+  if (detail != null && detail.current != null) {
+    currentIndex.value = detail.current as number
+    emit('change', detail.current as number)
+  }
+}
+
+/**
+ * 处理点击事件
+ */
+const handleClick = (): void => {
+  emit('click', currentIndex.value)
+}
+
+/**
+ * 计算是否显示指示器
+ */
+const showIndicator = computed<boolean>(() => {
+  return props.indicatorType !== 'none'
+})
+
+/**
+ * 监听插槽变化以更新轮播项数量
+ * 注意：这是一个简化处理，实际项目中可能需要更复杂的逻辑
+ */
+const updateItemCount = (count: number): void => {
+  swiperItemCount.value = count
+}
+
+// 导出方法供父组件使用
+defineExpose({
+  updateItemCount
+})
+</script>
+
+<template>
+  <view class="t-swiper" :style="swiperStyle">
+    <!-- 轮播容器 -->
+    <swiper
+      class="t-swiper__container"
+      :autoplay="autoplay"
+      :interval="interval"
+      :duration="duration"
+      :circular="circular"
+      :vertical="direction === 'vertical'"
+      :current="currentIndex"
+      @change="handleChange"
+      @click="handleClick"
+    >
+      <slot></slot>
+    </swiper>
+
+    <!-- 指示器 -->
+    <view v-if="showIndicator" :class="indicatorClass">
+      <!-- 点状指示器 -->
+      <template v-if="indicatorType === 'dots'">
+        <view
+          v-for="(item, index) in swiperItemCount"
+          :key="index"
+          class="t-swiper__dot"
+          :class="{ 't-swiper__dot--active': index === currentIndex }"
+          :style="getDotStyle(index)"
+        ></view>
+      </template>
+
+      <!-- 数字指示器 -->
+      <template v-if="indicatorType === 'number'">
+        <view class="t-swiper__number">
+          <text class="t-swiper__number-text">{{ currentIndex + 1 }}/{{ swiperItemCount }}</text>
+        </view>
+      </template>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-swiper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  &__container {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__indicator {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+
+    // 水平方向指示器位置
+    &--horizontal {
+      left: 50%;
+      transform: translateX(-50%);
+      flex-direction: row;
+
+      &.t-swiper__indicator--top {
+        top: 12px;
+      }
+
+      &.t-swiper__indicator--bottom {
+        bottom: 12px;
+      }
+    }
+
+    // 垂直方向指示器位置
+    &--vertical {
+      top: 50%;
+      transform: translateY(-50%);
+      flex-direction: column;
+
+      &.t-swiper__indicator--left {
+        left: 12px;
+      }
+
+      &.t-swiper__indicator--right {
+        right: 12px;
+      }
+    }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin: 0 4px;
+    transition: all 0.3s;
+
+    &--active {
+      width: 16px;
+    }
+  }
+
+  &__number {
+    padding: 4px 12px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+
+    &-text {
+      font-size: 12px;
+      color: #ffffff;
+      line-height: 1;
+    }
+  }
+}
+</style>

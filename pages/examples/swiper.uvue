@@ -1,0 +1,289 @@
+<script setup lang="uts">
+import { ref, onMounted } from 'vue'
+
+/**
+ * TSwiper 轮播图示例页面
+ */
+
+// 基础用法
+const currentIndex1 = ref<number>(0)
+
+// 自定义指示器
+const currentIndex2 = ref<number>(0)
+
+// 数字指示器
+const currentIndex3 = ref<number>(0)
+
+// 垂直轮播
+const currentIndex4 = ref<number>(0)
+
+// 禁用自动播放
+const currentIndex5 = ref<number>(0)
+
+// 轮播图数据
+const swiperList = ref<any[]>([
+  { id: 1, color: '#667eea', title: '轮播图 1' },
+  { id: 2, color: '#764ba2', title: '轮播图 2' },
+  { id: 3, color: '#f093fb', title: '轮播图 3' },
+  { id: 4, color: '#4facfe', title: '轮播图 4' }
+])
+
+// 初始化轮播项数量
+onMounted(() => {
+  // 这里可以动态设置轮播项数量
+  // swiper 组件会自动计算
+})
+
+/**
+ * 处理轮播改变
+ */
+const handleChange = (index: number): void => {
+  console.log('当前索引:', index)
+}
+
+/**
+ * 处理点击
+ */
+const handleClick = (index: number): void => {
+  console.log('点击索引:', index)
+  uni.showToast({
+    title: `点击了第 ${index + 1} 项`,
+    icon: 'none'
+  })
+}
+</script>
+
+<template>
+  <view class="page">
+    <view class="page-header">
+      <text class="page-title">Swiper 轮播图</text>
+      <text class="page-desc">用于循环播放图片或内容</text>
+    </view>
+
+    <view class="page-content">
+      <!-- 基础用法 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">基础用法</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex1" @change="handleChange" @click="handleClick">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+          <view class="state-text">
+            <text class="state-label">当前索引：{{ currentIndex1 }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 自定义指示器颜色 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">自定义指示器颜色</text>
+        </view>
+        <view class="section-content">
+          <TSwiper
+            v-model="currentIndex2"
+            indicator-color="rgba(255, 255, 255, 0.4)"
+            indicator-active-color="#667eea"
+          >
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+        </view>
+      </view>
+
+      <!-- 数字指示器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">数字指示器</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex3" indicator-type="number">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+        </view>
+      </view>
+
+      <!-- 顶部指示器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">顶部指示器</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex3" indicator-position="top">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+        </view>
+      </view>
+
+      <!-- 垂直轮播 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">垂直轮播</text>
+        </view>
+        <view class="section-content">
+          <TSwiper
+            v-model="currentIndex4"
+            direction="vertical"
+            height="300px"
+            indicator-position="right"
+          >
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+        </view>
+      </view>
+
+      <!-- 禁用自动播放 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">禁用自动播放</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex5" :autoplay="false">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+          <view class="state-text">
+            <text class="state-label">手动滑动切换</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 无指示器 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">无指示器</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex5" indicator-type="none">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+        </view>
+      </view>
+
+      <!-- 自定义高度和间隔 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">自定义高度和间隔</text>
+        </view>
+        <view class="section-content">
+          <TSwiper v-model="currentIndex1" height="150px" :interval="5000" :duration="500">
+            <swiper-item v-for="item in swiperList" :key="item.id">
+              <view class="swiper-item" :style="`background: ${item.color}`">
+                <text class="swiper-item-text">{{ item.title }}</text>
+              </view>
+            </swiper-item>
+          </TSwiper>
+          <view class="state-text">
+            <text class="state-label">高度 150px，间隔 5秒，动画 500ms</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+
+  &-header {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  &-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #303133;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    color: #909399;
+    display: block;
+  }
+
+  &-content {
+    padding: 0;
+  }
+}
+
+.section {
+  margin-bottom: 12px;
+
+  &-title {
+    padding: 12px 20px;
+    background-color: transparent;
+
+    &-text {
+      font-size: 14px;
+      color: #909399;
+    }
+  }
+
+  &-content {
+    background-color: #ffffff;
+    padding: 20px;
+  }
+}
+
+.swiper-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+
+  &-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+}
+
+.state-text {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.state-label {
+  font-size: 14px;
+  color: #606266;
+}
+</style>

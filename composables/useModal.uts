@@ -1,0 +1,294 @@
+/**
+ * 模态框管理组合式函数
+ * @module composables/useModal
+ */
+
+import { ref, reactive } from 'vue'
+import type { ModalOptions } from '../types/index.uts'
+
+/** 模态框队列 */
+const modalQueue = ref<ModalOptions[]>([])
+
+/** 当前显示的模态框 */
+const currentModal = ref<ModalOptions | null>(null)
+
+/** 是否显示模态框 */
+const isVisible = ref(false)
+
+/**
+ * 模态框管理组合式函数
+ * @returns {Object} 模态框管理对象
+ */
+export function useModal() {
+  /**
+   * 显示模态框
+   * @param {ModalOptions} options - 模态框配置
+   * @returns {Promise<boolean>} 用户选择结果
+   */
+  const show = (options: ModalOptions): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      try {
+        // 默认配置
+        const defaultOptions: ModalOptions = {
+          title: '',
+          content: '',
+          showCancel: true,
+          cancelText: '取消',
+          confirmText: '确定',
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false)
+        }
+
+        // 合并配置
+        const modalConfig = { ...defaultOptions, ...options }
+
+        // 添加到队列
+        modalQueue.value.push(modalConfig)
+
+        // 如果当前没有显示模态框，则显示第一个
+        if (!isVisible.value) {
+          showNext()
+        }
+      } catch (error) {
+        console.error('显示模态框失败:', error)
+        reject(error)
+      }
+    })
+  }
+
+  /**
+   * 显示确认框
+   * @param {string} content - 内容
+   * @param {string} title - 标题
+   * @returns {Promise<boolean>} 用户选择结果
+   */
+  const confirm = (content: string, title: string = '提示'): Promise<boolean> => {
+    return show({
+      title,
+      content,
+      showCancel: true
+    })
+  }
+
+  /**
+   * 显示提示框
+   * @param {string} content - 内容
+   * @param {string} title - 标题
+   * @returns {Promise<boolean>} 确认结果
+   */
+  const alert = (content: string, title: string = '提示'): Promise<boolean> => {
+    return show({
+      title,
+      content,
+      showCancel: false
+    })
+  }
+
+  /**
+   * 显示输入框
+   * @param {string} title - 标题
+   * @param {string} placeholder - 占位符
+   * @param {string} defaultValue - 默认值
+   * @returns {Promise<string | null>} 输入内容
+   */
+  const prompt = (title: string, placeholder: string = '', defaultValue: string = ''): Promise<string | null> => {
+    return new Promise((resolve) => {
+      // 使用 uni.showModal 的 editable 属性（部分平台支持）
+      // #ifdef MP-WEIXIN || MP-ALIPAY
+      uni.showModal({
+        title,
+        content: defaultValue,
+        editable: true,
+        placeholderText: placeholder,
+        success: (res) => {
+          if (res.confirm) {
+            resolve(res.content || '')
+          } else {
+            resolve(null)
+          }
+        },
+        fail: () => {
+          resolve(null)
+        }
+      })
+      // #endif
+
+      // 其他平台使用默认模态框
+      // #ifndef MP-WEIXIN || MP-ALIPAY
+      show({
+        title,
+        content: `请输入: ${placeholder}`,
+        showCancel: true,
+        onConfirm: () => resolve(defaultValue),
+        onCancel: () => resolve(null)
+      })
+      // #endif
+    })
+  }
+
+  /**
+   * 显示加载框
+   * @param {string} title - 加载提示
+   * @param {boolean} mask - 是否显示遮罩
+   * @returns {Function} 关闭函数
+   */
+  const loading = (title: string = '加载中...', mask: boolean = true): (() => void) => {
+    uni.showLoading({
+      title,
+      mask
+    })
+
+    return () => {
+      uni.hideLoading()
+    }
+  }
+
+  /**
+   * 显示操作菜单
+   * @param {string[]} items - 菜单项
+   * @param {string} title - 标题
+   * @returns {Promise<number>} 选择的索引
+   */
+  const actionSheet = (items: string[], title?: string): Promise<number> => {
+    return new Promise((resolve) => {
+      uni.showActionSheet({
+        itemList: items,
+        title,
+        success: (res) => {
+          resolve(res.tapIndex)
+        },
+        fail: () => {
+          resolve(-1)
+        }
+      })
+    })
+  }
+
+  /**
+   * 显示下一个模态框
+   */
+  const showNext = () => {
+    if (modalQueue.value.length > 0) {
+      currentModal.value = modalQueue.value.shift() || null
+      isVisible.value = true
+
+      // 使用 uni.showModal
+      if (currentModal.value) {
+        uni.showModal({
+          title: currentModal.value.title || '',
+          content: currentModal.value.content,
+          showCancel: currentModal.value.showCancel,
+          cancelText: currentModal.value.cancelText,
+          confirmText: currentModal.value.confirmText,
+          success: (res) => {
+            if (res.confirm && currentModal.value?.onConfirm) {
+              currentModal.value.onConfirm()
+            } else if (res.cancel && currentModal.value?.onCancel) {
+              currentModal.value.onCancel()
+            }
+
+            // 处理完当前模态框后，显示下一个
+            isVisible.value = false
+            currentModal.value = null
+
+            if (modalQueue.value.length > 0) {
+              setTimeout(() => showNext(), 300)
+            }
+          }
+        })
+      }
+    }
+  }
+
+  /**
+   * 关闭当前模态框
+   */
+  const close = () => {
+    if (currentModal.value?.onCancel) {
+      currentModal.value.onCancel()
+    }
+
+    isVisible.value = false
+    currentModal.value = null
+
+    // 显示下一个
+    if (modalQueue.value.length > 0) {
+      setTimeout(() => showNext(), 300)
+    }
+  }
+
+  /**
+   * 清空模态框队列
+   */
+  const clear = () => {
+    modalQueue.value = []
+    currentModal.value = null
+    isVisible.value = false
+  }
+
+  /**
+   * 获取队列长度
+   * @returns {number} 队列长度
+   */
+  const getQueueLength = (): number => {
+    return modalQueue.value.length
+  }
+
+  return {
+    // 状态
+    isVisible,
+    currentModal,
+    modalQueue,
+
+    // 方法
+    show,
+    confirm,
+    alert,
+    prompt,
+    loading,
+    actionSheet,
+    close,
+    clear,
+    getQueueLength
+  }
+}
+
+/**
+ * 获取模态框实例（单例模式）
+ */
+let modalInstance: ReturnType<typeof useModal> | null = null
+
+export function getModalInstance() {
+  if (!modalInstance) {
+    modalInstance = useModal()
+  }
+  return modalInstance
+}
+
+/**
+ * 快捷方法：显示确认框
+ */
+export function showConfirm(content: string, title?: string): Promise<boolean> {
+  return getModalInstance().confirm(content, title)
+}
+
+/**
+ * 快捷方法：显示提示框
+ */
+export function showAlert(content: string, title?: string): Promise<boolean> {
+  return getModalInstance().alert(content, title)
+}
+
+/**
+ * 快捷方法：显示加载框
+ */
+export function showLoading(title?: string, mask?: boolean): () => void {
+  return getModalInstance().loading(title, mask)
+}
+
+/**
+ * 快捷方法：显示操作菜单
+ */
+export function showActionSheet(items: string[], title?: string): Promise<number> {
+  return getModalInstance().actionSheet(items, title)
+}

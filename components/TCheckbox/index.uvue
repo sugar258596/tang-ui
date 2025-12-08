@@ -1,0 +1,187 @@
+<script  setup lang="uts" >
+/**
+ * 复选框组件 - 适用于购物车、列表等场景
+ * 参考 RadioButton 和 CheckboxButton 组件设计
+ */
+type Props = {
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 尺寸大小 */
+  size?: 'small' | 'medium' | 'large'
+  /** 激活状态颜色 */
+  activeColor?: string
+  /** 未激活状态颜色 */
+  inactiveColor?: string
+  /** 是否为方形设计 */
+  square?: boolean
+  /** 自定义边框宽度 */
+  borderWidth?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  size: 'medium',
+  activeColor: '#00bba7',
+  inactiveColor: '#c8c9cc',
+  square: false,
+  borderWidth: 2
+})
+
+const model = defineModel<boolean>({ default: false })
+
+const emit = defineEmits<{
+  change: [value: boolean]
+  click: [event: any]
+}>()
+
+// 计算尺寸
+const sizeMap = {
+  small: 32,
+  medium: 40,
+  large: 48
+}
+
+const checkboxSize = computed(() => {
+  return sizeMap[props.size]
+})
+
+// 计算图标大小
+const iconSize = computed(() => {
+  const baseSize = sizeMap[props.size]
+  return Math.floor(baseSize * 0.6)
+})
+
+// CSS变量
+const cssVars = computed(() => ({
+  '--checkbox-size': `${checkboxSize.value}rpx`,
+  '--checkbox-icon-size': `${iconSize.value}rpx`,
+  '--checkbox-active-color': props.activeColor,
+  '--checkbox-inactive-color': props.inactiveColor,
+  '--checkbox-border-width': `${props.borderWidth}rpx`
+}))
+
+// 处理点击事件
+const handleClick = (event: any) => {
+  if (props.disabled) return
+
+  const newValue = !model.value
+  model.value = newValue
+  emit('change', newValue)
+  emit('click', event)
+}
+
+// 处理触摸事件
+const handleTouchStart = () => {
+  if (props.disabled) return
+  // 可以添加触摸反馈效果
+}
+</script>
+
+<template>
+  <view
+    class="checkbox"
+    :class="[
+      `checkbox-${size}`,
+      {
+        'checkbox-checked': model,
+        'checkbox-disabled': disabled,
+        'checkbox-square': square,
+        'checkbox-round': !square
+      }
+    ]"
+    :style="cssVars"
+    @click="handleClick"
+    @touchstart="handleTouchStart"
+  >
+    <!-- 选中状态的图标 -->
+    <view v-if="model" class="checkbox-icon">
+      <text class="checkmark">✓</text>
+    </view>
+
+    <!-- 自定义插槽 -->
+    <slot v-else name="unchecked"></slot>
+
+    <!-- 完全自定义内容 -->
+    <slot></slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.checkbox {
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border-width: var(--checkbox-border-width);
+  border-style: solid;
+  border-color: var(--checkbox-inactive-color);
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkbox-square {
+  border-radius: 8rpx;
+}
+
+.checkbox-round {
+  border-radius: 50%;
+}
+
+.checkbox-checked {
+  border-color: var(--checkbox-active-color);
+  background-color: var(--checkbox-active-color);
+}
+
+.checkbox-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.checkbox-icon {
+  width: var(--checkbox-icon-size);
+  height: var(--checkbox-icon-size);
+  justify-content: center;
+  align-items: center;
+}
+
+.checkmark {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+/* 尺寸变体 */
+.checkbox-small .checkmark {
+  font-size: 20rpx;
+}
+
+.checkbox-medium .checkmark {
+  font-size: 24rpx;
+}
+
+.checkbox-large .checkmark {
+  font-size: 28rpx;
+}
+
+/* 交互效果 */
+.checkbox:not(.checkbox-disabled):active {
+  transform: scale(0.95);
+}
+
+/* 动画效果 */
+.checkbox-icon {
+  animation: checkIn 0.2s ease-out;
+}
+
+@keyframes checkIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+</style>

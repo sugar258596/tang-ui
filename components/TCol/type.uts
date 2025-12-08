@@ -1,0 +1,30 @@
+/**
+ * TCol 组件类型定义
+ */
+
+/**
+ * TCol Props 接口
+ */
+export interface TColProps {
+  /**
+   * 栅格占据的列数（共24列）
+   * @default 24
+   */
+  span?: number
+
+  /**
+   * 栅格左侧的间隔格数
+   * @default 0
+   */
+  offset?: number
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}

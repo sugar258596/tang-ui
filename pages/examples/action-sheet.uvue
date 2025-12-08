@@ -1,0 +1,75 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TActionSheet from '@/components/TActionSheet'
+import type { ActionSheetAction } from '@/components/TActionSheet/type.uts'
+import TCard from '@/components/TCard'
+import TButton from '@/components/TButton'
+
+const show1 = ref<boolean>(false)
+const show2 = ref<boolean>(false)
+const show3 = ref<boolean>(false)
+
+const actions: ActionSheetAction[] = [
+  { name: '选项一' },
+  { name: '选项二' },
+  { name: '选项三' }
+]
+
+const actions2: ActionSheetAction[] = [
+  { name: '分享给朋友' },
+  { name: '分享到朋友圈' },
+  { name: '复制链接', color: '#1890ff' },
+  { name: '删除', color: '#f5222d' }
+]
+
+const handleSelect = (action: ActionSheetAction, index: number): void => {
+  uni.showToast({
+    title: `选择了：${action.name}`,
+    icon: 'none'
+  })
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <TCard title="基础用法" padding="medium">
+      <TButton text="打开操作面板" type="primary" block @click="show1 = true" />
+    </TCard>
+
+    <TCard title="带标题描述" padding="medium">
+      <TButton text="打开操作面板" type="primary" block @click="show2 = true" />
+    </TCard>
+
+    <TCard title="自定义颜色" padding="medium">
+      <TButton text="打开操作面板" type="primary" block @click="show3 = true" />
+    </TCard>
+
+    <TActionSheet
+      v-model="show1"
+      :actions="actions"
+      @select="handleSelect"
+    />
+
+    <TActionSheet
+      v-model="show2"
+      :actions="actions"
+      title="操作选择"
+      description="请选择您要进行的操作"
+      @select="handleSelect"
+    />
+
+    <TActionSheet
+      v-model="show3"
+      :actions="actions2"
+      @select="handleSelect"
+    />
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+</style>

@@ -1,0 +1,161 @@
+<script  setup lang="uts" >
+import { computed } from 'vue'
+import type { TListItemProps } from './type.uts'
+
+/**
+ * TListItem 列表项组件
+ * @description 列表中的单个项目
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TListItemProps>(), {
+  title: '',
+  description: '',
+  icon: '',
+  extra: '',
+  arrow: false,
+  clickable: false,
+  disabled: false
+})
+
+// 定义 emits
+const emit = defineEmits<{
+  click: []
+}>()
+
+/**
+ * 计算列表项样式类
+ */
+const itemClass = computed<string>(() => {
+  const classes: string[] = ['t-list-item']
+
+  if (props.clickable && !props.disabled) {
+    classes.push('t-list-item--clickable')
+  }
+
+  if (props.disabled) {
+    classes.push('t-list-item--disabled')
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 处理点击事件
+ */
+const handleClick = (): void => {
+  if (!props.disabled && props.clickable) {
+    emit('click')
+  }
+}
+</script>
+
+<template>
+  <view :class="itemClass" @click="handleClick">
+    <!-- 左侧图标 -->
+    <view v-if="icon" class="t-list-item__icon">
+      <text class="t-list-item__icon-text">{{ icon }}</text>
+    </view>
+
+    <!-- 中间内容 -->
+    <view class="t-list-item__content">
+      <slot>
+        <text v-if="title" class="t-list-item__title">{{ title }}</text>
+        <text v-if="description" class="t-list-item__description">{{ description }}</text>
+      </slot>
+    </view>
+
+    <!-- 右侧内容 -->
+    <view class="t-list-item__extra">
+      <text v-if="extra" class="t-list-item__extra-text">{{ extra }}</text>
+      <text v-if="arrow" class="t-list-item__arrow">›</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-list-item {
+  display: flex;
+  flex-direction: row;
+  gap: 24rpx;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: #ebeef5;
+  }
+
+  &:last-child::after {
+    display: none;
+  }
+
+  &--clickable {
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:active {
+      background-color: #f5f7fa;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-text {
+      font-size: 20px;
+      color: #909399;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: 16px;
+    color: #303133;
+    line-height: 24px;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: #909399;
+    line-height: 20px;
+    margin-top: 4px;
+  }
+
+  &__extra {
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+
+    &-text {
+      font-size: 14px;
+      color: #909399;
+    }
+  }
+
+  &__arrow {
+    font-size: 20px;
+    color: #c0c4cc;
+    margin-left: 8px;
+  }
+}
+</style>

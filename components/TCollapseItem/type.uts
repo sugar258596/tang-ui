@@ -1,0 +1,25 @@
+/**
+ * TCollapseItem 折叠面板项组件属性类型定义
+ */
+export type TCollapseItemProps = {
+  /**
+   * 唯一标识符
+   */
+  name: string
+
+  /**
+   * 标题
+   */
+  title?: string
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 自定义图标
+   */
+  icon?: string
+}

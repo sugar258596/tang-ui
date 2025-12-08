@@ -1,0 +1,10 @@
+/**
+ * Tab 选项项
+ */
+export type TabItem = {
+  key: string |number,
+  label: string
+  disabled?: boolean
+  badge?: number | string
+  icon?: string
+}

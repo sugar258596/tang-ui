@@ -1,0 +1,92 @@
+/**
+ * 颜色处理工具函数
+ * @description 提供颜色转换、处理等功能
+ */
+
+/**
+ * 十六进制颜色转 RGB
+ * @param hex 十六进制颜色值，如 #ffffff
+ * @returns RGB 对象 { r, g, b }
+ */
+export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
+    : null
+}
+
+/**
+ * RGB 转十六进制颜色
+ * @param r 红色值 0-255
+ * @param g 绿色值 0-255
+ * @param b 蓝色值 0-255
+ * @returns 十六进制颜色值
+ */
+export function rgbToHex(r: number, g: number, b: number): string {
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+}
+
+/**
+ * 颜色加深
+ * @param color 颜色值
+ * @param amount 加深程度 0-1
+ * @returns 加深后的颜色
+ */
+export function darken(color: string, amount: number): string {
+  const rgb = hexToRgb(color)
+  if (!rgb) return color
+
+  const r = Math.max(0, Math.floor(rgb.r * (1 - amount)))
+  const g = Math.max(0, Math.floor(rgb.g * (1 - amount)))
+  const b = Math.max(0, Math.floor(rgb.b * (1 - amount)))
+
+  return rgbToHex(r, g, b)
+}
+
+/**
+ * 颜色变浅
+ * @param color 颜色值
+ * @param amount 变浅程度 0-1
+ * @returns 变浅后的颜色
+ */
+export function lighten(color: string, amount: number): string {
+  const rgb = hexToRgb(color)
+  if (!rgb) return color
+
+  const r = Math.min(255, Math.floor(rgb.r + (255 - rgb.r) * amount))
+  const g = Math.min(255, Math.floor(rgb.g + (255 - rgb.g) * amount))
+  const b = Math.min(255, Math.floor(rgb.b + (255 - rgb.b) * amount))
+
+  return rgbToHex(r, g, b)
+}
+
+/**
+ * 添加透明度
+ * @param color 颜色值
+ * @param opacity 透明度 0-1
+ * @returns rgba 颜色值
+ */
+export function addOpacity(color: string, opacity: number): string {
+  const rgb = hexToRgb(color)
+  if (!rgb) return color
+
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`
+}
+
+/**
+ * 判断颜色是否为浅色
+ * @param color 颜色值
+ * @returns 是否为浅色
+ */
+export function isLightColor(color: string): boolean {
+  const rgb = hexToRgb(color)
+  if (!rgb) return false
+
+  // 使用 YIQ 公式计算亮度
+  const yiq = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
+  return yiq >= 128
+}

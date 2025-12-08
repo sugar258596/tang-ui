@@ -1,0 +1,49 @@
+<script  setup lang="uts" >
+	import Icon from '@/components/TIcon'
+
+
+
+	interface Props {
+		/**标题 */
+		title ?: string,
+		/** 内容 */
+		content? : string
+		/** 是否显示图标 */
+		showIcon ?: boolean
+		/** 图标 */
+		icon ?: string
+	}
+
+	withDefaults(defineProps<Props>(), {
+		showIcon: true,
+		icon: "icon-youjiantou"
+	})
+
+
+  const emit=defineEmits(['cell'])
+
+  const handleClick = () => {
+     emit('cell')
+  }
+
+</script>
+<template>
+	<view class="flex flex-col gap-4" @tap="handleClick">
+		<view class="flex-row justify-between gap-4 p-2 m-2">
+			<slot name="title">
+				<view class="text-zice-900 font-bold"> {{ title }}</view>
+			</slot>
+			<slot name="right">
+				<view class="flex-row gap-4">
+          <slot name="content">
+            <text class="text-zice-600  ">{{ content }}</text>
+          </slot>
+					<Icon v-if="showIcon" :name="icon" color="#a1a1aa" :size="24" />
+				</view>
+			</slot>
+		</view>
+		<slot name="footer"></slot>
+	</view>
+</template>
+
+<style lang="scss" scoped></style>

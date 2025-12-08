@@ -1,0 +1,120 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TInput from '@/components/TInput'
+import TCard from '@/components/TCard'
+
+/**
+ * 输入框组件示例页面
+ */
+
+const inputValue1 = ref<string>('')
+const inputValue2 = ref<string>('')
+const inputValue3 = ref<string>('')
+const inputValue4 = ref<string>('')
+const inputValue5 = ref<string>('')
+
+const handleInput = (value: string): void => {
+  console.log('输入内容:', value)
+}
+
+const handleFocus = (): void => {
+  console.log('获得焦点')
+}
+
+const handleBlur = (): void => {
+  console.log('失去焦点')
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TInput 输入框组件</text>
+      <text class="example-desc">文本输入组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TInput v-model="inputValue1" placeholder="请输入内容" />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        输入值: {{ inputValue1 }}
+      </text>
+    </TCard>
+
+    <TCard title="不同类型" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <TInput type="text" placeholder="文本输入" />
+        <TInput type="password" placeholder="密码输入" />
+        <TInput type="number" placeholder="数字输入" />
+        <TInput type="tel" placeholder="电话号码" />
+        <TInput type="email" placeholder="邮箱地址" />
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <TInput size="small" placeholder="小尺寸输入框" />
+        <TInput size="medium" placeholder="中等尺寸输入框" />
+        <TInput size="large" placeholder="大尺寸输入框" />
+      </view>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <TInput value="禁用的输入框" disabled />
+    </TCard>
+
+    <TCard title="只读状态" class="example-section">
+      <TInput value="只读的输入框" readonly />
+    </TCard>
+
+    <TCard title="带清除按钮" class="example-section">
+      <TInput v-model="inputValue2" clearable placeholder="可清除内容" />
+    </TCard>
+
+    <TCard title="带前后缀" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <TInput prefix="￥" placeholder="请输入金额" />
+        <TInput suffix=".com" placeholder="请输入网址" />
+        <TInput prefix="https://" suffix=".com" placeholder="请输入域名" />
+      </view>
+    </TCard>
+
+    <TCard title="事件处理" class="example-section">
+      <TInput
+        v-model="inputValue3"
+        placeholder="查看控制台"
+        @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
+      />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

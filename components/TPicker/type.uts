@@ -1,0 +1,105 @@
+/**
+ * TPicker 选择器选项类型
+ */
+export type TPickerOption = {
+  /**
+   * 选项文本
+   */
+  label: string
+
+  /**
+   * 选项值
+   */
+  value: string | number
+
+  /**
+   * 子选项（用于级联选择）
+   */
+  children?: TPickerOption[]
+
+  /**
+   * 是否禁用
+   */
+  disabled?: boolean
+}
+
+/**
+ * TPicker 选择器组件属性类型定义
+ */
+export type TPickerProps = {
+  /**
+   * 选择器标题
+   */
+  title?: string
+
+  /**
+   * 选择器数据（单列）
+   */
+  options?: TPickerOption[]
+
+  /**
+   * 选择器数据（多列）
+   */
+  columns?: TPickerOption[][]
+
+  /**
+   * 是否显示选择器
+   * @default false
+   */
+  visible?: boolean
+
+  /**
+   * 确认按钮文字
+   * @default '确定'
+   */
+  confirmText?: string
+
+  /**
+   * 取消按钮文字
+   * @default '取消'
+   */
+  cancelText?: string
+
+  /**
+   * 选项高度
+   * @default '44px'
+   */
+  itemHeight?: string
+
+  /**
+   * 可见选项数量
+   * @default 5
+   */
+  visibleItemCount?: number
+
+  /**
+   * 是否显示工具栏
+   * @default true
+   */
+  showToolbar?: boolean
+}
+
+/**
+ * TPicker 选择器组件事件定义
+ */
+export type TPickerEmits = {
+  /**
+   * 确认选择时触发
+   */
+  confirm: (value: any, index: number | number[], option: TPickerOption | TPickerOption[]) => void
+
+  /**
+   * 取消选择时触发
+   */
+  cancel: () => void
+
+  /**
+   * 选项改变时触发
+   */
+  change: (value: any, index: number | number[], columnIndex: number) => void
+
+  /**
+   * 更新显示状态
+   */
+  'update:visible': (value: boolean) => void
+}

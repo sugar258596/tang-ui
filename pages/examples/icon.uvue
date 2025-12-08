@@ -1,0 +1,131 @@
+<script  setup lang="uts" >
+import TIcon from '@/components/TIcon'
+import TCard from '@/components/TCard'
+
+/**
+ * 图标组件示例页面
+ */
+
+const icons = [
+  'home', 'user', 'search', 'setting', 'message', 'star',
+  'heart', 'phone', 'mail', 'location', 'clock', 'calendar',
+  'camera', 'image', 'video', 'music', 'file', 'folder',
+  'download', 'upload', 'share', 'delete', 'edit', 'save'
+]
+
+const handleClick = (name: string): void => {
+  console.log(`点击了图标: ${name}`)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TIcon 图标组件</text>
+      <text class="example-desc">语义化的矢量图标</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <view class="icon-grid">
+        <view v-for="icon in icons.slice(0, 6)" :key="icon" class="icon-item">
+          <TIcon :name="icon" />
+          <text class="icon-name">{{ icon }}</text>
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view class="icon-row">
+        <TIcon name="star" size="16" />
+        <TIcon name="star" size="24" />
+        <TIcon name="star" size="32" />
+        <TIcon name="star" size="40" />
+        <TIcon name="star" size="48" />
+      </view>
+    </TCard>
+
+    <TCard title="不同颜色" class="example-section">
+      <view class="icon-row">
+        <TIcon name="heart" color="#409eff" />
+        <TIcon name="heart" color="#67c23a" />
+        <TIcon name="heart" color="#e6a23c" />
+        <TIcon name="heart" color="#f56c6c" />
+        <TIcon name="heart" color="#909399" />
+      </view>
+    </TCard>
+
+    <TCard title="点击事件" class="example-section">
+      <view class="icon-row">
+        <TIcon name="star" size="32" @click="() => handleClick('star')" />
+        <TIcon name="heart" size="32" color="#f56c6c" @click="() => handleClick('heart')" />
+        <TIcon name="message" size="32" @click="() => handleClick('message')" />
+      </view>
+      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
+        点击图标查看控制台
+      </text>
+    </TCard>
+
+    <TCard title="所有图标" class="example-section">
+      <view class="icon-grid">
+        <view v-for="icon in icons" :key="icon" class="icon-item">
+          <TIcon :name="icon" size="24" />
+          <text class="icon-name">{{ icon }}</text>
+        </view>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+}
+
+.icon-name {
+  font-size: 12px;
+  color: #606266;
+  margin-top: 8px;
+}
+
+.icon-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+</style>

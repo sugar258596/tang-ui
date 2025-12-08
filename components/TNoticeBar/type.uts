@@ -1,0 +1,21 @@
+/**
+ * TNoticeBar 组件类型定义
+ */
+
+export type NoticeBarMode = 'closeable' | 'link'
+
+export interface TNoticeBarProps {
+  text?: string
+  mode?: NoticeBarMode
+  color?: string
+  background?: string
+  leftIcon?: string
+  scrollable?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TNoticeBarEmits {
+  click: () => void
+  close: () => void
+}

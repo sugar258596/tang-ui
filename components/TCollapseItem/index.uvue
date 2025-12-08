@@ -1,0 +1,194 @@
+<script setup lang="uts">
+import { inject, computed, ref } from 'vue'
+import type { TCollapseItemProps } from './type.uts'
+import type { TCollapseContext } from '../TCollapse/type.uts'
+
+/**
+ * TCollapseItem 折叠面板项组件
+ * @description 折叠面板的子项
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TCollapseItemProps>(), {
+  title: '',
+  disabled: false,
+  icon: ''
+})
+
+// 从父组件注入上下文
+const collapseContext = inject<TCollapseContext>('TCollapse')
+
+// 计算是否展开
+const isActive = computed<boolean>(() => {
+  if (collapseContext == null) {
+    return false
+  }
+  return collapseContext.activeNames.indexOf(props.name) > -1
+})
+
+/**
+ * 处理点击事件
+ */
+const handleClick = (): void => {
+  if (props.disabled) {
+    return
+  }
+
+  if (collapseContext != null) {
+    collapseContext.toggle(props.name)
+  }
+}
+
+/**
+ * 计算头部样式类
+ */
+const headerClass = computed<string>(() => {
+  const classes: string[] = ['t-collapse-item__header']
+
+  if (isActive.value) {
+    classes.push('t-collapse-item__header--active')
+  }
+
+  if (props.disabled) {
+    classes.push('t-collapse-item__header--disabled')
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算箭头样式类
+ */
+const arrowClass = computed<string>(() => {
+  const classes: string[] = ['t-collapse-item__arrow']
+
+  if (isActive.value) {
+    classes.push('t-collapse-item__arrow--active')
+  }
+
+  return classes.join(' ')
+})
+</script>
+
+<template>
+  <view class="t-collapse-item">
+    <!-- 头部 -->
+    <view :class="headerClass" @click="handleClick">
+      <!-- 标题 -->
+      <view class="t-collapse-item__title">
+        <slot name="title">
+          <text class="t-collapse-item__title-text">{{ title }}</text>
+        </slot>
+      </view>
+
+      <!-- 箭头图标 -->
+      <view :class="arrowClass">
+        <text class="t-collapse-item__arrow-icon">›</text>
+      </view>
+    </view>
+
+    <!-- 内容区域 -->
+    <transition name="t-collapse">
+      <view v-show="isActive" class="t-collapse-item__content">
+        <view class="t-collapse-item__content-inner">
+          <slot></slot>
+        </view>
+      </view>
+    </transition>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-collapse-item {
+  border-bottom: 1px solid #ebeef5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:active {
+      background-color: #f5f7fa;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+
+      &:active {
+        background-color: #ffffff;
+      }
+    }
+  }
+
+  &__title {
+    flex: 1;
+
+    &-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #303133;
+      line-height: 1.5;
+    }
+  }
+
+  &__arrow {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+
+    &--active {
+      transform: rotate(90deg);
+    }
+
+    &-icon {
+      font-size: 18px;
+      color: #909399;
+      font-weight: bold;
+      line-height: 1;
+    }
+  }
+
+  &__content {
+    background-color: #ffffff;
+    overflow: hidden;
+
+    &-inner {
+      padding: 16px 20px;
+      font-size: 14px;
+      color: #606266;
+      line-height: 1.6;
+    }
+  }
+}
+
+/* 折叠动画 */
+.t-collapse-enter-active,
+.t-collapse-leave-active {
+  transition: all 0.3s ease;
+}
+
+.t-collapse-enter-from,
+.t-collapse-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.t-collapse-enter-to,
+.t-collapse-leave-from {
+  opacity: 1;
+  max-height: 1000px;
+}
+</style>

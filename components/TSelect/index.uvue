@@ -1,0 +1,655 @@
+<script  setup lang="uts" >
+	import Icon from '@/components/TIcon'
+	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue } from './type.uts'
+
+	// 双向绑定值 - 根据 multiple 属性动态类型
+	const model = defineModel<SingleSelectValue | MultipleSelectValue>({ default: null })
+
+	const props = withDefaults(defineProps<SelectProps>(), {
+		options: (): SelectOption[] => [],
+		placeholder: '请选择',
+		disabled: false,
+		readonly: false,
+		multiple: false,
+		height: 55,
+		background: '#ffffff',
+		borderColor: '#c1c2c3ff',
+		showClear: true,
+		maxDisplayCount: 3,
+		placement: 'bottom',
+		size: 'medium',
+		align: 'left'
+	})
+
+	const emit = defineEmits<{
+		change : [option: SelectOption | SelectOption[] | null]
+		clear : []
+	}>()
+
+	// ========== 状态管理 ==========
+	const showPopup = ref(false)
+	const isHover = ref(false)
+
+	// ========== 计算属性 ==========
+	const selectHeight = computed(() => {
+		if (typeof props.height === 'number') return `${props.height}rpx`
+		return props.height
+	})
+
+	// 获取选中的选项（单选）
+	const selectedOption = computed(() => {
+		if (props.multiple) return null
+		if (model.value == null) return null
+		return props.options?.find(opt => opt.value === model.value) ?? null
+	})
+
+	// 获取选中的选项（多选）
+	const selectedOptions = computed(() => {
+		if (!props.multiple) return []
+		if (model.value == null) return []
+		const values = model.value as MultipleSelectValue
+		return props.options?.filter(opt => values.includes(opt.value)) ?? []
+	})
+
+	// 显示的标签
+	const selectedLabels = computed(() => {
+		if (!props.multiple) {
+			return selectedOption.value?.label ?? ''
+		}
+
+		const options = selectedOptions.value
+		if (options.length === 0) return ''
+
+		const maxCount = props.maxDisplayCount
+		if (options.length <= maxCount) {
+			return options.map(opt => opt.label).join(', ')
+		} else {
+			return `已选择 ${options.length} 项`
+		}
+	})
+
+	// 显示文本
+	const displayText = computed(() => {
+		const label = selectedLabels.value
+		return label || props.placeholder
+	})
+
+	// 是否显示清空图标
+	const showClearIcon = computed(() => {
+		if (!props.showClear || props.disabled || props.readonly) return false
+
+		if (props.multiple) {
+			return (model.value as MultipleSelectValue)?.length > 0
+		}
+		return model.value != null
+	})
+
+	// 下拉列表位置样式
+	const dropdownStyle = computed(() => {
+		if (props.placement === 'top') {
+			return {
+				bottom: '100%',
+				top: 'auto',
+				marginBottom: '8rpx',
+				transformOrigin: 'bottom center'
+			}
+		} else {
+			return {
+				top: '100%',
+				bottom: 'auto',
+				marginTop: '8rpx',
+				transformOrigin: 'top center'
+			}
+		}
+	})
+
+	const sizeClass = computed(() => {
+		switch (props.size) {
+			case 'small':
+				return 'select-small'
+			case 'large':
+				return 'select-large'
+			default:
+				return 'select-medium'
+		}
+	})
+
+	const alignClass = computed(() => {
+		switch (props.align) {
+			case 'center':
+				return 'text-center'
+			case 'right':
+				return 'text-right'
+			default:
+				return 'text-left'
+		}
+	})
+
+	// ========== 方法 ==========
+	const openPicker = () => {
+		if (props.disabled || props.readonly) return
+		showPopup.value = true
+	}
+
+	const closePicker = () => {
+		showPopup.value = false
+	}
+
+	// 检查选项是否被选中
+	const isOptionSelected = (option: SelectOption): boolean => {
+		if (props.multiple && model.value != null) {
+			const values = model.value as MultipleSelectValue
+			return values.includes(option.value)
+		}
+		return model.value === option.value
+	}
+
+	// 选择选项
+	const selectOption = (option : SelectOption) => {
+		if (option.disabled || props.disabled || props.readonly) {
+			uni.showToast({ title: '该选项不可选', icon: 'none' })
+			return
+		}
+
+		if (props.multiple) {
+			// 多选模式
+			const currentValues = (model.value as MultipleSelectValue) || []
+			const newValues = [...currentValues]
+
+			const index = newValues.indexOf(option.value)
+			if (index > -1) {
+				// 已选中，取消选择
+				newValues.splice(index, 1)
+			} else {
+				// 未选中，添加到列表
+				newValues.push(option.value)
+			}
+
+			model.value = newValues
+			emit('change', selectedOptions.value)
+		} else {
+			// 单选模式
+			model.value = option.value
+			emit('change', option)
+			closePicker()
+		}
+	}
+
+	// 清空值
+	const clearValue = () => {
+		if (props.disabled || props.readonly) return
+
+		if (props.multiple) {
+			model.value = []
+			emit('clear')
+			emit('change', [])
+		} else {
+			model.value = null
+			emit('clear')
+			emit('change', null)
+		}
+	}
+
+	// 全选
+	const selectAll = () => {
+		if (props.disabled || props.readonly) return
+		const allValues = props.options
+			.filter(opt => !opt.disabled)
+			.map(opt => opt.value)
+		model.value = props.multiple ? allValues : (allValues[0] || null)
+
+		if (props.multiple) {
+			emit('change', selectedOptions.value)
+		} else {
+			emit('change', selectedOption.value)
+		}
+	}
+
+	// 点击外部关闭下拉框
+	const handleMaskClick = (e : Event) => {
+		e.stopPropagation()
+		closePicker()
+	}
+
+	// 阻止下拉框内点击事件冒泡
+	const handleDropdownClick = (e : Event) => {
+		e.stopPropagation()
+	}
+</script>
+
+<template>
+	<view class="select-container select-root">
+		<!-- 选择框 -->
+		<view class="select-box select-root" :class="[
+				sizeClass,
+				alignClass,
+				{
+					'select-disabled': disabled,
+					'select-readonly': readonly,
+					'select-active': showPopup,
+					'has-value': (props.multiple ? (model as MultipleSelectValue)?.length : model) != null
+				}
+			]" :style="{
+				height: selectHeight,
+				backgroundColor: disabled ? '#f5f5f5' : background,
+				borderColor: borderColor
+			}" @click="openPicker">
+			<text class="select-text truncate" :class="displayText === placeholder ? 'placeholder-text' : 'value-text'">
+				{{ displayText }}
+			</text>
+
+			<!-- 右侧图标容器 -->
+			<view class="select-icons">
+				<!-- 清空按钮 -->
+				<view v-if="showClearIcon" class="clear-icon" @click.stop="clearValue">
+					<Icon name="icon-close-circle" :size="14" color="#c0c4cc" />
+				</view>
+
+				<!-- 下拉箭头 -->
+				<view class="select-arrow" :class="{ 'arrow-up': showPopup }">
+					<Icon name="icon-xiajiantou-copy" :size="12" color="#999" />
+				</view>
+			</view>
+		</view>
+
+		<!-- 遮罩层 -->
+		<transition name="fade">
+			<view v-if="showPopup" class="dropdown-mask" @tap="handleMaskClick"></view>
+		</transition>
+
+		<!-- 下拉选项列表 -->
+		<transition name="dropdown">
+			<view v-if="showPopup" class="dropdown-list select-root" :class="`placement-${props.placement}`" :style="dropdownStyle" @tap="handleDropdownClick">
+				<scroll-view class="dropdown-scroll" scroll-y :scroll-top="0">
+					<!-- 多选模式下的全选/清空按钮 -->
+					<view v-if="props.multiple" class="dropdown-actions">
+						<view class="dropdown-action-item" @click.stop="selectAll">
+							<text class="action-text">全选</text>
+						</view>
+						<view class="dropdown-action-item" @click.stop="clearValue">
+							<text class="action-text">清空</text>
+						</view>
+					</view>
+
+					<!-- 选项列表 -->
+					<view v-for="option in options" :key="option.value" class="dropdown-item select-root" :class="[
+							alignClass,
+							{
+								'dropdown-item-selected': isOptionSelected(option),
+								'dropdown-item-disabled': option.disabled || disabled
+							}
+						]" @click="selectOption(option)">
+						<text class="dropdown-item-text">{{ option.label }}</text>
+
+						<!-- 单选模式的选中标记 -->
+						<text v-if="!props.multiple && isOptionSelected(option)" class="dropdown-item-check">
+							✓
+						</text>
+
+						<!-- 多选模式的复选框 -->
+						<view v-if="props.multiple" class="dropdown-checkbox" :class="{ 'checkbox-checked': isOptionSelected(option) }">
+							<text v-if="isOptionSelected(option)" class="checkbox-icon">✓</text>
+						</view>
+					</view>
+
+					<!-- 空状态 -->
+					<view v-if="options.length === 0" class="dropdown-empty" :class="alignClass">
+						<text class="empty-text">暂无选项</text>
+					</view>
+				</scroll-view>
+			</view>
+		</transition>
+	</view>
+</template>
+
+<style lang="scss" scoped>
+
+
+	/* 基础容器样式 */
+	.select-root,
+	uni-view {
+		overflow: visible;
+	}
+
+	.select-container {
+		position: relative;
+		width: 100%;
+	}
+
+	/* 选择框样式 */
+	.select-box {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 24rpx;
+		border-radius: 8rpx;
+		border: 1rpx solid;
+		transition: all 0.2s ease;
+		cursor: pointer;
+		position: relative;
+		z-index: 2;
+
+		&.select-small {
+			height: 44rpx !important;
+
+			.select-text {
+				font-size: 24rpx;
+			}
+		}
+
+		&.select-medium {
+			height: 55rpx !important;
+
+			.select-text {
+				font-size: 28rpx;
+			}
+		}
+
+		&.select-large {
+			height: 66rpx !important;
+
+			.select-text {
+				font-size: 32rpx;
+			}
+		}
+
+		&:active:not(.select-disabled):not(.select-readonly) {
+			transform: scale(0.99);
+		}
+
+		&.select-disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
+		}
+
+		&.select-readonly {
+			cursor: default;
+		}
+
+		&.select-active {
+			border-color: #1890ff !important;
+			box-shadow: 0 0 0 2rpx rgba(24, 144, 255, 0.1);
+		}
+
+		&.has-value {
+			.select-text {
+				color: #333;
+			}
+		}
+	}
+
+	.select-text {
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		&.placeholder-text {
+			color: #c0c4cc;
+		}
+
+		&.value-text {
+			color: #333;
+			font-weight: 400;
+		}
+	}
+
+	.select-icons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8rpx;
+		margin-left: 16rpx;
+	}
+
+	.clear-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 28rpx;
+		height: 28rpx;
+		border-radius: 50%;
+		transition: all 0.2s ease;
+
+		&:active {
+			background-color: #f5f5f5;
+			transform: scale(0.9);
+		}
+	}
+
+	.select-arrow {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease;
+
+		&.arrow-up {
+			transform: rotate(180deg);
+		}
+	}
+
+	/* 遮罩层 */
+	.dropdown-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 99;
+		background-color: transparent;
+	}
+
+	/* 下拉列表 */
+	.dropdown-list {
+		position: absolute;
+		left: 0;
+		right: 0;
+		max-height: 400rpx;
+		background-color: #ffffff;
+		border-radius: 8rpx;
+		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+		z-index: 100;
+		overflow: hidden;
+		border: 1rpx solid #ebeef5;
+	}
+
+	.dropdown-scroll {
+		max-height: 400rpx;
+	}
+
+	.dropdown-item {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 24rpx 24rpx;
+		transition: all 0.1s ease;
+		cursor: pointer;
+		border-bottom: 1rpx solid #f5f7fa;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:active:not(.dropdown-item-disabled) {
+			background-color: #f5f7fa;
+		}
+
+		&.dropdown-item-selected {
+			background-color: #ecf5ff;
+
+			.dropdown-item-text {
+				color: #1890ff;
+				font-weight: 500;
+			}
+
+			.dropdown-item-check {
+				color: #1890ff;
+			}
+		}
+
+		&.dropdown-item-disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			background-color: #f9fafb;
+		}
+	}
+
+	.dropdown-item-text {
+		flex: 1;
+		font-size: 28rpx;
+		color: #606266;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.dropdown-item-check {
+		font-size: 24rpx;
+		margin-left: 16rpx;
+		font-weight: bold;
+	}
+
+	/* 空状态 */
+	.dropdown-empty {
+		padding: 60rpx 24rpx;
+		text-align: center;
+
+		.empty-text {
+			font-size: 26rpx;
+			color: #c0c4cc;
+		}
+	}
+
+	/* 过渡动画 */
+	/* 遮罩层淡入淡出 */
+	.fade-enter-active,
+	.fade-leave-active {
+		transition: opacity 0.2s ease;
+	}
+
+	.fade-enter-from,
+	.fade-leave-to {
+		opacity: 0;
+	}
+
+	.fade-enter-to,
+	.fade-leave-from {
+		opacity: 1;
+	}
+
+	/* 下拉列表滑入滑出 */
+	.dropdown-list {
+		&.dropdown-enter-active {
+			transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+		}
+
+		&.dropdown-leave-active {
+			transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+		}
+
+		/* 向下展开的动画 */
+		&.placement-bottom.dropdown-enter-from {
+			opacity: 0;
+			transform: translateY(-10rpx) scaleY(0.9);
+			transform-origin: top center;
+		}
+
+		&.placement-bottom.dropdown-enter-to {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+			transform-origin: top center;
+		}
+
+		&.placement-bottom.dropdown-leave-from {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+			transform-origin: top center;
+		}
+
+		&.placement-bottom.dropdown-leave-to {
+			opacity: 0;
+			transform: translateY(-8rpx) scaleY(0.95);
+			transform-origin: top center;
+		}
+
+		/* 向上展开的动画 */
+		&.placement-top.dropdown-enter-from {
+			opacity: 0;
+			transform: translateY(10rpx) scaleY(0.9);
+			transform-origin: bottom center;
+		}
+
+		&.placement-top.dropdown-enter-to {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+			transform-origin: bottom center;
+		}
+
+		&.placement-top.dropdown-leave-from {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+			transform-origin: bottom center;
+		}
+
+		&.placement-top.dropdown-leave-to {
+			opacity: 0;
+			transform: translateY(8rpx) scaleY(0.95);
+			transform-origin: bottom center;
+		}
+	}
+
+
+/* 多选操作按钮区域 */
+.dropdown-actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 12rpx 16rpx;
+	background-color: #fafafa;
+	border-bottom: 1rpx solid #ebeef5;
+}
+
+.dropdown-action-item {
+	text-align: center;
+	padding: 8rpx 0;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:active {
+		background-color: #f5f7fa;
+	}
+
+	.action-text {
+		font-size: 24rpx;
+		color: #1890ff;
+		font-weight: 500;
+	}
+}
+
+/* 复选框样式 */
+.dropdown-checkbox {
+	width: 32rpx;
+	height: 32rpx;
+	border: 2rpx solid #dcdfe6;
+	border-radius: 4rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	margin-left: 16rpx;
+
+	&.checkbox-checked {
+		background-color: #1890ff;
+		border-color: #1890ff;
+	}
+
+	.checkbox-icon {
+		font-size: 20rpx;
+		color: #ffffff;
+		font-weight: bold;
+	}
+}
+
+</style>

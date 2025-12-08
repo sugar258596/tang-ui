@@ -1,0 +1,106 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import type { NoticeBarMode } from './type.uts'
+
+interface Props {
+  text?: string
+  mode?: NoticeBarMode
+  color?: string
+  background?: string
+  leftIcon?: string
+  scrollable?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  text: '',
+  mode: undefined,
+  color: '#ed6a0c',
+  background: '#fffbe8',
+  leftIcon: '📢',
+  scrollable: false,
+  customClass: '',
+  customStyle: ''
+})
+
+const emit = defineEmits<{
+  click: []
+  close: []
+}>()
+
+const visible = ref<boolean>(true)
+
+const handleClick = (): void => {
+  emit('click')
+}
+
+const handleClose = (): void => {
+  visible.value = false
+  emit('close')
+}
+</script>
+
+<template>
+  <view
+    v-if="visible"
+    class="t-notice-bar"
+    :class="customClass"
+    :style="`background: ${background}; color: ${color}; ${customStyle}`"
+    @click="handleClick"
+  >
+    <text v-if="leftIcon" class="t-notice-bar__icon">{{ leftIcon }}</text>
+    <view class="t-notice-bar__content" :class="{ 't-notice-bar__content--scrollable': scrollable }">
+      <text class="t-notice-bar__text">{{ text }}</text>
+    </view>
+    <text v-if="mode === 'closeable'" class="t-notice-bar__close" @click.stop="handleClose">✕</text>
+    <text v-if="mode === 'link'" class="t-notice-bar__link">›</text>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-notice-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 12px;
+  font-size: 14px;
+  overflow: hidden;;
+}
+
+.t-notice-bar__icon {
+  margin-right: 8px;
+}
+
+.t-notice-bar__content {
+  flex: 1;
+  overflow: hidden;
+
+  &--scrollable {
+    .t-notice-bar__text {
+      animation: t-notice-scroll 10s linear infinite;
+    }
+  }
+}
+
+.t-notice-bar__text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.t-notice-bar__close,
+.t-notice-bar__link {
+  margin-left: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@keyframes t-notice-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+</style>

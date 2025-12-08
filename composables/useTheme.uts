@@ -1,0 +1,235 @@
+/**
+ * 主题管理组合式函数
+ * @module composables/useTheme
+ */
+
+import { ref, reactive, computed, watch } from 'vue'
+import type { ThemeConfig } from '../types/index.uts'
+
+/** 默认主题配置 */
+const defaultTheme: ThemeConfig = {
+  primaryColor: '#007aff',
+  successColor: '#4cd964',
+  warningColor: '#f0ad4e',
+  dangerColor: '#dd524d',
+  infoColor: '#909399',
+  textColor: '#303133',
+  borderColor: '#dcdfe6',
+  backgroundColor: '#f5f7fa',
+  borderRadius: '8rpx',
+  fontSize: '28rpx'
+}
+
+/** 当前主题配置 */
+const currentTheme = reactive<ThemeConfig>({ ...defaultTheme })
+
+/** 是否深色模式 */
+const isDarkMode = ref(false)
+
+/**
+ * 主题管理组合式函数
+ * @returns {Object} 主题管理对象
+ */
+export function useTheme() {
+  /**
+   * 设置主题
+   * @param {Partial<ThemeConfig>} theme - 主题配置
+   */
+  const setTheme = (theme: Partial<ThemeConfig>) => {
+    Object.assign(currentTheme, theme)
+    applyTheme()
+  }
+
+  /**
+   * 重置主题
+   */
+  const resetTheme = () => {
+    Object.assign(currentTheme, defaultTheme)
+    applyTheme()
+  }
+
+  /**
+   * 切换深色模式
+   * @param {boolean} dark - 是否深色模式
+   */
+  const toggleDarkMode = (dark?: boolean) => {
+    isDarkMode.value = dark !== undefined ? dark : !isDarkMode.value
+
+    if (isDarkMode.value) {
+      applyDarkTheme()
+    } else {
+      applyLightTheme()
+    }
+  }
+
+  /**
+   * 应用主题到页面
+   */
+  const applyTheme = () => {
+    try {
+      // 在 H5 平台应用 CSS 变量
+      // #ifdef H5
+      const root = document.documentElement
+      if (root) {
+        root.style.setProperty('--primary-color', currentTheme.primaryColor)
+        root.style.setProperty('--success-color', currentTheme.successColor)
+        root.style.setProperty('--warning-color', currentTheme.warningColor)
+        root.style.setProperty('--danger-color', currentTheme.dangerColor)
+        root.style.setProperty('--info-color', currentTheme.infoColor)
+        root.style.setProperty('--text-color', currentTheme.textColor)
+        root.style.setProperty('--border-color', currentTheme.borderColor)
+        root.style.setProperty('--bg-color', currentTheme.backgroundColor)
+        root.style.setProperty('--border-radius', currentTheme.borderRadius)
+        root.style.setProperty('--font-size', currentTheme.fontSize)
+      }
+      // #endif
+
+      // 存储到本地
+      uni.setStorageSync('theme-config', JSON.stringify(currentTheme))
+    } catch (e) {
+      console.error('应用主题失败:', e)
+    }
+  }
+
+  /**
+   * 应用深色主题
+   */
+  const applyDarkTheme = () => {
+    const darkTheme: Partial<ThemeConfig> = {
+      primaryColor: '#409eff',
+      successColor: '#67c23a',
+      warningColor: '#e6a23c',
+      dangerColor: '#f56c6c',
+      infoColor: '#909399',
+      textColor: '#f0f0f0',
+      borderColor: '#4c4c4c',
+      backgroundColor: '#1a1a1a',
+      borderRadius: '8rpx',
+      fontSize: '28rpx'
+    }
+    setTheme(darkTheme)
+  }
+
+  /**
+   * 应用浅色主题
+   */
+  const applyLightTheme = () => {
+    resetTheme()
+  }
+
+  /**
+   * 从本地存储加载主题
+   */
+  const loadTheme = () => {
+    try {
+      const savedTheme = uni.getStorageSync('theme-config')
+      if (savedTheme) {
+        const theme = JSON.parse(savedTheme)
+        Object.assign(currentTheme, theme)
+        applyTheme()
+      }
+
+      const savedDarkMode = uni.getStorageSync('dark-mode')
+      if (savedDarkMode !== '') {
+        isDarkMode.value = savedDarkMode === 'true'
+      }
+    } catch (e) {
+      console.error('加载主题失败:', e)
+    }
+  }
+
+  /**
+   * 获取主题颜色
+   * @param {string} type - 颜色类型
+   * @returns {string} 颜色值
+   */
+  const getColor = (type: string): string => {
+    switch (type) {
+      case 'primary':
+        return currentTheme.primaryColor
+      case 'success':
+        return currentTheme.successColor
+      case 'warning':
+        return currentTheme.warningColor
+      case 'danger':
+        return currentTheme.dangerColor
+      case 'info':
+        return currentTheme.infoColor
+      case 'text':
+        return currentTheme.textColor
+      case 'border':
+        return currentTheme.borderColor
+      case 'bg':
+      case 'background':
+        return currentTheme.backgroundColor
+      default:
+        return currentTheme.primaryColor
+    }
+  }
+
+  /**
+   * 获取计算后的主题
+   */
+  const computedTheme = computed(() => currentTheme)
+
+  /**
+   * 监听系统主题变化
+   */
+  const watchSystemTheme = () => {
+    // #ifdef H5
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      mediaQuery.addListener((e) => {
+        if (e.matches) {
+          toggleDarkMode(true)
+        } else {
+          toggleDarkMode(false)
+        }
+      })
+    }
+    // #endif
+
+    // #ifdef APP-PLUS
+    plus.globalEvent.addEventListener('ThemeChange', (e: any) => {
+      toggleDarkMode(e.dark)
+    })
+    // #endif
+  }
+
+  // 监听深色模式变化
+  watch(isDarkMode, (newValue) => {
+    uni.setStorageSync('dark-mode', String(newValue))
+  })
+
+  // 初始化加载主题
+  loadTheme()
+  watchSystemTheme()
+
+  return {
+    // 状态
+    theme: computedTheme,
+    isDarkMode,
+
+    // 方法
+    setTheme,
+    resetTheme,
+    toggleDarkMode,
+    getColor,
+    loadTheme,
+
+    // 常量
+    defaultTheme
+  }
+}
+
+/**
+ * 获取主题实例（单例模式）
+ */
+let themeInstance: ReturnType<typeof useTheme> | null = null
+
+export function getThemeInstance() {
+  if (!themeInstance) {
+    themeInstance = useTheme()
+  }
+  return themeInstance
+}

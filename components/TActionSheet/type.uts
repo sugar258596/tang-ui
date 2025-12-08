@@ -1,0 +1,29 @@
+/**
+ * TActionSheet 组件类型定义
+ */
+
+export interface ActionSheetAction {
+  name: string
+  color?: string
+  disabled?: boolean
+  loading?: boolean
+}
+
+export interface TActionSheetProps {
+  show?: boolean
+  actions?: ActionSheetAction[]
+  title?: string
+  description?: string
+  cancelText?: string
+  closeOnClickAction?: boolean
+  closeOnClickOverlay?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TActionSheetEmits {
+  'update:show': (value: boolean) => void
+  select: (action: ActionSheetAction, index: number) => void
+  cancel: () => void
+  close: () => void
+}

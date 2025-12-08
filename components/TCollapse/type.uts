@@ -1,0 +1,36 @@
+/**
+ * TCollapse 折叠面板组件属性类型定义
+ */
+export type TCollapseProps = {
+  /**
+   * 是否开启手风琴模式（同时只能展开一个面板）
+   * @default false
+   */
+  accordion?: boolean
+
+  /**
+   * 是否显示边框
+   * @default true
+   */
+  border?: boolean
+}
+
+/**
+ * TCollapse 提供给子组件的上下文
+ */
+export type TCollapseContext = {
+  /**
+   * 当前展开的面板名称（数组）
+   */
+  activeNames: string[]
+
+  /**
+   * 是否为手风琴模式
+   */
+  accordion: boolean
+
+  /**
+   * 切换面板展开/收起状态
+   */
+  toggle: (name: string) => void
+}

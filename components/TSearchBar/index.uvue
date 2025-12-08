@@ -1,0 +1,255 @@
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+import type { TSearchBarProps } from './type.uts'
+
+/**
+ * TSearchBar 搜索框组件
+ * @description 用于搜索场景的输入框组件，支持防抖、清除、取消等功能
+ */
+
+// Props 定义 (从 type.uts 导入，排除 modelValue)
+type Props = Omit<TSearchBarProps, 'modelValue'>
+
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: '请输入搜索关键词',
+  shape: 'square',
+  background: '#f5f5f5',
+  maxlength: -1,
+  clearable: true,
+  showCancel: false,
+  cancelText: '取消',
+  disabled: false,
+  readonly: false,
+  autoFocus: false,
+  leftIcon: '🔍',
+  debounce: 300,
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel 管理双向绑定
+const modelValue = defineModel<string>({ default: '' })
+
+// Emits 定义
+const emit = defineEmits<{
+  search: [value: string]
+  input: [value: string]
+  cancel: []
+  clear: []
+  focus: [event: Event]
+  blur: [event: Event]
+}>()
+
+// 状态管理
+const isFocused = ref<boolean>(false)
+let debounceTimer: number | null = null
+
+/**
+ * 计算容器类名
+ */
+const containerClasses = computed((): string => {
+  const classes: string[] = ['t-search-bar']
+
+  if (props.shape === 'round') {
+    classes.push('t-search-bar--round')
+  }
+
+  if (props.disabled) {
+    classes.push('t-search-bar--disabled')
+  }
+
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算输入框样式
+ */
+const inputStyle = computed((): string => {
+  const styles: string[] = []
+
+  styles.push(`background-color: ${props.background}`)
+
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 输入事件处理（带防抖）
+ */
+const handleInput = (event: any): void => {
+  const value = event.detail.value as string
+  modelValue.value = value
+  emit('input', value)
+
+  // 防抖搜索
+  if (debounceTimer !== null) {
+    clearTimeout(debounceTimer)
+  }
+  debounceTimer = setTimeout(() => {
+    emit('search', value)
+  }, props.debounce)
+}
+
+/**
+ * 聚焦事件
+ */
+const handleFocus = (event: Event): void => {
+  isFocused.value = true
+  emit('focus', event)
+}
+
+/**
+ * 失焦事件
+ */
+const handleBlur = (event: Event): void => {
+  isFocused.value = false
+  emit('blur', event)
+}
+
+/**
+ * 清空输入
+ */
+const handleClear = (): void => {
+  modelValue.value = ''
+  emit('clear')
+  emit('search', '')
+}
+
+/**
+ * 点击搜索按钮
+ */
+const handleSearch = (): void => {
+  emit('search', modelValue.value)
+}
+
+/**
+ * 取消搜索
+ */
+const handleCancel = (): void => {
+  modelValue.value = ''
+  emit('cancel')
+}
+</script>
+
+<template>
+  <view :class="containerClasses">
+    <view class="t-search-bar__content" :style="inputStyle">
+      <!-- 左侧图标 -->
+      <text v-if="leftIcon" class="t-search-bar__icon">{{ leftIcon }}</text>
+
+      <!-- 输入框 -->
+      <input
+        class="t-search-bar__input"
+        type="text"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :maxlength="maxlength"
+        :disabled="disabled"
+        :focus="autoFocus"
+        @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        @confirm="handleSearch"
+      />
+
+      <!-- 清除按钮 -->
+      <view
+        v-if="clearable && modelValue.length > 0"
+        class="t-search-bar__clear"
+        @click="handleClear"
+      >
+        <text class="t-search-bar__clear-icon">✕</text>
+      </view>
+    </view>
+
+    <!-- 取消按钮 -->
+    <text
+      v-if="showCancel"
+      class="t-search-bar__cancel"
+      @click="handleCancel"
+    >
+      {{ cancelText }}
+    </text>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-search-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #fff;
+
+  &--round {
+    .t-search-bar__content {
+      border-radius: 18px;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.6;
+  }
+}
+
+.t-search-bar__content {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.t-search-bar__icon {
+  font-size: 16px;
+  margin-right: 8px;
+  color: #969799;
+}
+
+.t-search-bar__input {
+  flex: 1;
+  font-size: 14px;
+  color: #323233;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.t-search-bar__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background-color: #c8c9cc;
+  cursor: pointer;
+}
+
+.t-search-bar__clear-icon {
+  font-size: 10px;
+  color: #fff;
+}
+
+.t-search-bar__cancel {
+  margin-left: 12px;
+  font-size: 14px;
+  color: #323233;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+</style>

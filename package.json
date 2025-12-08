@@ -1,0 +1,47 @@
+{
+  "name": "@your-org/uniapp-x-ui",
+  "version": "1.0.0",
+  "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "components",
+    "composables",
+    "utils",
+    "types",
+    "style",
+    "uni.scss",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "uniapp",
+    "uni-app-x",
+    "uniapp-x",
+    "ui",
+    "components",
+    "mobile",
+    "vue3",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "echo 'Build completed'",
+    "version": "npm run build"
+  }
+}

@@ -1,0 +1,50 @@
+/**
+ * TCard 卡片组件属性类型定义
+ */
+export type TCardProps = {
+  /**
+   * 卡片标题
+   */
+  title?: string
+
+  /**
+   * 卡片副标题
+   */
+  subtitle?: string
+
+  /**
+   * 是否显示阴影
+   * @default true
+   */
+  shadow?: boolean
+
+  /**
+   * 是否显示边框
+   * @default false
+   */
+  border?: boolean
+
+  /**
+   * 内边距大小
+   * @default "medium"
+   */
+  padding?: 'small' | 'medium' | 'large'
+
+  /**
+   * 圆角大小
+   * @default "medium"
+   */
+  radius?: 'none' | 'small' | 'medium' | 'large'
+
+  /**
+   * 自定义样式类
+   */
+  customClass?: string
+}
+
+export type TCardEmits = {
+  /**
+   * 点击卡片时触发
+   */
+  click: () => void
+}

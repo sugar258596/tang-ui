@@ -1,0 +1,26 @@
+/**
+ * TCheckboxGroup 组件类型定义
+ */
+
+export type CheckboxDirection = 'horizontal' | 'vertical'
+
+export interface CheckboxOption {
+  label: string
+  value: string | number
+  disabled?: boolean
+}
+
+export interface TCheckboxGroupProps {
+  modelValue?: (string | number)[]
+  options?: CheckboxOption[]
+  direction?: CheckboxDirection
+  max?: number
+  disabled?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TCheckboxGroupEmits {
+  'update:modelValue': (value: (string | number)[]) => void
+  change: (value: (string | number)[]) => void
+}

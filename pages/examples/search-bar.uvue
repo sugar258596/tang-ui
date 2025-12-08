@@ -1,0 +1,103 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TSearchBar from '@/components/TSearchBar'
+import TCard from '@/components/TCard'
+
+/**
+ * TSearchBar 组件示例页面
+ */
+
+const value1 = ref<string>('')
+const value2 = ref<string>('')
+const value3 = ref<string>('')
+
+const handleSearch = (value: string): void => {
+  console.log('搜索:', value)
+  uni.showToast({
+    title: `搜索: ${value}`,
+    icon: 'none'
+  })
+}
+
+const handleCancel = (): void => {
+  console.log('取消搜索')
+  uni.showToast({
+    title: '已取消',
+    icon: 'none'
+  })
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <!-- 基础用法 -->
+    <TCard title="基础用法" padding="none">
+      <TSearchBar v-model="value1" @search="handleSearch" />
+    </TCard>
+
+    <!-- 圆角样式 -->
+    <TCard title="圆角样式" padding="none">
+      <TSearchBar
+        v-model="value2"
+        shape="round"
+        placeholder="圆角搜索框"
+        @search="handleSearch"
+      />
+    </TCard>
+
+    <!-- 显示取消按钮 -->
+    <TCard title="显示取消按钮" padding="none">
+      <TSearchBar
+        v-model="value3"
+        :show-cancel="true"
+        cancel-text="取消"
+        @search="handleSearch"
+        @cancel="handleCancel"
+      />
+    </TCard>
+
+    <!-- 自定义背景色 -->
+    <TCard title="自定义背景色" padding="none">
+      <TSearchBar
+        v-model="value1"
+        background="#e6f7ff"
+        placeholder="浅蓝色背景"
+      />
+    </TCard>
+
+    <!-- 禁用状态 -->
+    <TCard title="禁用状态" padding="none">
+      <TSearchBar
+        v-model="value1"
+        :disabled="true"
+        placeholder="禁用状态"
+      />
+    </TCard>
+
+    <!-- 自定义图标 -->
+    <TCard title="自定义图标" padding="none">
+      <TSearchBar
+        v-model="value1"
+        left-icon="🔎"
+        placeholder="自定义搜索图标"
+      />
+    </TCard>
+
+    <!-- 限制长度 -->
+    <TCard title="限制长度" padding="none">
+      <TSearchBar
+        v-model="value1"
+        :maxlength="20"
+        placeholder="最多输入20个字符"
+      />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+</style>

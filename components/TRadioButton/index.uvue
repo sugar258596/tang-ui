@@ -1,0 +1,232 @@
+<script  setup lang="uts" >
+/**
+ * 单选按钮组件
+ * @description 支持单个按钮和选项组两种使用方式
+ */
+
+type FormOption = {
+  label: string
+  value: string | number
+}
+
+type Props = {
+  /** 选项组模式：选项列表 */
+  options?: FormOption[]
+  /** 单个按钮模式：选项值 */
+  value?: string | number
+  /** 按钮尺寸 */
+  size?: 'small' | 'medium' | 'large'
+  /** 活动状态颜色 */
+  activeColor?: string
+  /** 非活动状态颜色 */
+  inactiveColor?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否选中（仅单个按钮模式） */
+  checked?: boolean
+  /** 名称属性（用于表单提交） */
+  name?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  options: () => [],
+  size: 'medium',
+  activeColor: '#00bba7',
+  inactiveColor: '#666666',
+  disabled: false,
+  checked: false
+})
+
+const model = defineModel<string | number>()
+
+const emit = defineEmits<{
+  change: [value: string | number]
+}>()
+
+/**
+ * 计算样式变量
+ */
+const cssVars = computed(() => ({
+  '--radio-active-color': props.activeColor,
+  '--radio-inactive-color': props.inactiveColor
+}))
+
+/**
+ * 是否为选项组模式
+ */
+const isOptionsMode = computed(() => props.options && props.options.length > 0)
+
+/**
+ * 单个按钮模式：判断是否被选中
+ */
+const isChecked = computed(() => {
+  if (isOptionsMode.value) {
+    return model.value === props.value
+  }
+  return props.checked || model.value === props.value
+})
+
+/**
+选择 * 处理变化
+ */
+const handleChange = (value: string | number) => {
+  model.value = value
+  emit('change', value)
+}
+
+/**
+ * 处理单个按钮点击
+ */
+const handleClick = () => {
+  if (props.disabled || isOptionsMode.value) return
+  handleChange(props.value!)
+}
+
+/**
+ * 尺寸样式类
+ */
+const sizeClass = computed(() => {
+  const sizeMap = {
+    'small': 'radio-size-small',
+    'medium': 'radio-size-medium',
+    'large': 'radio-size-large'
+  }
+  return sizeMap[props.size] ?? 'radio-size-medium'
+})
+</script>
+
+<template>
+  <!-- 选项组模式：使用 options 属性 -->
+  <view v-if="isOptionsMode" class="radio-group" :style="cssVars">
+    <view
+      v-for="option in props.options"
+      :key="option.value"
+      class="radio-item"
+      :class="{ 'radio-disabled': props.disabled }"
+      @click="!props.disabled && handleChange(option.value)"
+    >
+      <view class="radio-icon" :class="{ active: model === option.value, 'radio-disabled': props.disabled }">
+        <view v-if="model === option.value" class="radio-dot"></view>
+      </view>
+      <text class="radio-label">{{ option.label }}</text>
+    </view>
+  </view>
+
+  <!-- 单个按钮模式：使用插槽或默认内容 -->
+  <view v-else class="radio-item" :class="[sizeClass, { 'radio-disabled': props.disabled }]" @click="handleClick">
+    <view class="radio-icon" :class="{ active: isChecked, 'radio-disabled': props.disabled }">
+      <view v-if="isChecked" class="radio-dot"></view>
+    </view>
+    <slot>
+      <text v-if="props.value !== undefined" class="radio-label">{{ props.value }}</text>
+    </slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+/* 选项组容器 */
+.radio-group {
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+/* 单个按钮容器 */
+.radio-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+
+  &.radio-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* 单选按钮图标 */
+.radio-icon {
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border-width: 2rpx;
+  border-style: solid;
+  border-color: var(--radio-inactive-color);
+  transition: all 0.2s ease;
+
+  &.active {
+    border-color: var(--radio-active-color);
+  }
+
+  &.radio-disabled {
+    border-color: #dcdfe6;
+  }
+}
+
+/* 单选点 */
+.radio-dot {
+  border-radius: 50%;
+  background-color: var(--radio-active-color);
+}
+
+/* 尺寸样式 */
+.radio-size-small {
+  .radio-icon {
+    width: 28rpx;
+    height: 28rpx;
+  }
+
+  .radio-dot {
+    width: 14rpx;
+    height: 14rpx;
+  }
+
+  .radio-label {
+    font-size: 24rpx;
+  }
+}
+
+.radio-size-medium {
+  .radio-icon {
+    width: 36rpx;
+    height: 36rpx;
+  }
+
+  .radio-dot {
+    width: 20rpx;
+    height: 20rpx;
+  }
+
+  .radio-label {
+    font-size: 28rpx;
+  }
+}
+
+.radio-size-large {
+  .radio-icon {
+    width: 44rpx;
+    height: 44rpx;
+  }
+
+  .radio-dot {
+    width: 26rpx;
+    height: 26rpx;
+  }
+
+  .radio-label {
+    font-size: 32rpx;
+  }
+}
+
+/* 文本标签 */
+.radio-label {
+  color: var(--radio-inactive-color);
+  transition: color 0.2s ease;
+
+  .radio-item.active & {
+    color: var(--radio-active-color);
+  }
+
+  .radio-disabled & {
+    color: #c0c4cc;
+  }
+}
+</style>

@@ -1,0 +1,47 @@
+<script setup lang="uts">
+import TNavBar from '@/components/TNavBar'
+import TCard from '@/components/TCard'
+
+const handleClickLeft = (): void => {
+  uni.showToast({ title: '点击左侧', icon: 'none' })
+}
+
+const handleClickRight = (): void => {
+  uni.showToast({ title: '点击右侧', icon: 'none' })
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <TCard title="基础用法" padding="none">
+      <TNavBar title="标题" />
+    </TCard>
+
+    <TCard title="左侧返回" padding="none">
+      <TNavBar title="标题" left-icon="←" left-text="返回" @click-left="handleClickLeft" />
+    </TCard>
+
+    <TCard title="右侧按钮" padding="none">
+      <TNavBar title="标题" right-text="按钮" @click-right="handleClickRight" />
+    </TCard>
+
+    <TCard title="左右按钮" padding="none">
+      <TNavBar
+        title="标题"
+        left-icon="←"
+        left-text="返回"
+        right-text="更多"
+        @click-left="handleClickLeft"
+        @click-right="handleClickRight"
+      />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+</style>

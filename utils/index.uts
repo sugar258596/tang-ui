@@ -1,0 +1,10 @@
+/**
+ * 工具函数入口文件
+ * @module utils
+ * @description 导出所有工具函数
+ */
+
+export * from './color.uts'
+export * from './validator.uts'
+export * from './common.uts'
+export * from './dom.uts'

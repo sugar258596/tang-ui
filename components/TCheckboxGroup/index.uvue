@@ -1,0 +1,139 @@
+<script setup lang="uts">
+import { computed } from 'vue'
+import type { TCheckboxGroupProps, CheckboxOption } from './type.uts'
+
+/**
+ * TCheckboxGroup 复选框组组件
+ * @description 用于在多个选项中选择多个的组件
+ */
+
+// Props 定义 (从 type.uts 导入，排除 modelValue)
+type Props = Omit<TCheckboxGroupProps, 'modelValue'>
+
+const props = withDefaults(defineProps<Props>(), {
+  options: () => [] as CheckboxOption[],
+  direction: 'vertical',
+  max: -1,
+  disabled: false,
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel 管理双向绑定
+const modelValue = defineModel<(string | number)[]>({ default: () => [] })
+
+const emit = defineEmits<{
+  change: [value: (string | number)[]]
+}>()
+
+const isMaxReached = computed((): boolean => {
+  return props.max > 0 && modelValue.value.length >= props.max
+})
+
+const handleChange = (option: CheckboxOption): void => {
+  if (props.disabled || option.disabled) return
+
+  const index = modelValue.value.indexOf(option.value)
+
+  if (index > -1) {
+    // 取消选中
+    modelValue.value.splice(index, 1)
+  } else {
+    // 选中
+    if (isMaxReached.value) {
+      uni.showToast({
+        title: `最多只能选择 ${props.max} 项`,
+        icon: 'none'
+      })
+      return
+    }
+    modelValue.value.push(option.value)
+  }
+
+  emit('change', modelValue.value)
+}
+
+const isChecked = (option: CheckboxOption): boolean => {
+  return modelValue.value.includes(option.value)
+}
+</script>
+
+<template>
+  <view
+    class="t-checkbox-group"
+    :class="[`t-checkbox-group--${direction}`, customClass]"
+    :style="customStyle"
+  >
+    <view
+      v-for="(option, index) in options"
+      :key="index"
+      class="t-checkbox-group__item"
+      :class="{ 't-checkbox-group__item--disabled': disabled || option.disabled }"
+      @click="() => handleChange(option)"
+    >
+      <view class="t-checkbox-group__icon" :class="{ 't-checkbox-group__icon--checked': isChecked(option) }">
+        <text v-if="isChecked(option)" class="t-checkbox-group__check">✓</text>
+      </view>
+      <text class="t-checkbox-group__label">{{ option.label }}</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-checkbox-group {
+  &--vertical {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &--horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.t-checkbox-group__item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .t-checkbox-group--horizontal & {
+    margin-right: 24px;
+  }
+}
+
+.t-checkbox-group__icon {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #c8c9cc;
+  border-radius: 4px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+
+  &--checked {
+    background-color: #1890ff;
+    border-color: #1890ff;
+  }
+}
+
+.t-checkbox-group__check {
+  font-size: 14px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.t-checkbox-group__label {
+  font-size: 14px;
+  color: #323233;
+}
+</style>

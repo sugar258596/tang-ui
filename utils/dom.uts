@@ -1,0 +1,275 @@
+/**
+ * DOM 操作工具函数
+ * @module utils/dom
+ */
+
+/**
+ * 获取元素的边界信息
+ * @param {string} selector - 选择器
+ * @param {any} instance - 组件实例
+ * @returns {Promise<any>} 元素边界信息
+ */
+export function getRect(selector: string, instance: any): Promise<any> {
+  return new Promise((resolve) => {
+    uni.createSelectorQuery()
+      .in(instance)
+      .select(selector)
+      .boundingClientRect((rect: any) => {
+        resolve(rect)
+      })
+      .exec()
+  })
+}
+
+/**
+ * 获取所有匹配元素的边界信息
+ * @param {string} selector - 选择器
+ * @param {any} instance - 组件实例
+ * @returns {Promise<any[]>} 元素边界信息数组
+ */
+export function getRectAll(selector: string, instance: any): Promise<any[]> {
+  return new Promise((resolve) => {
+    uni.createSelectorQuery()
+      .in(instance)
+      .selectAll(selector)
+      .boundingClientRect((rects: any[]) => {
+        resolve(rects)
+      })
+      .exec()
+  })
+}
+
+/**
+ * 获取滚动位置
+ * @param {string} selector - 选择器
+ * @param {any} instance - 组件实例
+ * @returns {Promise<any>} 滚动位置信息
+ */
+export function getScrollOffset(selector: string, instance: any): Promise<any> {
+  return new Promise((resolve) => {
+    uni.createSelectorQuery()
+      .in(instance)
+      .select(selector)
+      .scrollOffset((res: any) => {
+        resolve(res)
+      })
+      .exec()
+  })
+}
+
+/**
+ * 获取系统信息
+ * @returns {any} 系统信息对象
+ */
+export function getSystemInfo(): any {
+  try {
+    return uni.getSystemInfoSync()
+  } catch (e) {
+    console.error('获取系统信息失败:', e)
+    return {
+      windowWidth: 375,
+      windowHeight: 667,
+      pixelRatio: 2,
+      platform: 'unknown'
+    }
+  }
+}
+
+/**
+ * px 转 rpx
+ * @param {number} px - 像素值
+ * @returns {number} rpx值
+ */
+export function pxToRpx(px: number): number {
+  const systemInfo = getSystemInfo()
+  return px * 750 / systemInfo.windowWidth
+}
+
+/**
+ * rpx 转 px
+ * @param {number} rpx - rpx值
+ * @returns {number} 像素值
+ */
+export function rpxToPx(rpx: number): number {
+  const systemInfo = getSystemInfo()
+  return rpx * systemInfo.windowWidth / 750
+}
+
+/**
+ * 添加单位
+ * @param {string | number} value - 值
+ * @param {string} unit - 单位，默认 'rpx'
+ * @returns {string} 带单位的值
+ */
+export function addUnit(value: string | number, unit: string = 'rpx'): string {
+  if (!value) return '0'
+
+  // 如果已经有单位，直接返回
+  if (typeof value === 'string') {
+    const hasUnit = /(rpx|px|%|vh|vw|rem|em)$/.test(value)
+    if (hasUnit) return value
+  }
+
+  return `${value}${unit}`
+}
+
+/**
+ * 获取元素样式
+ * @param {any} element - 元素
+ * @param {string} property - 样式属性
+ * @returns {string} 样式值
+ */
+export function getStyle(element: any, property: string): string {
+  if (!element) return ''
+
+  try {
+    return element.style[property] || ''
+  } catch (e) {
+    console.error('获取样式失败:', e)
+    return ''
+  }
+}
+
+/**
+ * 设置元素样式
+ * @param {any} element - 元素
+ * @param {string} property - 样式属性
+ * @param {string} value - 样式值
+ */
+export function setStyle(element: any, property: string, value: string): void {
+  if (!element) return
+
+  try {
+    element.style[property] = value
+  } catch (e) {
+    console.error('设置样式失败:', e)
+  }
+}
+
+/**
+ * 批量设置样式
+ * @param {any} element - 元素
+ * @param {Record<string, string>} styles - 样式对象
+ */
+export function setStyles(element: any, styles: Record<string, string>): void {
+  if (!element || !styles) return
+
+  Object.keys(styles).forEach(key => {
+    setStyle(element, key, styles[key])
+  })
+}
+
+/**
+ * 判断是否支持某个 CSS 属性
+ * @param {string} property - CSS 属性
+ * @returns {boolean} 是否支持
+ */
+export function supportsCss(property: string): boolean {
+  // #ifdef H5
+  if (typeof document !== 'undefined' && document.documentElement) {
+    const style = document.documentElement.style
+    return property in style
+  }
+  // #endif
+
+  // 非 H5 平台默认返回 true
+  return true
+}
+
+/**
+ * 获取元素的计算样式
+ * @param {any} element - 元素
+ * @returns {any} 计算样式对象
+ */
+export function getComputedStyle(element: any): any {
+  // #ifdef H5
+  if (typeof window !== 'undefined' && window.getComputedStyle) {
+    return window.getComputedStyle(element)
+  }
+  // #endif
+
+  return element.style || {}
+}
+
+/**
+ * 判断元素是否在视口内
+ * @param {any} rect - 元素边界信息
+ * @param {number} offset - 偏移量
+ * @returns {boolean} 是否在视口内
+ */
+export function isInViewport(rect: any, offset: number = 0): boolean {
+  if (!rect) return false
+
+  const systemInfo = getSystemInfo()
+  const { windowHeight } = systemInfo
+
+  return rect.top < windowHeight + offset && rect.bottom > -offset
+}
+
+/**
+ * 获取节点信息
+ * @param {string} selector - 选择器
+ * @param {any} instance - 组件实例
+ * @returns {Promise<any>} 节点信息
+ */
+export function getNodeInfo(selector: string, instance: any): Promise<any> {
+  return new Promise((resolve) => {
+    uni.createSelectorQuery()
+      .in(instance)
+      .select(selector)
+      .fields({
+        id: true,
+        dataset: true,
+        rect: true,
+        size: true,
+        scrollOffset: true,
+        properties: ['scrollX', 'scrollY']
+      }, (res: any) => {
+        resolve(res)
+      })
+      .exec()
+  })
+}
+
+/**
+ * 平滑滚动到指定位置
+ * @param {number} scrollTop - 滚动位置
+ * @param {number} duration - 动画时长
+ * @param {string} selector - 选择器
+ */
+export function smoothScrollTo(scrollTop: number, duration: number = 300, selector: string = ''): void {
+  if (selector) {
+    uni.pageScrollTo({
+      selector,
+      duration
+    })
+  } else {
+    uni.pageScrollTo({
+      scrollTop,
+      duration
+    })
+  }
+}
+
+/**
+ * 获取安全区域信息
+ * @returns {any} 安全区域信息
+ */
+export function getSafeArea(): any {
+  const systemInfo = getSystemInfo()
+  const { safeArea, screenHeight, statusBarHeight = 0 } = systemInfo
+
+  if (safeArea) {
+    return safeArea
+  }
+
+  // 如果没有 safeArea，计算一个默认值
+  return {
+    top: statusBarHeight,
+    bottom: screenHeight,
+    left: 0,
+    right: systemInfo.windowWidth,
+    width: systemInfo.windowWidth,
+    height: screenHeight - statusBarHeight
+  }
+}

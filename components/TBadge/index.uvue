@@ -1,0 +1,152 @@
+<script  setup lang="uts" >
+import { computed } from 'vue'
+import type { TBadgeProps } from './type.uts'
+
+/**
+ * TBadge 徽标组件
+ * @description 用于显示数字或状态标记
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TBadgeProps>(), {
+  value: '',
+  max: 99,
+  isDot: false,
+  hidden: false,
+  type: 'danger',
+  bgColor: '',
+  color: '',
+  offset: () => [0, 0] as [number, number]
+})
+
+/**
+ * 计算显示的内容
+ */
+const displayValue = computed<string>(() => {
+  if (props.isDot) {
+    return ''
+  }
+
+  const val = props.value
+  if (typeof val === 'number' && val > props.max) {
+    return `${props.max}+`
+  }
+
+  return String(val)
+})
+
+/**
+ * 计算徽标样式类
+ */
+const badgeClass = computed<string>(() => {
+  const classes: string[] = ['t-badge__content']
+
+  if (props.isDot) {
+    classes.push('t-badge__content--dot')
+  }
+
+  classes.push(`t-badge__content--${props.type}`)
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算徽标样式
+ */
+const badgeStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  if (props.bgColor != '') {
+    styles.push(`background-color: ${props.bgColor}`)
+  }
+
+  if (props.color != '') {
+    styles.push(`color: ${props.color}`)
+  }
+
+  if (props.offset && props.offset.length === 2) {
+    const [x, y] = props.offset
+    if (x !== 0) {
+      styles.push(`right: ${-x}px`)
+    }
+    if (y !== 0) {
+      styles.push(`top: ${y}px`)
+    }
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 是否显示徽标
+ */
+const showBadge = computed<boolean>(() => {
+  return !props.hidden && (props.isDot || props.value !== '' && props.value !== 0)
+})
+</script>
+
+<template>
+  <view class="t-badge">
+    <slot></slot>
+    <view v-if="showBadge" :class="badgeClass" :style="badgeStyle">
+      <text v-if="!isDot" class="t-badge__text">{{ displayValue }}</text>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-badge {
+  position: relative;
+  display: inline-block;
+  overflow:visible;
+
+  &__content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    z-index: 1;
+
+    &--dot {
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    &--primary {
+      background-color: #409eff;
+      color: #ffffff;
+    }
+
+    &--success {
+      background-color: #67c23a;
+      color: #ffffff;
+    }
+
+    &--warning {
+      background-color: #e6a23c;
+      color: #ffffff;
+    }
+
+    &--danger {
+      background-color: #f56c6c;
+      color: #ffffff;
+    }
+
+    &--info {
+      background-color: #909399;
+      color: #ffffff;
+    }
+  }
+
+  &__text {
+    font-size: 12px;
+  }
+}
+</style>

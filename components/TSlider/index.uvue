@@ -1,0 +1,72 @@
+<script setup lang="uts">
+import type { TSliderProps } from './type.uts'
+
+/**
+ * TSlider 滑块组件
+ * @description 用于在给定范围内选择数值的滑块组件
+ */
+
+// Props 定义 (从 type.uts 导入，排除 modelValue)
+type Props = Omit<TSliderProps, 'modelValue'>
+
+const props = withDefaults(defineProps<Props>(), {
+  min: 0,
+  max: 100,
+  step: 1,
+  disabled: false,
+  showValue: false,
+  activeColor: '#1890ff',
+  inactiveColor: '#e9e9e9',
+  customClass: '',
+  customStyle: ''
+})
+
+// 使用 defineModel 管理双向绑定
+const modelValue = defineModel<number>({ default: 0 })
+
+const emit = defineEmits<{
+  change: [value: number]
+}>()
+
+const handleChange = (event: any): void => {
+  const value = event.detail.value as number
+  modelValue.value = value
+  emit('change', value)
+}
+</script>
+
+<template>
+  <view class="t-slider" :class="customClass" :style="customStyle">
+    <slider
+      :value="modelValue"
+      :min="min"
+      :max="max"
+      :step="step"
+      :disabled="disabled"
+      :activeColor="activeColor"
+      :backgroundColor="inactiveColor"
+      :block-size="24"
+      @change="handleChange"
+    />
+    <text v-if="showValue" class="t-slider__value">{{ modelValue }}</text>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-slider {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.t-slider__value {
+  margin-left: 12px;
+  font-size: 14px;
+  color: #323233;
+  min-width: 40px;
+  text-align: right;
+}
+uni-slider,slider{
+  width: 100%;
+}
+</style>

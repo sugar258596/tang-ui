@@ -1,0 +1,52 @@
+/**
+ * 全局类型定义
+ */
+
+/**
+ * 组件类型
+ */
+export type ComponentType = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
+
+/**
+ * 位置类型
+ */
+export type PositionType = 'top' | 'center' | 'bottom'
+
+/**
+ * Toast 选项类型
+ */
+export type ToastOptions = {
+  /**
+   * 提示内容
+   */
+  message: string
+
+  /**
+   * 提示类型
+   * @default 'default'
+   */
+  type?: ComponentType
+
+  /**
+   * 显示时长（毫秒）
+   * @default 2000
+   */
+  duration?: number
+
+  /**
+   * 显示位置
+   * @default 'center'
+   */
+  position?: PositionType
+
+  /**
+   * 是否显示遮罩层
+   * @default false
+   */
+  mask?: boolean
+
+  /**
+   * 自定义图标路径
+   */
+  icon?: string
+}

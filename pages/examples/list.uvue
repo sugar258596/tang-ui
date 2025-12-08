@@ -1,0 +1,133 @@
+<script  setup lang="uts" >
+import TList from '@/components/TList'
+import TListItem from '@/components/TListItem'
+import TCard from '@/components/TCard'
+
+/**
+ * 列表组件示例页面
+ */
+
+const handleItemClick = (item: string): void => {
+  console.log(`点击了: ${item}`)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TList 列表组件</text>
+      <text class="example-desc">用于展示列表数据</text>
+    </view>
+
+    <TCard title="基础列表" class="example-section">
+      <TList>
+        <TListItem title="列表项 1" />
+        <TListItem title="列表项 2" />
+        <TListItem title="列表项 3" />
+      </TList>
+    </TCard>
+
+    <TCard title="带描述的列表" class="example-section">
+      <TList>
+        <TListItem
+          title="标题文字"
+          description="这里是描述信息，可以是多行文字内容"
+        />
+        <TListItem
+          title="另一个标题"
+          description="描述信息支持较长的文本内容显示"
+        />
+      </TList>
+    </TCard>
+
+    <TCard title="带图标的列表" class="example-section">
+      <TList>
+        <TListItem title="设置" icon="⚙" />
+        <TListItem title="通知" icon="🔔" />
+        <TListItem title="隐私" icon="🔒" />
+        <TListItem title="关于" icon="ℹ" />
+      </TList>
+    </TCard>
+
+    <TCard title="带右侧内容" class="example-section">
+      <TList>
+        <TListItem title="账户余额" extra="¥100.00" />
+        <TListItem title="优惠券" extra="5张" arrow />
+        <TListItem title="积分" extra="1000" arrow />
+      </TList>
+    </TCard>
+
+    <TCard title="可点击列表" class="example-section">
+      <TList>
+        <TListItem
+          title="可点击项 1"
+          clickable
+          arrow
+          @click="() => handleItemClick('项目1')"
+        />
+        <TListItem
+          title="可点击项 2"
+          clickable
+          arrow
+          @click="() => handleItemClick('项目2')"
+        />
+        <TListItem
+          title="禁用的项目"
+          clickable
+          disabled
+          arrow
+        />
+      </TList>
+    </TCard>
+
+    <TCard title="自定义间距" class="example-section">
+      <TList spacing="none">
+        <TListItem title="无间距列表项 1" />
+        <TListItem title="无间距列表项 2" />
+      </TList>
+      <view style="margin-top: 20px;">
+        <TList spacing="large">
+          <TListItem title="大间距列表项 1" />
+          <TListItem title="大间距列表项 2" />
+        </TList>
+      </view>
+    </TCard>
+
+    <TCard title="带标题的列表" class="example-section">
+      <TList title="系统设置">
+        <TListItem title="通用" arrow clickable />
+        <TListItem title="账号与安全" arrow clickable />
+        <TListItem title="隐私" arrow clickable />
+      </TList>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

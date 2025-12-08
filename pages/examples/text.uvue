@@ -1,0 +1,107 @@
+<script  setup lang="uts" >
+import TText from '@/components/TText'
+import TCard from '@/components/TCard'
+
+/**
+ * 文本组件示例页面
+ */
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TText 文本组件</text>
+      <text class="example-desc">用于文本展示的增强组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TText>这是一段普通文本</TText>
+    </TCard>
+
+    <TCard title="不同类型" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText type="primary">主要文本 Primary</TText>
+        <TText type="success">成功文本 Success</TText>
+        <TText type="warning">警告文本 Warning</TText>
+        <TText type="danger">危险文本 Danger</TText>
+        <TText type="info">信息文本 Info</TText>
+      </view>
+    </TCard>
+
+    <TCard title="不同大小" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText size="xs">超小号文本 Extra Small</TText>
+        <TText size="sm">小号文本 Small</TText>
+        <TText size="md">中号文本 Medium</TText>
+        <TText size="lg">大号文本 Large</TText>
+        <TText size="xl">超大号文本 Extra Large</TText>
+      </view>
+    </TCard>
+
+    <TCard title="文本修饰" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText bold>加粗文本</TText>
+        <TText italic>斜体文本</TText>
+        <TText underline>下划线文本</TText>
+        <TText lineThrough>删除线文本</TText>
+        <TText bold italic underline>组合修饰文本</TText>
+      </view>
+    </TCard>
+
+    <TCard title="文本对齐" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText align="left">左对齐文本</TText>
+        <TText align="center">居中对齐文本</TText>
+        <TText align="right">右对齐文本</TText>
+      </view>
+    </TCard>
+
+    <TCard title="文本省略" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText ellipsis :lines="1">
+          这是一段很长的文本，当超过一行时会显示省略号。这是一段很长的文本，当超过一行时会显示省略号。
+        </TText>
+        <TText ellipsis :lines="2">
+          这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。
+        </TText>
+      </view>
+    </TCard>
+
+    <TCard title="自定义颜色" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TText color="#f50">自定义颜色文本</TText>
+        <TText color="#2db7f5">自定义颜色文本</TText>
+        <TText color="#87d068">自定义颜色文本</TText>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

@@ -1,0 +1,132 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TLoading from '@/components/TLoading'
+import TCard from '@/components/TCard'
+import TButton from '@/components/TButton'
+
+/**
+ * 加载组件示例页面
+ */
+
+const loading1 = ref<boolean>(true)
+const loading2 = ref<boolean>(false)
+const fullscreenLoading = ref<boolean>(false)
+
+const showFullscreen = (): void => {
+  fullscreenLoading.value = true
+  setTimeout(() => {
+    fullscreenLoading.value = false
+  }, 2000)
+}
+
+const toggleLoading = (): void => {
+  loading2.value = !loading2.value
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TLoading 加载组件</text>
+      <text class="example-desc">显示加载状态</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <view style="position: relative; height: 100px;">
+        <TLoading :loading="loading1" text="加载中..." />
+      </view>
+      <TButton @click="() => loading1 = !loading1" style="margin-top: 10px;">
+        {{ loading1 ? '关闭加载' : '显示加载' }}
+      </TButton>
+    </TCard>
+
+    <TCard title="不同尺寸" class="example-section">
+      <view style="display: flex; gap: 30px;">
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading size="small" />
+        </view>
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading size="medium" />
+        </view>
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading size="large" />
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="自定义颜色" class="example-section">
+      <view style="display: flex; gap: 30px;">
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading color="#409eff" />
+        </view>
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading color="#67c23a" />
+        </view>
+        <view style="position: relative; width: 80px; height: 80px;">
+          <TLoading loading color="#e6a23c" />
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="加载文字" class="example-section">
+      <view style="position: relative; height: 100px;">
+        <TLoading :loading="loading2" text="正在加载数据..." />
+      </view>
+      <TButton @click="toggleLoading" style="margin-top: 10px;">
+        切换加载状态
+      </TButton>
+    </TCard>
+
+    <TCard title="自定义背景" class="example-section">
+      <view style="position: relative; height: 100px;">
+        <TLoading
+          loading
+          text="加载中..."
+          maskBgColor="rgba(0, 0, 0, 0.7)"
+        />
+      </view>
+    </TCard>
+
+    <TCard title="全屏加载" class="example-section">
+      <TButton type="primary" @click="showFullscreen">
+        显示全屏加载
+      </TButton>
+    </TCard>
+
+    <!-- 全屏加载组件 -->
+    <TLoading
+      :loading="fullscreenLoading"
+      fullscreen
+      text="正在加载，请稍候..."
+    />
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

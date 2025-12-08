@@ -1,0 +1,174 @@
+<script  setup lang="uts" >
+import { ref, computed } from 'vue'
+import type { TCardProps } from './type.uts'
+
+/**
+ * TCard 卡片组件
+ * @description 通用卡片容器组件，用于展示内容块
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TCardProps>(), {
+  title: '',
+  subtitle: '',
+  shadow: true,
+  border: false,
+  padding: 'medium',
+  radius: 'medium',
+  customClass: ''
+})
+
+// 定义 emits
+const emit = defineEmits<{
+  click: []
+}>()
+
+/**
+ * 计算卡片样式类
+ */
+const cardClass = computed<string>(() => {
+  const classes: string[] = ['t-card']
+
+  if (props.shadow) {
+    classes.push('t-card--shadow')
+  }
+
+  if (props.border) {
+    classes.push('t-card--border')
+  }
+
+  classes.push(`t-card--padding-${props.padding}`)
+  classes.push(`t-card--radius-${props.radius}`)
+
+  if (props.customClass != '') {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 处理卡片点击
+ */
+const handleClick = (): void => {
+  emit('click')
+}
+</script>
+
+<template>
+  <view :class="cardClass" @click="handleClick">
+    <!-- 卡片头部 -->
+    <view v-if="title || subtitle || $slots.header" class="t-card__header">
+      <slot name="header">
+        <view class="t-card__header-content">
+          <text v-if="title" class="t-card__title">{{ title }}</text>
+          <text v-if="subtitle" class="t-card__subtitle">{{ subtitle }}</text>
+        </view>
+      </slot>
+      <slot name="extra"></slot>
+    </view>
+
+    <!-- 卡片内容 -->
+    <view class="t-card__body">
+      <slot></slot>
+    </view>
+
+    <!-- 卡片底部 -->
+    <view v-if="$slots.footer" class="t-card__footer">
+      <slot name="footer"></slot>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+// 覆盖 uni-view 原生组件的默认样式
+// 使用 uni-view.t-card 确保覆盖原生样式
+uni-view.t-card {
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+  // 重置 uni-view 的默认样式
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: auto;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  overflow: visible;
+
+  &--shadow {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  &--border {
+    border: 1px solid #e4e7ed;
+  }
+
+  &--padding-small {
+    padding: 12px;
+  }
+
+  &--padding-medium {
+    padding: 20px;
+  }
+
+  &--padding-large {
+    padding: 28px;
+  }
+
+  &--radius-none {
+    border-radius: 0;
+  }
+
+  &--radius-small {
+    border-radius: 4px;
+  }
+
+  &--radius-medium {
+    border-radius: 8px;
+  }
+
+  &--radius-large {
+    border-radius: 12px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ebeef5;
+    margin-bottom: 16px;
+  }
+
+  &__header-content {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #303133;
+    line-height: 24px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: #909399;
+    margin-top: 4px;
+    line-height: 20px;
+  }
+
+  &__body {
+    color: #606266;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow:visible
+  }
+
+  &__footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ebeef5;
+  }
+}
+</style>

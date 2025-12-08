@@ -1,0 +1,77 @@
+/**
+ * TSwiper 轮播图组件属性类型定义
+ */
+export type TSwiperProps = {
+  /**
+   * 轮播图高度
+   * @default '200px'
+   */
+  height?: string
+
+  /**
+   * 是否自动切换
+   * @default true
+   */
+  autoplay?: boolean
+
+  /**
+   * 自动切换时间间隔（毫秒）
+   * @default 3000
+   */
+  interval?: number
+
+  /**
+   * 滑动动画时长（毫秒）
+   * @default 300
+   */
+  duration?: number
+
+  /**
+   * 是否循环播放
+   * @default true
+   */
+  circular?: boolean
+
+  /**
+   * 指示器类型
+   * @default 'dots'
+   */
+  indicatorType?: 'dots' | 'number' | 'none'
+
+  /**
+   * 指示器位置
+   * @default 'bottom'
+   */
+  indicatorPosition?: 'top' | 'bottom' | 'left' | 'right'
+
+  /**
+   * 指示器颜色
+   */
+  indicatorColor?: string
+
+  /**
+   * 指示器激活颜色
+   */
+  indicatorActiveColor?: string
+
+  /**
+   * 轮播方向
+   * @default 'horizontal'
+   */
+  direction?: 'horizontal' | 'vertical'
+}
+
+/**
+ * TSwiper 轮播图组件事件定义
+ */
+export type TSwiperEmits = {
+  /**
+   * 当前轮播索引改变时触发
+   */
+  change: (index: number) => void
+
+  /**
+   * 点击轮播项时触发
+   */
+  click: (index: number) => void
+}

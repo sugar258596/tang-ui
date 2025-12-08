@@ -1,0 +1,138 @@
+/**
+ * TInput 组件类型定义
+ */
+
+/**
+ * 输入框类型
+ */
+export type InputType = 'text' | 'number' | 'password' | 'tel' | 'textarea'
+
+/**
+ * 输入框尺寸
+ */
+export type InputSize = 'large' | 'medium' | 'small' | 'mini'
+
+/**
+ * 输入框 Props 接口
+ */
+export interface TInputProps {
+  /**
+   * 输入框类型
+   * @default 'text'
+   */
+  type?: InputType
+
+  /**
+   * 输入框尺寸
+   * @default 'medium'
+   */
+  size?: InputSize
+
+  /**
+   * 占位文本
+   */
+  placeholder?: string
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 是否只读
+   * @default false
+   */
+  readonly?: boolean
+
+  /**
+   * 是否显示清除按钮
+   * @default false
+   */
+  clearable?: boolean
+
+  /**
+   * 是否显示字数统计
+   * @default false
+   */
+  showCount?: boolean
+
+  /**
+   * 最大输入长度
+   * @default -1
+   */
+  maxlength?: number
+
+  /**
+   * 前缀图标
+   */
+  prefixIcon?: string
+
+  /**
+   * 后缀图标
+   */
+  suffixIcon?: string
+
+  /**
+   * 文本域行数
+   * @default 3
+   */
+  rows?: number
+
+  /**
+   * 文本域自动高度
+   * @default false
+   */
+  autoHeight?: boolean
+
+  /**
+   * 自动获取焦点
+   * @default false
+   */
+  autoFocus?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * 输入框事件接口
+ */
+export interface TInputEmits {
+  /**
+   * 输入事件
+   */
+  input: (value: string | number) => void
+
+  /**
+   * 值改变事件
+   */
+  change: (value: string | number) => void
+
+  /**
+   * 获得焦点事件
+   */
+  focus: () => void
+
+  /**
+   * 失去焦点事件
+   */
+  blur: () => void
+
+  /**
+   * 清除事件
+   */
+  clear: () => void
+
+  /**
+   * 确认事件
+   */
+  confirm: () => void
+}

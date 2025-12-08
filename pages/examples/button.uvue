@@ -1,0 +1,126 @@
+<script  setup lang="uts" >
+import { ref } from 'vue'
+import TButton from '@/components/TButton'
+import TCard from '@/components/TCard'
+
+/**
+ * 按钮组件示例页面
+ */
+
+const loading = ref<boolean>(false)
+
+const handleClick = (): void => {
+  console.log('按钮被点击')
+}
+
+const handleLoadingClick = (): void => {
+  loading.value = true
+  setTimeout(() => {
+    loading.value = false
+  }, 2000)
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TButton 按钮组件</text>
+      <text class="example-desc">按钮用于触发操作</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <view class="button-row">
+        <TButton type="primary" @click="handleClick">主要按钮</TButton>
+        <TButton type="success">成功按钮</TButton>
+        <TButton type="warning">警告按钮</TButton>
+        <TButton type="danger">危险按钮</TButton>
+        <TButton type="info">信息按钮</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="朴素按钮" class="example-section">
+      <view class="button-row">
+        <TButton type="primary" plain>朴素按钮</TButton>
+        <TButton type="success" plain>成功按钮</TButton>
+        <TButton type="warning" plain>警告按钮</TButton>
+        <TButton type="danger" plain>危险按钮</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="按钮尺寸" class="example-section">
+      <view class="button-row">
+        <TButton size="large">大型按钮</TButton>
+        <TButton size="medium">中等按钮</TButton>
+        <TButton size="small">小型按钮</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="禁用状态" class="example-section">
+      <view class="button-row">
+        <TButton disabled>禁用按钮</TButton>
+        <TButton type="primary" disabled>禁用按钮</TButton>
+        <TButton type="success" disabled>禁用按钮</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="加载状态" class="example-section">
+      <view class="button-row">
+        <TButton :loading="loading" @click="handleLoadingClick">
+          {{ loading ? '加载中...' : '点击加载' }}
+        </TButton>
+        <TButton type="primary" loading>加载中</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="圆角按钮" class="example-section">
+      <view class="button-row">
+        <TButton round>圆角按钮</TButton>
+        <TButton type="primary" round>主要按钮</TButton>
+        <TButton type="success" round>成功按钮</TButton>
+      </view>
+    </TCard>
+
+    <TCard title="块级按钮" class="example-section">
+      <TButton type="primary" block>块级按钮</TButton>
+      <view style="margin-top: 10px;">
+        <TButton type="success" block>块级按钮</TButton>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+</style>

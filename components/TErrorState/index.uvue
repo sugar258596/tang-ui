@@ -1,0 +1,57 @@
+<script  setup lang="uts" >
+type ErrorStateProps = {
+	/** 是否为错误状态 */
+	isError?: boolean
+	/** 错误标题 */
+	errorTitle?: string
+	/** 非错误标题 */
+	normalTitle?: string
+	/** 错误描述 */
+	errorDesc?: string
+	/** 非错误描述 */
+	normalDesc?: string
+	/** 是否显示重试按钮 */
+	showRetry?: boolean
+	/** 重试按钮文字 */
+	retryText?: string
+}
+
+const props = withDefaults(defineProps<ErrorStateProps>(), {
+	isError: false,
+	errorTitle: '加载失败',
+	normalTitle: '数据不存在',
+	errorDesc: '请检查网络后重试',
+	normalDesc: '请返回上一页重新操作',
+	showRetry: true,
+	retryText: '重新加载'
+})
+
+const emit = defineEmits<{
+	retry: []
+}>()
+
+const handleRetry = () => {
+	emit('retry')
+}
+</script>
+
+<template>
+	<view class="flex flex-col items-center justify-center" style="padding: 200rpx 0;">
+		<text style="font-size: 120rpx; margin-bottom: 32rpx;">😕</text>
+		<text class="text-gray-500 font-medium mb-2" style="font-size: 32rpx;">
+			{{ isError ? errorTitle : normalTitle }}
+		</text>
+		<text class="text-gray-400" style="font-size: 26rpx;">
+			{{ isError ? errorDesc : normalDesc }}
+		</text>
+		<view v-if="isError && showRetry"
+			class="bg-teal-500 text-white rounded-full px-8 mt-6"
+			style="padding: 24rpx 64rpx;"
+			@click="handleRetry">
+			<text class="text-white font-medium" style="font-size: 28rpx;">{{ retryText }}</text>
+		</view>
+	</view>
+</template>
+
+<style lang="scss" scoped>
+</style>

@@ -1,0 +1,21 @@
+/**
+ * TSlider 组件类型定义
+ */
+
+export interface TSliderProps {
+  modelValue?: number
+  min?: number
+  max?: number
+  step?: number
+  disabled?: boolean
+  showValue?: boolean
+  activeColor?: string
+  inactiveColor?: string
+  customClass?: string
+  customStyle?: string
+}
+
+export interface TSliderEmits {
+  'update:modelValue': (value: number) => void
+  change: (value: number) => void
+}

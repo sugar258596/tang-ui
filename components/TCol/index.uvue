@@ -1,0 +1,82 @@
+<script setup lang="uts">
+import { inject, computed } from 'vue'
+
+/**
+ * TCol 栅格列组件
+ * @description 基于 24 栅格系统的列组件，需配合 TRow 使用
+ */
+
+// Props 定义
+interface Props {
+  span?: number
+  offset?: number
+  customClass?: string
+  customStyle?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  span: 24,
+  offset: 0,
+  customClass: '',
+  customStyle: ''
+})
+
+// 注入父组件的 gutter
+const rowGutter = inject<number>('rowGutter', 0)
+
+/**
+ * 计算容器样式
+ */
+const containerStyle = computed((): string => {
+  const styles: string[] = []
+
+  // 宽度计算（基于 24 栅格）
+  const width = (props.span / 24) * 100
+  styles.push(`width: ${width}%`)
+
+  // 偏移
+  if (props.offset > 0) {
+    const marginLeft = (props.offset / 24) * 100
+    styles.push(`margin-left: ${marginLeft}%`)
+  }
+
+  // 列间距
+  if (rowGutter > 0) {
+    const padding = rowGutter / 2
+    styles.push(`padding-left: ${padding}px`)
+    styles.push(`padding-right: ${padding}px`)
+  }
+
+  // 自定义样式
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算容器类名
+ */
+const containerClasses = computed((): string => {
+  const classes: string[] = ['t-col']
+
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+</script>
+
+<template>
+  <view :class="containerClasses" :style="containerStyle">
+    <slot></slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-col {
+  box-sizing: border-box;
+}
+</style>

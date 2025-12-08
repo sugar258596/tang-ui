@@ -1,0 +1,386 @@
+<script  setup lang="uts" >
+import { computed } from 'vue'
+import type { TDialogProps } from './type.uts'
+
+/**
+ * TDialog 对话框组件
+ * @description 模态对话框组件
+ */
+
+// Props 定义 (从 type.uts 导入，排除 visible)
+type Props = Omit<TDialogProps, 'visible'>
+
+const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  content: '',
+  width: '80%',
+  mask: true,
+  maskClosable: true,
+  showClose: true,
+  showCancel: true,
+  confirmText: '确定',
+  cancelText: '取消',
+  confirmType: 'primary'
+})
+
+// 使用 defineModel 管理显示状态 (v-model)
+const modelValue = defineModel<boolean>({ default: false })
+
+// 定义 emits
+const emit = defineEmits<{
+  confirm: []
+  cancel: []
+  close: []
+}>()
+
+/**
+ * 计算对话框样式
+ */
+const dialogStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  if (props.width != '') {
+    styles.push(`width: ${props.width}`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算确认按钮样式类
+ */
+const confirmBtnClass = computed<string>(() => {
+  const classes: string[] = ['t-dialog__btn', 't-dialog__btn--confirm']
+
+  classes.push(`t-dialog__btn--${props.confirmType}`)
+
+  return classes.join(' ')
+})
+
+/**
+ * 处理遮罩层点击
+ */
+const handleMaskClick = (): void => {
+  if (props.maskClosable) {
+    handleClose()
+  }
+}
+
+/**
+ * 处理确认
+ */
+const handleConfirm = (): void => {
+  emit('confirm')
+  handleClose()
+}
+
+/**
+ * 处理取消
+ */
+const handleCancel = (): void => {
+  emit('cancel')
+  handleClose()
+}
+
+/**
+ * 处理关闭
+ */
+const handleClose = (): void => {
+  modelValue.value = false
+  emit('close')
+}
+</script>
+
+<template>
+  <transition name="t-dialog-fade" appear>
+    <view v-if="modelValue" class="t-dialog">
+      <!-- 遮罩层 -->
+      <transition name="t-dialog-mask" appear>
+        <view v-if="mask" class="t-dialog__mask" @click="handleMaskClick"></view>
+      </transition>
+
+      <!-- 对话框主体 -->
+      <view class="t-dialog__wrapper">
+        <transition name="t-dialog-zoom" appear>
+          <view class="t-dialog__content" :style="dialogStyle">
+            <!-- 头部 -->
+            <view v-if="title || showClose" class="t-dialog__header">
+              <!-- 关闭按钮（定位方式，不占用文档流） -->
+              <view v-if="showClose" class="t-dialog__close" @click="handleClose">
+                <text class="t-dialog__close-icon">×</text>
+              </view>
+
+              <!-- 标题（居中，支持插槽） -->
+              <view class="t-dialog__title">
+                <slot name="title">
+                  <text v-if="title" class="t-dialog__title-text">{{ title }}</text>
+                </slot>
+              </view>
+            </view>
+
+            <!-- 内容 -->
+            <view class="t-dialog__body">
+              <slot>
+                <text class="t-dialog__text">{{ content }}</text>
+              </slot>
+            </view>
+
+            <!-- 底部按钮 -->
+            <view class="t-dialog__footer">
+                <slot name="footer">
+                  <view v-if="showCancel" class="t-dialog__btn t-dialog__btn--cancel" @click="handleCancel">
+                    <text class="t-dialog__btn-text">{{ cancelText }}</text>
+                  </view>
+                  <view :class="confirmBtnClass" @click="handleConfirm">
+                    <text class="t-dialog__btn-text t-dialog__btn-text--confirm">{{ confirmText }}</text>
+                  </view>
+                </slot>
+            </view>
+          </view>
+        </transition>
+      </view>
+    </view>
+  </transition>
+</template>
+
+<style lang="scss" scoped>
+.t-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &__wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  &__content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 280px;
+    max-width: 90%;
+  }
+
+  /* 头部：使用定位布局 */
+  &__header {
+    position: relative;
+    padding: 16px 20px;
+    border-bottom: 1px solid #ebeef5;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 关闭按钮：绝对定位 */
+  &__close {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &:active {
+      background-color: #e4e7ed;
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    &-icon {
+      font-size: 24px;
+      color: #909399;
+      font-weight: bold;
+      line-height: 1;
+    }
+  }
+
+  /* 标题容器：居中 */
+  &__title {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #303133;
+      line-height: 1.4;
+    }
+  }
+
+  &__body {
+    padding: 20px;
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #606266;
+    line-height: 1.5;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px 20px;
+    border-top: 1px solid #ebeef5;
+  }
+
+  &__btn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 12px;
+    transition: all 0.3s;
+
+    &--cancel {
+      background-color: #ffffff;
+      border: 1px solid #dcdfe6;
+      color: #606266;
+    }
+
+    &--primary {
+      background-color: #409eff;
+      color: #ffffff;
+    }
+
+    &--success {
+      background-color: #67c23a;
+      color: #ffffff;
+    }
+
+    &--warning {
+      background-color: #e6a23c;
+      color: #ffffff;
+    }
+
+    &--danger {
+      background-color: #f56c6c;
+      color: #ffffff;
+    }
+
+    &-text {
+      font-size: 14px;
+
+      &--confirm {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+/* 渐隐动画 - 对话框整体 */
+.t-dialog-fade-enter-active {
+  animation: dialog-fade-in 0.3s ease-out;
+}
+
+.t-dialog-fade-leave-active {
+  animation: dialog-fade-out 0.3s ease-in;
+}
+
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* 遮罩层渐隐动画 */
+.t-dialog-mask-enter-active {
+  animation: mask-fade-in 0.3s ease-out;
+}
+
+.t-dialog-mask-leave-active {
+  animation: mask-fade-out 0.3s ease-in;
+}
+
+@keyframes mask-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mask-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* 内容区域缩放动画 */
+.t-dialog-zoom-enter-active {
+  animation: content-zoom-in 0.3s cubic-bezier(0.12, 0.8, 0.32, 1);
+}
+
+.t-dialog-zoom-leave-active {
+  animation: content-zoom-out 0.25s cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes content-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes content-zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+</style>

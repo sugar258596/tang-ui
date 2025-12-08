@@ -1,0 +1,156 @@
+<script  setup lang="uts" >
+import { computed, ref } from 'vue'
+import type { TAvatarProps } from './type.uts'
+
+/**
+ * TAvatar 头像组件
+ * @description 用于展示用户头像或图标
+ */
+
+// 定义 props
+const props = withDefaults(defineProps<TAvatarProps>(), {
+  src: '',
+  size: 'medium',
+  shape: 'circle',
+  alt: '',
+  bgColor: '#c0c4cc',
+  color: '#ffffff',
+  fit: 'cover'
+})
+
+// 定义 emits
+const emit = defineEmits<{
+  click: []
+  error: []
+}>()
+
+// 图片加载失败标记
+const hasLoadError = ref<boolean>(false)
+
+/**
+ * 计算头像大小
+ */
+const avatarSize = computed<number>(() => {
+  if (typeof props.size === 'number') {
+    return props.size
+  }
+
+  const sizeMap = {
+    small: 32,
+    medium: 40,
+    large: 56
+  }
+
+  return sizeMap[props.size] || 40
+})
+
+/**
+ * 计算头像样式类
+ */
+const avatarClass = computed<string>(() => {
+  const classes: string[] = ['t-avatar']
+
+  classes.push(`t-avatar--${props.shape}`)
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算头像样式
+ */
+const avatarStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  const size = avatarSize.value
+  styles.push(`width: ${size}px`)
+  styles.push(`height: ${size}px`)
+
+  if (!props.src || hasLoadError.value) {
+    styles.push(`background-color: ${props.bgColor}`)
+  }
+
+  return styles.join('; ')
+})
+
+/**
+ * 计算文字样式
+ */
+const textStyle = computed<string>(() => {
+  const styles: string[] = []
+
+  styles.push(`color: ${props.color}`)
+  styles.push(`font-size: ${avatarSize.value / 2}px`)
+
+  return styles.join('; ')
+})
+
+/**
+ * 处理点击事件
+ */
+const handleClick = (): void => {
+  emit('click')
+}
+
+/**
+ * 处理图片加载失败
+ */
+const handleError = (): void => {
+  hasLoadError.value = true
+  emit('error')
+}
+
+/**
+ * 获取显示的文字（取首字符）
+ */
+const displayText = computed<string>(() => {
+  if (props.alt) {
+    return props.alt.charAt(0).toUpperCase()
+  }
+  return ''
+})
+</script>
+
+<template>
+  <view :class="avatarClass" :style="avatarStyle" @click="handleClick">
+    <image
+      v-if="src && !hasLoadError"
+      class="t-avatar__image"
+      :src="src"
+      :mode="fit"
+      @error="handleError"
+    />
+    <text v-else-if="alt" class="t-avatar__text" :style="textStyle">
+      {{ displayText }}
+    </text>
+    <slot v-else></slot>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  &--square {
+    border-radius: 4px;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__text {
+    font-weight: 500;
+    text-align: center;
+  }
+}
+</style>

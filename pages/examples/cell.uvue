@@ -1,0 +1,130 @@
+<script  setup lang="uts" >
+import TCell from '@/components/TCell'
+import TCard from '@/components/TCard'
+
+/**
+ * 单元格组件示例页面
+ */
+
+const handleClick = (): void => {
+  console.log('单元格被点击')
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TCell 单元格组件</text>
+      <text class="example-desc">单元格列表项组件</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TCell title="单元格" value="内容" />
+      <TCell title="单元格" value="内容" description="描述信息" />
+    </TCard>
+
+    <TCard title="展示图标" class="example-section">
+      <TCell title="设置" icon="⚙️" />
+      <TCell title="消息" icon="💬" value="3" />
+      <TCell title="通知" icon="🔔" value="开启" />
+    </TCard>
+
+    <TCard title="展示箭头" class="example-section">
+      <TCell title="个人信息" isLink />
+      <TCell title="系统设置" isLink value="进入" />
+      <TCell title="关于我们" isLink />
+    </TCard>
+
+    <TCard title="可点击单元格" class="example-section">
+      <TCell title="可点击单元格" isLink clickable @click="handleClick" />
+      <TCell title="不可点击单元格" />
+    </TCard>
+
+    <TCard title="自定义大小" class="example-section">
+      <TCell title="大号单元格" size="large" isLink />
+      <TCell title="默认单元格" isLink />
+      <TCell title="小号单元格" size="small" isLink />
+    </TCard>
+
+    <TCard title="自定义内容" class="example-section">
+      <TCell>
+        <template #title>
+          <view style="display: flex; align-items: center;">
+            <text style="font-size: 20px; margin-right: 8px;">🏠</text>
+            <text>自定义标题</text>
+          </view>
+        </template>
+        <template #value>
+          <view style="display: flex; align-items: center;">
+            <text style="color: #67c23a;">已认证</text>
+            <text style="margin-left: 8px;">✓</text>
+          </view>
+        </template>
+      </TCell>
+    </TCard>
+
+    <TCard title="分组" class="example-section">
+      <view class="cell-group">
+        <text class="group-title">基础设置</text>
+        <TCell title="账号管理" isLink />
+        <TCell title="隐私设置" isLink />
+        <TCell title="通知设置" isLink value="已开启" />
+      </view>
+      <view class="cell-group" style="margin-top: 20px;">
+        <text class="group-title">其他</text>
+        <TCell title="清除缓存" isLink value="12.3MB" />
+        <TCell title="关于我们" isLink />
+        <TCell title="退出登录" isLink />
+      </view>
+    </TCard>
+
+    <TCard title="必填标记" class="example-section">
+      <TCell title="用户名" required />
+      <TCell title="手机号" required value="请输入" />
+      <TCell title="邮箱" value="选填" />
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+
+.cell-group {
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.group-title {
+  display: block;
+  padding: 12px 16px 8px;
+  font-size: 14px;
+  color: #909399;
+  background-color: #f5f5f5;
+}
+</style>

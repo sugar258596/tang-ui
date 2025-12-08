@@ -1,0 +1,383 @@
+<script setup lang="uts">
+  import type {TabItem} from './type'
+ 
+
+/**
+ * Tabs 组件属性
+ */
+type TabsProps = {
+  /** 选项卡数据 */
+  items: TabItem[]
+  /** 当前激活的 tab key */
+  activeKey?: string
+  /** 默认激活的 tab key */
+  defaultActiveKey?: string
+  /** 选项卡类型 */
+  type?: "line" | "card"
+  /** 选项卡位置 */
+  tabPosition?: "top" | "bottom"
+  /** 是否居中显示 */
+  centered?: boolean
+  /** 是否可滑动 */
+  scrollable?: boolean
+  /** 激活标签的颜色 */
+  activeColor?: string
+  /** 未激活标签的颜色 */
+  inactiveColor?: string
+  /** 标签大小 */
+  size?: "small" | "medium" | "large"
+  /** 是否显示动画 */
+  animated?: boolean
+}
+
+// v-model 绑定当前激活 key
+const model = defineModel()
+
+const props = withDefaults(defineProps<TabsProps>(), {
+  items: () => [],
+  type: 'line',
+  tabPosition: 'top',
+  centered: false,
+  scrollable: true,
+  activeColor: '#00bba7',
+  inactiveColor: '#666666',
+  size: 'medium',
+  animated: true,
+})
+
+const emit = defineEmits<{
+  /** 切换标签时触发 */
+  change: [key: string |number]
+  /** 当前激活的 tab 改变时触发 */
+  'update:activeKey': [key: string |number]
+  /** 点击标签时触发 */
+  tabClick: [key: string |number, item: TabItem]
+}>()
+
+/** 获取默认激活项的 key */
+const getDefaultKey = (): string => {
+  if (props.defaultActiveKey) {
+    return props.defaultActiveKey
+  }
+  if (props.items.length > 0) {
+    const firstEnabled = props.items.find(item => !item.disabled)
+    return firstEnabled ? firstEnabled.key : props.items[0].key
+  }
+  return ''
+}
+
+/** 初始化默认激活项 */
+onMounted(() => {
+  if (!model.value) {
+    model.value = getDefaultKey()
+  }
+})
+
+/** 计算当前激活项的索引 */
+const activeIndex = computed(() => {
+  return props.items.findIndex(item => item.key === model.value)
+})
+
+/** 获取当前激活项的 DOM 元素 */
+const activeItemRef = ref<UniElement | null>(null)
+const navListRef = ref<UniElement | null>(null)
+
+/** 将十六进制颜色转换为 RGB */
+const hexToRgb = (hex: string): string => {
+  // 移除 # 号
+  hex = hex.replace('#', '')
+
+  // 处理缩写形式 (#fff)
+  if (hex.length === 3) {
+    hex = hex.split('').map(char => char + char).join('')
+  }
+
+  // 转换为 RGB
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+
+  return `${r}, ${g}, ${b}`
+}
+
+/** 计算激活颜色的 RGB 值 */
+const activeColorRgb = computed(() => {
+  // 如果是 rgba 格式，直接提取 RGB 部分
+  if (props.activeColor.startsWith('rgb')) {
+    const match = props.activeColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+    if (match) {
+      return `${match[1]}, ${match[2]}, ${match[3]}`
+    }
+  }
+  // 如果是十六进制颜色，转换为 RGB
+  return hexToRgb(props.activeColor)
+})
+
+/** 点击切换 tab */
+const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
+  if (item.disabled) return
+
+  model.value = item.key
+  emit('update:activeKey', item.key)
+  emit('change', item.key)
+  emit('tabClick', item.key, item)
+
+  // 滚动到激活项
+  if (props.scrollable) {
+    nextTick(() => {
+    })
+  }
+}
+
+</script>
+
+<template>
+  <view
+    class="nav-tabs"
+    :class="[type, centered ? 'centered' : '', `size-${size}`]"
+    :style="{
+      '--active-color': activeColor,
+      '--active-color-rgb': activeColorRgb
+    }"
+  >
+    <scroll-view
+      v-if="tabPosition === 'top'"
+      ref="navListRef"
+      class="nav-scroll"
+      :scroll-x="true"
+      :show-scrollbar="false"
+    >
+      <view class="nav-list">
+        <view
+          v-for="(item, index) in items"
+          :key="item.key"
+          class="nav-item"
+          :class="{
+            active: item.key === model,
+            disabled: item.disabled
+          }"
+          :ref="'navItem' + index"
+          @click="handleClick(item, index, $event)"
+        >
+          <image v-if="item.icon" class="nav-icon" :src="item.icon" mode="aspectFit" />
+
+          <text
+            class="nav-label"
+            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+          >
+            {{ item.label }}
+          </text>
+
+          <view v-if="item.badge" class="nav-badge">
+            {{ item.badge }}
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 内容插槽 -->
+    <view class="tab-content">
+      <slot :active-key="model"></slot>
+    </view>
+
+    <!-- 底部标签 -->
+    <scroll-view
+      v-if="tabPosition === 'bottom'"
+      ref="navListRef"
+      class="nav-scroll"
+      :scroll-x="true"
+      :show-scrollbar="false"
+    >
+      <view class="nav-list">
+        <view
+          v-for="(item, index) in items"
+          :key="item.key"
+          class="nav-item"
+          :class="{
+            active: item.key === model,
+            disabled: item.disabled
+          }"
+          @click="handleClick(item, index, $event)"
+        >
+          <image v-if="item.icon" class="nav-icon" :src="item.icon" mode="aspectFit" />
+
+          <text
+            class="nav-label"
+            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+          >
+            {{ item.label }}
+          </text>
+
+          <view v-if="item.badge" class="nav-badge">
+            {{ item.badge }}
+          </view>
+        </view>
+
+        <!-- 滑动指示器 -->
+        <view
+          v-if="type === 'line' && animated && activeIndex >= 0"
+          class="nav-line"
+          :style="[{ backgroundColor: activeColor }]"
+        ></view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<style scoped lang="scss">
+.nav-tabs {
+  width: 100%;
+  background-color: #fff;
+  overflow: hidden;
+
+  &.centered {
+    .nav-list {
+      justify-content: center;
+    }
+  }
+
+  .nav-scroll {
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    position: relative;
+    padding: 20rpx 0;
+    overflow: overlay;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .nav-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16rpx 28rpx;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center;
+
+    &.active {
+      transform: scale(1.05);
+    }
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nav-icon {
+      width: 36rpx;
+      height: 36rpx;
+      margin-right: 8rpx;
+      transition: all 0.3s;
+    }
+
+    .nav-label {
+      font-size: 28rpx;
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: 6rpx;
+      right: 12rpx;
+      min-width: 28rpx;
+      height: 28rpx;
+      border-radius: 14rpx;
+      background-color: #f56c6c;
+      color: #fff;
+      font-size: 20rpx;
+      line-height: 28rpx;
+      text-align: center;
+      padding: 0 6rpx;
+      transform: translateX(30%);
+    }
+  }
+
+  /* 滑动指示器 */
+  .nav-line {
+    position: absolute;
+    bottom: 0;
+    height: 4rpx;
+    border-radius: 2rpx;
+    background-color: var(--active-color);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 0;
+
+    &.animated {
+      opacity: 1;
+    }
+  }
+
+  /* 卡片样式 */
+  &.card {
+    .nav-list {
+      padding: 16rpx 24rpx;
+      background-color: #f5f5f5;
+      border-radius: 12rpx 12rpx 0 0;
+    }
+
+    .nav-item {
+      border: 1rpx solid #e8e8e8;
+      border-radius: 8rpx;
+      margin: 0 8rpx;
+      padding: 16rpx 32rpx;
+      background-color: #fff;
+      transition: all 0.3s ease;
+
+      &.active {
+        /* 使用 CSS 变量控制的激活颜色 */
+        background-color: rgba(var(--active-color-rgb, 0, 187, 167), 0.1);
+        border-color: var(--active-color);
+        color: var(--active-color);
+        transform: translateY(-2rpx);
+        box-shadow: 0 4rpx 12rpx rgba(var(--active-color-rgb, 0, 187, 167), 0.2);
+      }
+    }
+  }
+
+  /* 尺寸变体 */
+  &.size-small .nav-item {
+    padding: 12rpx 20rpx;
+
+    .nav-label {
+      font-size: 24rpx;
+    }
+  }
+
+  &.size-large .nav-item {
+    padding: 20rpx 40rpx;
+
+    .nav-label {
+      font-size: 32rpx;
+    }
+  }
+
+  /* 底部位置 */
+  &[tab-position="bottom"] {
+    flex-direction: column-reverse;
+
+    .nav-list {
+      border-top: 1rpx solid #e8e8e8;
+      border-bottom: none;
+    }
+
+    .nav-line {
+      top: 0;
+      bottom: auto;
+    }
+  }
+
+  .tab-content {
+    background-color: #fff;
+  }
+}
+</style>

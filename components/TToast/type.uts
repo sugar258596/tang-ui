@@ -1,0 +1,14 @@
+/**
+ * TToast 组件类型定义
+ */
+
+export type ToastType = 'text' | 'success' | 'fail' | 'loading'
+export type ToastPosition = 'top' | 'center' | 'bottom'
+
+export interface ToastOptions {
+  message?: string
+  type?: ToastType
+  duration?: number
+  position?: ToastPosition
+  mask?: boolean
+}

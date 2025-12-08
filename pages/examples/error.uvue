@@ -1,0 +1,128 @@
+<script  setup lang="uts" >
+import TErrorState from '@/components/TErrorState'
+import TCard from '@/components/TCard'
+import TButton from '@/components/TButton'
+
+/**
+ * 错误状态组件示例页面
+ */
+
+const handleRetry = (): void => {
+  console.log('重试操作')
+}
+</script>
+
+<template>
+  <view class="example-page">
+    <view class="example-header">
+      <text class="example-title">TErrorState 错误状态组件</text>
+      <text class="example-desc">用于展示错误状态</text>
+    </view>
+
+    <TCard title="基础用法" class="example-section">
+      <TErrorState />
+    </TCard>
+
+    <TCard title="自定义错误信息" class="example-section">
+      <TErrorState
+        title="加载失败"
+        message="网络连接异常，请检查网络设置"
+      />
+    </TCard>
+
+    <TCard title="404 错误" class="example-section">
+      <TErrorState
+        type="404"
+        title="页面不存在"
+        message="抱歉，您访问的页面不存在"
+      />
+    </TCard>
+
+    <TCard title="500 错误" class="example-section">
+      <TErrorState
+        type="500"
+        title="服务器错误"
+        message="服务器开小差了，请稍后再试"
+      />
+    </TCard>
+
+    <TCard title="网络错误" class="example-section">
+      <TErrorState
+        type="network"
+        title="网络异常"
+        message="请检查您的网络连接"
+      />
+    </TCard>
+
+    <TCard title="带操作按钮" class="example-section">
+      <TErrorState
+        title="加载失败"
+        message="数据加载失败，请重试"
+        showButton
+        buttonText="重新加载"
+        @retry="handleRetry"
+      />
+    </TCard>
+
+    <TCard title="自定义图标" class="example-section">
+      <TErrorState
+        icon="⚠️"
+        title="操作失败"
+        message="请稍后重试"
+      />
+    </TCard>
+
+    <TCard title="自定义插槽" class="example-section">
+      <TErrorState>
+        <template #icon>
+          <text style="font-size: 48px;">😵</text>
+        </template>
+        <template #title>
+          <text style="font-size: 20px; font-weight: bold; color: #f56c6c;">
+            出错了！
+          </text>
+        </template>
+        <template #message>
+          <text style="color: #909399;">
+            这是通过插槽自定义的错误信息
+          </text>
+        </template>
+        <template #footer>
+          <view style="display: flex; gap: 10px; margin-top: 20px;">
+            <TButton size="small">返回</TButton>
+            <TButton type="primary" size="small">重试</TButton>
+          </view>
+        </template>
+      </TErrorState>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.example-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.example-header {
+  margin-bottom: 20px;
+}
+
+.example-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.example-desc {
+  font-size: 14px;
+  color: #909399;
+}
+
+.example-section {
+  margin-bottom: 20px;
+}
+</style>

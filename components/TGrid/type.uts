@@ -1,0 +1,77 @@
+/**
+ * TGrid 组件类型定义
+ */
+
+/**
+ * TGrid Props 接口
+ */
+export interface TGridProps {
+  /**
+   * 列数
+   * @default 4
+   */
+  columns?: number
+
+  /**
+   * 间距
+   * @default 0
+   */
+  gap?: number | string
+
+  /**
+   * 是否显示边框
+   * @default false
+   */
+  border?: boolean
+
+  /**
+   * 边框颜色
+   * @default '#e0e0e0'
+   */
+  borderColor?: string
+
+  /**
+   * 是否正方形格子
+   * @default false
+   */
+  square?: boolean
+
+  /**
+   * 是否居中显示内容
+   * @default true
+   */
+  center?: boolean
+
+  /**
+   * 是否可点击
+   * @default false
+   */
+  clickable?: boolean
+
+  /**
+   * 图标大小
+   * @default '28px'
+   */
+  iconSize?: string | number
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * TGrid 事件接口
+ */
+export interface TGridEmits {
+  /**
+   * 点击格子事件
+   * @param index 格子索引
+   */
+  click: (index: number) => void
+}

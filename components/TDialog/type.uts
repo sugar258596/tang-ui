@@ -1,0 +1,84 @@
+/**
+ * TDialog 对话框组件属性类型定义
+ */
+export type TDialogProps = {
+  /**
+   * 是否显示对话框
+   * @default false
+   */
+  visible?: boolean
+
+  /**
+   * 对话框标题
+   */
+  title?: string
+
+  /**
+   * 对话框内容
+   */
+  content?: string
+
+  /**
+   * 对话框宽度
+   */
+  width?: string
+
+  /**
+   * 是否显示遮罩层
+   * @default true
+   */
+  mask?: boolean
+
+  /**
+   * 是否点击遮罩关闭
+   * @default true
+   */
+  maskClosable?: boolean
+
+  /**
+   * 是否显示关闭按钮
+   * @default true
+   */
+  showClose?: boolean
+
+  /**
+   * 是否显示取消按钮
+   * @default true
+   */
+  showCancel?: boolean
+
+  /**
+   * 确认按钮文字
+   * @default "确定"
+   */
+  confirmText?: string
+
+  /**
+   * 取消按钮文字
+   * @default "取消"
+   */
+  cancelText?: string
+
+  /**
+   * 确认按钮类型
+   * @default "primary"
+   */
+  confirmType?: 'primary' | 'success' | 'warning' | 'danger'
+}
+
+export type TDialogEmits = {
+  /**
+   * 确认时触发
+   */
+  confirm: () => void
+
+  /**
+   * 取消时触发
+   */
+  cancel: () => void
+
+  /**
+   * 关闭时触发
+   */
+  close: () => void
+}

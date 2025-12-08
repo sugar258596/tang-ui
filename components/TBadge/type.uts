@@ -1,0 +1,48 @@
+/**
+ * TBadge 徽标组件属性类型定义
+ */
+export type TBadgeProps = {
+  /**
+   * 显示的数值
+   */
+  value?: number | string
+
+  /**
+   * 最大值，超过最大值显示 max+
+   * @default 99
+   */
+  max?: number
+
+  /**
+   * 是否显示小圆点
+   * @default false
+   */
+  isDot?: boolean
+
+  /**
+   * 是否隐藏徽标
+   * @default false
+   */
+  hidden?: boolean
+
+  /**
+   * 徽标类型
+   * @default "danger"
+   */
+  type?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
+
+  /**
+   * 自定义背景色
+   */
+  bgColor?: string
+
+  /**
+   * 自定义文字颜色
+   */
+  color?: string
+
+  /**
+   * 偏移量 [x, y]
+   */
+  offset?: [number, number]
+}

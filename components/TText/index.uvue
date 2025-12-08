@@ -1,0 +1,257 @@
+
+
+<script  setup lang="uts" >
+import { computed } from 'vue'
+import type { TextType, TextSize, TextWeight, TextAlign } from './type.uts'
+
+/**
+ * TText 文本组件
+ * @description 支持多种类型、尺寸、粗细的文本组件
+ */
+
+// Props 定义
+interface Props {
+  text?: string
+  type?: TextType
+  size?: TextSize
+  weight?: TextWeight
+  align?: TextAlign
+  color?: string
+  lineHeight?: number | string
+  maxLines?: number
+  ellipsis?: boolean
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  strikethrough?: boolean
+  customClass?: string
+  customStyle?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  text: '',
+  type: 'default',
+  size: 'medium',
+  weight: 'normal',
+  align: 'left',
+  color: '',
+  lineHeight: 1.5,
+  maxLines: 0,
+  ellipsis: false,
+  bold: false,
+  italic: false,
+  underline: false,
+  strikethrough: false,
+  customClass: '',
+  customStyle: ''
+})
+
+/**
+ * 计算文本类名
+ */
+const textClasses = computed((): string => {
+  const classes: string[] = []
+
+  // 类型样式
+  classes.push(`t-text--${props.type}`)
+
+  // 尺寸样式
+  classes.push(`t-text--${props.size}`)
+
+  // 粗细样式
+  classes.push(`t-text--${props.weight}`)
+
+  // 对齐样式
+  classes.push(`t-text--${props.align}`)
+
+  // 加粗
+  if (props.bold) {
+    classes.push('t-text--bold')
+  }
+
+  // 斜体
+  if (props.italic) {
+    classes.push('t-text--italic')
+  }
+
+  // 下划线
+  if (props.underline) {
+    classes.push('t-text--underline')
+  }
+
+  // 删除线
+  if (props.strikethrough) {
+    classes.push('t-text--strikethrough')
+  }
+
+  // 省略号
+  if (props.ellipsis) {
+    classes.push('t-text--ellipsis')
+  }
+
+  // 自定义类名
+  if (props.customClass) {
+    classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+/**
+ * 计算文本样式
+ */
+const textStyles = computed((): string => {
+  const styles: string[] = []
+
+  // 自定义颜色
+  if (props.color) {
+    styles.push(`color: ${props.color}`)
+  }
+
+  // 行高
+  if (props.lineHeight) {
+    const lineHeight = typeof props.lineHeight === 'number'
+      ? props.lineHeight
+      : props.lineHeight
+    styles.push(`line-height: ${lineHeight}`)
+  }
+
+  // 最大行数
+  if (props.maxLines > 0) {
+    styles.push(`-webkit-line-clamp: ${props.maxLines}`)
+    styles.push('display: -webkit-box')
+    styles.push('-webkit-box-orient: vertical')
+    styles.push('overflow: hidden')
+  }
+
+  // 自定义样式
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+</script>
+
+<template>
+  <text class="t-text" :class="textClasses" :style="textStyles">
+    <slot>{{ text }}</slot>
+  </text>
+</template>
+
+<style lang="scss" scoped>
+  // 重置 uni-text 的默认样式
+  .t-text {
+  text-align: left;
+  line-height: 1.5;
+  color: inherit;
+  font-size: 14px;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  word-wrap: break-word;
+
+  // 类型样式
+  &--default {
+    color: #606266;
+  }
+
+  &--primary {
+    color: #409eff;
+  }
+
+  &--success {
+    color: #67c23a;
+  }
+
+  &--warning {
+    color: #e6a23c;
+  }
+
+  &--danger {
+    color: #f56c6c;
+  }
+
+  &--info {
+    color: #909399;
+  }
+
+  // 尺寸样式
+  &--large {
+    font-size: 18px;
+  }
+
+  &--medium {
+    font-size: 14px;
+  }
+
+  &--small {
+    font-size: 12px;
+  }
+
+  &--mini {
+    font-size: 10px;
+  }
+
+  // 粗细样式
+  &--lighter {
+    font-weight: 300;
+  }
+
+  &--normal {
+    font-weight: 400;
+  }
+
+  &--medium {
+    font-weight: 500;
+  }
+
+  &--bold {
+    font-weight: 700;
+  }
+
+  // 对齐样式
+  &--left {
+    text-align: left;
+  }
+
+  &--center {
+    text-align: center;
+  }
+
+  &--right {
+    text-align: right;
+  }
+
+  &--justify {
+    text-align: justify;
+  }
+
+  // 加粗
+  &--bold {
+    font-weight: bold;
+  }
+
+  // 斜体
+  &--italic {
+    font-style: italic;
+  }
+
+  // 下划线
+  &--underline {
+    text-decoration: underline;
+  }
+
+  // 删除线
+  &--strikethrough {
+    text-decoration: line-through;
+  }
+
+  // 省略号
+  &--ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+</style>
