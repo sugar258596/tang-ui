@@ -1,0 +1,80 @@
+/**
+ * 表单选项类型
+ */
+export type FormOption = {
+  label: string
+  value: string | number
+}
+
+/**
+ * 组件通用属性
+ */
+export type ComponentProps = {
+  /** 占位符 */
+  placeholder?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 选项列表（用于 select、radio、checkbox） */
+  options?: FormOption[]
+  /** 输入类型（用于 input） */
+  type?: string
+  /** 最大长度（用于 input、textarea） */
+  maxlength?: number
+  /** 最小值（用于 number、slider） */
+  min?: number
+  /** 最大值（用于 number、slider、rate） */
+  max?: number
+  /** 步长（用于 slider） */
+  step?: number
+  /** 是否自动聚焦（用于 input、textarea） */
+  focus?: boolean
+  /** 确认按钮文字（用于 input） */
+  confirmType?: string
+  /** 是否自动高度（用于 textarea） */
+  autoHeight?: boolean
+  /** 是否显示确认栏（用于 textarea） */
+  showConfirmBar?: boolean
+  /** 开始日期（用于 date） */
+  start?: string
+  /** 结束日期（用于 date） */
+  end?: string
+  /** 激活颜色（用于 switch） */
+  color?: string
+  /** 是否允许半星（用于 rate） */
+  allowHalf?: boolean
+  /** 是否显示值（用于 slider） */
+  showValue?: boolean
+  /** 其他扩展属性 */
+  [key: string]: any
+}
+
+/**
+ * 表单字段配置
+ */
+export type FormSchema = {
+  /** 字段名 */
+  field: string
+  /** 标签文本 */
+  label: string
+  /** 组件类型 */
+  component: 'input' | 'textarea' | 'select' | 'date' | 'time' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'slider' | 'number'
+  /** 是否必填 */
+  required?: boolean
+  /** 组件属性 */
+  componentProps?: ComponentProps
+}
+
+/**
+ * 表单组件属性
+ */
+export type TFormProps = {
+  /** 表单配置 */
+  schemas: FormSchema[]
+  /** 标签宽度 */
+  labelWidth?: string
+  /** 是否隐藏默认按钮 */
+  hideButtons?: boolean
+}
+
+// 导出所有类型
+export { FormOption, ComponentProps, FormSchema, TFormProps }

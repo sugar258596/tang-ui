@@ -66,6 +66,7 @@ export const components: string[] = [
   'TSlider',
   'TRate',
   'TPicker',
+  'TForm',
 
   // 数据展示
   'Tags',

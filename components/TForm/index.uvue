@@ -1,0 +1,379 @@
+<script setup lang="uts">
+	import TRadioButton from '../TRadioButton/index.uvue'
+	import TCheckbox from '../TCheckbox/index.uvue'
+	import TSwitch from '../TSwitch/index.uvue'
+	import TRate from '../TRate/index.uvue'
+	import TSlider from '../TSlider/index.uvue'
+	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
+
+	const props = withDefaults(defineProps<TFormProps>(), {
+		labelWidth: '160rpx',
+		hideButtons: false,
+	})
+
+	const emit = defineEmits(['submit', 'reset'])
+
+	const model = defineModel<Record<string, any>>({ default: () => ({}) })
+	const errors = reactive<Record<string, string>>({})
+
+	const handlePlaceholder = (item: FormSchema): string => {
+		return item.componentProps?.placeholder || `请输入${item.label}`
+	}
+
+	const handleRange = (item: FormSchema) => {
+		const options = item.componentProps?.options as FormOption[] | undefined
+		return options?.map(o => o.label) || []
+	}
+
+	const getSelectLabel = (item: FormSchema) => {
+		const options = item.componentProps?.options as FormOption[] | undefined
+		const opt = options?.find(o => o.value === model.value[item.field])
+		return opt?.label || ''
+	}
+
+	const onSelectChange = (e: any, item: FormSchema) => {
+		const index = e.detail.value as number
+		const options = item.componentProps?.options as FormOption[] | undefined
+		const value = options?.[index]?.value ?? ''
+		model.value[item.field] = value
+		validateField(item)
+	}
+
+	const onTimeChange = (e: any, item: FormSchema) => {
+		model.value[item.field] = e.detail.value
+		validateField(item)
+	}
+
+	const validateField = (item: FormSchema) => {
+		if (item.required && !model.value[item.field]) {
+			errors[item.field] = `请输入${item.label}`
+		} else {
+			delete errors[item.field]
+		}
+	}
+
+	const onRadioChange = (value: string | number, item: FormSchema) => {
+		model.value[item.field] = value
+		validateField(item)
+	}
+
+	const onCheckboxChange = (values: (string | number)[], item: FormSchema) => {
+		model.value[item.field] = values
+		validateField(item)
+	}
+
+	const onSwitchChange = (value: boolean, item: FormSchema) => {
+		model.value[item.field] = value
+		validateField(item)
+	}
+
+	const onRateChange = (value: number, item: FormSchema) => {
+		model.value[item.field] = value
+		validateField(item)
+	}
+
+	const onSliderChange = (value: number, item: FormSchema) => {
+		model.value[item.field] = value
+		validateField(item)
+	}
+
+	const onFormSubmit = async (e: UniFormSubmitEvent): Promise<{ valid: boolean, values: any }> => {
+		Object.keys(errors).forEach(k => delete errors[k])
+
+		let hasError = false
+		for (const item of props.schemas) {
+			validateField(item)
+			if (item.required && !model.value[item.field]) {
+				hasError = true
+			}
+		}
+
+		if (hasError) {
+			console.warn('表单验证失败')
+			return { valid: false, values: null }
+		}
+
+		try {
+			await emit('submit', model.value)
+			return { valid: true, values: model.value }
+		} catch (err) {
+			console.error('表单提交失败:', err)
+			return { valid: false, values: null }
+		}
+	}
+
+	const onFormReset = () => {
+		Object.keys(model.value).forEach(k => (model.value[k] = ''))
+		Object.keys(errors).forEach(k => delete errors[k])
+		emit('reset')
+	}
+
+	defineExpose({
+		submit: async () => {
+			return await onFormSubmit({} as UniFormSubmitEvent)
+		},
+		reset: () => {
+			onFormReset()
+		},
+		validate: () => {
+			Object.keys(errors).forEach(k => delete errors[k])
+			let hasError = false
+			for (const item of props.schemas) {
+				validateField(item)
+				if (item.required && !model.value[item.field]) {
+					hasError = true
+				}
+			}
+			return !hasError
+		},
+		getFormData: () => ({ ...model.value }),
+		getErrors: () => ({ ...errors })
+	})
+</script>
+
+<template>
+	<view class="t-form">
+		<form @submit="onFormSubmit" @reset="onFormReset">
+			<view v-for="(item, index) in schemas" class="form-item" :key="index">
+				<view class="form-label" :style="{ width: labelWidth }">
+					<text>{{ item.label }}</text>
+					<text v-if="item.required" class="required">*</text>
+				</view>
+
+				<view class="form-control">
+					<!-- 自定义插槽 -->
+					<slot v-if="$slots[item.field]" :name="item.field" :item="item" :value="model[item.field]" :error="errors[item.field]"></slot>
+					
+					<!-- 输入框 -->
+					<input v-else-if="item.component === 'input'" 
+						v-model="model[item.field]" 
+						:placeholder="handlePlaceholder(item)"
+						:name="item.field" 
+						class="input"
+						v-bind="item.componentProps || {}"
+						@input="validateField(item)" />
+
+					<!-- 数字输入 -->
+					<input v-else-if="item.component === 'number'" 
+						v-model="model[item.field]" 
+						:placeholder="handlePlaceholder(item)"
+						type="number"
+						:name="item.field" 
+						class="input"
+						v-bind="item.componentProps || {}"
+						@input="validateField(item)" />
+
+					<!-- 文本域 -->
+					<textarea v-else-if="item.component === 'textarea'" 
+						v-model="model[item.field]"
+						:placeholder="handlePlaceholder(item)" 
+						:name="item.field" 
+						class="textarea"
+						v-bind="item.componentProps || {}"
+						@input="validateField(item)"></textarea>
+
+					<!-- 下拉选择 -->
+					<picker v-else-if="item.component === 'select'" 
+						mode="selector" 
+						:name="item.field"
+						:range="handleRange(item)"
+						v-bind="item.componentProps || {}"
+						@change="onSelectChange($event, item)">
+						<view class="picker">
+							{{ getSelectLabel(item) || '请选择' }}
+						</view>
+					</picker>
+
+					<!-- 日期选择 -->
+					<picker v-else-if="item.component === 'date'" 
+						mode="date" 
+						:name="item.field" 
+						:value="model[item.field]"
+						v-bind="item.componentProps || {}"
+						@change="onTimeChange($event, item)">
+						<view class="picker">
+							{{ model[item.field] || '请选择日期' }}
+						</view>
+					</picker>
+
+					<!-- 时间选择 -->
+					<picker v-else-if="item.component === 'time'" 
+						mode="time" 
+						:name="item.field" 
+						:value="model[item.field]"
+						v-bind="item.componentProps || {}"
+						@change="onTimeChange($event, item)">
+						<view class="picker">
+							{{ model[item.field] || '请选择时间' }}
+						</view>
+					</picker>
+
+					<!-- 单选 -->
+					<view v-else-if="item.component === 'radio'" class="radio-group">
+						<TRadioButton 
+							v-for="opt in (item.componentProps?.options as FormOption[])" 
+							:key="opt.value"
+							:label="opt.label"
+							:value="opt.value"
+							:checked="model[item.field] === opt.value"
+							v-bind="item.componentProps || {}"
+							@change="onRadioChange(opt.value, item)" />
+					</view>
+
+					<!-- 多选 -->
+					<view v-else-if="item.component === 'checkbox'" class="checkbox-group">
+						<TCheckbox 
+							v-for="opt in (item.componentProps?.options as FormOption[])" 
+							:key="opt.value"
+							:label="opt.label"
+							:value="opt.value"
+							:checked="(model[item.field] || []).includes(opt.value)"
+							v-bind="item.componentProps || {}"
+							@change="(checked) => {
+								const values = model[item.field] || []
+								if (checked) {
+									values.push(opt.value)
+								} else {
+									const index = values.indexOf(opt.value)
+									if (index > -1) values.splice(index, 1)
+								}
+								onCheckboxChange(values, item)
+							}" />
+					</view>
+
+					<!-- 开关 -->
+					<TSwitch v-else-if="item.component === 'switch'"
+						:checked="model[item.field]"
+						v-bind="item.componentProps || {}"
+						@change="onSwitchChange($event, item)" />
+
+					<!-- 评分 -->
+					<TRate v-else-if="item.component === 'rate'"
+						:value="model[item.field] || 0"
+						v-bind="item.componentProps || {}"
+						@change="onRateChange($event, item)" />
+
+					<!-- 滑块 -->
+					<TSlider v-else-if="item.component === 'slider'"
+						:value="model[item.field] || 0"
+						v-bind="item.componentProps || {}"
+						@change="onSliderChange($event, item)" />
+				</view>
+
+				<!-- 错误提示 -->
+				<view v-if="errors[item.field]" class="error-message">
+					<text>{{ errors[item.field] }}</text>
+				</view>
+			</view>
+
+			<!-- 按钮区域 -->
+			<view v-if="!hideButtons" class="form-footer">
+				<button class="btn btn-submit" form-type="submit">提交</button>
+				<button class="btn btn-reset" form-type="reset">重置</button>
+			</view>
+		</form>
+	</view>
+</template>
+
+<style lang="scss" scoped>
+.t-form {
+	padding: 32rpx;
+}
+
+.form-item {
+	margin-bottom: 32rpx;
+}
+
+.form-label {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 16rpx;
+	font-size: 28rpx;
+	color: #333;
+	font-weight: 500;
+}
+
+.required {
+	color: #ff4d4f;
+	margin-left: 4rpx;
+}
+
+.form-control {
+	width: 100%;
+}
+
+.input,
+.textarea,
+.picker {
+	width: 100%;
+	padding: 20rpx 24rpx;
+	font-size: 28rpx;
+	color: #333;
+	background-color: #f5f5f5;
+	border-radius: 8rpx;
+	border: 1rpx solid #e0e0e0;
+	transition: all 0.3s;
+}
+
+.input:focus,
+.textarea:focus {
+	background-color: #fff;
+	border-color: #007aff;
+}
+
+.textarea {
+	min-height: 120rpx;
+}
+
+.picker {
+	display: flex;
+	align-items: center;
+}
+
+.radio-group,
+.checkbox-group {
+	display: flex;
+	flex-direction: column;
+	gap: 16rpx;
+}
+
+.error-message {
+	margin-top: 8rpx;
+	font-size: 24rpx;
+	color: #ff4d4f;
+}
+
+.form-footer {
+	display: flex;
+	flex-direction: row;
+	gap: 24rpx;
+	margin-top: 48rpx;
+}
+
+.btn {
+	flex: 1;
+	height: 88rpx;
+	line-height: 88rpx;
+	text-align: center;
+	font-size: 32rpx;
+	border-radius: 8rpx;
+	transition: all 0.3s;
+}
+
+.btn-submit {
+	background-color: #007aff;
+	color: #fff;
+}
+
+.btn-reset {
+	background-color: #fff;
+	color: #007aff;
+	border: 1rpx solid #007aff;
+}
+
+.btn:active {
+	opacity: 0.7;
+	transform: scale(0.98);
+}
+</style>
