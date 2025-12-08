@@ -31,7 +31,7 @@ export { useToast } from './composables/useToast.uts'
 export { useModal } from './composables/useModal.uts'
 
 // 版本信息
-export const version: string = '1.0.3'
+export const version: string = '1.0.5'
 
 // 组件列表（用于文档和类型提示）
 export const components: string[] = [
@@ -90,3 +90,18 @@ export const components: string[] = [
   'Tabs',
   'TNavBar'
 ]
+
+/**
+ * Tang UI 插件
+ */
+const TangUI = {
+  install(app: any) {
+    // uni-app x 使用 easycom 自动导入组件，这里不需要注册组件
+    console.log('Tang UI X installed, version:', version)
+  },
+  version,
+  components
+}
+
+// 默认导出
+export default TangUI

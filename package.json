@@ -1,6 +1,6 @@
 {
   "name": "tang-ui-x",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
   "main": "index.uts",
   "module": "index.uts",
@@ -41,8 +41,9 @@
     "vue": "^3.0.0"
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "preinstall": "npx only-allow pnpm",
+    "prepublishOnly": "pnpm run build",
     "build": "echo 'Build completed'",
-    "version": "npm run build"
+    "version": "pnpm run build"
   }
 }

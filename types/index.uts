@@ -50,3 +50,101 @@ export type ToastOptions = {
    */
   icon?: string
 }
+
+/**
+ * 主题配置类型
+ */
+export type ThemeConfig = {
+  /**
+   * 主色调
+   */
+  primaryColor: string
+
+  /**
+   * 成功色
+   */
+  successColor: string
+
+  /**
+   * 警告色
+   */
+  warningColor: string
+
+  /**
+   * 危险色
+   */
+  dangerColor: string
+
+  /**
+   * 信息色
+   */
+  infoColor: string
+
+  /**
+   * 文本色
+   */
+  textColor: string
+
+  /**
+   * 边框色
+   */
+  borderColor: string
+
+  /**
+   * 背景色
+   */
+  backgroundColor: string
+
+  /**
+   * 圆角大小
+   */
+  borderRadius: string
+
+  /**
+   * 字体大小
+   */
+  fontSize: string
+}
+
+/**
+ * 模态框选项类型
+ */
+export type ModalOptions = {
+  /**
+   * 标题
+   */
+  title?: string
+
+  /**
+   * 内容
+   */
+  content: string
+
+  /**
+   * 是否显示取消按钮
+   * @default true
+   */
+  showCancel?: boolean
+
+  /**
+   * 取消按钮文字
+   * @default '取消'
+   */
+  cancelText?: string
+
+  /**
+   * 确认按钮文字
+   * @default '确定'
+   */
+  confirmText?: string
+
+  /**
+   * 确认回调
+   */
+  onConfirm?: () => void
+
+  /**
+   * 取消回调
+   */
+  onCancel?: () => void
+}
