@@ -2,22 +2,22 @@
 
 ## 📋 发布前准备
 
-### 1. 更新 package.json 信息
+### 1. 检查 package.json 信息
 
-请修改 `package.json` 中的以下字段：
+`package.json` 已配置完成：
 
 ```json
 {
-  "name": "@your-org/uniapp-x-ui",  // 改为你的包名
-  "author": "Your Name",             // 你的名字
+  "name": "tang-ui",
+  "author": "sugar258596",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/uniapp-x-ui.git"  // 你的仓库地址
+    "url": "https://github.com/sugar258596/tang-ui.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/uniapp-x-ui/issues"
+    "url": "https://github.com/sugar258596/tang-ui/issues"
   },
-  "homepage": "https://github.com/your-org/uniapp-x-ui#readme"
+  "homepage": "https://github.com/sugar258596/tang-ui#readme"
 }
 ```
 
@@ -78,20 +78,20 @@ npm publish --access public
 
 ### 1. 检查包是否发布成功
 
-访问：`https://www.npmjs.com/package/@your-org/uniapp-x-ui`
+访问：`https://www.npmjs.com/package/tang-ui`
 
 ### 2. 测试安装
 
 在另一个项目中测试：
 ```bash
-npm install @your-org/uniapp-x-ui
+npm install tang-ui
 ```
 
 ### 3. 测试使用
 
 ```vue
 <script setup>
-import { TButton } from '@your-org/uniapp-x-ui'
+import { TButton } from 'tang-ui'
 </script>
 
 <template>
@@ -151,9 +151,9 @@ npm publish --access public
 
 ### 1. 发布失败：包名已存在
 ```
-npm ERR! 403 Forbidden - PUT https://registry.npmjs.org/@your-org/uniapp-x-ui
+npm ERR! 403 Forbidden - PUT https://registry.npmjs.org/tang-ui
 ```
-解决：更改包名或使用作用域包
+解决：更改包名或使用作用域包（如 @sugar258596/tang-ui）
 
 ### 2. 权限错误
 ```
@@ -170,10 +170,10 @@ npm ERR! 402 Payment Required
 ### 4. 撤销已发布的版本
 ```bash
 # 撤销指定版本（24小时内）
-npm unpublish @your-org/uniapp-x-ui@1.0.0
+npm unpublish tang-ui@1.0.0
 
 # 撤销整个包（24小时内，慎用）
-npm unpublish @your-org/uniapp-x-ui --force
+npm unpublish tang-ui --force
 ```
 
 ## 📚 推荐工具

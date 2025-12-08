@@ -15,11 +15,11 @@
 ## 📦 安装
 
 ```bash
-npm install @your-org/uniapp-x-ui
+npm install tang-ui
 # 或
-yarn add @your-org/uniapp-x-ui
+yarn add tang-ui
 # 或
-pnpm add @your-org/uniapp-x-ui
+pnpm add tang-ui
 ```
 
 ## 🔨 使用
@@ -33,7 +33,7 @@ pnpm add @your-org/uniapp-x-ui
   "easycom": {
     "autoscan": true,
     "custom": {
-      "^T(.*)": "@your-org/uniapp-x-ui/components/T$1/T$1.vue"
+      "^T(.*)": "tang-ui/components/T$1/T$1.vue"
     }
   }
 }
@@ -54,7 +54,7 @@ pnpm add @your-org/uniapp-x-ui
 
 ```vue
 <script setup>
-import { TButton, TInput } from '@your-org/uniapp-x-ui'
+import { TButton, TInput } from 'tang-ui'
 </script>
 
 <template>
@@ -124,11 +124,17 @@ import { TButton, TInput } from '@your-org/uniapp-x-ui'
 
 ## 📖 文档
 
-详细文档请访问：[文档地址]
+详细文档请访问：[https://github.com/sugar258596/tang-ui](https://github.com/sugar258596/tang-ui)
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
+
+## � 链接
+
+- [GitHub](https://github.com/sugar258596/tang-ui)
+- [Issues](https://github.com/sugar258596/tang-ui/issues)
+- [NPM](https://www.npmjs.com/package/tang-ui)
 
 ## 📄 License
 

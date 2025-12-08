@@ -1,5 +1,5 @@
 {
-  "name": "@your-org/uniapp-x-ui",
+  "name": "tang-ui",
   "version": "1.0.0",
   "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
   "main": "index.js",
@@ -24,18 +24,19 @@
     "components",
     "mobile",
     "vue3",
-    "typescript"
+    "typescript",
+    "tang-ui"
   ],
-  "author": "",
+  "author": "sugar258596",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/sugar258596/tang-ui.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/sugar258596/tang-ui/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/sugar258596/tang-ui#readme",
   "peerDependencies": {
     "vue": "^3.0.0"
   },
