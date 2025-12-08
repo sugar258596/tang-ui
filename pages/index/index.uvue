@@ -58,6 +58,7 @@ const componentGroups = ref<ComponentGroup[]>([
       { name: 'TPicker', title: '通用选择器 Picker', description: '多列数据选择', path: '/pages/examples/picker' },
       { name: 'TSlider', title: '滑块 Slider', description: '滑动选择器', path: '/pages/examples/slider' },
       { name: 'TRate', title: '评分 Rate', description: '评分组件', path: '/pages/examples/rate' },
+      { name: 'TForm', title: '表单 form', description: '评分组件', path: '/pages/examples/form' },
     ]
   },
   {

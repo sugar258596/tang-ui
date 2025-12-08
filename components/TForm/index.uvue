@@ -213,32 +213,33 @@
 						<TRadioButton 
 							v-for="opt in (item.componentProps?.options as FormOption[])" 
 							:key="opt.value"
+							v-model="model[item.field]"
 							:label="opt.label"
 							:value="opt.value"
-							:checked="model[item.field] === opt.value"
-							v-bind="item.componentProps || {}"
 							@change="onRadioChange(opt.value, item)" />
 					</view>
 
 					<!-- 多选 -->
 					<view v-else-if="item.component === 'Checkbox'" class="checkbox-group">
-						<TCheckbox 
+						<view 
 							v-for="opt in (item.componentProps?.options as FormOption[])" 
 							:key="opt.value"
-							:label="opt.label"
-							:value="opt.value"
-							:checked="(model[item.field] || []).includes(opt.value)"
-							v-bind="item.componentProps || {}"
-							@change="(checked) => {
-								const values = model[item.field] || []
-								if (checked) {
-									values.push(opt.value)
-								} else {
-									const index = values.indexOf(opt.value)
-									if (index > -1) values.splice(index, 1)
-								}
-								onCheckboxChange(values, item)
-							}" />
+							class="checkbox-item">
+							<TCheckbox 
+								:checked="(model[item.field] || []).includes(opt.value)"
+								v-bind="item.componentProps || {}"
+								@change="(checked) => {
+									const values = model[item.field] || []
+									if (checked) {
+										values.push(opt.value)
+									} else {
+										const index = values.indexOf(opt.value)
+										if (index > -1) values.splice(index, 1)
+									}
+									onCheckboxChange(values, item)
+								}" />
+							<text class="checkbox-label">{{ opt.label }}</text>
+						</view>
 					</view>
 
 					<!-- 开关 -->
@@ -336,6 +337,18 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16rpx;
+}
+
+.checkbox-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16rpx;
+}
+
+.checkbox-label {
+	font-size: 28rpx;
+	color: #333;
 }
 
 .error-message {

@@ -1,5 +1,28 @@
 # 更新日志
 
+## [1.1.1] - 2025-12-08
+
+### 修复
+- **TRadioButton**: 修复单选按钮点击无响应的问题
+- **TRadioButton**: 修复选中状态样式不显示的问题
+- **TRadioButton**: 修复 `isChecked` 计算逻辑错误
+- **TRadioButton**: 修复 CSS 变量未应用到单个按钮模式
+- **TRadioButton**: 修复 `.radio-item.active` 类名缺失导致文字颜色不变化
+- **TRadioButton**: 展开嵌套 SCSS 选择器，提高兼容性
+- **TRadioButton**: 添加 `label` 属性支持，在单个按钮模式下显示标签
+- **TForm**: 修复 Radio 组件使用 v-model 绑定问题
+- **TForm**: 修复 Checkbox 组件缺少 label 显示
+- **TCheckbox**: 添加 label 文本显示支持
+
+### 新增
+- **TRadioButton**: 添加完整的 README 文档
+- **TRadioButton**: 支持自定义颜色（activeColor、inactiveColor）
+- **TForm**: 完善 Radio 和 Checkbox 组件的样式和交互
+
+### 示例
+- 修复 radio 示例页面的自定义颜色属性名（color → activeColor）
+- 更新 form 示例页面，展示 Radio 和 Checkbox 的正确用法
+
 ## [1.0.3] - 2025-12-08
 
 ### 修复

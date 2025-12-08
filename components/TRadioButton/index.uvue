@@ -14,6 +14,8 @@ type Props = {
   options?: FormOption[]
   /** 单个按钮模式：选项值 */
   value?: string | number
+  /** 单个按钮模式：显示标签 */
+  label?: string
   /** 按钮尺寸 */
   size?: 'small' | 'medium' | 'large'
   /** 活动状态颜色 */
@@ -60,14 +62,16 @@ const isOptionsMode = computed(() => props.options && props.options.length > 0)
  * 单个按钮模式：判断是否被选中
  */
 const isChecked = computed(() => {
-  if (isOptionsMode.value) {
+  // 优先使用 model.value 判断
+  if (model.value !== undefined && model.value !== null) {
     return model.value === props.value
   }
-  return props.checked || model.value === props.value
+  // 如果没有 model.value，使用 checked 属性
+  return props.checked === true
 })
 
 /**
-选择 * 处理变化
+ * 处理变化
  */
 const handleChange = (value: string | number) => {
   model.value = value
@@ -79,7 +83,9 @@ const handleChange = (value: string | number) => {
  */
 const handleClick = () => {
   if (props.disabled || isOptionsMode.value) return
-  handleChange(props.value!)
+  if (props.value !== undefined) {
+    handleChange(props.value)
+  }
 }
 
 /**
@@ -99,26 +105,26 @@ const sizeClass = computed(() => {
   <!-- 选项组模式：使用 options 属性 -->
   <view v-if="isOptionsMode" class="radio-group" :style="cssVars">
     <view
-      v-for="option in props.options"
+      v-for="option in options"
       :key="option.value"
       class="radio-item"
-      :class="{ 'radio-disabled': props.disabled }"
-      @click="!props.disabled && handleChange(option.value)"
+      :class="{ 'radio-disabled': disabled }"
+      @click="!disabled && handleChange(option.value)"
     >
-      <view class="radio-icon" :class="{ active: model === option.value, 'radio-disabled': props.disabled }">
-        <view v-if="model === option.value" class="radio-dot"></view>
+      <view class="radio-icon" :class="{ active: model.value === option.value, 'radio-disabled': disabled }">
+        <view v-if="model.value === option.value" class="radio-dot"></view>
       </view>
       <text class="radio-label">{{ option.label }}</text>
     </view>
   </view>
 
   <!-- 单个按钮模式：使用插槽或默认内容 -->
-  <view v-else class="radio-item" :class="[sizeClass, { 'radio-disabled': props.disabled }]" @click="handleClick">
-    <view class="radio-icon" :class="{ active: isChecked, 'radio-disabled': props.disabled }">
+  <view v-else class="radio-item" :class="[sizeClass, { active: isChecked, 'radio-disabled': disabled }]" :style="cssVars" @tap="handleClick">
+    <view class="radio-icon" :class="{ active: isChecked, 'radio-disabled': disabled }">
       <view v-if="isChecked" class="radio-dot"></view>
     </view>
     <slot>
-      <text v-if="props.value !== undefined" class="radio-label">{{ props.value }}</text>
+      <text v-if="label || value !== undefined" class="radio-label">{{ label || value }}</text>
     </slot>
   </view>
 </template>
@@ -126,24 +132,29 @@ const sizeClass = computed(() => {
 <style lang="scss" scoped>
 /* 选项组容器 */
 .radio-group {
+  display: flex;
   flex-direction: column;
   gap: 16rpx;
 }
 
 /* 单个按钮容器 */
 .radio-item {
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 16rpx;
+  padding: 8rpx 0;
+  cursor: pointer;
+}
 
-  &.radio-disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+.radio-item.radio-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 单选按钮图标 */
 .radio-icon {
+  display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
@@ -151,14 +162,14 @@ const sizeClass = computed(() => {
   border-style: solid;
   border-color: var(--radio-inactive-color);
   transition: all 0.2s ease;
+}
 
-  &.active {
-    border-color: var(--radio-active-color);
-  }
+.radio-icon.active {
+  border-color: var(--radio-active-color);
+}
 
-  &.radio-disabled {
-    border-color: #dcdfe6;
-  }
+.radio-icon.radio-disabled {
+  border-color: #dcdfe6;
 }
 
 /* 单选点 */
@@ -168,65 +179,59 @@ const sizeClass = computed(() => {
 }
 
 /* 尺寸样式 */
-.radio-size-small {
-  .radio-icon {
-    width: 28rpx;
-    height: 28rpx;
-  }
-
-  .radio-dot {
-    width: 14rpx;
-    height: 14rpx;
-  }
-
-  .radio-label {
-    font-size: 24rpx;
-  }
+.radio-size-small .radio-icon {
+  width: 28rpx;
+  height: 28rpx;
 }
 
-.radio-size-medium {
-  .radio-icon {
-    width: 36rpx;
-    height: 36rpx;
-  }
-
-  .radio-dot {
-    width: 20rpx;
-    height: 20rpx;
-  }
-
-  .radio-label {
-    font-size: 28rpx;
-  }
+.radio-size-small .radio-dot {
+  width: 14rpx;
+  height: 14rpx;
 }
 
-.radio-size-large {
-  .radio-icon {
-    width: 44rpx;
-    height: 44rpx;
-  }
+.radio-size-small .radio-label {
+  font-size: 24rpx;
+}
 
-  .radio-dot {
-    width: 26rpx;
-    height: 26rpx;
-  }
+.radio-size-medium .radio-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
 
-  .radio-label {
-    font-size: 32rpx;
-  }
+.radio-size-medium .radio-dot {
+  width: 20rpx;
+  height: 20rpx;
+}
+
+.radio-size-medium .radio-label {
+  font-size: 28rpx;
+}
+
+.radio-size-large .radio-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.radio-size-large .radio-dot {
+  width: 26rpx;
+  height: 26rpx;
+}
+
+.radio-size-large .radio-label {
+  font-size: 32rpx;
 }
 
 /* 文本标签 */
 .radio-label {
   color: var(--radio-inactive-color);
   transition: color 0.2s ease;
+}
 
-  .radio-item.active & {
-    color: var(--radio-active-color);
-  }
+.radio-item.active .radio-label {
+  color: var(--radio-active-color);
+}
 
-  .radio-disabled & {
-    color: #c0c4cc;
-  }
+.radio-item.radio-disabled .radio-label {
+  color: #c0c4cc;
 }
 </style>

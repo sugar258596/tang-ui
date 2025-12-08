@@ -66,9 +66,9 @@ const handleChange = (value: string | number): void => {
 
     <TCard title="自定义颜色" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRadioButton v-model="radioValue3" value="apple" color="#f56c6c">红色</TRadioButton>
-        <TRadioButton v-model="radioValue3" value="banana" color="#67c23a">绿色</TRadioButton>
-        <TRadioButton v-model="radioValue3" value="orange" color="#e6a23c">橙色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="apple" activeColor="#f56c6c">红色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="banana" activeColor="#67c23a">绿色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="orange" activeColor="#e6a23c">橙色</TRadioButton>
       </view>
     </TCard>
 
