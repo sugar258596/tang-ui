@@ -3,8 +3,15 @@
   "cancel": "Cancel",
   "ok": "OK",
   "close": "Close",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "submit": "Submit",
+  "reset": "Reset",
+  "search": "Search",
   "loading": "Loading...",
   "noData": "No Data",
+  "error": "Error",
   "language": "Language",
   "languageSwitch": "Switch Language"
 }

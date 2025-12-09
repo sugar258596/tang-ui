@@ -3,6 +3,13 @@
   "cancel": "取消",
   "ok": "好的",
   "close": "關閉",
+  "save": "儲存",
+  "delete": "刪除",
+  "edit": "編輯",
+  "submit": "提交",
+  "reset": "重置",
+  "search": "搜尋",
   "loading": "載入中...",
-  "noData": "暫無資料"
+  "noData": "暫無資料",
+  "error": "出錯了"
 }
