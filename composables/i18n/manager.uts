@@ -230,10 +230,71 @@ export class I18nManager {
   /**
    * 注册或更新语言包（默认使用合并模式）
    * @param locale 语言代码
-   * @param messages 模块化语言包
+   * @param messages 模块化语言包或语言包目录路径
    */
-  registerMessages(locale: string, messages: ModularLocaleMessages): void {
-    this.registerMessagesWithMode(locale, messages, 'merge')
+  registerMessages(locale: string, messages: ModularLocaleMessages | string): void {
+    // 如果传入的是字符串路径，则加载该路径下的所有语言包
+    if (typeof messages === 'string') {
+      this.registerMessagesFromPath(locale, messages)
+    } else {
+      this.registerMessagesWithMode(locale, messages, 'merge')
+    }
+  }
+  
+  /**
+   * 从路径加载语言包
+   * @param locale 语言代码
+   * @param basePath 语言包目录路径（例如：'locales/ja-JP'）
+   */
+  private registerMessagesFromPath(locale: string, basePath: string): void {
+    // 定义需要加载的模块列表
+    const modules = [
+      'common',
+      'actionSheet',
+      'dialog',
+      'empty',
+      'errorState',
+      'examplePages',
+      'examples',
+      'form',
+      'input',
+      'list',
+      'loading',
+      'navBar',
+      'noticeBar',
+      'picker',
+      'searchBar',
+      'textarea',
+      'toast'
+    ]
+    
+    const loadedMessages: ModularLocaleMessages = {}
+    
+    // 加载每个模块的 JSON 文件
+    for (const moduleName of modules) {
+      try {
+        // 构建文件路径
+        const filePath = `${basePath}/${moduleName}.json`
+        
+        // 动态导入 JSON 文件
+        // 注意：在 UTS 中，需要使用相对路径或绝对路径
+        const moduleData = require(filePath)
+        
+        if (moduleData && typeof moduleData === 'object') {
+          loadedMessages[moduleName] = moduleData
+        }
+      } catch (e) {
+        // 如果文件不存在或加载失败，跳过该模块
+        console.warn(`[I18n] Failed to load module ${moduleName} for locale ${locale}: ${e}`)
+      }
+    }
+    
+    // 如果成功加载了至少一个模块，则注册语言包
+    if (Object.keys(loadedMessages).length > 0) {
+      this.registerMessagesWithMode(locale, loadedMessages, 'merge')
+    } else {
+      I18nError.warnLocaleNotFound(locale)
+    }
   }
   
   /**
@@ -332,5 +393,69 @@ export class I18nManager {
    */
   getCurrentLocale(): string {
     return this.currentLocale.value
+  }
+  
+  /**
+   * 注册新语言（简化方法）
+   * 支持传入语言包对象或语言包目录路径
+   * @param locale 语言代码（例如：'ja-JP'）
+   * @param messagesOrPath 语言包对象或语言包目录路径
+   * 
+   * @example
+   * // 方式一：传入语言包对象
+   * i18nManager.registerLocale('ja-JP', {
+   *   common: { confirm: '確認', cancel: 'キャンセル' },
+   *   button: { submit: '送信' }
+   * })
+   * 
+   * // 方式二：传入语言包目录路径
+   * i18nManager.registerLocale('ja-JP', '@/locales/ja-JP')
+   */
+  registerLocale(locale: string, messagesOrPath: ModularLocaleMessages | string): void {
+    this.registerMessages(locale, messagesOrPath)
+  }
+  
+  /**
+   * 扩展现有语言包
+   * 用于添加自定义翻译到已有语言
+   * @param locale 语言代码
+   * @param messages 要添加的语言包
+   * 
+   * @example
+   * i18nManager.extendLocale('zh-CN', {
+   *   myApp: {
+   *     welcome: '欢迎使用我的应用',
+   *     logout: '退出登录'
+   *   }
+   * })
+   */
+  extendLocale(locale: string, messages: ModularLocaleMessages): void {
+    this.registerMessagesWithMode(locale, messages, 'merge')
+  }
+  
+  /**
+   * 获取语言代码（别名方法）
+   * @returns 当前语言代码
+   */
+  getLocale(): string {
+    return this.currentLocale.value
+  }
+  
+  /**
+   * 翻译函数（别名方法）
+   * @param key 翻译键
+   * @param params 插值参数
+   * @param defaultValue 默认值
+   * @returns 翻译后的文本
+   */
+  t(key: string, params?: TranslateParams, defaultValue?: string): string {
+    const result = this.translate(key, params)
+    
+    // 如果翻译结果等于键本身，且提供了默认值，则返回默认值
+    if (result === key && defaultValue !== undefined) {
+      return defaultValue
+    }
+    
+    return result
   }
 }
