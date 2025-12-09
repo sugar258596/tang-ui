@@ -139,12 +139,12 @@ const currentLang = ref<string>(i18nManager.getLocale())
 // 是否显示文件结构
 const showStructure = ref<boolean>(false)
 
-// 内置语言列表
-const languages = [
+// 内置语言列表（使用 ref 使其可变）
+const languages = ref([
   { code: 'zh-CN', label: '简体中文' },
   { code: 'zh-TW', label: '繁體中文' },
   { code: 'en-US', label: 'English' }
-]
+])
 
 // 已加载的模块列表（示例中实际加载的模块）
 const loadedModules = [
@@ -184,8 +184,8 @@ const registerJapanese = (): void => {
     i18nManager.registerLocale('ja-JP', '@/pages/i18n-demo/locales/ja-JP')
     
     // 添加到语言列表
-    if (!languages.some(lang => lang.code === 'ja-JP')) {
-      languages.push({ code: 'ja-JP', label: '日本語' })
+    if (!languages.value.some(lang => lang.code === 'ja-JP')) {
+      languages.value.push({ code: 'ja-JP', label: '日本語' })
     }
     
     uni.showToast({
@@ -208,8 +208,8 @@ const registerKorean = (): void => {
     i18nManager.registerLocale('ko-KR', '@/pages/i18n-demo/locales/ko-KR')
     
     // 添加到语言列表
-    if (!languages.some(lang => lang.code === 'ko-KR')) {
-      languages.push({ code: 'ko-KR', label: '한국어' })
+    if (!languages.value.some(lang => lang.code === 'ko-KR')) {
+      languages.value.push({ code: 'ko-KR', label: '한국어' })
     }
     
     uni.showToast({
