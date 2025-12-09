@@ -48,17 +48,6 @@
     <view class="section">
       <text class="section-title">路径方式注册</text>
       
-      <!-- H5 平台提示 -->
-      <!-- #ifdef H5 -->
-      <view class="warning-box">
-        <text class="warning-icon">⚠️</text>
-        <view class="warning-content">
-          <text class="warning-title">H5 平台限制</text>
-          <text class="warning-text">路径方式注册依赖 Node.js 的 require 函数，在 H5 环境下不可用。请在 App 或小程序环境中测试此功能，或使用对象方式注册。</text>
-        </view>
-      </view>
-      <!-- #endif -->
-      
       <view class="info-box">
         <text class="info-text">使用路径方式注册时，系统会自动加载该目录下的所有语言包文件：</text>
         <text class="info-text">• common.json</text>
@@ -70,10 +59,10 @@
       </view>
       
       <view class="code-block">
-        <text class="code-text">// 注册日语语言包</text>
-        <text class="code-text">i18nManager.registerLocale(</text>
+        <text class="code-text">// 注册日语语言包（异步方式）</text>
+        <text class="code-text">await i18nManager.registerLocaleAsync(</text>
         <text class="code-text">  'ja-JP',</text>
-        <text class="code-text">  '@/pages/i18n-demo/locales/ja-JP'</text>
+        <text class="code-text">  '/pages/i18n-demo/locales/ja-JP'</text>
         <text class="code-text">)</text>
       </view>
       
@@ -190,73 +179,65 @@ const switchLanguage = (locale: string): void => {
 }
 
 // 注册日语语言包（路径方式）
-const registerJapanese = (): void => {
-  // #ifdef H5
-  uni.showToast({
-    title: 'H5环境不支持路径方式',
-    icon: 'none',
-    duration: 2000
-  })
-  return
-  // #endif
-  
-  // #ifndef H5
+const registerJapanese = async (): Promise<void> => {
   try {
-    // 使用路径方式注册
-    i18nManager.registerLocale('ja-JP', '@/pages/i18n-demo/locales/ja-JP')
+    // 显示加载提示
+    uni.showLoading({
+      title: '加载中...'
+    })
+    
+    // 使用异步路径方式注册
+    await i18nManager.registerLocaleAsync('ja-JP', '/pages/i18n-demo/locales/ja-JP')
     
     // 添加到语言列表
     if (!languages.value.some(lang => lang.code === 'ja-JP')) {
       languages.value.push({ code: 'ja-JP', label: '日本語' })
     }
     
+    uni.hideLoading()
     uni.showToast({
       title: '日语语言包注册成功',
       icon: 'success'
     })
   } catch (e) {
+    uni.hideLoading()
     uni.showToast({
       title: '注册失败',
       icon: 'error'
     })
     console.error('注册日语失败:', e)
   }
-  // #endif
 }
 
 // 注册韩语语言包（路径方式）
-const registerKorean = (): void => {
-  // #ifdef H5
-  uni.showToast({
-    title: 'H5环境不支持路径方式',
-    icon: 'none',
-    duration: 2000
-  })
-  return
-  // #endif
-  
-  // #ifndef H5
+const registerKorean = async (): Promise<void> => {
   try {
-    // 使用路径方式注册
-    i18nManager.registerLocale('ko-KR', '@/pages/i18n-demo/locales/ko-KR')
+    // 显示加载提示
+    uni.showLoading({
+      title: '加载中...'
+    })
+    
+    // 使用异步路径方式注册
+    await i18nManager.registerLocaleAsync('ko-KR', '/pages/i18n-demo/locales/ko-KR')
     
     // 添加到语言列表
     if (!languages.value.some(lang => lang.code === 'ko-KR')) {
       languages.value.push({ code: 'ko-KR', label: '한국어' })
     }
     
+    uni.hideLoading()
     uni.showToast({
       title: '韩语语言包注册成功',
       icon: 'success'
     })
   } catch (e) {
+    uni.hideLoading()
     uni.showToast({
       title: '注册失败',
       icon: 'error'
     })
     console.error('注册韩语失败:', e)
   }
-  // #endif
 }
 
 // 显示路径信息

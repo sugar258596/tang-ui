@@ -242,24 +242,42 @@ export class I18nManager {
   }
   
   /**
-   * 从路径加载语言包
+   * 注册或更新语言包（异步版本）
+   * @param locale 语言代码
+   * @param messages 模块化语言包或语言包目录路径
+   */
+  async registerMessagesAsync(locale: string, messages: ModularLocaleMessages | string): Promise<void> {
+    // 如果传入的是字符串路径，则加载该路径下的所有语言包
+    if (typeof messages === 'string') {
+      await this.registerMessagesFromPathAsync(locale, messages)
+    } else {
+      this.registerMessagesWithMode(locale, messages, 'merge')
+    }
+  }
+  
+  /**
+   * 从路径加载语言包（异步版本）
    * @param locale 语言代码
    * @param basePath 语言包目录路径（例如：'locales/ja-JP'）
    */
-  private registerMessagesFromPath(locale: string, basePath: string): void {
-    // 定义需要加载的模块列表
-    const modules = [
+  private async registerMessagesFromPathAsync(locale: string, basePath: string): Promise<void> {
+    // 定义核心模块列表（只加载常用的模块，减少 404 请求）
+    const coreModules = [
       'common',
-      'actionSheet',
+      'form',
+      'input',
       'dialog',
       'empty',
+      'loading'
+    ]
+    
+    // 定义可选模块列表
+    const optionalModules = [
+      'actionSheet',
       'errorState',
       'examplePages',
       'examples',
-      'form',
-      'input',
       'list',
-      'loading',
       'navBar',
       'noticeBar',
       'picker',
@@ -270,24 +288,43 @@ export class I18nManager {
     
     const loadedMessages: ModularLocaleMessages = {}
     
-    // 加载每个模块的 JSON 文件
-    for (const moduleName of modules) {
-      try {
-        // 构建文件路径
-        const filePath = `${basePath}/${moduleName}.json`
-        
-        // 动态导入 JSON 文件
-        // 注意：在 UTS 中，需要使用相对路径或绝对路径
-        const moduleData = require(filePath)
-        
-        if (moduleData && typeof moduleData === 'object') {
-          loadedMessages[moduleName] = moduleData
+    // 先加载核心模块
+    await Promise.all(
+      coreModules.map(async (moduleName) => {
+        try {
+          // 构建文件路径
+          const filePath = `${basePath}/${moduleName}.json`
+          
+          // 使用动态 import 加载 JSON 文件（支持 H5、App、小程序）
+          const module = await import(/* @vite-ignore */ filePath)
+          const moduleData = module.default || module
+          
+          if (moduleData && typeof moduleData === 'object') {
+            loadedMessages[moduleName] = moduleData
+          }
+        } catch (e) {
+          // 核心模块加载失败时输出警告
+          console.warn(`[I18n] Failed to load core module ${moduleName} for locale ${locale}`)
         }
-      } catch (e) {
-        // 如果文件不存在或加载失败，跳过该模块
-        console.warn(`[I18n] Failed to load module ${moduleName} for locale ${locale}: ${e}`)
-      }
-    }
+      })
+    )
+    
+    // 尝试加载可选模块（静默失败）
+    await Promise.allSettled(
+      optionalModules.map(async (moduleName) => {
+        try {
+          const filePath = `${basePath}/${moduleName}.json`
+          const module = await import(/* @vite-ignore */ filePath)
+          const moduleData = module.default || module
+          
+          if (moduleData && typeof moduleData === 'object') {
+            loadedMessages[moduleName] = moduleData
+          }
+        } catch (e) {
+          // 可选模块加载失败时静默忽略
+        }
+      })
+    )
     
     // 如果成功加载了至少一个模块，则注册语言包
     if (Object.keys(loadedMessages).length > 0) {
@@ -295,6 +332,19 @@ export class I18nManager {
     } else {
       I18nError.warnLocaleNotFound(locale)
     }
+  }
+  
+  /**
+   * 从路径加载语言包（同步版本，仅用于兼容）
+   * @param locale 语言代码
+   * @param basePath 语言包目录路径
+   */
+  private registerMessagesFromPath(locale: string, basePath: string): void {
+    // 调用异步版本，但不等待结果
+    this.registerMessagesFromPathAsync(locale, basePath).catch((e) => {
+      console.error(`[I18n] Failed to load locale ${locale} from path ${basePath}:`, e)
+      I18nError.warnLocaleNotFound(locale)
+    })
   }
   
   /**
@@ -413,6 +463,26 @@ export class I18nManager {
    */
   registerLocale(locale: string, messagesOrPath: ModularLocaleMessages | string): void {
     this.registerMessages(locale, messagesOrPath)
+  }
+  
+  /**
+   * 注册新语言（异步方法）
+   * 支持传入语言包对象或语言包目录路径
+   * @param locale 语言代码（例如：'ja-JP'）
+   * @param messagesOrPath 语言包对象或语言包目录路径
+   * 
+   * @example
+   * // 方式一：传入语言包对象
+   * await i18nManager.registerLocaleAsync('ja-JP', {
+   *   common: { confirm: '確認', cancel: 'キャンセル' },
+   *   button: { submit: '送信' }
+   * })
+   * 
+   * // 方式二：传入语言包目录路径（推荐使用异步版本）
+   * await i18nManager.registerLocaleAsync('ja-JP', '@/locales/ja-JP')
+   */
+  async registerLocaleAsync(locale: string, messagesOrPath: ModularLocaleMessages | string): Promise<void> {
+    await this.registerMessagesAsync(locale, messagesOrPath)
   }
   
   /**
