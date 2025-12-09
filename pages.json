@@ -251,7 +251,19 @@
 		{
 			"path": "pages/i18n-demo/index",
 			"style": {
-				"navigationBarTitleText": "多语言测试"
+				"navigationBarTitleText": "国际化示例"
+			}
+		},
+		{
+			"path": "pages/i18n-demo/register-object",
+			"style": {
+				"navigationBarTitleText": "对象方式注册"
+			}
+		},
+		{
+			"path": "pages/i18n-demo/register-path",
+			"style": {
+				"navigationBarTitleText": "路径方式注册"
 			}
 		}
 	],

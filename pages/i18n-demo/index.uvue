@@ -47,6 +47,24 @@ const getLanguageName = (code: string): string => {
 }
 
 /**
+ * 跳转到对象方式注册示例
+ */
+const goToRegisterObject = () => {
+  uni.navigateTo({
+    url: '/pages/i18n-demo/register-object'
+  })
+}
+
+/**
+ * 跳转到路径方式注册示例
+ */
+const goToRegisterPath = () => {
+  uni.navigateTo({
+    url: '/pages/i18n-demo/register-path'
+  })
+}
+
+/**
  * 返回首页
  */
 const goBack = () => {
@@ -125,6 +143,30 @@ const goBack = () => {
           </view>
         </view>
       </TCard>
+    </view>
+
+    <!-- 示例页面入口 -->
+    <view class="demo-section">
+      <text class="section-title">示例页面 / Example Pages</text>
+      <view class="example-list">
+        <view class="example-item" @click="goToRegisterObject">
+          <view class="example-icon">📦</view>
+          <view class="example-content">
+            <text class="example-title">对象方式注册</text>
+            <text class="example-desc">通过传入语言包对象注册新语言</text>
+          </view>
+          <text class="example-arrow">→</text>
+        </view>
+        
+        <view class="example-item" @click="goToRegisterPath">
+          <view class="example-icon">📁</view>
+          <view class="example-content">
+            <text class="example-title">路径方式注册</text>
+            <text class="example-desc">通过传入目录路径注册新语言</text>
+          </view>
+          <text class="example-arrow">→</text>
+        </view>
+      </view>
     </view>
 
     <!-- 操作按钮 -->
@@ -271,5 +313,56 @@ const goBack = () => {
   font-size: 14px;
   color: #303133;
   font-weight: 500;
+}
+
+.example-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.example-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:active {
+    background-color: #e8e8e8;
+    transform: scale(0.98);
+  }
+}
+
+.example-icon {
+  font-size: 32px;
+  margin-right: 16px;
+}
+
+.example-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.example-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.example-desc {
+  font-size: 12px;
+  color: #909399;
+}
+
+.example-arrow {
+  font-size: 20px;
+  color: #c0c4cc;
+  margin-left: 12px;
 }
 </style>
