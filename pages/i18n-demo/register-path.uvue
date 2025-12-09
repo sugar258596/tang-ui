@@ -47,6 +47,18 @@
     <!-- 路径注册说明 -->
     <view class="section">
       <text class="section-title">路径方式注册</text>
+      
+      <!-- H5 平台提示 -->
+      <!-- #ifdef H5 -->
+      <view class="warning-box">
+        <text class="warning-icon">⚠️</text>
+        <view class="warning-content">
+          <text class="warning-title">H5 平台限制</text>
+          <text class="warning-text">路径方式注册依赖 Node.js 的 require 函数，在 H5 环境下不可用。请在 App 或小程序环境中测试此功能，或使用对象方式注册。</text>
+        </view>
+      </view>
+      <!-- #endif -->
+      
       <view class="info-box">
         <text class="info-text">使用路径方式注册时，系统会自动加载该目录下的所有语言包文件：</text>
         <text class="info-text">• common.json</text>
@@ -179,6 +191,16 @@ const switchLanguage = (locale: string): void => {
 
 // 注册日语语言包（路径方式）
 const registerJapanese = (): void => {
+  // #ifdef H5
+  uni.showToast({
+    title: 'H5环境不支持路径方式',
+    icon: 'none',
+    duration: 2000
+  })
+  return
+  // #endif
+  
+  // #ifndef H5
   try {
     // 使用路径方式注册
     i18nManager.registerLocale('ja-JP', '@/pages/i18n-demo/locales/ja-JP')
@@ -199,10 +221,21 @@ const registerJapanese = (): void => {
     })
     console.error('注册日语失败:', e)
   }
+  // #endif
 }
 
 // 注册韩语语言包（路径方式）
 const registerKorean = (): void => {
+  // #ifdef H5
+  uni.showToast({
+    title: 'H5环境不支持路径方式',
+    icon: 'none',
+    duration: 2000
+  })
+  return
+  // #endif
+  
+  // #ifndef H5
   try {
     // 使用路径方式注册
     i18nManager.registerLocale('ko-KR', '@/pages/i18n-demo/locales/ko-KR')
@@ -223,6 +256,7 @@ const registerKorean = (): void => {
     })
     console.error('注册韩语失败:', e)
   }
+  // #endif
 }
 
 // 显示路径信息
@@ -339,6 +373,42 @@ const getLocaleName = (locale: string): string => {
     font-size: 28rpx;
     color: #333;
     font-weight: 500;
+  }
+}
+
+.warning-box {
+  background-color: #fff7e6;
+  border-left: 4rpx solid #faad14;
+  padding: 24rpx;
+  border-radius: 8rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+  
+  .warning-icon {
+    font-size: 32rpx;
+  }
+  
+  .warning-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8rpx;
+  }
+  
+  .warning-title {
+    font-size: 28rpx;
+    color: #d46b08;
+    font-weight: bold;
+    display: block;
+  }
+  
+  .warning-text {
+    font-size: 24rpx;
+    color: #ad6800;
+    display: block;
+    line-height: 36rpx;
   }
 }
 
