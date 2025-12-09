@@ -1,9 +1,14 @@
 <script setup lang="uts">
 import { ref } from 'vue'
+import TCollapse from '@/components/TCollapse'
+import TCollapseItem from '@/components/TCollapseItem'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TCollapse 折叠面板示例页面
  */
+
+const { $t } = useI18n()
 
 // 基础用法 - 多选模式
 const activeNames = ref<string[]>(['1'])
@@ -21,31 +26,31 @@ const customActive = ref<string[]>(['1'])
 <template>
   <view class="page">
     <view class="page-header">
-      <text class="page-title">Collapse 折叠面板</text>
-      <text class="page-desc">可以折叠/展开的内容区域</text>
+      <text class="page-title">{{ $t('examplePages.collapse.title') }}</text>
+      <text class="page-desc">{{ $t('examplePages.collapse.description') }}</text>
     </view>
 
     <view class="page-content">
       <!-- 基础用法 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">基础用法</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.basic') }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="activeNames">
-            <TCollapseItem name="1" title="一致性 Consistency">
+            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.consistency')">
               <text class="item-content">
-                与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念。
+                {{ $t('examplePages.collapse.content.consistency') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" title="反馈 Feedback">
+            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.feedback')">
               <text class="item-content">
-                控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作。
+                {{ $t('examplePages.collapse.content.feedback') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" title="效率 Efficiency">
+            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.efficiency')">
               <text class="item-content">
-                简化流程：设计简洁直观的操作流程，让用户快速完成目标。
+                {{ $t('examplePages.collapse.content.efficiency') }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -55,23 +60,23 @@ const customActive = ref<string[]>(['1'])
       <!-- 手风琴模式 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">手风琴模式</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.accordion') }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="accordionActive" :accordion="true">
-            <TCollapseItem name="1" title="设计原则">
+            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.designPrinciples')">
               <text class="item-content">
-                一致、反馈、效率、可控是我们的设计原则。
+                {{ $t('examplePages.collapse.content.designPrinciples') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" title="导航">
+            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.navigation')">
               <text class="item-content">
-                导航可以解决用户在访问页面时，在哪里、去哪里、怎么去的问题。
+                {{ $t('examplePages.collapse.content.navigation') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" title="反馈">
+            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.feedbackTitle')">
               <text class="item-content">
-                反馈是对用户行为的一种回应，给用户一个交代。
+                {{ $t('examplePages.collapse.content.feedbackContent') }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -81,23 +86,23 @@ const customActive = ref<string[]>(['1'])
       <!-- 禁用状态 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">禁用状态</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.disabled') }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="disabledActive">
-            <TCollapseItem name="1" title="正常项">
+            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.normalItem')">
               <text class="item-content">
-                这是一个正常的折叠面板项，可以正常展开收起。
+                {{ $t('examplePages.collapse.content.normalItem') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" title="禁用项" :disabled="true">
+            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.disabledItem')" :disabled="true">
               <text class="item-content">
-                这是一个禁用的折叠面板项，无法展开。
+                {{ $t('examplePages.collapse.content.disabledItem') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" title="正常项">
+            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.normalItem')">
               <text class="item-content">
-                这是另一个正常的折叠面板项。
+                {{ $t('examplePages.collapse.content.normalItem') }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -107,7 +112,7 @@ const customActive = ref<string[]>(['1'])
       <!-- 自定义标题 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">自定义标题</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.customTitle') }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="customActive">
@@ -115,33 +120,33 @@ const customActive = ref<string[]>(['1'])
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">📱</text>
-                  <text class="custom-title-text">移动端组件</text>
+                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.mobileComponents') }}</text>
                 </view>
               </template>
               <text class="item-content">
-                专为移动端设计的轻量级 UI 组件库。
+                {{ $t('examplePages.collapse.content.mobileComponents') }}
               </text>
             </TCollapseItem>
             <TCollapseItem name="2">
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">🎨</text>
-                  <text class="custom-title-text">丰富的组件</text>
+                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.richComponents') }}</text>
                 </view>
               </template>
               <text class="item-content">
-                提供丰富的基础组件，覆盖移动端各类场景。
+                {{ $t('examplePages.collapse.content.richComponents') }}
               </text>
             </TCollapseItem>
             <TCollapseItem name="3">
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">⚡</text>
-                  <text class="custom-title-text">高性能</text>
+                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.highPerformance') }}</text>
                 </view>
               </template>
               <text class="item-content">
-                性能优异，轻量级实现，保证流畅体验。
+                {{ $t('examplePages.collapse.content.highPerformance') }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -151,18 +156,18 @@ const customActive = ref<string[]>(['1'])
       <!-- 无边框 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">无边框</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.noBorder') }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="activeNames" :border="false">
-            <TCollapseItem name="1" title="第一项">
+            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.item1')">
               <text class="item-content">
-                这是第一项的内容。
+                {{ $t('examplePages.collapse.content.item1Content') }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" title="第二项">
+            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.item2')">
               <text class="item-content">
-                这是第二项的内容。
+                {{ $t('examplePages.collapse.content.item2Content') }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -172,16 +177,16 @@ const customActive = ref<string[]>(['1'])
       <!-- 数据状态 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">当前状态</text>
+          <text class="section-title-text">{{ $t('examplePages.collapse.sections.currentState') }}</text>
         </view>
         <view class="section-content">
           <view class="state-box">
-            <text class="state-label">基础用法展开项：</text>
-            <text class="state-value">{{ activeNames.join(', ') || '无' }}</text>
+            <text class="state-label">{{ $t('examplePages.collapse.labels.expandedItems') }}：</text>
+            <text class="state-value">{{ activeNames.join(', ') || $t('examplePages.collapse.labels.none') }}</text>
           </view>
           <view class="state-box">
-            <text class="state-label">手风琴展开项：</text>
-            <text class="state-value">{{ accordionActive || '无' }}</text>
+            <text class="state-label">{{ $t('examplePages.collapse.labels.accordionExpanded') }}：</text>
+            <text class="state-value">{{ accordionActive || $t('examplePages.collapse.labels.none') }}</text>
           </view>
         </view>
       </view>

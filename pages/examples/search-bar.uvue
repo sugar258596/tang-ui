@@ -2,27 +2,30 @@
 import { ref } from 'vue'
 import TSearchBar from '@/components/TSearchBar'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TSearchBar 组件示例页面
  */
+
+const { $t } = useI18n()
 
 const value1 = ref<string>('')
 const value2 = ref<string>('')
 const value3 = ref<string>('')
 
 const handleSearch = (value: string): void => {
-  console.log('搜索:', value)
+  console.log($t('examplePages.searchBar.messages.search'), value)
   uni.showToast({
-    title: `搜索: ${value}`,
+    title: `${$t('examplePages.searchBar.messages.search')}: ${value}`,
     icon: 'none'
   })
 }
 
 const handleCancel = (): void => {
-  console.log('取消搜索')
+  console.log($t('examplePages.searchBar.messages.cancelled'))
   uni.showToast({
-    title: '已取消',
+    title: $t('examplePages.searchBar.messages.cancelled'),
     icon: 'none'
   })
 }
@@ -31,64 +34,64 @@ const handleCancel = (): void => {
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.basic')" padding="none">
       <TSearchBar v-model="value1" @search="handleSearch" />
     </TCard>
 
     <!-- 圆角样式 -->
-    <TCard title="圆角样式" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.round')" padding="none">
       <TSearchBar
         v-model="value2"
         shape="round"
-        placeholder="圆角搜索框"
+        :placeholder="$t('examplePages.searchBar.placeholder.round')"
         @search="handleSearch"
       />
     </TCard>
 
     <!-- 显示取消按钮 -->
-    <TCard title="显示取消按钮" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.showCancel')" padding="none">
       <TSearchBar
         v-model="value3"
         :show-cancel="true"
-        cancel-text="取消"
+        :cancel-text="$t('examplePages.searchBar.buttons.cancel')"
         @search="handleSearch"
         @cancel="handleCancel"
       />
     </TCard>
 
     <!-- 自定义背景色 -->
-    <TCard title="自定义背景色" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.customBackground')" padding="none">
       <TSearchBar
         v-model="value1"
         background="#e6f7ff"
-        placeholder="浅蓝色背景"
+        :placeholder="$t('examplePages.searchBar.placeholder.background')"
       />
     </TCard>
 
     <!-- 禁用状态 -->
-    <TCard title="禁用状态" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.disabled')" padding="none">
       <TSearchBar
         v-model="value1"
         :disabled="true"
-        placeholder="禁用状态"
+        :placeholder="$t('examplePages.searchBar.placeholder.disabled')"
       />
     </TCard>
 
     <!-- 自定义图标 -->
-    <TCard title="自定义图标" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.customIcon')" padding="none">
       <TSearchBar
         v-model="value1"
         left-icon="🔎"
-        placeholder="自定义搜索图标"
+        :placeholder="$t('examplePages.searchBar.placeholder.customIcon')"
       />
     </TCard>
 
     <!-- 限制长度 -->
-    <TCard title="限制长度" padding="none">
+    <TCard :title="$t('examplePages.searchBar.sections.maxlength')" padding="none">
       <TSearchBar
         v-model="value1"
         :maxlength="20"
-        placeholder="最多输入20个字符"
+        :placeholder="$t('examplePages.searchBar.placeholder.maxlength')"
       />
     </TCard>
   </view>

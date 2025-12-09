@@ -1,0 +1,105 @@
+/**
+ * useI18n Composable 验证脚本
+ * 验证 useI18n 的基本功能
+ */
+
+import { I18nManager } from './manager.uts'
+import { useI18n } from '../useI18n.uts'
+
+/**
+ * 验证 useI18n Composable
+ */
+export function verifyUseI18n(): void {
+  console.log('=== useI18n Composable 验证 ===\n')
+  
+  // 准备测试数据
+  const manager = I18nManager.getInstance()
+  manager.registerMessages('zh-CN', {
+    common: {
+      confirm: '确定',
+      cancel: '取消',
+      hello: '你好，{name}'
+    },
+    dialog: {
+      title: '提示'
+    }
+  })
+  
+  manager.registerMessages('en-US', {
+    common: {
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+      hello: 'Hello, {name}'
+    },
+    dialog: {
+      title: 'Notice'
+    }
+  })
+  
+  // 测试 useI18n
+  const { $t, locale, availableLocales, setLocale } = useI18n()
+  
+  // 1. 测试翻译函数
+  console.log('1. 测试翻译函数')
+  console.log('   $t("common.confirm"):', $t('common.confirm'))
+  console.log('   预期: "确定"')
+  console.log('   结果:', $t('common.confirm') === '确定' ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 2. 测试带参数的翻译
+  console.log('2. 测试带参数的翻译')
+  const greeting = $t('common.hello', { name: '张三' })
+  console.log('   $t("common.hello", { name: "张三" }):', greeting)
+  console.log('   预期: "你好，张三"')
+  console.log('   结果:', greeting === '你好，张三' ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 3. 测试当前语言（响应式）
+  console.log('3. 测试当前语言（响应式）')
+  console.log('   locale.value:', locale.value)
+  console.log('   预期: "zh-CN"')
+  console.log('   结果:', locale.value === 'zh-CN' ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 4. 测试可用语言列表
+  console.log('4. 测试可用语言列表')
+  console.log('   availableLocales.value:', availableLocales.value)
+  console.log('   预期: 包含 "zh-CN" 和 "en-US"')
+  const hasZhCN = availableLocales.value.includes('zh-CN')
+  const hasEnUS = availableLocales.value.includes('en-US')
+  console.log('   结果:', hasZhCN && hasEnUS ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 5. 测试语言切换
+  console.log('5. 测试语言切换')
+  const switchResult = setLocale('en-US')
+  console.log('   setLocale("en-US"):', switchResult)
+  console.log('   预期: true')
+  console.log('   结果:', switchResult === true ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 6. 验证切换后的翻译
+  console.log('6. 验证切换后的翻译')
+  console.log('   locale.value:', locale.value)
+  console.log('   $t("common.confirm"):', $t('common.confirm'))
+  console.log('   预期语言: "en-US"')
+  console.log('   预期翻译: "Confirm"')
+  const localeCorrect = locale.value === 'en-US'
+  const translationCorrect = $t('common.confirm') === 'Confirm'
+  console.log('   结果:', localeCorrect && translationCorrect ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  // 7. 测试无效语言代码
+  console.log('7. 测试无效语言代码')
+  const invalidResult = setLocale('invalid-locale')
+  console.log('   setLocale("invalid-locale"):', invalidResult)
+  console.log('   预期: false')
+  console.log('   当前语言保持不变:', locale.value)
+  console.log('   结果:', invalidResult === false && locale.value === 'en-US' ? '✓ 通过' : '✗ 失败')
+  console.log()
+  
+  console.log('=== 验证完成 ===')
+}
+
+// 如果直接运行此文件，执行验证
+// verifyUseI18n()

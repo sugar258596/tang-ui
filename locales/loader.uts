@@ -1,0 +1,251 @@
+/**
+ * JSON 文件加载器
+ * 负责加载和管理 JSON 语言包
+ * 使用静态导入确保跨平台兼容性
+ */
+
+import type { ModularLocaleMessages } from '../composables/i18n/types.uts'
+
+// ============================================
+// 静态导入所有 JSON 文件
+// ============================================
+
+// 简体中文 (zh-CN)
+import zhCNActionSheet from './zh-CN/actionSheet.json'
+import zhCNCommon from './zh-CN/common.json'
+import zhCNDialog from './zh-CN/dialog.json'
+import zhCNEmpty from './zh-CN/empty.json'
+import zhCNErrorState from './zh-CN/errorState.json'
+import zhCNExamples from './zh-CN/examples.json'
+import zhCNExamplePages from './zh-CN/examplePages.json'
+import zhCNForm from './zh-CN/form.json'
+import zhCNInput from './zh-CN/input.json'
+import zhCNList from './zh-CN/list.json'
+import zhCNLoading from './zh-CN/loading.json'
+import zhCNNavBar from './zh-CN/navBar.json'
+import zhCNNoticeBar from './zh-CN/noticeBar.json'
+import zhCNPicker from './zh-CN/picker.json'
+import zhCNSearchBar from './zh-CN/searchBar.json'
+import zhCNTextarea from './zh-CN/textarea.json'
+import zhCNToast from './zh-CN/toast.json'
+
+// 英语 (en-US)
+import enUSActionSheet from './en-US/actionSheet.json'
+import enUSCommon from './en-US/common.json'
+import enUSDialog from './en-US/dialog.json'
+import enUSEmpty from './en-US/empty.json'
+import enUSErrorState from './en-US/errorState.json'
+import enUSExamples from './en-US/examples.json'
+import enUSExamplePages from './en-US/examplePages.json'
+import enUSForm from './en-US/form.json'
+import enUSInput from './en-US/input.json'
+import enUSList from './en-US/list.json'
+import enUSLoading from './en-US/loading.json'
+import enUSNavBar from './en-US/navBar.json'
+import enUSNoticeBar from './en-US/noticeBar.json'
+import enUSPicker from './en-US/picker.json'
+import enUSSearchBar from './en-US/searchBar.json'
+import enUSTextarea from './en-US/textarea.json'
+import enUSToast from './en-US/toast.json'
+
+// 繁体中文 (zh-TW)
+import zhTWActionSheet from './zh-TW/actionSheet.json'
+import zhTWCommon from './zh-TW/common.json'
+import zhTWDialog from './zh-TW/dialog.json'
+import zhTWEmpty from './zh-TW/empty.json'
+import zhTWErrorState from './zh-TW/errorState.json'
+import zhTWExamples from './zh-TW/examples.json'
+import zhTWExamplePages from './zh-TW/examplePages.json'
+import zhTWForm from './zh-TW/form.json'
+import zhTWInput from './zh-TW/input.json'
+import zhTWList from './zh-TW/list.json'
+import zhTWLoading from './zh-TW/loading.json'
+import zhTWNavBar from './zh-TW/navBar.json'
+import zhTWNoticeBar from './zh-TW/noticeBar.json'
+import zhTWPicker from './zh-TW/picker.json'
+import zhTWSearchBar from './zh-TW/searchBar.json'
+import zhTWTextarea from './zh-TW/textarea.json'
+import zhTWToast from './zh-TW/toast.json'
+
+// ============================================
+// 创建静态导入映射表
+// ============================================
+
+/**
+ * 简体中文模块映射
+ */
+const zhCNModules: ModularLocaleMessages = {
+  actionSheet: zhCNActionSheet,
+  common: zhCNCommon,
+  dialog: zhCNDialog,
+  empty: zhCNEmpty,
+  errorState: zhCNErrorState,
+  examples: zhCNExamples,
+  examplePages: zhCNExamplePages,
+  form: zhCNForm,
+  input: zhCNInput,
+  list: zhCNList,
+  loading: zhCNLoading,
+  navBar: zhCNNavBar,
+  noticeBar: zhCNNoticeBar,
+  picker: zhCNPicker,
+  searchBar: zhCNSearchBar,
+  textarea: zhCNTextarea,
+  toast: zhCNToast
+}
+
+/**
+ * 英语模块映射
+ */
+const enUSModules: ModularLocaleMessages = {
+  actionSheet: enUSActionSheet,
+  common: enUSCommon,
+  dialog: enUSDialog,
+  empty: enUSEmpty,
+  errorState: enUSErrorState,
+  examples: enUSExamples,
+  examplePages: enUSExamplePages,
+  form: enUSForm,
+  input: enUSInput,
+  list: enUSList,
+  loading: enUSLoading,
+  navBar: enUSNavBar,
+  noticeBar: enUSNoticeBar,
+  picker: enUSPicker,
+  searchBar: enUSSearchBar,
+  textarea: enUSTextarea,
+  toast: enUSToast
+}
+
+/**
+ * 繁体中文模块映射
+ */
+const zhTWModules: ModularLocaleMessages = {
+  actionSheet: zhTWActionSheet,
+  common: zhTWCommon,
+  dialog: zhTWDialog,
+  empty: zhTWEmpty,
+  errorState: zhTWErrorState,
+  examples: zhTWExamples,
+  examplePages: zhTWExamplePages,
+  form: zhTWForm,
+  input: zhTWInput,
+  list: zhTWList,
+  loading: zhTWLoading,
+  navBar: zhTWNavBar,
+  noticeBar: zhTWNoticeBar,
+  picker: zhTWPicker,
+  searchBar: zhTWSearchBar,
+  textarea: zhTWTextarea,
+  toast: zhTWToast
+}
+
+// ============================================
+// LocaleLoader 类
+// ============================================
+
+/**
+ * LocaleLoader 类
+ * 提供语言包加载功能（同步方式，跨平台兼容）
+ */
+export class LocaleLoader {
+  /**
+   * 模块列表（显式维护）
+   */
+  private static readonly MODULES = [
+    'actionSheet',
+    'common',
+    'dialog',
+    'empty',
+    'errorState',
+    'examples',
+    'examplePages',
+    'form',
+    'input',
+    'list',
+    'loading',
+    'navBar',
+    'noticeBar',
+    'picker',
+    'searchBar',
+    'textarea',
+    'toast'
+  ]
+  
+  /**
+   * 加载指定语言的所有模块（同步方法）
+   * 使用静态导入映射表，确保编译时可解析
+   * @param locale 语言代码
+   * @returns 模块化语言包
+   */
+  static loadLocale(locale: string): ModularLocaleMessages {
+    const modules: ModularLocaleMessages = {}
+    
+    // 使用静态导入映射表
+    const localeImports = this.getLocaleImports(locale)
+    
+    if (!localeImports) {
+      console.warn(`[Tang UI I18n] Locale "${locale}" not found`)
+      return modules
+    }
+    
+    for (const moduleName of this.MODULES) {
+      try {
+        const content = localeImports[moduleName]
+        if (content) {
+          modules[moduleName] = content
+        } else {
+          console.warn(`[Tang UI I18n] Module ${moduleName} not found for locale ${locale}`)
+          modules[moduleName] = {}
+        }
+      } catch (error) {
+        console.warn(`[Tang UI I18n] Failed to load module ${moduleName} for locale ${locale}`, error)
+        modules[moduleName] = {}
+      }
+    }
+    
+    return modules
+  }
+  
+  /**
+   * 获取语言的静态导入映射
+   * 所有导入都是静态的，确保编译时可解析
+   * @param locale 语言代码
+   * @returns 模块名到内容的映射
+   */
+  private static getLocaleImports(locale: string): ModularLocaleMessages | null {
+    // 根据语言代码返回对应的静态导入
+    // 这些导入在文件顶部已经完成
+    switch (locale) {
+      case 'zh-CN':
+        return zhCNModules
+      case 'en-US':
+        return enUSModules
+      case 'zh-TW':
+        return zhTWModules
+      default:
+        return null
+    }
+  }
+  
+  /**
+   * 预加载内置语言包（同步方法）
+   * 同步加载所有内置语言，确保平台兼容性
+   * @returns 内置语言包的 Map
+   */
+  static preloadBuiltinLocales(): Map<string, ModularLocaleMessages> {
+    const builtinLocales = ['zh-CN', 'en-US', 'zh-TW']
+    const localesMap = new Map<string, ModularLocaleMessages>()
+    
+    for (const locale of builtinLocales) {
+      try {
+        const messages = this.loadLocale(locale)
+        localesMap.set(locale, messages)
+      } catch (error) {
+        console.error(`[Tang UI I18n] Failed to preload locale ${locale}`, error)
+      }
+    }
+    
+    return localesMap
+  }
+}

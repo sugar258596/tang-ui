@@ -2,15 +2,17 @@
 import { ref } from 'vue'
 import TButton from '@/components/TButton'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 按钮组件示例页面
  */
 
+const { $t } = useI18n()
 const loading = ref<boolean>(false)
 
 const handleClick = (): void => {
-  console.log('按钮被点击')
+  console.log($t('examplePages.button.messages.clicked'))
 }
 
 const handleLoadingClick = (): void => {
@@ -24,66 +26,66 @@ const handleLoadingClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TButton 按钮组件</text>
-      <text class="example-desc">按钮用于触发操作</text>
+      <text class="example-title">{{ $t('examplePages.button.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.button.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.basic')" class="example-section">
       <view class="button-row">
-        <TButton type="primary" @click="handleClick">主要按钮</TButton>
-        <TButton type="success">成功按钮</TButton>
-        <TButton type="warning">警告按钮</TButton>
-        <TButton type="danger">危险按钮</TButton>
-        <TButton type="info">信息按钮</TButton>
+        <TButton type="primary" @click="handleClick">{{ $t('examplePages.button.buttons.primary') }}</TButton>
+        <TButton type="success">{{ $t('examplePages.button.buttons.success') }}</TButton>
+        <TButton type="warning">{{ $t('examplePages.button.buttons.warning') }}</TButton>
+        <TButton type="danger">{{ $t('examplePages.button.buttons.danger') }}</TButton>
+        <TButton type="info">{{ $t('examplePages.button.buttons.info') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="朴素按钮" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.plain')" class="example-section">
       <view class="button-row">
-        <TButton type="primary" plain>朴素按钮</TButton>
-        <TButton type="success" plain>成功按钮</TButton>
-        <TButton type="warning" plain>警告按钮</TButton>
-        <TButton type="danger" plain>危险按钮</TButton>
+        <TButton type="primary" plain>{{ $t('examplePages.button.buttons.plain') }}</TButton>
+        <TButton type="success" plain>{{ $t('examplePages.button.buttons.success') }}</TButton>
+        <TButton type="warning" plain>{{ $t('examplePages.button.buttons.warning') }}</TButton>
+        <TButton type="danger" plain>{{ $t('examplePages.button.buttons.danger') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="按钮尺寸" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.size')" class="example-section">
       <view class="button-row">
-        <TButton size="large">大型按钮</TButton>
-        <TButton size="medium">中等按钮</TButton>
-        <TButton size="small">小型按钮</TButton>
+        <TButton size="large">{{ $t('examplePages.button.buttons.large') }}</TButton>
+        <TButton size="medium">{{ $t('examplePages.button.buttons.medium') }}</TButton>
+        <TButton size="small">{{ $t('examplePages.button.buttons.small') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.disabled')" class="example-section">
       <view class="button-row">
-        <TButton disabled>禁用按钮</TButton>
-        <TButton type="primary" disabled>禁用按钮</TButton>
-        <TButton type="success" disabled>禁用按钮</TButton>
+        <TButton disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
+        <TButton type="primary" disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
+        <TButton type="success" disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="加载状态" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.loading')" class="example-section">
       <view class="button-row">
         <TButton :loading="loading" @click="handleLoadingClick">
-          {{ loading ? '加载中...' : '点击加载' }}
+          {{ loading ? $t('examplePages.button.buttons.loading') : $t('examplePages.button.buttons.clickToLoad') }}
         </TButton>
-        <TButton type="primary" loading>加载中</TButton>
+        <TButton type="primary" loading>{{ $t('examplePages.button.buttons.loading') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="圆角按钮" class="example-section">
+    <TCard :title="$t('examplePages.button.sections.round')" class="example-section">
       <view class="button-row">
-        <TButton round>圆角按钮</TButton>
-        <TButton type="primary" round>主要按钮</TButton>
-        <TButton type="success" round>成功按钮</TButton>
+        <TButton round>{{ $t('examplePages.button.buttons.round') }}</TButton>
+        <TButton type="primary" round>{{ $t('examplePages.button.buttons.primary') }}</TButton>
+        <TButton type="success" round>{{ $t('examplePages.button.buttons.success') }}</TButton>
       </view>
     </TCard>
 
-    <TCard title="块级按钮" class="example-section">
-      <TButton type="primary" block>块级按钮</TButton>
+    <TCard :title="$t('examplePages.button.sections.block')" class="example-section">
+      <TButton type="primary" block>{{ $t('examplePages.button.buttons.block') }}</TButton>
       <view style="margin-top: 10px;">
-        <TButton type="success" block>块级按钮</TButton>
+        <TButton type="success" block>{{ $t('examplePages.button.buttons.block') }}</TButton>
       </view>
     </TCard>
   </view>

@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TRadioButton from '@/components/TRadioButton'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 单选按钮组件示例页面
  */
+
+const { $t } = useI18n()
 
 const radioValue1 = ref<string>('option1')
 const radioValue2 = ref<string>('')
@@ -20,66 +23,66 @@ const handleChange = (value: string | number): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TRadioButton 单选组件</text>
-      <text class="example-desc">单选按钮组件</text>
+      <text class="example-title">{{ $t('examplePages.radio.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.radio.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.basic')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRadioButton v-model="radioValue1" name="radio1" value="option1">选项一</TRadioButton>
-        <TRadioButton v-model="radioValue1" name="radio1" value="option2">选项二</TRadioButton>
-        <TRadioButton v-model="radioValue1" name="radio1" value="option3">选项三</TRadioButton>
+        <TRadioButton v-model="radioValue1" name="radio1" value="option1">{{ $t('examplePages.radio.labels.option1') }}</TRadioButton>
+        <TRadioButton v-model="radioValue1" name="radio1" value="option2">{{ $t('examplePages.radio.labels.option2') }}</TRadioButton>
+        <TRadioButton v-model="radioValue1" name="radio1" value="option3">{{ $t('examplePages.radio.labels.option3') }}</TRadioButton>
       </view>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中值: {{ radioValue1 }}
+        {{ $t('examplePages.radio.status.selected') }}: {{ radioValue1 }}
       </text>
     </TCard>
 
-    <TCard title="单选组" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.group')" class="example-section">
       <radio-group v-model="radioValue2">
         <view style="display: flex; flex-direction: column; gap: 10px;">
-          <TRadioButton value="A">选项 A</TRadioButton>
-          <TRadioButton value="B">选项 B</TRadioButton>
-          <TRadioButton value="C">选项 C</TRadioButton>
-          <TRadioButton value="D">选项 D</TRadioButton>
+          <TRadioButton value="A">{{ $t('examplePages.radio.labels.optionA') }}</TRadioButton>
+          <TRadioButton value="B">{{ $t('examplePages.radio.labels.optionB') }}</TRadioButton>
+          <TRadioButton value="C">{{ $t('examplePages.radio.labels.optionC') }}</TRadioButton>
+          <TRadioButton value="D">{{ $t('examplePages.radio.labels.optionD') }}</TRadioButton>
         </view>
       </radio-group>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中值: {{ radioValue2 || '未选择' }}
+        {{ $t('examplePages.radio.status.selected') }}: {{ radioValue2 || $t('examplePages.radio.status.notSelected') }}
       </text>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.disabled')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRadioButton value="1" disabled>禁用未选中</TRadioButton>
-        <TRadioButton v-model="radioValue4" :value="2" disabled>禁用已选中</TRadioButton>
+        <TRadioButton value="1" disabled>{{ $t('examplePages.radio.labels.disabledUnchecked') }}</TRadioButton>
+        <TRadioButton v-model="radioValue4" :value="2" disabled>{{ $t('examplePages.radio.labels.disabledChecked') }}</TRadioButton>
       </view>
     </TCard>
 
-    <TCard title="不同大小" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRadioButton size="small" value="small">小尺寸</TRadioButton>
-        <TRadioButton size="medium" value="medium">中等尺寸</TRadioButton>
-        <TRadioButton size="large" value="large">大尺寸</TRadioButton>
+        <TRadioButton size="small" value="small">{{ $t('examplePages.radio.labels.small') }}</TRadioButton>
+        <TRadioButton size="medium" value="medium">{{ $t('examplePages.radio.labels.medium') }}</TRadioButton>
+        <TRadioButton size="large" value="large">{{ $t('examplePages.radio.labels.large') }}</TRadioButton>
       </view>
     </TCard>
 
-    <TCard title="自定义颜色" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.customColor')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRadioButton v-model="radioValue3" value="apple" activeColor="#f56c6c">红色</TRadioButton>
-        <TRadioButton v-model="radioValue3" value="banana" activeColor="#67c23a">绿色</TRadioButton>
-        <TRadioButton v-model="radioValue3" value="orange" activeColor="#e6a23c">橙色</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="apple" activeColor="#f56c6c">{{ $t('examplePages.radio.labels.red') }}</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="banana" activeColor="#67c23a">{{ $t('examplePages.radio.labels.green') }}</TRadioButton>
+        <TRadioButton v-model="radioValue3" value="orange" activeColor="#e6a23c">{{ $t('examplePages.radio.labels.orange') }}</TRadioButton>
       </view>
     </TCard>
 
-    <TCard title="事件处理" class="example-section">
+    <TCard :title="$t('examplePages.radio.sections.events')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <TRadioButton v-model="radioValue4" :value="1" @change="handleChange">选项 1</TRadioButton>
         <TRadioButton v-model="radioValue4" :value="2" @change="handleChange">选项 2</TRadioButton>
         <TRadioButton v-model="radioValue4" :value="3" @change="handleChange">选项 3</TRadioButton>
       </view>
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        切换选项查看控制台
+        {{ $t('examplePages.radio.status.checkConsole') }}
       </text>
     </TCard>
   </view>

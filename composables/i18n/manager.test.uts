@@ -1,0 +1,182 @@
+/**
+ * I18nManager 单元测试
+ * 测试核心管理器的基本功能
+ */
+
+import { describe, it, expect, beforeEach } from 'vitest'
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+describe('I18nManager', () => {
+  let manager: I18nManager
+  
+  beforeEach(() => {
+    // 获取单例实例
+    manager = I18nManager.getInstance()
+    
+    // 注册测试语言包
+    const zhCN: ModularLocaleMessages = {
+      common: {
+        confirm: '确定',
+        cancel: '取消',
+        hello: '你好，{name}'
+      },
+      dialog: {
+        title: '提示'
+      }
+    }
+    
+    const enUS: ModularLocaleMessages = {
+      common: {
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        hello: 'Hello, {name}'
+      }
+    }
+    
+    manager.registerMessages('zh-CN', zhCN)
+    manager.registerMessages('en-US', enUS)
+    manager.setLocale('zh-CN')
+  })
+  
+  describe('translate()', () => {
+    it('should translate simple keys', () => {
+      const result = manager.translate('common.confirm')
+      expect(result).toBe('确定')
+    })
+    
+    it('should translate with module name', () => {
+      const result = manager.translate('dialog.title')
+      expect(result).toBe('提示')
+    })
+    
+    it('should return key if translation not found', () => {
+      const result = manager.translate('common.notexist')
+      expect(result).toBe('common.notexist')
+    })
+    
+    it('should return key if invalid format', () => {
+      const result = manager.translate('invalidkey')
+      expect(result).toBe('invalidkey')
+    })
+  })
+  
+  describe('interpolate()', () => {
+    it('should interpolate parameters', () => {
+      const result = manager.translate('common.hello', { name: '张三' })
+      expect(result).toBe('你好，张三')
+    })
+    
+    it('should handle missing parameters', () => {
+      const result = manager.translate('common.hello', {})
+      expect(result).toBe('你好，{name}')
+    })
+    
+    it('should handle multiple parameters', () => {
+      // 注册带多个参数的消息
+      manager.registerMessages('zh-CN', {
+        test: {
+          multi: '{greeting}, {name}! 你有 {count} 条消息'
+        }
+      })
+      
+      const result = manager.translate('test.multi', {
+        greeting: '你好',
+        name: '李四',
+        count: 5
+      })
+      expect(result).toBe('你好, 李四! 你有 5 条消息')
+    })
+  })
+  
+  describe('setLocale()', () => {
+    it('should switch locale successfully', () => {
+      const success = manager.setLocale('en-US')
+      expect(success).toBe(true)
+      expect(manager.getCurrentLocale()).toBe('en-US')
+    })
+    
+    it('should translate in new locale after switch', () => {
+      manager.setLocale('en-US')
+      const result = manager.translate('common.confirm')
+      expect(result).toBe('Confirm')
+    })
+    
+    it('should return false for invalid locale', () => {
+      const success = manager.setLocale('invalid-locale')
+      expect(success).toBe(false)
+      expect(manager.getCurrentLocale()).toBe('zh-CN')
+    })
+  })
+  
+  describe('fallback mechanism', () => {
+    it('should fallback to default locale when key not found', () => {
+      manager.setLocale('en-US')
+      // dialog.title 只在 zh-CN 中存在
+      const result = manager.translate('dialog.title')
+      expect(result).toBe('提示')
+    })
+  })
+  
+  describe('registerMessages()', () => {
+    it('should register new locale', () => {
+      const zhTW: ModularLocaleMessages = {
+        common: {
+          confirm: '確定'
+        }
+      }
+      
+      manager.registerMessages('zh-TW', zhTW)
+      manager.setLocale('zh-TW')
+      const result = manager.translate('common.confirm')
+      expect(result).toBe('確定')
+    })
+    
+    it('should merge messages for existing locale', () => {
+      const additional: ModularLocaleMessages = {
+        common: {
+          ok: '好的'
+        },
+        newModule: {
+          test: '测试'
+        }
+      }
+      
+      manager.registerMessages('zh-CN', additional)
+      
+      // 原有的键应该保留
+      expect(manager.translate('common.confirm')).toBe('确定')
+      // 新增的键应该可用
+      expect(manager.translate('common.ok')).toBe('好的')
+      expect(manager.translate('newModule.test')).toBe('测试')
+    })
+    
+    it('should override existing keys when merging', () => {
+      const override: ModularLocaleMessages = {
+        common: {
+          confirm: '好的'
+        }
+      }
+      
+      manager.registerMessages('zh-CN', override)
+      const result = manager.translate('common.confirm')
+      expect(result).toBe('好的')
+    })
+  })
+  
+  describe('getAvailableLocales()', () => {
+    it('should return all registered locales', () => {
+      const locales = manager.getAvailableLocales()
+      expect(locales.value).toContain('zh-CN')
+      expect(locales.value).toContain('en-US')
+    })
+  })
+  
+  describe('singleton pattern', () => {
+    it('should return same instance', () => {
+      const instance1 = I18nManager.getInstance()
+      const instance2 = I18nManager.getInstance()
+      expect(instance1).toBe(instance2)
+    })
+  })
+})

@@ -1,0 +1,343 @@
+/**
+ * Task 23 验证脚本
+ * 验证全局函数支持注册模式
+ */
+
+import { 
+  registerLocale, 
+  registerLocaleWithMode, 
+  replaceLocale,
+  setLanguage,
+  getCurrentLocale
+} from './index.uts'
+import { I18nManager } from './manager.uts'
+
+/**
+ * 验证 registerLocale 保持向后兼容（默认合并模式）
+ */
+function testRegisterLocaleBackwardCompatibility(): boolean {
+  console.log('\n=== 测试 1: registerLocale 向后兼容性（默认合并模式） ===')
+  
+  const manager = I18nManager.getInstance()
+  
+  // 注册初始语言包
+  registerLocale('test-locale-1', {
+    common: {
+      confirm: '确定',
+      cancel: '取消',
+      ok: '好的'
+    },
+    dialog: {
+      title: '提示',
+      confirmText: '确定'
+    }
+  })
+  
+  // 使用 registerLocale 覆盖部分内容（应该使用合并模式）
+  registerLocale('test-locale-1', {
+    common: {
+      confirm: '好的'  // 覆盖这个键
+      // cancel 和 ok 应该保留
+    }
+  })
+  
+  // 验证合并结果
+  setLanguage('test-locale-1')
+  const messages = manager.messages.get('test-locale-1')
+  
+  if (!messages) {
+    console.log('❌ 失败：语言包未注册')
+    return false
+  }
+  
+  // 检查 common 模块
+  const common = messages['common']
+  if (!common) {
+    console.log('❌ 失败：common 模块不存在')
+    return false
+  }
+  
+  // 验证覆盖的键
+  if (common['confirm'] !== '好的') {
+    console.log('❌ 失败：confirm 应该被覆盖为 "好的"，实际为:', common['confirm'])
+    return false
+  }
+  
+  // 验证保留的键
+  if (common['cancel'] !== '取消') {
+    console.log('❌ 失败：cancel 应该保留为 "取消"，实际为:', common['cancel'])
+    return false
+  }
+  
+  if (common['ok'] !== '好的') {
+    console.log('❌ 失败：ok 应该保留为 "好的"，实际为:', common['ok'])
+    return false
+  }
+  
+  // 验证 dialog 模块应该保留
+  const dialog = messages['dialog']
+  if (!dialog || dialog['title'] !== '提示') {
+    console.log('❌ 失败：dialog 模块应该保留')
+    return false
+  }
+  
+  console.log('✅ 通过：registerLocale 默认使用合并模式')
+  return true
+}
+
+/**
+ * 验证 registerLocaleWithMode 合并模式
+ */
+function testRegisterLocaleWithModeMerge(): boolean {
+  console.log('\n=== 测试 2: registerLocaleWithMode 合并模式 ===')
+  
+  const manager = I18nManager.getInstance()
+  
+  // 注册初始语言包
+  registerLocaleWithMode('test-locale-2', {
+    common: {
+      confirm: '确定',
+      cancel: '取消'
+    },
+    dialog: {
+      title: '提示'
+    }
+  }, 'merge')
+  
+  // 使用合并模式添加新内容
+  registerLocaleWithMode('test-locale-2', {
+    common: {
+      ok: '好的'  // 添加新键
+    },
+    empty: {
+      title: '暂无数据'  // 添加新模块
+    }
+  }, 'merge')
+  
+  const messages = manager.messages.get('test-locale-2')
+  
+  if (!messages) {
+    console.log('❌ 失败：语言包未注册')
+    return false
+  }
+  
+  // 验证原有内容保留
+  const common = messages['common']
+  if (!common || common['confirm'] !== '确定' || common['cancel'] !== '取消') {
+    console.log('❌ 失败：原有 common 内容应该保留')
+    return false
+  }
+  
+  // 验证新内容添加
+  if (common['ok'] !== '好的') {
+    console.log('❌ 失败：新键 ok 应该被添加')
+    return false
+  }
+  
+  // 验证原有模块保留
+  const dialog = messages['dialog']
+  if (!dialog || dialog['title'] !== '提示') {
+    console.log('❌ 失败：原有 dialog 模块应该保留')
+    return false
+  }
+  
+  // 验证新模块添加
+  const empty = messages['empty']
+  if (!empty || empty['title'] !== '暂无数据') {
+    console.log('❌ 失败：新模块 empty 应该被添加')
+    return false
+  }
+  
+  console.log('✅ 通过：registerLocaleWithMode 合并模式正常工作')
+  return true
+}
+
+/**
+ * 验证 registerLocaleWithMode 替换模式
+ */
+function testRegisterLocaleWithModeReplace(): boolean {
+  console.log('\n=== 测试 3: registerLocaleWithMode 替换模式 ===')
+  
+  const manager = I18nManager.getInstance()
+  
+  // 注册初始语言包
+  registerLocaleWithMode('test-locale-3', {
+    common: {
+      confirm: '确定',
+      cancel: '取消',
+      ok: '好的'
+    },
+    dialog: {
+      title: '提示',
+      confirmText: '确定'
+    }
+  }, 'merge')
+  
+  // 使用替换模式完全替换
+  registerLocaleWithMode('test-locale-3', {
+    common: {
+      confirm: '好的'  // 只有这一个键
+    }
+    // dialog 模块应该被移除
+  }, 'replace')
+  
+  const messages = manager.messages.get('test-locale-3')
+  
+  if (!messages) {
+    console.log('❌ 失败：语言包未注册')
+    return false
+  }
+  
+  // 验证只有新内容
+  const common = messages['common']
+  if (!common) {
+    console.log('❌ 失败：common 模块应该存在')
+    return false
+  }
+  
+  if (common['confirm'] !== '好的') {
+    console.log('❌ 失败：confirm 应该是 "好的"')
+    return false
+  }
+  
+  // 验证原有的其他键被移除
+  if ('cancel' in common || 'ok' in common) {
+    console.log('❌ 失败：原有的 cancel 和 ok 键应该被移除')
+    return false
+  }
+  
+  // 验证原有模块被移除
+  if ('dialog' in messages) {
+    console.log('❌ 失败：原有的 dialog 模块应该被移除')
+    return false
+  }
+  
+  console.log('✅ 通过：registerLocaleWithMode 替换模式正常工作')
+  return true
+}
+
+/**
+ * 验证 replaceLocale 函数
+ */
+function testReplaceLocale(): boolean {
+  console.log('\n=== 测试 4: replaceLocale 函数 ===')
+  
+  const manager = I18nManager.getInstance()
+  
+  // 注册初始语言包
+  registerLocale('test-locale-4', {
+    common: {
+      confirm: '确定',
+      cancel: '取消',
+      ok: '好的'
+    },
+    dialog: {
+      title: '提示'
+    },
+    empty: {
+      title: '暂无数据'
+    }
+  })
+  
+  // 使用 replaceLocale 完全替换
+  replaceLocale('test-locale-4', {
+    common: {
+      confirm: '好的',
+      cancel: '取消'
+    }
+    // 只保留 common 模块，其他模块应该被移除
+  })
+  
+  const messages = manager.messages.get('test-locale-4')
+  
+  if (!messages) {
+    console.log('❌ 失败：语言包未注册')
+    return false
+  }
+  
+  // 验证新内容存在
+  const common = messages['common']
+  if (!common || common['confirm'] !== '好的' || common['cancel'] !== '取消') {
+    console.log('❌ 失败：新的 common 内容应该存在')
+    return false
+  }
+  
+  // 验证原有的 ok 键被移除
+  if ('ok' in common) {
+    console.log('❌ 失败：原有的 ok 键应该被移除')
+    return false
+  }
+  
+  // 验证原有模块被移除
+  if ('dialog' in messages || 'empty' in messages) {
+    console.log('❌ 失败：原有的 dialog 和 empty 模块应该被移除')
+    return false
+  }
+  
+  console.log('✅ 通过：replaceLocale 函数正常工作')
+  return true
+}
+
+/**
+ * 验证函数导出
+ */
+function testFunctionExports(): boolean {
+  console.log('\n=== 测试 5: 函数导出验证 ===')
+  
+  // 验证所有函数都已导出
+  if (typeof registerLocale !== 'function') {
+    console.log('❌ 失败：registerLocale 未导出')
+    return false
+  }
+  
+  if (typeof registerLocaleWithMode !== 'function') {
+    console.log('❌ 失败：registerLocaleWithMode 未导出')
+    return false
+  }
+  
+  if (typeof replaceLocale !== 'function') {
+    console.log('❌ 失败：replaceLocale 未导出')
+    return false
+  }
+  
+  console.log('✅ 通过：所有函数都已正确导出')
+  return true
+}
+
+/**
+ * 运行所有测试
+ */
+export function runTask23Verification(): void {
+  console.log('========================================')
+  console.log('Task 23 验证：全局函数支持注册模式')
+  console.log('========================================')
+  
+  const results: boolean[] = []
+  
+  results.push(testFunctionExports())
+  results.push(testRegisterLocaleBackwardCompatibility())
+  results.push(testRegisterLocaleWithModeMerge())
+  results.push(testRegisterLocaleWithModeReplace())
+  results.push(testReplaceLocale())
+  
+  const passed = results.filter(r => r).length
+  const total = results.length
+  
+  console.log('\n========================================')
+  console.log(`测试结果: ${passed}/${total} 通过`)
+  console.log('========================================')
+  
+  if (passed === total) {
+    console.log('✅ Task 23 验证通过！')
+    console.log('\n实现的功能：')
+    console.log('1. ✅ registerLocale() 保持向后兼容（默认合并模式）')
+    console.log('2. ✅ registerLocaleWithMode() 支持指定模式')
+    console.log('3. ✅ replaceLocale() 提供便捷的替换方法')
+    console.log('4. ✅ 所有函数都已正确导出')
+  } else {
+    console.log('❌ 部分测试失败，请检查实现')
+  }
+}
+
+// 如果直接运行此文件，执行验证
+// runTask23Verification()

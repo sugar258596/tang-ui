@@ -1,0 +1,11 @@
+{
+  "inputPlaceholder": "Please enter {label}",
+  "selectPlaceholder": "Please select",
+  "datePlaceholder": "Select date",
+  "timePlaceholder": "Select time",
+  "requiredError": "Please enter {label}",
+  "submitButton": "Submit",
+  "resetButton": "Reset",
+  "validationFailed": "Form validation failed",
+  "submitFailed": "Form submission failed"
+}

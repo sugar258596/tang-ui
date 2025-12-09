@@ -64,6 +64,16 @@ export interface TInputProps {
   maxlength?: number
 
   /**
+   * 前缀文本
+   */
+  prefix?: string
+
+  /**
+   * 后缀文本
+   */
+  suffix?: string
+
+  /**
    * 前缀图标
    */
   prefixIcon?: string

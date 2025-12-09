@@ -3,10 +3,13 @@ import { ref } from 'vue'
 import TTextarea from '@/components/TTextarea'
 import TCard from '@/components/TCard'
 import TText from '@/components/TText'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TTextarea 组件示例页面
  */
+
+const { $t } = useI18n()
 
 const value1 = ref<string>('')
 const value2 = ref<string>('默认内容')
@@ -28,7 +31,7 @@ const handleBlur = (): void => {
 const handleClear = (): void => {
   console.log('清空内容')
   uni.showToast({
-    title: '已清空',
+    title: $t('examplePages.textarea.messages.cleared'),
     icon: 'success'
   })
 }
@@ -37,69 +40,69 @@ const handleClear = (): void => {
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.basic')" padding="medium">
       <TTextarea
         v-model="value1"
-        placeholder="请输入内容"
+        :placeholder="$t('examplePages.textarea.placeholder')"
         @input="handleInput"
       />
     </TCard>
 
     <!-- 禁用状态 -->
-    <TCard title="禁用状态" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.disabled')" padding="medium">
       <TTextarea
         v-model="value2"
         :disabled="true"
-        placeholder="禁用状态"
+        :placeholder="$t('examplePages.textarea.labels.disabled')"
       />
     </TCard>
 
     <!-- 字数统计 -->
-    <TCard title="字数统计" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.maxlength')" padding="medium">
       <TTextarea
         v-model="value3"
-        placeholder="限制100字"
+        :placeholder="$t('examplePages.textarea.labels.limit100')"
         :maxlength="100"
         :show-count="true"
       />
     </TCard>
 
     <!-- 自动高度 -->
-    <TCard title="自动高度" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.autoHeight')" padding="medium">
       <TTextarea
         v-model="value4"
-        placeholder="输入内容会自动增高"
+        :placeholder="$t('examplePages.textarea.labels.autoGrow')"
         :auto-height="true"
         :show-count="true"
       />
     </TCard>
 
     <!-- 显示清空按钮 -->
-    <TCard title="显示清空按钮" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.clearable')" padding="medium">
       <TTextarea
         v-model="value1"
-        placeholder="可以清空内容"
+        :placeholder="$t('examplePages.textarea.labels.clearable')"
         :clearable="true"
         @clear="handleClear"
       />
     </TCard>
 
     <!-- 自定义行数 -->
-    <TCard title="自定义行数" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.customRows')" padding="medium">
       <view class="demo-section">
-        <TText text="3行" size="small" color="secondary" custom-style="margin-bottom: 8px" />
-        <TTextarea placeholder="3行高度" :rows="3" />
+        <TText :text="$t('examplePages.textarea.labels.rows3')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows3Height')" :rows="3" />
 
-        <TText text="5行" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
-        <TTextarea placeholder="5行高度" :rows="5" />
+        <TText :text="$t('examplePages.textarea.labels.rows5')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows5Height')" :rows="5" />
       </view>
     </TCard>
 
     <!-- 完整示例 -->
-    <TCard title="完整示例" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.complete')" padding="medium">
       <TTextarea
         v-model="value3"
-        placeholder="请输入您的意见或建议"
+        :placeholder="$t('examplePages.textarea.labels.feedback')"
         :maxlength="200"
         :show-count="true"
         :clearable="true"

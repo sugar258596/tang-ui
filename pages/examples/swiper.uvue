@@ -1,9 +1,13 @@
 <script setup lang="uts">
 import { ref, onMounted } from 'vue'
+import TSwiper from '@/components/TSwiper'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TSwiper 轮播图示例页面
  */
+
+const { $t } = useI18n()
 
 // 基础用法
 const currentIndex1 = ref<number>(0)
@@ -22,10 +26,10 @@ const currentIndex5 = ref<number>(0)
 
 // 轮播图数据
 const swiperList = ref<any[]>([
-  { id: 1, color: '#667eea', title: '轮播图 1' },
-  { id: 2, color: '#764ba2', title: '轮播图 2' },
-  { id: 3, color: '#f093fb', title: '轮播图 3' },
-  { id: 4, color: '#4facfe', title: '轮播图 4' }
+  { id: 1, color: '#667eea', title: $t('examplePages.swiper.labels.carousel1') },
+  { id: 2, color: '#764ba2', title: $t('examplePages.swiper.labels.carousel2') },
+  { id: 3, color: '#f093fb', title: $t('examplePages.swiper.labels.carousel3') },
+  { id: 4, color: '#4facfe', title: $t('examplePages.swiper.labels.carousel4') }
 ])
 
 // 初始化轮播项数量
@@ -38,7 +42,7 @@ onMounted(() => {
  * 处理轮播改变
  */
 const handleChange = (index: number): void => {
-  console.log('当前索引:', index)
+  console.log($t('examplePages.swiper.labels.currentIndex'), index)
 }
 
 /**
@@ -56,15 +60,15 @@ const handleClick = (index: number): void => {
 <template>
   <view class="page">
     <view class="page-header">
-      <text class="page-title">Swiper 轮播图</text>
-      <text class="page-desc">用于循环播放图片或内容</text>
+      <text class="page-title">{{ $t('examplePages.swiper.title') }}</text>
+      <text class="page-desc">{{ $t('examplePages.swiper.description') }}</text>
     </view>
 
     <view class="page-content">
       <!-- 基础用法 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">基础用法</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.basic') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex1" @change="handleChange" @click="handleClick">
@@ -75,7 +79,7 @@ const handleClick = (index: number): void => {
             </swiper-item>
           </TSwiper>
           <view class="state-text">
-            <text class="state-label">当前索引：{{ currentIndex1 }}</text>
+            <text class="state-label">{{ $t('examplePages.swiper.labels.currentIndex') }}：{{ currentIndex1 }}</text>
           </view>
         </view>
       </view>
@@ -83,7 +87,7 @@ const handleClick = (index: number): void => {
       <!-- 自定义指示器颜色 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">自定义指示器颜色</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.customIndicator') }}</text>
         </view>
         <view class="section-content">
           <TSwiper
@@ -103,7 +107,7 @@ const handleClick = (index: number): void => {
       <!-- 数字指示器 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">数字指示器</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.numberIndicator') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex3" indicator-type="number">
@@ -119,7 +123,7 @@ const handleClick = (index: number): void => {
       <!-- 顶部指示器 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">顶部指示器</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.topIndicator') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex3" indicator-position="top">
@@ -135,7 +139,7 @@ const handleClick = (index: number): void => {
       <!-- 垂直轮播 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">垂直轮播</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.vertical') }}</text>
         </view>
         <view class="section-content">
           <TSwiper
@@ -156,7 +160,7 @@ const handleClick = (index: number): void => {
       <!-- 禁用自动播放 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">禁用自动播放</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.noAutoplay') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex5" :autoplay="false">
@@ -167,7 +171,7 @@ const handleClick = (index: number): void => {
             </swiper-item>
           </TSwiper>
           <view class="state-text">
-            <text class="state-label">手动滑动切换</text>
+            <text class="state-label">{{ $t('examplePages.swiper.labels.manualSwipe') }}</text>
           </view>
         </view>
       </view>
@@ -175,7 +179,7 @@ const handleClick = (index: number): void => {
       <!-- 无指示器 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">无指示器</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.noIndicator') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex5" indicator-type="none">
@@ -191,7 +195,7 @@ const handleClick = (index: number): void => {
       <!-- 自定义高度和间隔 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">自定义高度和间隔</text>
+          <text class="section-title-text">{{ $t('examplePages.swiper.sections.customHeight') }}</text>
         </view>
         <view class="section-content">
           <TSwiper v-model="currentIndex1" height="150px" :interval="5000" :duration="500">
@@ -202,7 +206,7 @@ const handleClick = (index: number): void => {
             </swiper-item>
           </TSwiper>
           <view class="state-text">
-            <text class="state-label">高度 150px，间隔 5秒，动画 500ms</text>
+            <text class="state-label">{{ $t('examplePages.swiper.labels.heightDesc') }}</text>
           </view>
         </view>
       </view>

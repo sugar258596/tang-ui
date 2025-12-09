@@ -1,0 +1,218 @@
+{
+  "groups": {
+    "basic": "基础组件",
+    "layout": "布局组件",
+    "form": "表单组件",
+    "display": "数据展示",
+    "feedback": "反馈组件",
+    "navigation": "导航组件",
+    "tools": "测试工具"
+  },
+  "components": {
+    "TButton": {
+      "name": "按钮",
+      "enName": "Button",
+      "description": "按钮用于触发操作"
+    },
+    "TIcon": {
+      "name": "图标",
+      "enName": "Icon",
+      "description": "语义化图标"
+    },
+    "TText": {
+      "name": "文本",
+      "enName": "Text",
+      "description": "文本展示组件"
+    },
+    "TImage": {
+      "name": "图片",
+      "enName": "Image",
+      "description": "增强的图片组件"
+    },
+    "TDivider": {
+      "name": "分割线",
+      "enName": "Divider",
+      "description": "内容分割线"
+    },
+    "TCard": {
+      "name": "卡片",
+      "enName": "Card",
+      "description": "卡片容器"
+    },
+    "TList": {
+      "name": "列表",
+      "enName": "List",
+      "description": "列表展示"
+    },
+    "TCell": {
+      "name": "单元格",
+      "enName": "Cell",
+      "description": "单元格组件"
+    },
+    "TGrid": {
+      "name": "宫格",
+      "enName": "Grid",
+      "description": "宫格布局"
+    },
+    "TRow/TCol": {
+      "name": "栅格",
+      "enName": "Layout",
+      "description": "24栅格布局"
+    },
+    "TInput": {
+      "name": "输入框",
+      "enName": "Input",
+      "description": "文本输入"
+    },
+    "TTextarea": {
+      "name": "多行输入",
+      "enName": "Textarea",
+      "description": "多行文本输入"
+    },
+    "TSearchBar": {
+      "name": "搜索框",
+      "enName": "SearchBar",
+      "description": "搜索输入框"
+    },
+    "TNumberInput": {
+      "name": "数字输入",
+      "enName": "NumberInput",
+      "description": "数字输入框"
+    },
+    "TSwitch": {
+      "name": "开关",
+      "enName": "Switch",
+      "description": "开关选择器"
+    },
+    "TCheckbox": {
+      "name": "复选框",
+      "enName": "Checkbox",
+      "description": "多选框"
+    },
+    "TCheckboxGroup": {
+      "name": "复选组",
+      "enName": "CheckboxGroup",
+      "description": "复选框组"
+    },
+    "TRadioButton": {
+      "name": "单选",
+      "enName": "Radio",
+      "description": "单选按钮"
+    },
+    "TRadioGroup": {
+      "name": "单选组",
+      "enName": "RadioGroup",
+      "description": "单选框组"
+    },
+    "TSelect": {
+      "name": "选择器",
+      "enName": "Select",
+      "description": "下拉选择"
+    },
+    "TPicker": {
+      "name": "通用选择器",
+      "enName": "Picker",
+      "description": "多列数据选择"
+    },
+    "TSlider": {
+      "name": "滑块",
+      "enName": "Slider",
+      "description": "滑动选择器"
+    },
+    "TRate": {
+      "name": "评分",
+      "enName": "Rate",
+      "description": "评分组件"
+    },
+    "TForm": {
+      "name": "表单",
+      "enName": "Form",
+      "description": "表单组件"
+    },
+    "Tags": {
+      "name": "标签",
+      "enName": "Tags",
+      "description": "标记分类"
+    },
+    "TBadge": {
+      "name": "徽标",
+      "enName": "Badge",
+      "description": "数字角标"
+    },
+    "TAvatar": {
+      "name": "头像",
+      "enName": "Avatar",
+      "description": "用户头像"
+    },
+    "TProgress": {
+      "name": "进度条",
+      "enName": "Progress",
+      "description": "进度指示器"
+    },
+    "TNoticeBar": {
+      "name": "通知栏",
+      "enName": "NoticeBar",
+      "description": "滚动通知"
+    },
+    "TCollapse": {
+      "name": "折叠面板",
+      "enName": "Collapse",
+      "description": "可折叠内容区域"
+    },
+    "TSwiper": {
+      "name": "轮播图",
+      "enName": "Swiper",
+      "description": "图片/内容轮播"
+    },
+    "TEmpty": {
+      "name": "空状态",
+      "enName": "Empty",
+      "description": "空数据展示"
+    },
+    "TErrorState": {
+      "name": "错误状态",
+      "enName": "Error",
+      "description": "错误提示"
+    },
+    "TLoading": {
+      "name": "加载",
+      "enName": "Loading",
+      "description": "加载状态"
+    },
+    "TToast": {
+      "name": "轻提示",
+      "enName": "Toast",
+      "description": "轻量级提示"
+    },
+    "TDialog": {
+      "name": "对话框",
+      "enName": "Dialog",
+      "description": "模态对话框"
+    },
+    "TPopup": {
+      "name": "弹出层",
+      "enName": "Popup",
+      "description": "弹出层容器"
+    },
+    "TActionSheet": {
+      "name": "动作面板",
+      "enName": "ActionSheet",
+      "description": "底部动作面板"
+    },
+    "Tabs": {
+      "name": "标签页",
+      "enName": "Tabs",
+      "description": "选项卡切换"
+    },
+    "TNavBar": {
+      "name": "导航栏",
+      "enName": "NavBar",
+      "description": "顶部导航栏"
+    },
+    "I18nDemo": {
+      "name": "多语言测试",
+      "enName": "I18n",
+      "description": "国际化多语言功能演示"
+    }
+  }
+}

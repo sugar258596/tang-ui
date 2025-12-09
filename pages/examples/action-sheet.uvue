@@ -4,27 +4,30 @@ import TActionSheet from '@/components/TActionSheet'
 import type { ActionSheetAction } from '@/components/TActionSheet/type.uts'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const show1 = ref<boolean>(false)
 const show2 = ref<boolean>(false)
 const show3 = ref<boolean>(false)
 
 const actions: ActionSheetAction[] = [
-  { name: '选项一' },
-  { name: '选项二' },
-  { name: '选项三' }
+  { name: $t('examplePages.actionSheet.actions.option1') },
+  { name: $t('examplePages.actionSheet.actions.option2') },
+  { name: $t('examplePages.actionSheet.actions.option3') }
 ]
 
 const actions2: ActionSheetAction[] = [
-  { name: '分享给朋友' },
-  { name: '分享到朋友圈' },
-  { name: '复制链接', color: '#1890ff' },
-  { name: '删除', color: '#f5222d' }
+  { name: $t('examplePages.actionSheet.actions.shareToFriend') },
+  { name: $t('examplePages.actionSheet.actions.shareToMoments') },
+  { name: $t('examplePages.actionSheet.actions.copyLink'), color: '#1890ff' },
+  { name: $t('examplePages.actionSheet.actions.delete'), color: '#f5222d' }
 ]
 
 const handleSelect = (action: ActionSheetAction, index: number): void => {
   uni.showToast({
-    title: `选择了：${action.name}`,
+    title: `${$t('examplePages.actionSheet.messages.selected')}：${action.name}`,
     icon: 'none'
   })
 }
@@ -32,16 +35,16 @@ const handleSelect = (action: ActionSheetAction, index: number): void => {
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="medium">
-      <TButton text="打开操作面板" type="primary" block @click="show1 = true" />
+    <TCard :title="$t('examplePages.actionSheet.sections.basic')" padding="medium">
+      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show1 = true" />
     </TCard>
 
-    <TCard title="带标题描述" padding="medium">
-      <TButton text="打开操作面板" type="primary" block @click="show2 = true" />
+    <TCard :title="$t('examplePages.actionSheet.sections.withTitle')" padding="medium">
+      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show2 = true" />
     </TCard>
 
-    <TCard title="自定义颜色" padding="medium">
-      <TButton text="打开操作面板" type="primary" block @click="show3 = true" />
+    <TCard :title="$t('examplePages.actionSheet.sections.customColor')" padding="medium">
+      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show3 = true" />
     </TCard>
 
     <TActionSheet
@@ -53,8 +56,8 @@ const handleSelect = (action: ActionSheetAction, index: number): void => {
     <TActionSheet
       v-model="show2"
       :actions="actions"
-      title="操作选择"
-      description="请选择您要进行的操作"
+      :title="$t('examplePages.actionSheet.dialog.title')"
+      :description="$t('examplePages.actionSheet.dialog.description')"
       @select="handleSelect"
     />
 

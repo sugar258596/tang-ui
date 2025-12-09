@@ -1,0 +1,336 @@
+/**
+ * I18n 核心管理器
+ * 管理语言包、当前语言状态、执行翻译逻辑
+ */
+
+import { ref, computed } from 'vue'
+import type { Ref, ComputedRef } from 'vue'
+import type { ModularLocaleMessages, TranslateParams } from './types.uts'
+import { I18nError } from './error.uts'
+
+/**
+ * I18nManager 单例类
+ * 提供多语言系统的核心功能
+ */
+export class I18nManager {
+  /** 单例实例 */
+  private static instance: I18nManager | null = null
+  
+  /** 当前语言代码（响应式） */
+  public currentLocale: Ref<string>
+  
+  /** 回退语言代码 */
+  public fallbackLocale: string
+  
+  /** 语言包存储 */
+  private messages: Map<string, ModularLocaleMessages>
+  
+  /**
+   * 私有构造函数，确保单例模式
+   */
+  private constructor() {
+    this.currentLocale = ref<string>('zh-CN')
+    this.fallbackLocale = 'zh-CN'
+    this.messages = new Map<string, ModularLocaleMessages>()
+  }
+  
+  /**
+   * 获取单例实例
+   * @returns I18nManager 实例
+   */
+  static getInstance(): I18nManager {
+    if (I18nManager.instance === null) {
+      I18nManager.instance = new I18nManager()
+    }
+    return I18nManager.instance
+  }
+  
+  /**
+   * 翻译函数
+   * 支持模块化键查询（moduleName.key）和参数插值
+   * @param key 翻译键（格式：moduleName.key）
+   * @param params 插值参数（可选）
+   * @returns 翻译后的文本
+   */
+  translate(key: string, params?: TranslateParams): string {
+    // 1. 解析键：moduleName.key
+    const parts = key.split('.')
+    
+    if (parts.length < 2) {
+      I18nError.warnInvalidKey(key)
+      return key
+    }
+    
+    const moduleName = parts[0]
+    const messageKey = parts.slice(1).join('.')
+    
+    if (!moduleName || !messageKey) {
+      I18nError.warnInvalidKey(key)
+      return key
+    }
+    
+    // 2. 在当前语言中查找
+    let message = this.getModuleMessage(this.currentLocale.value, moduleName, messageKey)
+    
+    // 3. 如果未找到，尝试回退语言
+    if (message === undefined) {
+      message = this.getModuleMessage(this.fallbackLocale, moduleName, messageKey)
+      
+      // 4. 如果仍未找到，返回键本身
+      if (message === undefined) {
+        I18nError.warnKeyNotFound(key, this.currentLocale.value)
+        return key
+      }
+    }
+    
+    // 5. 如果有参数，执行插值
+    if (params && typeof message === 'string') {
+      return this.interpolate(message, params)
+    }
+    
+    return message as string
+  }
+  
+  /**
+   * 获取模块中的消息（支持深层嵌套）
+   * @param locale 语言代码
+   * @param moduleName 模块名
+   * @param key 消息键（支持点号分隔的嵌套路径）
+   * @returns 消息文本或 undefined
+   */
+  private getModuleMessage(locale: string, moduleName: string, key: string): string | undefined {
+    const localeMessages = this.messages.get(locale)
+    if (!localeMessages) {
+      return undefined
+    }
+    
+    const module = localeMessages[moduleName]
+    if (!module) {
+      return undefined
+    }
+    
+    // 支持嵌套路径查询（例如：components.TButton.name）
+    const keys = key.split('.')
+    let current: any = module
+    
+    for (const k of keys) {
+      if (current && typeof current === 'object' && k in current) {
+        current = current[k]
+      } else {
+        return undefined
+      }
+    }
+    
+    // 确保最终值是字符串
+    return typeof current === 'string' ? current : undefined
+  }
+  
+  /**
+   * 字符串插值
+   * 支持 {key} 占位符格式
+   * @param template 模板字符串（使用 {key} 作为占位符）
+   * @param params 参数对象
+   * @returns 插值后的字符串
+   */
+  private interpolate(template: string, params: TranslateParams): string {
+    return template.replace(/\{(\w+)\}/g, (match: string, key: string): string => {
+      if (key in params) {
+        return String(params[key])
+      }
+      I18nError.warnMissingParam(template, key)
+      return match  // 保留未匹配的占位符
+    })
+  }
+  
+  /**
+   * 设置当前语言
+   * @param locale 语言代码
+   * @returns 是否切换成功
+   */
+  setLocale(locale: string): boolean {
+    if (!this.hasLocale(locale)) {
+      I18nError.warnLocaleNotFound(locale)
+      return false
+    }
+    
+    // 更新 ref 会自动触发所有依赖的重新计算
+    this.currentLocale.value = locale
+    return true
+  }
+  
+  /**
+   * 检查语言包是否已注册
+   * @param locale 语言代码
+   * @returns 是否存在
+   */
+  hasLocale(locale: string): boolean {
+    return this.messages.has(locale)
+  }
+  
+  /**
+   * 验证语言包结构（支持嵌套对象）
+   * @param locale 语言代码
+   * @param messages 模块化语言包
+   * @returns 是否验证通过
+   */
+  private validateMessages(locale: string, messages: ModularLocaleMessages): boolean {
+    // 1. 验证语言包是否为有效的对象
+    if (!messages || typeof messages !== 'object' || Array.isArray(messages)) {
+      I18nError.errorMessagesNotObject(locale)
+      return false
+    }
+    
+    // 2. 验证每个模块是否为对象
+    for (const moduleName in messages) {
+      const module = messages[moduleName]
+      
+      if (!module || typeof module !== 'object' || Array.isArray(module)) {
+        I18nError.errorModuleNotObject(locale, moduleName)
+        return false
+      }
+      
+      // 3. 递归验证模块内容（支持嵌套对象）
+      if (!this.validateModuleContent(locale, moduleName, module)) {
+        return false
+      }
+    }
+    
+    return true
+  }
+  
+  /**
+   * 递归验证模块内容（支持嵌套对象）
+   * @param locale 语言代码
+   * @param moduleName 模块名
+   * @param obj 要验证的对象
+   * @returns 是否验证通过
+   */
+  private validateModuleContent(locale: string, moduleName: string, obj: any): boolean {
+    for (const key in obj) {
+      const value = obj[key]
+      
+      if (typeof value === 'string') {
+        // 字符串值，验证通过
+        continue
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // 嵌套对象，递归验证
+        if (!this.validateModuleContent(locale, moduleName, value)) {
+          return false
+        }
+      } else {
+        // 其他类型（数组、null等），验证失败
+        I18nError.errorValueNotString(locale, moduleName, key)
+        return false
+      }
+    }
+    
+    return true
+  }
+  
+  /**
+   * 注册或更新语言包（默认使用合并模式）
+   * @param locale 语言代码
+   * @param messages 模块化语言包
+   */
+  registerMessages(locale: string, messages: ModularLocaleMessages): void {
+    this.registerMessagesWithMode(locale, messages, 'merge')
+  }
+  
+  /**
+   * 注册语言包（指定模式）
+   * @param locale 语言代码
+   * @param messages 模块化语言包
+   * @param mode 注册模式：'merge' 合并，'replace' 替换
+   */
+  registerMessagesWithMode(
+    locale: string,
+    messages: ModularLocaleMessages,
+    mode: 'merge' | 'replace'
+  ): void {
+    // 验证语言包结构
+    if (!this.validateMessages(locale, messages)) {
+      // 验证失败，拒绝注册
+      return
+    }
+    
+    if (mode === 'replace') {
+      // 替换模式：完全替换现有语言包（直接设置，不再次验证）
+      this.messages.set(locale, messages)
+    } else {
+      // 合并模式：合并现有语言包
+      const existingMessages = this.messages.get(locale)
+      
+      if (existingMessages) {
+        // 合并现有语言包
+        const merged = this.mergeModularMessages(existingMessages, messages)
+        this.messages.set(locale, merged)
+      } else {
+        // 新增语言包
+        this.messages.set(locale, messages)
+      }
+    }
+  }
+  
+  /**
+   * 替换语言包（完全替换）
+   * @param locale 语言代码
+   * @param messages 模块化语言包
+   */
+  replaceMessages(locale: string, messages: ModularLocaleMessages): void {
+    // 验证语言包结构
+    if (!this.validateMessages(locale, messages)) {
+      // 验证失败，拒绝替换
+      return
+    }
+    
+    this.messages.set(locale, messages)
+  }
+  
+  /**
+   * 合并模块化语言包
+   * @param target 目标语言包
+   * @param source 源语言包
+   * @returns 合并后的语言包
+   */
+  private mergeModularMessages(
+    target: ModularLocaleMessages,
+    source: ModularLocaleMessages
+  ): ModularLocaleMessages {
+    const result: ModularLocaleMessages = { ...target }
+    
+    // 遍历源语言包的所有模块
+    for (const moduleName in source) {
+      const sourceModule = source[moduleName]
+      const targetModule = result[moduleName]
+      
+      if (targetModule) {
+        // 如果目标中已有该模块，合并键值对
+        result[moduleName] = {
+          ...targetModule,
+          ...sourceModule  // 源模块的键覆盖目标模块
+        }
+      } else {
+        // 如果目标中没有该模块，直接添加
+        result[moduleName] = sourceModule
+      }
+    }
+    
+    return result
+  }
+  
+  /**
+   * 获取可用语言列表（响应式）
+   * @returns 可用语言代码数组
+   */
+  getAvailableLocales(): ComputedRef<string[]> {
+    return computed(() => Array.from(this.messages.keys()))
+  }
+  
+  /**
+   * 获取当前语言代码
+   * @returns 当前语言代码
+   */
+  getCurrentLocale(): string {
+    return this.currentLocale.value
+  }
+}

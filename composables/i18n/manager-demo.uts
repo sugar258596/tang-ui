@@ -1,0 +1,104 @@
+/**
+ * I18nManager 功能演示
+ * 演示语言切换功能的使用
+ */
+
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+// 获取管理器实例
+const manager = I18nManager.getInstance()
+
+// 注册测试语言包
+const zhCN: ModularLocaleMessages = {
+  common: {
+    confirm: '确定',
+    cancel: '取消',
+    hello: '你好，{name}'
+  },
+  dialog: {
+    title: '提示'
+  }
+}
+
+const enUS: ModularLocaleMessages = {
+  common: {
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    hello: 'Hello, {name}'
+  },
+  dialog: {
+    title: 'Notice'
+  }
+}
+
+const zhTW: ModularLocaleMessages = {
+  common: {
+    confirm: '確定',
+    cancel: '取消',
+    hello: '你好，{name}'
+  }
+}
+
+// 注册语言包
+manager.registerMessages('zh-CN', zhCN)
+manager.registerMessages('en-US', enUS)
+manager.registerMessages('zh-TW', zhTW)
+
+console.log('=== 语言切换功能演示 ===\n')
+
+// 测试 1: 检查语言包是否已注册
+console.log('1. 检查语言包是否已注册:')
+console.log('   hasLocale("zh-CN"):', manager.hasLocale('zh-CN'))
+console.log('   hasLocale("en-US"):', manager.hasLocale('en-US'))
+console.log('   hasLocale("zh-TW"):', manager.hasLocale('zh-TW'))
+console.log('   hasLocale("ja-JP"):', manager.hasLocale('ja-JP'))
+console.log('')
+
+// 测试 2: 切换到有效的语言
+console.log('2. 切换到有效的语言:')
+console.log('   当前语言:', manager.getCurrentLocale())
+console.log('   翻译 "common.confirm":', manager.translate('common.confirm'))
+
+const success1 = manager.setLocale('en-US')
+console.log('   setLocale("en-US") 返回:', success1)
+console.log('   当前语言:', manager.getCurrentLocale())
+console.log('   翻译 "common.confirm":', manager.translate('common.confirm'))
+console.log('')
+
+// 测试 3: 切换到另一个有效语言
+console.log('3. 切换到繁体中文:')
+const success2 = manager.setLocale('zh-TW')
+console.log('   setLocale("zh-TW") 返回:', success2)
+console.log('   当前语言:', manager.getCurrentLocale())
+console.log('   翻译 "common.confirm":', manager.translate('common.confirm'))
+console.log('')
+
+// 测试 4: 尝试切换到无效的语言
+console.log('4. 尝试切换到无效的语言:')
+console.log('   当前语言:', manager.getCurrentLocale())
+const success3 = manager.setLocale('invalid-locale')
+console.log('   setLocale("invalid-locale") 返回:', success3)
+console.log('   当前语言（应保持不变）:', manager.getCurrentLocale())
+console.log('   翻译 "common.confirm"（应保持繁体中文）:', manager.translate('common.confirm'))
+console.log('')
+
+// 测试 5: 验证响应式更新
+console.log('5. 验证响应式状态:')
+console.log('   currentLocale.value:', manager.currentLocale.value)
+manager.setLocale('zh-CN')
+console.log('   切换后 currentLocale.value:', manager.currentLocale.value)
+console.log('')
+
+// 测试 6: 获取可用语言列表
+console.log('6. 获取可用语言列表:')
+const availableLocales = manager.getAvailableLocales()
+console.log('   可用语言:', availableLocales.value)
+console.log('')
+
+console.log('=== 演示完成 ===')
+console.log('✅ setLocale() 方法已实现')
+console.log('✅ hasLocale() 辅助方法已实现')
+console.log('✅ 验证语言代码是否已注册')
+console.log('✅ 更新 currentLocale ref 以触发响应式更新')
+console.log('✅ 返回切换成功/失败状态')

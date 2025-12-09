@@ -3,10 +3,13 @@ import { ref } from 'vue'
 import TLoading from '@/components/TLoading'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 加载组件示例页面
  */
+
+const { $t } = useI18n()
 
 const loading1 = ref<boolean>(true)
 const loading2 = ref<boolean>(false)
@@ -27,20 +30,20 @@ const toggleLoading = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TLoading 加载组件</text>
-      <text class="example-desc">显示加载状态</text>
+      <text class="example-title">{{ $t('examplePages.loading.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.loading.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.loading.sections.basic')" class="example-section">
       <view style="position: relative; height: 100px;">
-        <TLoading :loading="loading1" text="加载中..." />
+        <TLoading :loading="loading1" :text="$t('examplePages.loading.text.loading')" />
       </view>
       <TButton @click="() => loading1 = !loading1" style="margin-top: 10px;">
         {{ loading1 ? '关闭加载' : '显示加载' }}
       </TButton>
     </TCard>
 
-    <TCard title="不同尺寸" class="example-section">
+    <TCard :title="$t('examplePages.loading.sections.type')" class="example-section">
       <view style="display: flex; gap: 30px;">
         <view style="position: relative; width: 80px; height: 80px;">
           <TLoading loading size="small" />

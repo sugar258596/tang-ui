@@ -1,39 +1,42 @@
 <script setup lang="uts">
 import TNoticeBar from '@/components/TNoticeBar'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const handleClick = (): void => {
-  uni.showToast({ title: '点击通知栏', icon: 'none' })
+  uni.showToast({ title: $t('examplePages.noticeBar.text.link'), icon: 'none' })
 }
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="none">
-      <TNoticeBar text="这是一条通知消息" />
+    <TCard :title="$t('examplePages.noticeBar.sections.basic')" padding="none">
+      <TNoticeBar :text="$t('examplePages.noticeBar.text.notice')" />
     </TCard>
 
-    <TCard title="可关闭" padding="none">
-      <TNoticeBar text="这是一条可关闭的通知消息" mode="closeable" />
+    <TCard :title="$t('examplePages.noticeBar.sections.closable')" padding="none">
+      <TNoticeBar :text="$t('examplePages.noticeBar.text.closable')" mode="closeable" />
     </TCard>
 
-    <TCard title="链接模式" padding="none">
-      <TNoticeBar text="点击查看详情" mode="link" @click="handleClick" />
+    <TCard :title="$t('examplePages.noticeBar.sections.link')" padding="none">
+      <TNoticeBar :text="$t('examplePages.noticeBar.text.link')" mode="link" @click="handleClick" />
     </TCard>
 
-    <TCard title="滚动播放" padding="none">
-      <TNoticeBar text="这是一条很长的通知消息，会自动滚动播放以便用户查看完整内容" :scrollable="true" />
+    <TCard :title="$t('examplePages.noticeBar.sections.scrollable')" padding="none">
+      <TNoticeBar :text="$t('examplePages.noticeBar.text.scrollable')" :scrollable="true" />
     </TCard>
 
-    <TCard title="自定义颜色" padding="none">
+    <TCard :title="$t('examplePages.noticeBar.sections.customColor')" padding="none">
       <TNoticeBar
-        text="自定义颜色的通知栏"
+        :text="$t('examplePages.noticeBar.text.customColor')"
         color="#1890ff"
         background="#e6f7ff"
         custom-style="margin-bottom: 1px"
       />
       <TNoticeBar
-        text="危险提示信息"
+        :text="$t('examplePages.noticeBar.text.danger')"
         color="#fff"
         background="#f5222d"
       />

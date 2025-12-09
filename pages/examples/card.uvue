@@ -1,71 +1,74 @@
 <script  setup lang="uts" >
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 卡片组件示例页面
  */
 
+const { $t } = useI18n()
+
 const handleCardClick = (): void => {
-  console.log('卡片被点击')
+  console.log($t('examplePages.card.messages.clicked'))
 }
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TCard 卡片组件</text>
-      <text class="example-desc">卡片容器，用于组织内容</text>
+      <text class="example-title">{{ $t('examplePages.card.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.card.description') }}</text>
     </view>
 
-    <TCard title="基础卡片" class="example-section">
-      <text>这是卡片的内容区域</text>
+    <TCard :title="$t('examplePages.card.sections.basic')" class="example-section">
+      <text>{{ $t('examplePages.card.content.basic') }}</text>
     </TCard>
 
-    <TCard title="带副标题的卡片" subtitle="这是副标题" class="example-section">
-      <text>卡片内容可以是任何元素</text>
+    <TCard :title="$t('examplePages.card.sections.withSubtitle')" :subtitle="$t('examplePages.card.content.subtitle')" class="example-section">
+      <text>{{ $t('examplePages.card.content.anyContent') }}</text>
     </TCard>
 
-    <TCard title="无阴影卡片" :shadow="false" class="example-section">
-      <text>这个卡片没有阴影效果</text>
+    <TCard :title="$t('examplePages.card.sections.noShadow')" :shadow="false" class="example-section">
+      <text>{{ $t('examplePages.card.content.noShadow') }}</text>
     </TCard>
 
-    <TCard title="带边框卡片" :border="true" :shadow="false" class="example-section">
-      <text>这个卡片使用边框而不是阴影</text>
+    <TCard :title="$t('examplePages.card.sections.withBorder')" :border="true" :shadow="false" class="example-section">
+      <text>{{ $t('examplePages.card.content.withBorder') }}</text>
     </TCard>
 
-    <TCard title="不同内边距" padding="small" class="example-section">
-      <text>小内边距卡片</text>
+    <TCard :title="$t('examplePages.card.sections.padding')" padding="small" class="example-section">
+      <text>{{ $t('examplePages.card.content.smallPadding') }}</text>
     </TCard>
 
-    <TCard title="大内边距卡片" padding="large" class="example-section">
-      <text>大内边距卡片</text>
+    <TCard :title="$t('examplePages.card.sections.largePadding')" padding="large" class="example-section">
+      <text>{{ $t('examplePages.card.content.largePadding') }}</text>
     </TCard>
 
-    <TCard title="不同圆角" radius="none" class="example-section">
-      <text>无圆角卡片</text>
+    <TCard :title="$t('examplePages.card.sections.radius')" radius="none" class="example-section">
+      <text>{{ $t('examplePages.card.content.noRadius') }}</text>
     </TCard>
 
-    <TCard title="大圆角卡片" radius="large" class="example-section">
-      <text>大圆角卡片</text>
+    <TCard :title="$t('examplePages.card.sections.largeRadius')" radius="large" class="example-section">
+      <text>{{ $t('examplePages.card.content.largeRadius') }}</text>
     </TCard>
 
-    <TCard title="可点击卡片" @click="handleCardClick" class="example-section">
-      <text>点击这个卡片会触发事件</text>
+    <TCard :title="$t('examplePages.card.sections.clickable')" @click="handleCardClick" class="example-section">
+      <text>{{ $t('examplePages.card.content.clickable') }}</text>
     </TCard>
 
     <TCard class="example-section">
       <template #header>
         <view style="display: flex; justify-content: space-between; align-items: center;">
-          <text style="font-size: 18px; font-weight: bold;">自定义头部</text>
-          <TButton type="primary" size="small">操作</TButton>
+          <text style="font-size: 18px; font-weight: bold;">{{ $t('examplePages.card.content.customHeader') }}</text>
+          <TButton type="primary" size="small">{{ $t('examplePages.card.buttons.action') }}</TButton>
         </view>
       </template>
-      <text>这个卡片使用了自定义头部插槽</text>
+      <text>{{ $t('examplePages.card.content.customSlot') }}</text>
       <template #footer>
         <view style="display: flex; justify-content: flex-end;">
-          <TButton plain size="small">取消</TButton>
-          <TButton type="primary" size="small" style="margin-left: 10px;">确定</TButton>
+          <TButton plain size="small">{{ $t('examplePages.card.buttons.cancel') }}</TButton>
+          <TButton type="primary" size="small" style="margin-left: 10px;">{{ $t('examplePages.card.buttons.confirm') }}</TButton>
         </view>
       </template>
     </TCard>

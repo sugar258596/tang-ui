@@ -2,10 +2,13 @@
 import TGrid from '@/components/TGrid'
 import TGridItem from '@/components/TGridItem'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TGrid 组件示例页面
  */
+
+const { $t } = useI18n()
 
 const handleItemClick = (index: number): void => {
   uni.showToast({
@@ -18,128 +21,128 @@ const handleItemClick = (index: number): void => {
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.basic')" padding="medium">
       <TGrid>
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" />
-        <TGridItem icon="⭐" text="收藏" />
-        <TGridItem icon="⚙️" text="设置" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" />
       </TGrid>
     </TCard>
 
     <!-- 自定义列数 -->
-    <TCard title="自定义列数" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.custom')" padding="medium">
       <TGrid :columns="3">
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" />
-        <TGridItem icon="⭐" text="收藏" />
-        <TGridItem icon="⚙️" text="设置" />
-        <TGridItem icon="📱" text="手机" />
-        <TGridItem icon="💡" text="灯泡" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" />
+        <TGridItem icon="📱" :text="$t('examplePages.grid.labels.phone')" />
+        <TGridItem icon="💡" :text="$t('examplePages.grid.labels.bulb')" />
       </TGrid>
     </TCard>
 
     <!-- 自定义间距 -->
-    <TCard title="自定义间距" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.customGap')" padding="medium">
       <TGrid :columns="4" :gap="10">
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" />
-        <TGridItem icon="⭐" text="收藏" />
-        <TGridItem icon="⚙️" text="设置" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" />
       </TGrid>
     </TCard>
 
     <!-- 显示边框 -->
-    <TCard title="显示边框" padding="none">
+    <TCard :title="$t('examplePages.grid.sections.border')" padding="none">
       <TGrid :columns="4" :border="true">
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" />
-        <TGridItem icon="⭐" text="收藏" />
-        <TGridItem icon="⚙️" text="设置" />
-        <TGridItem icon="📱" text="手机" />
-        <TGridItem icon="💡" text="灯泡" />
-        <TGridItem icon="🎨" text="画板" />
-        <TGridItem icon="📷" text="相机" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" />
+        <TGridItem icon="📱" :text="$t('examplePages.grid.labels.phone')" />
+        <TGridItem icon="💡" :text="$t('examplePages.grid.labels.bulb')" />
+        <TGridItem icon="🎨" :text="$t('examplePages.grid.labels.palette')" />
+        <TGridItem icon="📷" :text="$t('examplePages.grid.labels.camera')" />
       </TGrid>
     </TCard>
 
     <!-- 正方形格子 -->
-    <TCard title="正方形格子" padding="none">
+    <TCard :title="$t('examplePages.grid.sections.square')" padding="none">
       <TGrid :columns="4" :border="true" :square="true">
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" />
-        <TGridItem icon="⭐" text="收藏" />
-        <TGridItem icon="⚙️" text="设置" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" />
       </TGrid>
     </TCard>
 
     <!-- 可点击 -->
-    <TCard title="可点击" padding="none">
+    <TCard :title="$t('examplePages.grid.sections.clickable')" padding="none">
       <TGrid :columns="3" :border="true" :clickable="true">
-        <TGridItem icon="🏠" text="首页" @click="() => handleItemClick(0)" />
-        <TGridItem icon="📧" text="邮件" @click="() => handleItemClick(1)" />
-        <TGridItem icon="⭐" text="收藏" @click="() => handleItemClick(2)" />
-        <TGridItem icon="⚙️" text="设置" @click="() => handleItemClick(3)" />
-        <TGridItem icon="📱" text="手机" @click="() => handleItemClick(4)" />
-        <TGridItem icon="💡" text="灯泡" @click="() => handleItemClick(5)" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" @click="() => handleItemClick(0)" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" @click="() => handleItemClick(1)" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" @click="() => handleItemClick(2)" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" @click="() => handleItemClick(3)" />
+        <TGridItem icon="📱" :text="$t('examplePages.grid.labels.phone')" @click="() => handleItemClick(4)" />
+        <TGridItem icon="💡" :text="$t('examplePages.grid.labels.bulb')" @click="() => handleItemClick(5)" />
       </TGrid>
     </TCard>
 
     <!-- 自定义图标颜色 -->
-    <TCard title="自定义图标颜色" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.customColor')" padding="medium">
       <TGrid :columns="4">
-        <TGridItem icon="🔴" text="红色" icon-color="#f5222d" />
-        <TGridItem icon="🔵" text="蓝色" icon-color="#1890ff" />
-        <TGridItem icon="🟢" text="绿色" icon-color="#52c41a" />
-        <TGridItem icon="🟡" text="黄色" icon-color="#faad14" />
+        <TGridItem icon="🔴" :text="$t('examplePages.grid.labels.red')" icon-color="#f5222d" />
+        <TGridItem icon="🔵" :text="$t('examplePages.grid.labels.blue')" icon-color="#1890ff" />
+        <TGridItem icon="🟢" :text="$t('examplePages.grid.labels.green')" icon-color="#52c41a" />
+        <TGridItem icon="🟡" :text="$t('examplePages.grid.labels.yellow')" icon-color="#faad14" />
       </TGrid>
     </TCard>
 
     <!-- 徽标提示 -->
-    <TCard title="徽标提示" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.badge')" padding="medium">
       <TGrid :columns="4">
-        <TGridItem icon="🏠" text="首页" />
-        <TGridItem icon="📧" text="邮件" badge="99+" />
-        <TGridItem icon="⭐" text="收藏" :dot="true" />
-        <TGridItem icon="⚙️" text="设置" badge="5" />
+        <TGridItem icon="🏠" :text="$t('examplePages.grid.labels.home')" />
+        <TGridItem icon="📧" :text="$t('examplePages.grid.labels.mail')" badge="99+" />
+        <TGridItem icon="⭐" :text="$t('examplePages.grid.labels.favorite')" :dot="true" />
+        <TGridItem icon="⚙️" :text="$t('examplePages.grid.labels.settings')" badge="5" />
       </TGrid>
     </TCard>
 
     <!-- 使用图片 -->
-    <TCard title="使用图片" padding="medium">
+    <TCard :title="$t('examplePages.grid.sections.image')" padding="medium">
       <TGrid :columns="3">
         <TGridItem
           image="https://picsum.photos/100/100?random=1"
-          text="图片1"
+          :text="$t('examplePages.grid.labels.image1')"
         />
         <TGridItem
           image="https://picsum.photos/100/100?random=2"
-          text="图片2"
+          :text="$t('examplePages.grid.labels.image2')"
         />
         <TGridItem
           image="https://picsum.photos/100/100?random=3"
-          text="图片3"
+          :text="$t('examplePages.grid.labels.image3')"
         />
       </TGrid>
     </TCard>
 
     <!-- 自定义内容 -->
-    <TCard title="自定义内容" padding="none">
+    <TCard :title="$t('examplePages.grid.sections.customContent')" padding="none">
       <TGrid :columns="2" :border="true" :square="true">
         <TGridItem>
           <view class="custom-content">
-            <text class="custom-title">自定义</text>
-            <text class="custom-desc">完全自定义内容</text>
+            <text class="custom-title">{{ $t('examplePages.grid.labels.custom') }}</text>
+            <text class="custom-desc">{{ $t('examplePages.grid.labels.customDesc') }}</text>
           </view>
         </TGridItem>
-        <TGridItem icon="📋" text="普通格子" />
+        <TGridItem icon="📋" :text="$t('examplePages.grid.labels.normalGrid')" />
         <TGridItem>
           <view class="custom-content" style="background-color: #1890ff">
-            <text class="custom-title" style="color: white">蓝色</text>
-            <text class="custom-desc" style="color: white">背景色</text>
+            <text class="custom-title" style="color: white">{{ $t('examplePages.grid.labels.blueColor') }}</text>
+            <text class="custom-desc" style="color: white">{{ $t('examplePages.grid.labels.background') }}</text>
           </view>
         </TGridItem>
-        <TGridItem icon="⚡" text="快速" />
+        <TGridItem icon="⚡" :text="$t('examplePages.grid.labels.fast')" />
       </TGrid>
     </TCard>
   </view>

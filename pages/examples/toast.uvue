@@ -2,38 +2,40 @@
 import { useToast } from '@/composables/useToast.uts'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
+const { $t } = useI18n()
 const { show, success, error, loading, hide } = useToast()
 
 const handleShowText = (): void => {
-  show('这是一条文本提示')
+  show($t('examplePages.toast.messages.text'))
 }
 
 const handleShowSuccess = (): void => {
-  success('操作成功')
+  success($t('examplePages.toast.messages.success'))
 }
 
 const handleShowFail = (): void => {
-  error('操作失败')
+  error($t('examplePages.toast.messages.fail'))
 }
 
 const handleShowLoading = (): void => {
-  const hideLoading = loading('加载中...')
+  const hideLoading = loading($t('examplePages.toast.messages.loading'))
   setTimeout(() => {
     hideLoading()
-    success('加载完成')
+    success($t('examplePages.toast.messages.loadComplete'))
   }, 2000)
 }
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard title="Toast 轻提示" padding="medium">
+    <TCard :title="$t('examplePages.toast.title')" padding="medium">
       <view class="demo-buttons">
-        <TButton text="文本提示" type="default" block custom-style="margin-bottom: 12px" @click="handleShowText" />
-        <TButton text="成功提示" type="success" block custom-style="margin-bottom: 12px" @click="handleShowSuccess" />
-        <TButton text="失败提示" type="danger" block custom-style="margin-bottom: 12px" @click="handleShowFail" />
-        <TButton text="加载提示" type="info" block @click="handleShowLoading" />
+        <TButton :text="$t('examplePages.toast.buttons.show')" type="default" block custom-style="margin-bottom: 12px" @click="handleShowText" />
+        <TButton :text="$t('examplePages.toast.buttons.success')" type="success" block custom-style="margin-bottom: 12px" @click="handleShowSuccess" />
+        <TButton :text="$t('examplePages.toast.buttons.error')" type="danger" block custom-style="margin-bottom: 12px" @click="handleShowFail" />
+        <TButton :text="$t('examplePages.toast.buttons.loading')" type="info" block @click="handleShowLoading" />
       </view>
     </TCard>
   </view>

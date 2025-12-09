@@ -1,12 +1,16 @@
 <script  setup lang="uts" >
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import TCard from '@/components/TCard'
 import TList from '@/components/TList'
 import TListItem from '@/components/TListItem'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * UI组件库首页导航
  */
+
+// 多语言支持
+const { $t, locale, setLocale, availableLocales } = useI18n()
 
 // 组件列表
 interface ComponentGroup {
@@ -21,83 +25,113 @@ interface ComponentItem {
   path: string
 }
 
-const componentGroups = ref<ComponentGroup[]>([
-  {
-    title: '基础组件',
-    components: [
-      { name: 'TButton', title: '按钮 Button', description: '按钮用于触发操作', path: '/pages/examples/button' },
-      { name: 'TIcon', title: '图标 Icon', description: '语义化图标', path: '/pages/examples/icon' },
-      { name: 'TText', title: '文本 Text', description: '文本展示组件', path: '/pages/examples/text' },
-      { name: 'TImage', title: '图片 Image', description: '增强的图片组件', path: '/pages/examples/image' },
-      { name: 'TDivider', title: '分割线 Divider', description: '内容分割线', path: '/pages/examples/divider' },
-    ]
-  },
-  {
-    title: '布局组件',
-    components: [
-      { name: 'TCard', title: '卡片 Card', description: '卡片容器', path: '/pages/examples/card' },
-      { name: 'TList', title: '列表 List', description: '列表展示', path: '/pages/examples/list' },
-      { name: 'TCell', title: '单元格 Cell', description: '单元格组件', path: '/pages/examples/cell' },
-      { name: 'TGrid', title: '宫格 Grid', description: '宫格布局', path: '/pages/examples/grid' },
-      { name: 'TRow/TCol', title: '栅格 Layout', description: '24栅格布局', path: '/pages/examples/layout' },
-    ]
-  },
-  {
-    title: '表单组件',
-    components: [
-      { name: 'TInput', title: '输入框 Input', description: '文本输入', path: '/pages/examples/input' },
-      { name: 'TTextarea', title: '多行输入 Textarea', description: '多行文本输入', path: '/pages/examples/textarea' },
-      { name: 'TSearchBar', title: '搜索框 SearchBar', description: '搜索输入框', path: '/pages/examples/search-bar' },
-      { name: 'TNumberInput', title: '数字输入 NumberInput', description: '数字输入框', path: '/pages/examples/number-input' },
-      { name: 'TSwitch', title: '开关 Switch', description: '开关选择器', path: '/pages/examples/switch' },
-      { name: 'TCheckbox', title: '复选框 Checkbox', description: '多选框', path: '/pages/examples/checkbox' },
-      { name: 'TCheckboxGroup', title: '复选组 CheckboxGroup', description: '复选框组', path: '/pages/examples/checkbox-group' },
-      { name: 'TRadioButton', title: '单选 Radio', description: '单选按钮', path: '/pages/examples/radio' },
-      { name: 'TRadioGroup', title: '单选组 RadioGroup', description: '单选框组', path: '/pages/examples/radio-group' },
-      { name: 'TSelect', title: '选择器 Select', description: '下拉选择', path: '/pages/examples/select' },
-      { name: 'TPicker', title: '通用选择器 Picker', description: '多列数据选择', path: '/pages/examples/picker' },
-      { name: 'TSlider', title: '滑块 Slider', description: '滑动选择器', path: '/pages/examples/slider' },
-      { name: 'TRate', title: '评分 Rate', description: '评分组件', path: '/pages/examples/rate' },
-      { name: 'TForm', title: '表单 form', description: '评分组件', path: '/pages/examples/form' },
-    ]
-  },
-  {
-    title: '数据展示',
-    components: [
-      { name: 'Tags', title: '标签 Tags', description: '标记分类', path: '/pages/examples/tags' },
-      { name: 'TBadge', title: '徽标 Badge', description: '数字角标', path: '/pages/examples/badge' },
-      { name: 'TAvatar', title: '头像 Avatar', description: '用户头像', path: '/pages/examples/avatar' },
-      { name: 'TProgress', title: '进度条 Progress', description: '进度指示器', path: '/pages/examples/progress' },
-      { name: 'TNoticeBar', title: '通知栏 NoticeBar', description: '滚动通知', path: '/pages/examples/notice-bar' },
-      { name: 'TCollapse', title: '折叠面板 Collapse', description: '可折叠内容区域', path: '/pages/examples/collapse' },
-      { name: 'TSwiper', title: '轮播图 Swiper', description: '图片/内容轮播', path: '/pages/examples/swiper' },
-      { name: 'TEmpty', title: '空状态 Empty', description: '空数据展示', path: '/pages/examples/empty' },
-      { name: 'TErrorState', title: '错误状态 Error', description: '错误提示', path: '/pages/examples/error' },
-    ]
-  },
-  {
-    title: '反馈组件',
-    components: [
-      { name: 'TLoading', title: '加载 Loading', description: '加载状态', path: '/pages/examples/loading' },
-      { name: 'TToast', title: '轻提示 Toast', description: '轻量级提示', path: '/pages/examples/toast' },
-      { name: 'TDialog', title: '对话框 Dialog', description: '模态对话框', path: '/pages/examples/dialog' },
-      { name: 'TPopup', title: '弹出层 Popup', description: '弹出层容器', path: '/pages/examples/popup' },
-      { name: 'TActionSheet', title: '动作面板 ActionSheet', description: '底部动作面板', path: '/pages/examples/action-sheet' },
-    ]
-  },
-  {
-    title: '导航组件',
-    components: [
-      { name: 'Tabs', title: '标签页 Tabs', description: '选项卡切换', path: '/pages/examples/tabs' },
-      { name: 'TNavBar', title: '导航栏 NavBar', description: '顶部导航栏', path: '/pages/examples/navbar' },
-    ]
-  }
+// 组件路径映射（组件名 -> 路径）
+const componentPaths: Map<string, string> = new Map([
+  ['TButton', '/pages/examples/button'],
+  ['TIcon', '/pages/examples/icon'],
+  ['TText', '/pages/examples/text'],
+  ['TImage', '/pages/examples/image'],
+  ['TDivider', '/pages/examples/divider'],
+  ['TCard', '/pages/examples/card'],
+  ['TList', '/pages/examples/list'],
+  ['TCell', '/pages/examples/cell'],
+  ['TGrid', '/pages/examples/grid'],
+  ['TRow/TCol', '/pages/examples/layout'],
+  ['TInput', '/pages/examples/input'],
+  ['TTextarea', '/pages/examples/textarea'],
+  ['TSearchBar', '/pages/examples/search-bar'],
+  ['TNumberInput', '/pages/examples/number-input'],
+  ['TSwitch', '/pages/examples/switch'],
+  ['TCheckbox', '/pages/examples/checkbox'],
+  ['TCheckboxGroup', '/pages/examples/checkbox-group'],
+  ['TRadioButton', '/pages/examples/radio'],
+  ['TRadioGroup', '/pages/examples/radio-group'],
+  ['TSelect', '/pages/examples/select'],
+  ['TPicker', '/pages/examples/picker'],
+  ['TSlider', '/pages/examples/slider'],
+  ['TRate', '/pages/examples/rate'],
+  ['TForm', '/pages/examples/form'],
+  ['Tags', '/pages/examples/tags'],
+  ['TBadge', '/pages/examples/badge'],
+  ['TAvatar', '/pages/examples/avatar'],
+  ['TProgress', '/pages/examples/progress'],
+  ['TNoticeBar', '/pages/examples/notice-bar'],
+  ['TCollapse', '/pages/examples/collapse'],
+  ['TSwiper', '/pages/examples/swiper'],
+  ['TEmpty', '/pages/examples/empty'],
+  ['TErrorState', '/pages/examples/error'],
+  ['TLoading', '/pages/examples/loading'],
+  ['TToast', '/pages/examples/toast'],
+  ['TDialog', '/pages/examples/dialog'],
+  ['TPopup', '/pages/examples/popup'],
+  ['TActionSheet', '/pages/examples/action-sheet'],
+  ['Tabs', '/pages/examples/tabs'],
+  ['TNavBar', '/pages/examples/navbar'],
+  ['I18nDemo', '/pages/i18n-demo/index']
 ])
+
+// 组件分组配置（分组key -> 组件名列表）
+const groupConfig: Map<string, string[]> = new Map([
+  ['basic', ['TButton', 'TIcon', 'TText', 'TImage', 'TDivider']],
+  ['layout', ['TCard', 'TList', 'TCell', 'TGrid', 'TRow/TCol']],
+  ['form', ['TInput', 'TTextarea', 'TSearchBar', 'TNumberInput', 'TSwitch', 'TCheckbox', 'TCheckboxGroup', 'TRadioButton', 'TRadioGroup', 'TSelect', 'TPicker', 'TSlider', 'TRate', 'TForm']],
+  ['display', ['Tags', 'TBadge', 'TAvatar', 'TProgress', 'TNoticeBar', 'TCollapse', 'TSwiper', 'TEmpty', 'TErrorState']],
+  ['feedback', ['TLoading', 'TToast', 'TDialog', 'TPopup', 'TActionSheet']],
+  ['navigation', ['Tabs', 'TNavBar']],
+  ['tools', ['I18nDemo']]
+])
+
+// 根据当前语言动态生成组件列表
+const componentGroups = computed<ComponentGroup[]>(() => {
+  const groups: ComponentGroup[] = []
+  
+  for (const [groupKey, componentNames] of groupConfig) {
+    const components: ComponentItem[] = []
+    
+    for (const componentName of componentNames) {
+      const name = $t(`examples.components.${componentName}.name`)
+      const enName = $t(`examples.components.${componentName}.enName`)
+      const description = $t(`examples.components.${componentName}.description`)
+      const path = componentPaths.get(componentName) ?? ''
+      
+      components.push({
+        name: componentName,
+        title: `${name} ${enName}`,
+        description: description,
+        path: path
+      })
+    }
+    
+    groups.push({
+      title: $t(`examples.groups.${groupKey}`),
+      components: components
+    })
+  }
+  
+  return groups
+})
 
 // 跳转到组件示例页面
 const navigateToComponent = (path: string): void => {
   uni.navigateTo({
     url: path
+  })
+}
+
+// 语言选项
+const languageOptions = ref([
+  { label: '简体中文', value: 'zh-CN' },
+  { label: 'English', value: 'en-US' },
+  { label: '繁體中文', value: 'zh-TW' }
+])
+
+// 切换语言
+const handleLanguageChange = (lang: string): void => {
+  setLocale(lang)
+  uni.showToast({
+    title: $t('common.languageSwitch'),
+    icon: 'success',
+    duration: 1500
   })
 }
 </script>
@@ -111,6 +145,22 @@ const navigateToComponent = (path: string): void => {
         <text class="title">UniApp X UI</text>
         <text class="subtitle">基于 UniApp X 的组件库</text>
         <text class="version">v1.0.0</text>
+        
+        <!-- 语言切换 -->
+        <view class="language-switcher">
+          <text class="language-label">{{ $t('common.language') }}:</text>
+          <view class="language-options">
+            <view
+              v-for="(option, index) in languageOptions"
+              :key="index"
+              class="language-option"
+              :class="{ active: locale === option.value }"
+              @click="() => handleLanguageChange(option.value)"
+            >
+              <text class="language-text">{{ option.label }}</text>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -196,6 +246,48 @@ const navigateToComponent = (path: string): void => {
     padding: 4px 12px;
     border-radius: 20px;
     display: inline-block;
+  }
+}
+
+.language-switcher {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+  .language-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .language-options {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .language-option {
+    padding: 6px 16px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s;
+
+    &.active {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.9);
+
+      .language-text {
+        color: #667eea;
+        font-weight: 600;
+      }
+    }
+
+    .language-text {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.95);
+    }
   }
 }
 

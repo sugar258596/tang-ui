@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TCheckbox from '@/components/TCheckbox'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 复选框组件示例页面
  */
+
+const { $t } = useI18n()
 
 const checked1 = ref<boolean>(false)
 const checked2 = ref<boolean>(true)
@@ -20,28 +23,28 @@ const handleChange = (value: boolean): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TCheckbox 复选框组件</text>
-      <text class="example-desc">多选框组件</text>
+      <text class="example-title">{{ $t('examplePages.checkbox.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.checkbox.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.basic')" class="example-section">
       <view style="display: flex; flex-direction: row; align-items: center;">
         <TCheckbox v-model="checked1" />
-        <text style="margin-left: 8px;">复选框</text>
+        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.checkbox') }}</text>
       </view>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中状态: {{ checked1 }}
+        {{ $t('examplePages.checkbox.status.checked') }}: {{ checked1 }}
       </text>
     </TCard>
 
-    <TCard title="默认选中" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.defaultChecked')" class="example-section">
       <view style="display: flex; flex-direction: row; align-items: center;">
         <TCheckbox v-model="checked2" />
-        <text style="margin-left: 8px;">默认选中的复选框</text>
+        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.defaultChecked') }}</text>
       </view>
     </TCard>
 
-    <TCard title="复选框组" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.group')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox
@@ -51,7 +54,7 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option1')
             }"
           />
-          <text style="margin-left: 8px;">选项一</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option1') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox
@@ -61,7 +64,7 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option2')
             }"
           />
-          <text style="margin-left: 8px;">选项二</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option2') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox
@@ -71,78 +74,78 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option3')
             }"
           />
-          <text style="margin-left: 8px;">选项三</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option3') }}</text>
         </view>
       </view>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中值: {{ checkedList.join(', ') || '未选择' }}
+        {{ $t('examplePages.checkbox.status.selected') }}: {{ checkedList.join(', ') || $t('examplePages.checkbox.status.notSelected') }}
       </text>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.disabled')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox disabled />
-          <text style="margin-left: 8px;">禁用未选中</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.disabledUnchecked') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox :model-value="true" disabled />
-          <text style="margin-left: 8px;">禁用已选中</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.disabledChecked') }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="不同大小" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox size="small" />
-          <text style="margin-left: 8px;">小尺寸</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.small') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox size="medium" />
-          <text style="margin-left: 8px;">中等尺寸</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.medium') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox size="large" />
-          <text style="margin-left: 8px;">大尺寸</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.large') }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="自定义颜色" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.customColor')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox activeColor="#f56c6c" />
-          <text style="margin-left: 8px;">红色复选框</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.red') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox activeColor="#67c23a" />
-          <text style="margin-left: 8px;">绿色复选框</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.green') }}</text>
         </view>
         <view style="display: flex; flex-direction: row; align-items: center;">
           <TCheckbox activeColor="#e6a23c" />
-          <text style="margin-left: 8px;">橙色复选框</text>
+          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.orange') }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="中间状态" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.indeterminate')" class="example-section">
       <view style="display: flex; flex-direction: row; align-items: center;">
         <TCheckbox />
-        <text style="margin-left: 8px;">半选状态</text>
+        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.indeterminate') }}</text>
       </view>
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        用于表示部分选中状态
+        {{ $t('examplePages.checkbox.status.indeterminateDesc') }}
       </text>
     </TCard>
 
-    <TCard title="事件处理" class="example-section">
+    <TCard :title="$t('examplePages.checkbox.sections.events')" class="example-section">
       <view style="display: flex; flex-direction: row; align-items: center;">
         <TCheckbox @change="handleChange" />
-        <text style="margin-left: 8px;">点击查看控制台</text>
+        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.clickToConsole') }}</text>
       </view>
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        切换复选框查看控制台
+        {{ $t('examplePages.checkbox.status.checkConsole') }}
       </text>
     </TCard>
   </view>

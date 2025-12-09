@@ -1,0 +1,5 @@
+{
+  "loadingText": "Loading...",
+  "finishedText": "No more data",
+  "errorText": "Load failed, click to retry"
+}

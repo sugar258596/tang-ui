@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import TSlider from '@/components/TSlider'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const value1 = ref<number>(50)
 const value2 = ref<number>(30)
@@ -10,23 +13,23 @@ const value3 = ref<number>(70)
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.slider.sections.basic')" padding="medium">
       <TSlider v-model="value1" />
     </TCard>
 
-    <TCard title="显示当前值" padding="medium">
+    <TCard :title="$t('examplePages.slider.sections.showValue')" padding="medium">
       <TSlider v-model="value2" :show-value="true" />
     </TCard>
 
-    <TCard title="自定义颜色" padding="medium">
+    <TCard :title="$t('examplePages.slider.sections.customColor')" padding="medium">
       <TSlider v-model="value3" active-color="#52c41a" :show-value="true" />
     </TCard>
 
-    <TCard title="设置步长" padding="medium">
+    <TCard :title="$t('examplePages.slider.sections.step')" padding="medium">
       <TSlider v-model="value1" :step="10" :show-value="true" />
     </TCard>
 
-    <TCard title="禁用状态" padding="medium">
+    <TCard :title="$t('examplePages.slider.sections.disabled')" padding="medium">
       <TSlider v-model="value1" :disabled="true" />
     </TCard>
   </view>

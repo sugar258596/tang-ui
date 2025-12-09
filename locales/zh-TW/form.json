@@ -1,0 +1,11 @@
+{
+  "inputPlaceholder": "請輸入{label}",
+  "selectPlaceholder": "請選擇",
+  "datePlaceholder": "請選擇日期",
+  "timePlaceholder": "請選擇時間",
+  "requiredError": "請輸入{label}",
+  "submitButton": "提交",
+  "resetButton": "重設",
+  "validationFailed": "表單驗證失敗",
+  "submitFailed": "表單提交失敗"
+}

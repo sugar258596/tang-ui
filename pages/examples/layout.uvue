@@ -3,16 +3,19 @@ import TRow from '@/components/TRow'
 import TCol from '@/components/TCol'
 import TCard from '@/components/TCard'
 import TText from '@/components/TText'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TRow/TCol 栅格布局示例页面
  */
+
+const { $t } = useI18n()
 </script>
 
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.layout.sections.basic')" padding="medium">
       <view class="demo-section">
         <TRow>
           <TCol :span="24">
@@ -56,7 +59,7 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 列间距 -->
-    <TCard title="列间距" padding="medium">
+    <TCard :title="$t('examplePages.layout.sections.gutter')" padding="medium">
       <view class="demo-section">
         <TRow :gutter="10">
           <TCol :span="8">
@@ -87,7 +90,7 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 列偏移 -->
-    <TCard title="列偏移" padding="medium">
+    <TCard :title="$t('examplePages.layout.sections.offset')" padding="medium">
       <view class="demo-section">
         <TRow>
           <TCol :span="8">
@@ -114,9 +117,9 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 水平对齐 -->
-    <TCard title="水平对齐" padding="medium">
+    <TCard :title="$t('examplePages.layout.sections.align')" padding="medium">
       <view class="demo-section">
-        <TText text="左对齐 (start)" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TText :text="$t('examplePages.layout.labels.leftAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
         <TRow justify="start">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -129,7 +132,7 @@ import TText from '@/components/TText'
           </TCol>
         </TRow>
 
-        <TText text="居中对齐 (center)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.centerAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="center">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -142,7 +145,7 @@ import TText from '@/components/TText'
           </TCol>
         </TRow>
 
-        <TText text="右对齐 (end)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.rightAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="end">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -155,7 +158,7 @@ import TText from '@/components/TText'
           </TCol>
         </TRow>
 
-        <TText text="两端对齐 (space-between)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.spaceBetween')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="space-between">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -168,7 +171,7 @@ import TText from '@/components/TText'
           </TCol>
         </TRow>
 
-        <TText text="均匀分布 (space-around)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.spaceAround')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="space-around">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -184,44 +187,44 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 垂直对齐 -->
-    <TCard title="垂直对齐" padding="medium">
+    <TCard :title="$t('examplePages.layout.sections.verticalAlign')" padding="medium">
       <view class="demo-section">
-        <TText text="顶部对齐 (top)" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TText :text="$t('examplePages.layout.labels.topAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
         <TRow align="top" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">高度: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">高度: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">高度: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
 
-        <TText text="居中对齐 (middle)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.middleAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow align="middle" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">高度: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">高度: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">高度: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
 
-        <TText text="底部对齐 (bottom)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="$t('examplePages.layout.labels.bottomAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow align="bottom" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">高度: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">高度: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">高度: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
       </view>

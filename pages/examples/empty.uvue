@@ -2,10 +2,13 @@
 import TEmpty from '@/components/TEmpty'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 空状态组件示例页面
  */
+
+const { $t } = useI18n()
 
 const handleClick = (): void => {
   console.log('按钮被点击')
@@ -15,16 +18,16 @@ const handleClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TEmpty 空状态组件</text>
-      <text class="example-desc">空数据时的占位提示</text>
+      <text class="example-title">{{ $t('examplePages.empty.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.empty.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.empty.sections.basic')" class="example-section">
       <TEmpty />
     </TCard>
 
-    <TCard title="自定义描述" class="example-section">
-      <TEmpty description="暂无相关数据" />
+    <TCard :title="$t('examplePages.empty.sections.custom')" class="example-section">
+      <TEmpty :description="$t('examplePages.empty.text.noData')" />
     </TCard>
 
     <TCard title="自定义图片" class="example-section">

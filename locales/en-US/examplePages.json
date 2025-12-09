@@ -1,0 +1,1236 @@
+{
+  "button": {
+    "title": "TButton Component",
+    "description": "Trigger an action",
+    "sections": {
+      "basic": "Basic Usage",
+      "plain": "Plain Button",
+      "size": "Button Size",
+      "disabled": "Disabled State",
+      "loading": "Loading State",
+      "round": "Round Button",
+      "block": "Block Button"
+    },
+    "buttons": {
+      "primary": "Primary",
+      "success": "Success",
+      "warning": "Warning",
+      "danger": "Danger",
+      "info": "Info",
+      "plain": "Plain",
+      "large": "Large",
+      "medium": "Medium",
+      "small": "Small",
+      "disabled": "Disabled",
+      "loading": "Loading",
+      "clickToLoad": "Click to Load",
+      "round": "Round",
+      "block": "Block"
+    },
+    "messages": {
+      "clicked": "Button clicked"
+    }
+  },
+  "icon": {
+    "title": "TIcon Component",
+    "description": "Semantic icons",
+    "sections": {
+      "basic": "Basic Usage",
+      "size": "Icon Size",
+      "color": "Icon Color"
+    }
+  },
+  "text": {
+    "title": "TText Component",
+    "description": "Text display component",
+    "sections": {
+      "basic": "Basic Usage",
+      "type": "Text Type",
+      "size": "Text Size",
+      "weight": "Text Weight",
+      "align": "Text Alignment",
+      "ellipsis": "Text Ellipsis",
+      "customColor": "Custom Color"
+    },
+    "content": {
+      "normal": "This is a normal text",
+      "primary": "Primary Text",
+      "success": "Success Text",
+      "warning": "Warning Text",
+      "danger": "Danger Text",
+      "info": "Info Text",
+      "extraSmall": "Extra Small Text",
+      "small": "Small Text",
+      "medium": "Medium Text",
+      "large": "Large Text",
+      "extraLarge": "Extra Large Text",
+      "bold": "Bold Text",
+      "italic": "Italic Text",
+      "underline": "Underline Text",
+      "lineThrough": "Line Through Text",
+      "combined": "Combined Style Text",
+      "alignLeft": "Left Aligned Text",
+      "alignCenter": "Center Aligned Text",
+      "alignRight": "Right Aligned Text",
+      "ellipsisOneLine": "This is a very long text that will show ellipsis when it exceeds one line. This is a very long text that will show ellipsis when it exceeds one line.",
+      "ellipsisTwoLines": "This is a very long text that will show ellipsis when it exceeds two lines. This is a very long text that will show ellipsis when it exceeds two lines. This is a very long text that will show ellipsis when it exceeds two lines. This is a very long text that will show ellipsis when it exceeds two lines.",
+      "customColor": "Custom Color Text"
+    }
+  },
+  "image": {
+    "title": "TImage Component",
+    "description": "Enhanced image component",
+    "sections": {
+      "basic": "Basic Usage",
+      "shape": "Image Shape",
+      "mode": "Crop Mode",
+      "radius": "Custom Radius",
+      "error": "Load Error",
+      "preview": "Image Preview",
+      "lazy": "Lazy Load",
+      "customText": "Custom Text"
+    },
+    "labels": {
+      "square": "Square",
+      "round": "Round",
+      "circle": "Circle",
+      "clickToPreview": "Click to preview",
+      "lazyLoadDesc": "Image loads when scrolling down",
+      "customLoading": "Custom loading text",
+      "customError": "Custom error text"
+    },
+    "messages": {
+      "loadComplete": "Image loaded",
+      "loadFailed": "Image load failed",
+      "errorText": "Image load failed",
+      "loadingText": "Please wait...",
+      "errorCustomText": "Cannot load",
+      "lazyLoading": "Lazy loading..."
+    }
+  },
+  "divider": {
+    "title": "TDivider Component",
+    "description": "Content divider",
+    "sections": {
+      "basic": "Basic Usage",
+      "dashed": "Dashed Style",
+      "customColor": "Custom Color",
+      "customThickness": "Custom Thickness",
+      "withText": "With Text",
+      "customTextStyle": "Custom Text Style",
+      "customMargin": "Custom Margin",
+      "vertical": "Vertical Divider",
+      "verticalStyle": "Vertical Divider Style",
+      "slot": "Slot Usage"
+    },
+    "labels": {
+      "default": "Default divider",
+      "secondPart": "Second part content",
+      "dashedLine": "Dashed line",
+      "dottedLine": "Dotted line",
+      "solidLine": "Solid line",
+      "blueLine": "Blue divider",
+      "redLine": "Red divider",
+      "greenLine": "Green divider",
+      "hairline": "Hairline",
+      "defaultCenter": "Default center",
+      "leftAlign": "Left align",
+      "rightAlign": "Right align",
+      "topContent": "Top content",
+      "middleContent": "Middle content",
+      "bottomContent": "Bottom content",
+      "blueText": "Blue text",
+      "largeText": "Large text",
+      "smallMargin": "Small margin",
+      "defaultMargin": "Default margin",
+      "largeMargin": "Large margin",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "option4": "Option 4",
+      "solid": "Solid",
+      "dashed": "Dashed",
+      "dotted": "Dotted",
+      "colorful": "Colorful",
+      "end": "End",
+      "customSlot": "Custom slot content"
+    }
+  },
+  "card": {
+    "title": "TCard Component",
+    "description": "Card container for organizing content",
+    "sections": {
+      "basic": "Basic Card",
+      "withSubtitle": "Card with Subtitle",
+      "noShadow": "No Shadow Card",
+      "withBorder": "Card with Border",
+      "padding": "Different Padding",
+      "largePadding": "Large Padding Card",
+      "radius": "Different Radius",
+      "largeRadius": "Large Radius Card",
+      "clickable": "Clickable Card",
+      "customSlot": "Custom Slot"
+    },
+    "content": {
+      "basic": "This is the content area of the card",
+      "subtitle": "This is subtitle",
+      "anyContent": "Card content can be any element",
+      "noShadow": "This card has no shadow effect",
+      "withBorder": "This card uses border instead of shadow",
+      "smallPadding": "Small padding card",
+      "largePadding": "Large padding card",
+      "noRadius": "No radius card",
+      "largeRadius": "Large radius card",
+      "clickable": "Clicking this card will trigger an event",
+      "customHeader": "Custom Header",
+      "customSlot": "This card uses custom header slot"
+    },
+    "buttons": {
+      "action": "Action",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "messages": {
+      "clicked": "Card clicked"
+    }
+  },
+  "input": {
+    "title": "TInput Component",
+    "description": "Text input",
+    "sections": {
+      "basic": "Basic Usage",
+      "type": "Input Type",
+      "size": "Different Sizes",
+      "disabled": "Disabled State",
+      "readonly": "Readonly State",
+      "clearable": "Clearable",
+      "affix": "With Affix",
+      "events": "Event Handling",
+      "maxlength": "Max Length"
+    },
+    "placeholder": "Please enter content",
+    "labels": {
+      "inputValue": "Input value",
+      "textInput": "Text input",
+      "passwordInput": "Password input",
+      "numberInput": "Number input",
+      "phoneInput": "Phone number",
+      "emailInput": "Email address",
+      "smallSize": "Small size input",
+      "mediumSize": "Medium size input",
+      "largeSize": "Large size input",
+      "disabled": "Disabled input",
+      "readonly": "Readonly input",
+      "clearable": "Clearable content",
+      "amount": "Please enter amount",
+      "website": "Please enter website",
+      "domain": "Please enter domain",
+      "checkConsole": "Check console"
+    }
+  },
+  "form": {
+    "title": "TForm Component",
+    "description": "Dynamic form with multiple form controls",
+    "sections": {
+      "basic": "Basic Usage",
+      "full": "Full Form (All Component Types)",
+      "customButtons": "Custom Buttons",
+      "customSlot": "Custom Slot"
+    },
+    "labels": {
+      "username": "Username",
+      "password": "Password",
+      "name": "Name",
+      "age": "Age",
+      "bio": "Bio",
+      "city": "City",
+      "birthday": "Birthday",
+      "gender": "Gender",
+      "hobbies": "Hobbies",
+      "notify": "Notification",
+      "rating": "Rating",
+      "volume": "Volume",
+      "email": "Email",
+      "phone": "Phone",
+      "nickname": "Nickname",
+      "avatar": "Avatar"
+    },
+    "placeholders": {
+      "username": "Please enter username",
+      "password": "Please enter password",
+      "name": "Please enter name",
+      "age": "Please enter age",
+      "bio": "Please enter bio",
+      "email": "Please enter email",
+      "phone": "Please enter phone",
+      "nickname": "Please enter nickname"
+    },
+    "options": {
+      "beijing": "Beijing",
+      "shanghai": "Shanghai",
+      "guangzhou": "Guangzhou",
+      "shenzhen": "Shenzhen",
+      "male": "Male",
+      "female": "Female",
+      "reading": "Reading",
+      "sports": "Sports",
+      "music": "Music"
+    },
+    "buttons": {
+      "submit": "Submit",
+      "reset": "Reset",
+      "validate": "Validate",
+      "getData": "Get Data",
+      "uploadAvatar": "Upload Avatar"
+    },
+    "messages": {
+      "submitSuccess": "Submit successful",
+      "reset": "Reset",
+      "validateSuccess": "Validation passed",
+      "validateFail": "Validation failed",
+      "uploadSuccess": "Upload successful",
+      "formData": "Form Data"
+    }
+  },
+  "list": {
+    "title": "TList Component",
+    "description": "Display list data",
+    "sections": {
+      "basic": "Basic List",
+      "withDescription": "List with Description",
+      "withIcon": "List with Icon",
+      "withExtra": "With Extra Content",
+      "clickable": "Clickable List",
+      "customSpacing": "Custom Spacing",
+      "withTitle": "List with Title"
+    },
+    "items": {
+      "item1": "List Item 1",
+      "item2": "List Item 2",
+      "item3": "List Item 3",
+      "titleText": "Title Text",
+      "description1": "This is the description for the first item",
+      "anotherTitle": "Another Title",
+      "description2": "This is the description for the second item",
+      "settings": "Settings",
+      "notification": "Notification",
+      "privacy": "Privacy",
+      "about": "About",
+      "balance": "Balance",
+      "coupon": "Coupon",
+      "points": "Points",
+      "clickable1": "Clickable Item 1",
+      "clickable2": "Clickable Item 2",
+      "disabled": "Disabled Item",
+      "noSpacing1": "No Spacing Item 1",
+      "noSpacing2": "No Spacing Item 2",
+      "largeSpacing1": "Large Spacing Item 1",
+      "largeSpacing2": "Large Spacing Item 2",
+      "systemSettings": "System Settings",
+      "general": "General",
+      "accountSecurity": "Account & Security"
+    },
+    "extra": {
+      "balance": "¥1,234.56",
+      "couponCount": "3 coupons",
+      "pointsCount": "1,234"
+    }
+  },
+  "dialog": {
+    "title": "TDialog Component",
+    "description": "Modal dialog",
+    "sections": {
+      "basic": "Basic Usage",
+      "confirm": "Confirm Dialog",
+      "custom": "Custom Content"
+    },
+    "buttons": {
+      "show": "Show Dialog",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "content": {
+      "title": "Tip",
+      "message": "This is a message"
+    }
+  },
+  "toast": {
+    "title": "TToast Component",
+    "description": "Lightweight prompt",
+    "sections": {
+      "basic": "Basic Usage",
+      "type": "Toast Type",
+      "duration": "Duration"
+    },
+    "buttons": {
+      "show": "Show Toast",
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "loading": "Loading"
+    },
+    "messages": {
+      "text": "This is a text message",
+      "success": "Operation successful",
+      "fail": "Operation failed",
+      "loading": "Loading...",
+      "loadComplete": "Load complete"
+    }
+  },
+  "loading": {
+    "title": "TLoading Component",
+    "description": "Loading state",
+    "sections": {
+      "basic": "Basic Usage",
+      "type": "Loading Type",
+      "text": "Loading Text"
+    },
+    "text": {
+      "loading": "Loading..."
+    }
+  },
+  "empty": {
+    "title": "TEmpty Component",
+    "description": "Empty state display",
+    "sections": {
+      "basic": "Basic Usage",
+      "custom": "Custom Content"
+    },
+    "text": {
+      "noData": "No Data",
+      "noResult": "No Search Results"
+    }
+  },
+  "picker": {
+    "title": "TPicker Component",
+    "description": "Multi-column data picker",
+    "sections": {
+      "basic": "Basic Usage",
+      "multiColumn": "Multi Column",
+      "cascade": "Cascade"
+    },
+    "buttons": {
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
+  "actionSheet": {
+    "title": "TActionSheet Component",
+    "description": "Bottom action sheet",
+    "sections": {
+      "basic": "Basic Usage",
+      "withTitle": "With Title & Description",
+      "customColor": "Custom Color"
+    },
+    "buttons": {
+      "show": "Open Action Sheet",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "shareToFriend": "Share to Friend",
+      "shareToMoments": "Share to Moments",
+      "copyLink": "Copy Link",
+      "delete": "Delete"
+    },
+    "dialog": {
+      "title": "Action Selection",
+      "description": "Please select the action you want to perform"
+    },
+    "messages": {
+      "selected": "Selected"
+    }
+  },
+  "checkbox": {
+    "title": "TCheckbox Component",
+    "description": "Checkbox component",
+    "sections": {
+      "basic": "Basic Usage",
+      "defaultChecked": "Default Checked",
+      "group": "Checkbox Group",
+      "disabled": "Disabled State",
+      "size": "Different Sizes",
+      "customColor": "Custom Color",
+      "indeterminate": "Indeterminate State",
+      "events": "Event Handling"
+    },
+    "labels": {
+      "checkbox": "Checkbox",
+      "defaultChecked": "Default checked checkbox",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "disabledUnchecked": "Disabled unchecked",
+      "disabledChecked": "Disabled checked",
+      "small": "Small size",
+      "medium": "Medium size",
+      "large": "Large size",
+      "red": "Red checkbox",
+      "green": "Green checkbox",
+      "orange": "Orange checkbox",
+      "indeterminate": "Indeterminate state",
+      "clickToConsole": "Click to view console"
+    },
+    "status": {
+      "checked": "Checked status",
+      "selected": "Selected",
+      "notSelected": "Not selected",
+      "indeterminateDesc": "Used to indicate partial selection",
+      "checkConsole": "Toggle checkbox to view console"
+    }
+  },
+  "cell": {
+    "title": "TCell Component",
+    "description": "Cell component",
+    "sections": {
+      "basic": "Basic Usage",
+      "withIcon": "With Icon",
+      "withValue": "With Value",
+      "link": "Link Cell"
+    },
+    "groups": {
+      "showArrow": "Show Arrow",
+      "clickableCell": "Clickable Cell",
+      "customSize": "Custom Size",
+      "customContent": "Custom Content",
+      "group": "Cell Group",
+      "required": "Required Field"
+    },
+    "labels": {
+      "cell": "Cell",
+      "content": "Content",
+      "description": "Description",
+      "settings": "Settings",
+      "message": "Message",
+      "notification": "Notification",
+      "enabled": "Enabled",
+      "personalInfo": "Personal Info",
+      "systemSettings": "System Settings",
+      "enter": "Enter",
+      "aboutUs": "About Us",
+      "clickable": "Clickable",
+      "notClickable": "Not Clickable",
+      "largeCell": "Large Cell",
+      "defaultCell": "Default Cell",
+      "smallCell": "Small Cell",
+      "customTitle": "Custom Title",
+      "accountManagement": "Account Management",
+      "privacySettings": "Privacy Settings",
+      "notificationSettings": "Notification Settings",
+      "basicSettings": "Basic Settings",
+      "clearCache": "Clear Cache",
+      "logout": "Logout",
+      "other": "Other",
+      "username": "Username",
+      "phone": "Phone",
+      "pleaseEnter": "Please Enter",
+      "email": "Email",
+      "optional": "Optional"
+    }
+  },
+  "grid": {
+    "title": "TGrid Component",
+    "description": "Grid layout",
+    "sections": {
+      "basic": "Basic Usage",
+      "custom": "Custom Columns",
+      "customGap": "Custom Gap",
+      "border": "With Border",
+      "square": "Square Grid",
+      "clickable": "Clickable",
+      "customColor": "Custom Icon Color",
+      "badge": "With Badge",
+      "image": "With Image",
+      "customContent": "Custom Content"
+    },
+    "labels": {
+      "home": "Home",
+      "mail": "Mail",
+      "favorite": "Favorite",
+      "settings": "Settings",
+      "phone": "Phone",
+      "bulb": "Bulb",
+      "palette": "Palette",
+      "camera": "Camera",
+      "red": "Red",
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow",
+      "image1": "Image 1",
+      "image2": "Image 2",
+      "image3": "Image 3",
+      "custom": "Custom",
+      "customDesc": "Custom Content",
+      "normalGrid": "Normal Grid",
+      "blueColor": "Blue",
+      "background": "Background",
+      "fast": "Fast"
+    }
+  },
+  "layout": {
+    "title": "TRow/TCol Component",
+    "description": "24-column grid layout",
+    "sections": {
+      "basic": "Basic Usage",
+      "gutter": "With Gutter",
+      "offset": "Column Offset",
+      "align": "Horizontal Alignment",
+      "verticalAlign": "Vertical Alignment",
+      "responsive": "Responsive"
+    },
+    "labels": {
+      "leftAlign": "Left Align",
+      "centerAlign": "Center Align",
+      "rightAlign": "Right Align",
+      "spaceBetween": "Space Between",
+      "spaceAround": "Space Around",
+      "topAlign": "Top Align",
+      "middleAlign": "Middle Align",
+      "bottomAlign": "Bottom Align",
+      "height": "Height"
+    }
+  },
+  "textarea": {
+    "title": "TTextarea Component",
+    "description": "Multi-line text input",
+    "sections": {
+      "basic": "Basic Usage",
+      "disabled": "Disabled State",
+      "maxlength": "Character Count",
+      "autoHeight": "Auto Height",
+      "clearable": "Clearable",
+      "customRows": "Custom Rows",
+      "complete": "Complete Example"
+    },
+    "placeholder": "Please enter content",
+    "labels": {
+      "disabled": "Disabled state",
+      "limit100": "Max 100 characters",
+      "autoGrow": "Auto grow height",
+      "clearable": "Clearable content",
+      "rows3": "3 Rows",
+      "rows3Height": "Fixed 3 rows height",
+      "rows5": "5 Rows",
+      "rows5Height": "Fixed 5 rows height",
+      "feedback": "Please enter your feedback"
+    }
+  },
+  "error": {
+    "title": "TErrorState Component",
+    "description": "Error prompt",
+    "sections": {
+      "basic": "Basic Usage",
+      "custom": "Custom Content",
+      "404": "404 Error",
+      "500": "500 Error",
+      "network": "Network Error",
+      "withButton": "With Button",
+      "customIcon": "Custom Icon",
+      "customSlot": "Custom Slot"
+    },
+    "text": {
+      "error": "Error occurred",
+      "retry": "Retry",
+      "networkError": "Network connection failed",
+      "404Title": "Page Not Found",
+      "404Message": "Sorry, the page you are looking for does not exist",
+      "500Title": "Server Error",
+      "500Message": "Sorry, the server encountered an error",
+      "networkTitle": "Network Error",
+      "networkMessage": "Please check your network connection",
+      "loadFailed": "Load Failed",
+      "loadFailedMessage": "Failed to load data, please try again",
+      "reload": "Reload",
+      "operationFailed": "Operation Failed",
+      "tryAgain": "Please try again later",
+      "errorOccurred": "An Error Occurred",
+      "customError": "This is a custom error message",
+      "back": "Back"
+    }
+  },
+  "radio": {
+    "title": "TRadioButton Component",
+    "description": "Radio button component",
+    "sections": {
+      "basic": "Basic Usage",
+      "group": "Radio Group",
+      "disabled": "Disabled State",
+      "size": "Different Sizes",
+      "customColor": "Custom Color",
+      "events": "Event Handling"
+    },
+    "labels": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "optionA": "Option A",
+      "optionB": "Option B",
+      "optionC": "Option C",
+      "optionD": "Option D",
+      "disabledUnchecked": "Disabled unchecked",
+      "disabledChecked": "Disabled checked",
+      "small": "Small size",
+      "medium": "Medium size",
+      "large": "Large size",
+      "red": "Red",
+      "green": "Green",
+      "orange": "Orange"
+    },
+    "status": {
+      "selected": "Selected",
+      "notSelected": "Not selected",
+      "checkConsole": "Toggle option to view console"
+    }
+  },
+  "switch": {
+    "title": "TSwitch Component",
+    "description": "Toggle between two states",
+    "sections": {
+      "basic": "Basic Usage",
+      "disabled": "Disabled State",
+      "size": "Different Sizes",
+      "customColor": "Custom Color",
+      "withText": "With Text",
+      "events": "Change Event"
+    },
+    "labels": {
+      "status": "Status",
+      "on": "On",
+      "off": "Off",
+      "disabledOff": "Disabled (Off)",
+      "disabledOn": "Disabled (On)",
+      "small": "Small size",
+      "medium": "Medium size",
+      "large": "Large size",
+      "customColor": "Custom color",
+      "openConsole": "Open console to view event"
+    },
+    "text": {
+      "active": "On",
+      "inactive": "Off"
+    }
+  },
+  "searchBar": {
+    "title": "TSearchBar Component",
+    "description": "Search input box",
+    "sections": {
+      "basic": "Basic Usage",
+      "round": "Round Style",
+      "showCancel": "Show Cancel Button",
+      "customBackground": "Custom Background",
+      "disabled": "Disabled State",
+      "customIcon": "Custom Icon",
+      "maxlength": "Max Length"
+    },
+    "placeholder": {
+      "default": "Please enter search content",
+      "round": "Round search box",
+      "background": "Light blue background",
+      "disabled": "Disabled state",
+      "customIcon": "Custom search icon",
+      "maxlength": "Max 20 characters"
+    },
+    "buttons": {
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "search": "Search",
+      "cancelled": "Cancelled"
+    }
+  },
+  "numberInput": {
+    "title": "TNumberInput Component",
+    "description": "Enhanced component for number input",
+    "sections": {
+      "basic": "Basic Usage",
+      "range": "Set Range",
+      "step": "Step Setting",
+      "precision": "Precision Control",
+      "size": "Different Sizes",
+      "disabled": "Disabled State",
+      "events": "Event Handling"
+    },
+    "labels": {
+      "currentValue": "Current value",
+      "range": "Range",
+      "step": "Step",
+      "integer": "Integer",
+      "decimal": "2 decimal places",
+      "checkConsole": "Check console for value changes"
+    }
+  },
+  "select": {
+    "title": "TSelect Component",
+    "description": "Dropdown selector component",
+    "sections": {
+      "basic": "Basic Usage",
+      "upward": "Upward Expand",
+      "default": "Default Value",
+      "disabled": "Disabled State",
+      "disabledOptions": "Disabled Options",
+      "clearable": "Clearable",
+      "filterable": "Filterable",
+      "multiple": "Multiple Selection",
+      "size": "Different Sizes",
+      "events": "Event Handling"
+    },
+    "labels": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "option4": "Option 4",
+      "option5": "Option 5",
+      "item1": "Item 1",
+      "item2": "Item 2",
+      "item3": "Item 3",
+      "available1": "Available Option 1",
+      "disabled": "Disabled Option",
+      "available2": "Available Option 2",
+      "available3": "Available Option 3",
+      "small": "Small Size",
+      "medium": "Medium Size",
+      "large": "Large Size"
+    },
+    "placeholder": {
+      "default": "Please select",
+      "upward": "Upward expand",
+      "disabled": "Disabled state",
+      "partialDisabled": "Partial options disabled",
+      "clearable": "Clearable selection",
+      "filterable": "Filterable options",
+      "multiple": "Please select multiple options",
+      "checkConsole": "Select to view console"
+    },
+    "messages": {
+      "selected": "Selected value",
+      "notSelected": "Not selected",
+      "upwardDesc": "Set placement=\"top\" to expand dropdown upward"
+    }
+  },
+  "slider": {
+    "title": "TSlider Component",
+    "description": "Slider selector",
+    "sections": {
+      "basic": "Basic Usage",
+      "showValue": "Show Current Value",
+      "customColor": "Custom Color",
+      "step": "Set Step",
+      "disabled": "Disabled State"
+    }
+  },
+  "rate": {
+    "title": "TRate Component",
+    "description": "Rating component",
+    "sections": {
+      "basic": "Basic Usage",
+      "halfStar": "Half Star",
+      "readonly": "Read Only",
+      "customIcon": "Custom Icon"
+    }
+  },
+  "tags": {
+    "title": "Tags Component",
+    "description": "Tag component for marking and classification",
+    "sections": {
+      "basic": "Basic Usage",
+      "card": "Card Type",
+      "size": "Different Sizes",
+      "badge": "With Badge",
+      "disabled": "Disabled State",
+      "bottom": "Bottom Tag Bar",
+      "customColor": "Custom Color",
+      "centered": "Centered Display",
+      "noAnimation": "Disable Animation",
+      "usage": "Usage Instructions"
+    },
+    "labels": {
+      "home": "Home",
+      "product": "Product",
+      "service": "Service",
+      "about": "About",
+      "all": "All",
+      "ongoing": "Ongoing",
+      "finished": "Finished",
+      "tab1": "Option 1",
+      "tab2": "Option 2",
+      "tab3": "Option 3",
+      "message": "Message",
+      "notification": "Notification",
+      "todo": "Todo",
+      "enabled1": "Enabled Option 1",
+      "disabled": "Disabled Option",
+      "enabled2": "Enabled Option 2",
+      "discover": "Discover",
+      "profile": "Profile",
+      "redTheme": "Red Theme",
+      "greenTheme": "Green Theme",
+      "blueTheme": "Blue Theme"
+    },
+    "content": {
+      "currentKey": "Current active Key",
+      "home": "Home content area",
+      "product": "Product display area",
+      "service": "Service introduction area",
+      "about": "About us area",
+      "currentSelected": "Current selected",
+      "allTasks": "All Tasks",
+      "allTasksDesc": "Display all task list",
+      "ongoing": "Ongoing",
+      "ongoingDesc": "Display ongoing tasks",
+      "finished": "Finished",
+      "finishedDesc": "Display finished tasks",
+      "current": "Current",
+      "messageCenter": "Message Center",
+      "unreadMessages": "You have 5 unread messages",
+      "notifications": "Notifications",
+      "notificationCount": "You have 99+ notifications",
+      "todoList": "Todo List",
+      "newTodo": "You have new todo items",
+      "disabledDesc": "The middle option is disabled and cannot be clicked",
+      "homeContent": "Home",
+      "bottomNavDesc": "Tab bar displayed at bottom, suitable for bottom navigation",
+      "discoverContent": "Discover page content",
+      "profileContent": "Profile content",
+      "customColorTheme": "Custom color theme",
+      "redTheme": "Active color is red (#e74c3c)",
+      "centered": "Centered display",
+      "noAnimation": "No animation effect"
+    },
+    "usage": {
+      "props": "Main Properties",
+      "vModel": "• v-model: Bind current active tag",
+      "items": "• items: Tag data array",
+      "type": "• type: Tag type (line | card)",
+      "size": "• size: Tag size (small | medium | large)",
+      "tabPosition": "• tabPosition: Tag position (top | bottom)",
+      "scrollable": "• scrollable: Whether scrollable",
+      "centered": "• centered: Whether centered",
+      "activeColor": "• activeColor: Active color",
+      "inactiveColor": "• inactiveColor: Inactive color",
+      "animated": "• animated: Whether to show animation",
+      "events": "Main Events",
+      "change": "• @change: Triggered when tag switches",
+      "tabClick": "• @tab-click: Triggered when tag is clicked",
+      "slots": "Slots",
+      "default": "• default: Content area, receives activeKey parameter",
+      "tabItem": "TabItem Type",
+      "key": "• key: Unique identifier (required)",
+      "label": "• label: Tag text (required)",
+      "disabled": "• disabled: Whether disabled",
+      "badge": "• badge: Badge content",
+      "icon": "• icon: Icon path"
+    }
+  },
+  "badge": {
+    "title": "TBadge Component",
+    "description": "Display number or status badge",
+    "sections": {
+      "basic": "Basic Usage",
+      "max": "Max Value",
+      "dot": "Dot Badge",
+      "type": "Different Types",
+      "customColor": "Custom Color",
+      "offset": "Offset",
+      "dynamic": "Dynamic Control"
+    },
+    "labels": {
+      "comment": "Comment",
+      "reply": "Reply",
+      "message": "Message",
+      "warning": "Warning",
+      "online": "Online",
+      "offline": "Offline",
+      "primary": "Primary",
+      "danger": "Danger",
+      "success": "Success",
+      "info": "Info",
+      "bgColor": "BgColor",
+      "blue": "Blue",
+      "green": "Green",
+      "offset": "Offset",
+      "dynamic": "Dynamic"
+    },
+    "buttons": {
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "show": "Show",
+      "hide": "Hide"
+    }
+  },
+  "avatar": {
+    "title": "TAvatar Component",
+    "description": "Display user avatar or icon",
+    "sections": {
+      "basic": "Basic Usage",
+      "size": "Different Sizes",
+      "shape": "Different Shapes",
+      "customColor": "Custom Color",
+      "fit": "Image Fit Mode",
+      "events": "With Events",
+      "customContent": "Custom Content"
+    },
+    "messages": {
+      "clicked": "Avatar clicked",
+      "error": "Image load failed",
+      "clickOrConsole": "Click avatar or check console log"
+    }
+  },
+  "progress": {
+    "title": "TProgress Component",
+    "description": "Progress indicator",
+    "sections": {
+      "basic": "Basic Usage",
+      "type": "Progress Type",
+      "status": "Progress Status",
+      "custom": "Custom Color"
+    }
+  },
+  "noticeBar": {
+    "title": "TNoticeBar Component",
+    "description": "Scrolling notice",
+    "sections": {
+      "basic": "Basic Usage",
+      "closable": "Closable",
+      "link": "Link Mode",
+      "scrollable": "Scrollable",
+      "customColor": "Custom Color"
+    },
+    "text": {
+      "notice": "This is a notice message",
+      "closable": "This is a closable notice message",
+      "link": "Click for details",
+      "scrollable": "This is a long notice message that will automatically scroll for users to view the complete content",
+      "customColor": "Custom color notice bar",
+      "danger": "Danger alert message"
+    }
+  },
+  "collapse": {
+    "title": "Collapse Component",
+    "description": "Collapsible content area",
+    "sections": {
+      "basic": "Basic Usage",
+      "accordion": "Accordion Mode",
+      "disabled": "Disabled State",
+      "customTitle": "Custom Title",
+      "noBorder": "No Border",
+      "currentState": "Current State"
+    },
+    "titles": {
+      "consistency": "Consistency",
+      "feedback": "Feedback",
+      "efficiency": "Efficiency",
+      "designPrinciples": "Design Principles",
+      "navigation": "Navigation",
+      "feedbackTitle": "Feedback",
+      "normalItem": "Normal Item",
+      "disabledItem": "Disabled Item",
+      "mobileComponents": "Mobile Components",
+      "richComponents": "Rich Components",
+      "highPerformance": "High Performance",
+      "item1": "Item 1",
+      "item2": "Item 2"
+    },
+    "content": {
+      "consistency": "Consistent with real life: Keep consistent with real-life processes and logic, follow user habits in language and concepts.",
+      "feedback": "Control feedback: Let users clearly perceive their operations through interface styles and interactive effects.",
+      "efficiency": "Simplify process: Design simple and intuitive operation processes to help users complete goals quickly.",
+      "designPrinciples": "Consistency, feedback, efficiency, and controllability are our design principles.",
+      "navigation": "Navigation can solve the problems of where users are, where to go, and how to get there when visiting pages.",
+      "feedbackContent": "Feedback is a response to user behavior, giving users an explanation.",
+      "normalItem": "This is a normal collapse item that can be expanded and collapsed normally.",
+      "disabledItem": "This is a disabled collapse item that cannot be expanded.",
+      "mobileComponents": "Lightweight UI component library designed for mobile.",
+      "richComponents": "Provides rich basic components covering various mobile scenarios.",
+      "highPerformance": "Excellent performance, lightweight implementation, ensuring smooth experience.",
+      "item1Content": "This is the content of item 1.",
+      "item2Content": "This is the content of item 2."
+    },
+    "labels": {
+      "expandedItems": "Expanded items",
+      "accordionExpanded": "Accordion expanded",
+      "none": "None"
+    }
+  },
+  "swiper": {
+    "title": "Swiper Component",
+    "description": "For looping images or content",
+    "sections": {
+      "basic": "Basic Usage",
+      "customIndicator": "Custom Indicator Color",
+      "numberIndicator": "Number Indicator",
+      "topIndicator": "Top Indicator",
+      "vertical": "Vertical Swiper",
+      "noAutoplay": "Disable Autoplay",
+      "noIndicator": "No Indicator",
+      "customHeight": "Custom Height and Interval"
+    },
+    "labels": {
+      "carousel1": "Carousel 1",
+      "carousel2": "Carousel 2",
+      "carousel3": "Carousel 3",
+      "carousel4": "Carousel 4",
+      "currentIndex": "Current Index",
+      "manualSwipe": "Manual swipe to switch",
+      "heightDesc": "Height 150px, interval 5s, animation 500ms"
+    }
+  },
+  "navbar": {
+    "title": "TNavBar Component",
+    "description": "Top navigation bar",
+    "sections": {
+      "basic": "Basic Usage",
+      "leftBack": "Left Back Button",
+      "rightButton": "Right Button",
+      "bothButtons": "Both Buttons"
+    },
+    "labels": {
+      "title": "Title",
+      "back": "Back",
+      "button": "Button",
+      "more": "More"
+    },
+    "messages": {
+      "clickLeft": "Click left",
+      "clickRight": "Click right"
+    }
+  },
+  "tabs": {
+    "title": "Tabs Component",
+    "description": "Tab switching component with multiple styles and configurations",
+    "sections": {
+      "basic": "Basic Usage",
+      "card": "Card Type",
+      "size": "Different Sizes",
+      "badge": "With Badge",
+      "disabled": "Disabled State",
+      "bottom": "Bottom Tab Bar",
+      "customColor": "Custom Color",
+      "centered": "Centered Display",
+      "noAnimation": "Disable Animation",
+      "usage": "Usage Instructions"
+    },
+    "labels": {
+      "home": "Home",
+      "profile": "Profile",
+      "settings": "Settings",
+      "about": "About",
+      "user": "User Info",
+      "order": "Order Management",
+      "wallet": "My Wallet",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "message": "Message",
+      "notification": "Notification",
+      "todo": "Todo",
+      "enabled1": "Enabled Option 1",
+      "disabled": "Disabled Option",
+      "enabled2": "Enabled Option 2",
+      "discover": "Discover",
+      "me": "Me"
+    },
+    "content": {
+      "currentKey": "Current active Key",
+      "home": "This is the home content area",
+      "profile": "This is the profile content area",
+      "settings": "This is the settings content area",
+      "about": "This is the about content area",
+      "user": "User Info",
+      "userPanel": "Card style user info panel",
+      "order": "Order Management",
+      "orderPanel": "Card style order management panel",
+      "wallet": "My Wallet",
+      "walletPanel": "Card style wallet panel",
+      "currentSelected": "Current selected",
+      "messageCenter": "Message Center",
+      "unreadMessages": "You have 5 unread messages",
+      "notifications": "Notifications",
+      "notificationCount": "You have 99+ notifications",
+      "todoList": "Todo List",
+      "newTodo": "You have new todo items",
+      "disabledDesc": "The middle option is disabled and cannot be clicked",
+      "homeContent": "Home",
+      "bottomNavDesc": "Tab bar displayed at bottom, suitable for bottom navigation",
+      "discoverContent": "Discover page content",
+      "meContent": "Profile content",
+      "customColorTheme": "Custom color",
+      "redTheme": "Active color is red (#ff6b6b)",
+      "centered": "Centered tabs",
+      "noAnimation": "No animation effect"
+    },
+    "usage": {
+      "props": "Main Properties",
+      "vModel": "• v-model: Bind current active tab",
+      "type": "• type: Tab type (line | card)",
+      "size": "• size: Tab size (small | medium | large)",
+      "tabPosition": "• tabPosition: Tab position (top | bottom)",
+      "scrollable": "• scrollable: Whether scrollable",
+      "centered": "• centered: Whether centered",
+      "activeColor": "• activeColor: Active color",
+      "inactiveColor": "• inactiveColor: Inactive color",
+      "animated": "• animated: Whether to show animation",
+      "events": "Main Events",
+      "change": "• @change: Triggered when tab switches",
+      "slots": "Slots",
+      "default": "• default: Content area, receives activePane and activeIndex"
+    }
+  },
+  "popup": {
+    "title": "TPopup Component",
+    "description": "Popup container for displaying popup content",
+    "sections": {
+      "basic": "Basic Usage",
+      "position": "Different Positions"
+    },
+    "buttons": {
+      "bottom": "Bottom Popup",
+      "top": "Top Popup",
+      "left": "Left Popup",
+      "right": "Right Popup",
+      "center": "Center Popup"
+    },
+    "content": {
+      "bottom": "This is popup content",
+      "top": "Top popup content",
+      "left": "Left popup content",
+      "right": "Right popup content",
+      "center": "Center Popup",
+      "centerDesc": "This is a center popup content area"
+    }
+  },
+  "checkboxGroup": {
+    "title": "TCheckboxGroup Component",
+    "description": "Checkbox group",
+    "sections": {
+      "basic": "Basic Usage",
+      "horizontal": "Horizontal Layout",
+      "disabled": "Disabled Options",
+      "max": "Max Selection Limit",
+      "disabledAll": "Disabled All"
+    },
+    "labels": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "option2Disabled": "Option 2 (Disabled)"
+    }
+  },
+  "radioGroup": {
+    "title": "TRadioGroup Component",
+    "description": "Radio group",
+    "sections": {
+      "basic": "Basic Usage",
+      "horizontal": "Horizontal Layout",
+      "disabled": "Disabled Options",
+      "disabledAll": "Disabled All"
+    },
+    "labels": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3",
+      "option2Disabled": "Option 2 (Disabled)"
+    }
+  }
+}

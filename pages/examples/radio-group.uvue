@@ -3,38 +3,41 @@ import { ref } from 'vue'
 import TRadioGroup from '@/components/TRadioGroup'
 import type { RadioOption } from '@/components/TRadioGroup/type.uts'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const value1 = ref<string | number>('1')
 const value2 = ref<string | number>('2')
 
 const options: RadioOption[] = [
-  { label: '选项一', value: '1' },
-  { label: '选项二', value: '2' },
-  { label: '选项三', value: '3' }
+  { label: $t('examplePages.radioGroup.labels.option1'), value: '1' },
+  { label: $t('examplePages.radioGroup.labels.option2'), value: '2' },
+  { label: $t('examplePages.radioGroup.labels.option3'), value: '3' }
 ]
 
 const options2: RadioOption[] = [
-  { label: '选项一', value: '1' },
-  { label: '选项二（禁用）', value: '2', disabled: true },
-  { label: '选项三', value: '3' }
+  { label: $t('examplePages.radioGroup.labels.option1'), value: '1' },
+  { label: $t('examplePages.radioGroup.labels.option2Disabled'), value: '2', disabled: true },
+  { label: $t('examplePages.radioGroup.labels.option3'), value: '3' }
 ]
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.radioGroup.sections.basic')" padding="medium">
       <TRadioGroup v-model="value1" :options="options" />
     </TCard>
 
-    <TCard title="水平排列" padding="medium">
+    <TCard :title="$t('examplePages.radioGroup.sections.horizontal')" padding="medium">
       <TRadioGroup v-model="value2" :options="options" direction="horizontal" />
     </TCard>
 
-    <TCard title="禁用选项" padding="medium">
+    <TCard :title="$t('examplePages.radioGroup.sections.disabled')" padding="medium">
       <TRadioGroup v-model="value1" :options="options2" />
     </TCard>
 
-    <TCard title="禁用所有" padding="medium">
+    <TCard :title="$t('examplePages.radioGroup.sections.disabledAll')" padding="medium">
       <TRadioGroup v-model="value1" :options="options" :disabled="true" />
     </TCard>
   </view>

@@ -1,0 +1,93 @@
+/**
+ * Task 8 功能演示
+ * 展示 getAvailableLocales() 和 getCurrentLocale() 的使用
+ */
+
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+// 获取管理器实例
+const manager = I18nManager.getInstance()
+
+// 准备测试数据
+const zhCN: ModularLocaleMessages = {
+  common: { confirm: '确定', cancel: '取消' }
+}
+
+const enUS: ModularLocaleMessages = {
+  common: { confirm: 'Confirm', cancel: 'Cancel' }
+}
+
+const zhTW: ModularLocaleMessages = {
+  common: { confirm: '確定', cancel: '取消' }
+}
+
+// 演示 1: 初始状态
+console.log('=== 演示 1: 初始状态 ===')
+console.log('当前语言:', manager.getCurrentLocale())
+console.log('可用语言:', manager.getAvailableLocales().value)
+console.log('')
+
+// 演示 2: 注册语言包
+console.log('=== 演示 2: 注册语言包 ===')
+manager.registerMessages('zh-CN', zhCN)
+console.log('注册 zh-CN 后:')
+console.log('  可用语言:', manager.getAvailableLocales().value)
+console.log('')
+
+manager.registerMessages('en-US', enUS)
+console.log('注册 en-US 后:')
+console.log('  可用语言:', manager.getAvailableLocales().value)
+console.log('')
+
+manager.registerMessages('zh-TW', zhTW)
+console.log('注册 zh-TW 后:')
+console.log('  可用语言:', manager.getAvailableLocales().value)
+console.log('')
+
+// 演示 3: 切换语言
+console.log('=== 演示 3: 切换语言 ===')
+console.log('初始语言:', manager.getCurrentLocale())
+
+manager.setLocale('en-US')
+console.log('切换到 en-US:', manager.getCurrentLocale())
+
+manager.setLocale('zh-TW')
+console.log('切换到 zh-TW:', manager.getCurrentLocale())
+
+manager.setLocale('zh-CN')
+console.log('切换回 zh-CN:', manager.getCurrentLocale())
+console.log('')
+
+// 演示 4: 响应式特性
+console.log('=== 演示 4: 响应式特性 ===')
+const availableLocales = manager.getAvailableLocales()
+console.log('获取响应式列表:', availableLocales.value)
+
+// 动态注册新语言
+const jaJP: ModularLocaleMessages = {
+  common: { confirm: '確認', cancel: 'キャンセル' }
+}
+manager.registerMessages('ja-JP', jaJP)
+console.log('注册 ja-JP 后，列表自动更新:', availableLocales.value)
+console.log('')
+
+// 演示 5: 实际应用场景
+console.log('=== 演示 5: 实际应用场景 - 语言选择器 ===')
+console.log('构建语言选择器选项:')
+const locales = manager.getAvailableLocales().value
+const localeNames: Record<string, string> = {
+  'zh-CN': '简体中文',
+  'en-US': 'English',
+  'zh-TW': '繁體中文',
+  'ja-JP': '日本語'
+}
+
+locales.forEach((locale: string) => {
+  const isCurrent = locale === manager.getCurrentLocale()
+  const marker = isCurrent ? '✓' : ' '
+  console.log(`  [${marker}] ${locale} - ${localeNames[locale]}`)
+})
+console.log('')
+
+console.log('=== 演示完成 ===')

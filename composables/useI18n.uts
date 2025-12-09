@@ -1,0 +1,77 @@
+/**
+ * useI18n Composable
+ * 为组件提供响应式的 i18n 功能
+ */
+
+import { computed } from 'vue'
+import type { ComputedRef } from 'vue'
+import { I18nManager } from './i18n/manager.uts'
+import type { TranslateParams } from './i18n/types.uts'
+
+/**
+ * useI18n 返回类型
+ */
+export interface UseI18nReturn {
+  /** 翻译函数 */
+  $t: (key: string, params?: TranslateParams) => string
+  /** 当前语言（响应式） */
+  locale: ComputedRef<string>
+  /** 可用语言列表（响应式） */
+  availableLocales: ComputedRef<string[]>
+  /** 设置语言 */
+  setLocale: (locale: string) => boolean
+}
+
+/**
+ * useI18n Composable 函数
+ * 提供响应式的多语言功能
+ * 
+ * @returns i18n 功能对象
+ * 
+ * @example
+ * ```typescript
+ * const { $t, locale, setLocale, availableLocales } = useI18n()
+ * 
+ * // 翻译文本
+ * const title = $t('common.confirm')
+ * 
+ * // 带参数的翻译
+ * const greeting = $t('common.hello', { name: '张三' })
+ * 
+ * // 切换语言
+ * setLocale('en-US')
+ * 
+ * // 获取当前语言
+ * console.log(locale.value)
+ * 
+ * // 获取可用语言列表
+ * console.log(availableLocales.value)
+ * ```
+ */
+export function useI18n(): UseI18nReturn {
+  // 获取 I18nManager 单例实例
+  const manager = I18nManager.getInstance()
+  
+  // 翻译函数：调用 manager.translate()
+  const $t = (key: string, params?: TranslateParams): string => {
+    return manager.translate(key, params)
+  }
+  
+  // 当前语言（响应式 computed）
+  const locale = computed<string>(() => manager.currentLocale.value)
+  
+  // 可用语言列表（响应式 computed）
+  const availableLocales = manager.getAvailableLocales()
+  
+  // 设置语言方法
+  const setLocale = (locale: string): boolean => {
+    return manager.setLocale(locale)
+  }
+  
+  return {
+    $t,
+    locale,
+    availableLocales,
+    setLocale
+  }
+}

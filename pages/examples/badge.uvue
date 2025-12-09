@@ -3,10 +3,13 @@ import { ref } from 'vue'
 import TBadge from '@/components/TBadge'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 徽标组件示例页面
  */
+
+const { $t } = useI18n()
 
 const value = ref<number>(5)
 const hidden = ref<boolean>(false)
@@ -15,106 +18,106 @@ const hidden = ref<boolean>(false)
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TBadge 徽标组件</text>
-      <text class="example-desc">用于显示数字或状态标记</text>
+      <text class="example-title">{{ $t('examplePages.badge.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.badge.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.basic')" class="example-section">
       <view class="badge-row">
         <TBadge :value="12">
-          <TButton size="small">评论</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.comment') }}</TButton>
         </TBadge>
         <TBadge :value="3">
-          <TButton size="small">回复</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.reply') }}</TButton>
         </TBadge>
         <TBadge :value="1" type="primary">
-          <TButton size="small">消息</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
         </TBadge>
         <TBadge :value="2" type="warning">
-          <TButton size="small">警告</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.warning') }}</TButton>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="最大值" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.max')" class="example-section">
       <view class="badge-row">
         <TBadge :value="200" :max="99">
-          <TButton size="small">评论</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.comment') }}</TButton>
         </TBadge>
         <TBadge :value="100" :max="10">
-          <TButton size="small">消息</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="小圆点" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.dot')" class="example-section">
       <view class="badge-row">
         <TBadge isDot>
-          <TButton size="small">消息</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
         </TBadge>
         <TBadge isDot type="success">
-          <text style="padding: 8px;">在线</text>
+          <text style="padding: 8px;">{{ $t('examplePages.badge.labels.online') }}</text>
         </TBadge>
         <TBadge isDot type="danger">
-          <text style="padding: 8px;">离线</text>
+          <text style="padding: 8px;">{{ $t('examplePages.badge.labels.offline') }}</text>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="不同类型" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.type')" class="example-section">
       <view class="badge-row">
         <TBadge value="NEW" type="primary">
-          <TButton size="small">主要</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.primary') }}</TButton>
         </TBadge>
         <TBadge value="HOT" type="danger">
-          <TButton size="small">危险</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.danger') }}</TButton>
         </TBadge>
         <TBadge value="5" type="success">
-          <TButton size="small">成功</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.success') }}</TButton>
         </TBadge>
         <TBadge value="10" type="warning">
-          <TButton size="small">警告</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.warning') }}</TButton>
         </TBadge>
         <TBadge value="2" type="info">
-          <TButton size="small">信息</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.info') }}</TButton>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="自定义颜色" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.customColor')" class="example-section">
       <view class="badge-row">
         <TBadge value="自定义" bgColor="#f50">
-          <TButton size="small">背景色</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.bgColor') }}</TButton>
         </TBadge>
         <TBadge value="12" bgColor="#2db7f5">
-          <TButton size="small">蓝色</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.blue') }}</TButton>
         </TBadge>
         <TBadge value="5" bgColor="#87d068">
-          <TButton size="small">绿色</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.green') }}</TButton>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="偏移量" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.offset')" class="example-section">
       <view class="badge-row">
         <TBadge :value="5" :offset="[10, 10]">
-          <TButton size="small">偏移</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.offset') }}</TButton>
         </TBadge>
         <TBadge :value="10" :offset="[-10, 10]">
-          <TButton size="small">偏移</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.offset') }}</TButton>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard title="动态控制" class="example-section">
+    <TCard :title="$t('examplePages.badge.sections.dynamic')" class="example-section">
       <view class="badge-row">
         <TBadge :value="value" :hidden="hidden">
-          <TButton size="small">动态</TButton>
+          <TButton size="small">{{ $t('examplePages.badge.labels.dynamic') }}</TButton>
         </TBadge>
-        <TButton size="small" @click="value++">增加</TButton>
-        <TButton size="small" @click="value = Math.max(0, value - 1)">减少</TButton>
+        <TButton size="small" @click="value++">{{ $t('examplePages.badge.buttons.increase') }}</TButton>
+        <TButton size="small" @click="value = Math.max(0, value - 1)">{{ $t('examplePages.badge.buttons.decrease') }}</TButton>
         <TButton size="small" @click="hidden = !hidden">
-          {{ hidden ? '显示' : '隐藏' }}
+          {{ hidden ? $t('examplePages.badge.buttons.show') : $t('examplePages.badge.buttons.hide') }}
         </TButton>
       </view>
     </TCard>

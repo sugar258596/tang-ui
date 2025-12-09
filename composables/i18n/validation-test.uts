@@ -1,0 +1,106 @@
+/**
+ * 验证 JSON 结构验证功能
+ * 测试 validateMessages 方法的各种场景
+ */
+
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+console.log('=== JSON 结构验证测试 ===\n')
+
+const manager = I18nManager.getInstance()
+
+// 测试 1: 有效的语言包结构
+console.log('测试 1: 有效的语言包结构')
+const validMessages: ModularLocaleMessages = {
+  common: {
+    confirm: '确定',
+    cancel: '取消'
+  },
+  dialog: {
+    title: '提示'
+  }
+}
+manager.registerMessages('test-valid', validMessages)
+console.log('✓ 有效语言包注册成功')
+console.log('可用语言:', manager.getAvailableLocales().value)
+console.log('')
+
+// 测试 2: 无效的语言包（null）
+console.log('测试 2: 无效的语言包（null）')
+try {
+  manager.registerMessages('test-null', null as any)
+  console.log('✗ 应该拒绝 null 语言包')
+} catch (e) {
+  console.log('✓ 正确拒绝 null 语言包')
+}
+console.log('')
+
+// 测试 3: 无效的语言包（数组）
+console.log('测试 3: 无效的语言包（数组）')
+manager.registerMessages('test-array', [] as any)
+console.log('检查是否注册:', manager.hasLocale('test-array'))
+console.log('')
+
+// 测试 4: 无效的模块（不是对象）
+console.log('测试 4: 无效的模块（不是对象）')
+const invalidModule: any = {
+  common: 'not an object'
+}
+manager.registerMessages('test-invalid-module', invalidModule)
+console.log('检查是否注册:', manager.hasLocale('test-invalid-module'))
+console.log('')
+
+// 测试 5: 无效的键值（不是字符串）
+console.log('测试 5: 无效的键值（不是字符串）')
+const invalidValue: any = {
+  common: {
+    confirm: 123,  // 数字而非字符串
+    cancel: '取消'
+  }
+}
+manager.registerMessages('test-invalid-value', invalidValue)
+console.log('检查是否注册:', manager.hasLocale('test-invalid-value'))
+console.log('')
+
+// 测试 6: 部分有效的语言包（应该完全拒绝）
+console.log('测试 6: 部分有效的语言包')
+const partiallyValid: any = {
+  common: {
+    confirm: '确定',
+    cancel: '取消'
+  },
+  dialog: {
+    title: '提示',
+    invalid: { nested: 'object' }  // 嵌套对象而非字符串
+  }
+}
+manager.registerMessages('test-partial', partiallyValid)
+console.log('检查是否注册:', manager.hasLocale('test-partial'))
+console.log('')
+
+// 测试 7: 替换模式也应该验证
+console.log('测试 7: 替换模式验证')
+manager.registerMessagesWithMode('test-replace', invalidValue, 'replace')
+console.log('检查是否注册:', manager.hasLocale('test-replace'))
+console.log('')
+
+// 测试 8: 空对象是有效的
+console.log('测试 8: 空对象是有效的')
+manager.registerMessages('test-empty', {})
+console.log('✓ 空对象注册成功')
+console.log('检查是否注册:', manager.hasLocale('test-empty'))
+console.log('')
+
+// 测试 9: 空模块是有效的
+console.log('测试 9: 空模块是有效的')
+const emptyModule: ModularLocaleMessages = {
+  common: {}
+}
+manager.registerMessages('test-empty-module', emptyModule)
+console.log('✓ 空模块注册成功')
+console.log('检查是否注册:', manager.hasLocale('test-empty-module'))
+console.log('')
+
+console.log('=== 测试完成 ===')
+console.log('最终可用语言列表:', manager.getAvailableLocales().value)

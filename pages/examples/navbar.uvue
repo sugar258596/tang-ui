@@ -1,36 +1,39 @@
 <script setup lang="uts">
 import TNavBar from '@/components/TNavBar'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const handleClickLeft = (): void => {
-  uni.showToast({ title: '点击左侧', icon: 'none' })
+  uni.showToast({ title: $t('examplePages.navbar.messages.clickLeft'), icon: 'none' })
 }
 
 const handleClickRight = (): void => {
-  uni.showToast({ title: '点击右侧', icon: 'none' })
+  uni.showToast({ title: $t('examplePages.navbar.messages.clickRight'), icon: 'none' })
 }
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="none">
-      <TNavBar title="标题" />
+    <TCard :title="$t('examplePages.navbar.sections.basic')" padding="none">
+      <TNavBar :title="$t('examplePages.navbar.labels.title')" />
     </TCard>
 
-    <TCard title="左侧返回" padding="none">
-      <TNavBar title="标题" left-icon="←" left-text="返回" @click-left="handleClickLeft" />
+    <TCard :title="$t('examplePages.navbar.sections.leftBack')" padding="none">
+      <TNavBar :title="$t('examplePages.navbar.labels.title')" left-icon="←" :left-text="$t('examplePages.navbar.labels.back')" @click-left="handleClickLeft" />
     </TCard>
 
-    <TCard title="右侧按钮" padding="none">
-      <TNavBar title="标题" right-text="按钮" @click-right="handleClickRight" />
+    <TCard :title="$t('examplePages.navbar.sections.rightButton')" padding="none">
+      <TNavBar :title="$t('examplePages.navbar.labels.title')" :right-text="$t('examplePages.navbar.labels.button')" @click-right="handleClickRight" />
     </TCard>
 
-    <TCard title="左右按钮" padding="none">
+    <TCard :title="$t('examplePages.navbar.sections.bothButtons')" padding="none">
       <TNavBar
-        title="标题"
+        :title="$t('examplePages.navbar.labels.title')"
         left-icon="←"
-        left-text="返回"
-        right-text="更多"
+        :left-text="$t('examplePages.navbar.labels.back')"
+        :right-text="$t('examplePages.navbar.labels.more')"
         @click-left="handleClickLeft"
         @click-right="handleClickRight"
       />

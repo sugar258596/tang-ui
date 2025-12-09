@@ -1,6 +1,7 @@
 <script setup lang="uts">
 import { computed, ref, watch } from 'vue'
 import type { TPickerProps, TPickerOption } from './type.uts'
+import { useI18n } from '../../composables/useI18n.uts'
 
 /**
  * TPicker 通用选择器组件
@@ -11,11 +12,8 @@ import type { TPickerProps, TPickerOption } from './type.uts'
 type Props = Omit<TPickerProps, 'visible'>
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '请选择',
   options: () => [] as TPickerOption[],
   columns: () => [] as TPickerOption[][],
-  confirmText: '确定',
-  cancelText: '取消',
   itemHeight: '44px',
   visibleItemCount: 5,
   showToolbar: true
@@ -33,6 +31,28 @@ const emit = defineEmits<{
   cancel: []
   change: [value: any, index: number | number[], columnIndex: number]
 }>()
+
+// 使用 i18n
+const { $t } = useI18n()
+
+// 优先使用用户传入的值，否则使用翻译
+const displayTitle = computed(() => {
+  return props.title !== undefined && props.title !== '' 
+    ? props.title 
+    : $t('picker.title')
+})
+
+const displayConfirmText = computed(() => {
+  return props.confirmText !== undefined && props.confirmText !== '' 
+    ? props.confirmText 
+    : $t('picker.confirmText')
+})
+
+const displayCancelText = computed(() => {
+  return props.cancelText !== undefined && props.cancelText !== '' 
+    ? props.cancelText 
+    : $t('picker.cancelText')
+})
 
 // 当前选中的索引（单列为 number，多列为 number[]）
 const selectedIndex = ref<number[]>([0])
@@ -154,13 +174,13 @@ const handleChange = (e: any): void => {
       <!-- 工具栏 -->
       <view v-if="showToolbar" class="t-picker__toolbar">
         <view class="t-picker__btn t-picker__btn--cancel" @click="handleCancel">
-          <text class="t-picker__btn-text">{{ cancelText }}</text>
+          <text class="t-picker__btn-text">{{ displayCancelText }}</text>
         </view>
         <view class="t-picker__title">
-          <text class="t-picker__title-text">{{ title }}</text>
+          <text class="t-picker__title-text">{{ displayTitle }}</text>
         </view>
         <view class="t-picker__btn t-picker__btn--confirm" @click="handleConfirm">
-          <text class="t-picker__btn-text t-picker__btn-text--primary">{{ confirmText }}</text>
+          <text class="t-picker__btn-text t-picker__btn-text--primary">{{ displayConfirmText }}</text>
         </view>
       </view>
 

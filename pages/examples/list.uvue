@@ -2,10 +2,13 @@
 import TList from '@/components/TList'
 import TListItem from '@/components/TListItem'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 列表组件示例页面
  */
+
+const { $t } = useI18n()
 
 const handleItemClick = (item: string): void => {
   console.log(`点击了: ${item}`)
@@ -15,64 +18,64 @@ const handleItemClick = (item: string): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TList 列表组件</text>
-      <text class="example-desc">用于展示列表数据</text>
+      <text class="example-title">{{ $t('examplePages.list.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.list.description') }}</text>
     </view>
 
-    <TCard title="基础列表" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.basic')" class="example-section">
       <TList>
-        <TListItem title="列表项 1" />
-        <TListItem title="列表项 2" />
-        <TListItem title="列表项 3" />
+        <TListItem :title="$t('examplePages.list.items.item1')" />
+        <TListItem :title="$t('examplePages.list.items.item2')" />
+        <TListItem :title="$t('examplePages.list.items.item3')" />
       </TList>
     </TCard>
 
-    <TCard title="带描述的列表" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.withDescription')" class="example-section">
       <TList>
         <TListItem
-          title="标题文字"
-          description="这里是描述信息，可以是多行文字内容"
+          :title="$t('examplePages.list.items.titleText')"
+          :description="$t('examplePages.list.items.description1')"
         />
         <TListItem
-          title="另一个标题"
-          description="描述信息支持较长的文本内容显示"
+          :title="$t('examplePages.list.items.anotherTitle')"
+          :description="$t('examplePages.list.items.description2')"
         />
       </TList>
     </TCard>
 
-    <TCard title="带图标的列表" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.withIcon')" class="example-section">
       <TList>
-        <TListItem title="设置" icon="⚙" />
-        <TListItem title="通知" icon="🔔" />
-        <TListItem title="隐私" icon="🔒" />
-        <TListItem title="关于" icon="ℹ" />
+        <TListItem :title="$t('examplePages.list.items.settings')" icon="⚙" />
+        <TListItem :title="$t('examplePages.list.items.notification')" icon="🔔" />
+        <TListItem :title="$t('examplePages.list.items.privacy')" icon="🔒" />
+        <TListItem :title="$t('examplePages.list.items.about')" icon="ℹ" />
       </TList>
     </TCard>
 
-    <TCard title="带右侧内容" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.withExtra')" class="example-section">
       <TList>
-        <TListItem title="账户余额" extra="¥100.00" />
-        <TListItem title="优惠券" extra="5张" arrow />
-        <TListItem title="积分" extra="1000" arrow />
+        <TListItem :title="$t('examplePages.list.items.balance')" :extra="$t('examplePages.list.extra.balance')" />
+        <TListItem :title="$t('examplePages.list.items.coupon')" :extra="$t('examplePages.list.extra.couponCount')" arrow />
+        <TListItem :title="$t('examplePages.list.items.points')" :extra="$t('examplePages.list.extra.pointsCount')" arrow />
       </TList>
     </TCard>
 
-    <TCard title="可点击列表" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.clickable')" class="example-section">
       <TList>
         <TListItem
-          title="可点击项 1"
+          :title="$t('examplePages.list.items.clickable1')"
           clickable
           arrow
           @click="() => handleItemClick('项目1')"
         />
         <TListItem
-          title="可点击项 2"
+          :title="$t('examplePages.list.items.clickable2')"
           clickable
           arrow
           @click="() => handleItemClick('项目2')"
         />
         <TListItem
-          title="禁用的项目"
+          :title="$t('examplePages.list.items.disabled')"
           clickable
           disabled
           arrow
@@ -80,24 +83,24 @@ const handleItemClick = (item: string): void => {
       </TList>
     </TCard>
 
-    <TCard title="自定义间距" class="example-section">
+    <TCard :title="$t('examplePages.list.sections.customSpacing')" class="example-section">
       <TList spacing="none">
-        <TListItem title="无间距列表项 1" />
-        <TListItem title="无间距列表项 2" />
+        <TListItem :title="$t('examplePages.list.items.noSpacing1')" />
+        <TListItem :title="$t('examplePages.list.items.noSpacing2')" />
       </TList>
       <view style="margin-top: 20px;">
         <TList spacing="large">
-          <TListItem title="大间距列表项 1" />
-          <TListItem title="大间距列表项 2" />
+          <TListItem :title="$t('examplePages.list.items.largeSpacing1')" />
+          <TListItem :title="$t('examplePages.list.items.largeSpacing2')" />
         </TList>
       </view>
     </TCard>
 
-    <TCard title="带标题的列表" class="example-section">
-      <TList title="系统设置">
-        <TListItem title="通用" arrow clickable />
-        <TListItem title="账号与安全" arrow clickable />
-        <TListItem title="隐私" arrow clickable />
+    <TCard :title="$t('examplePages.list.sections.withTitle')" class="example-section">
+      <TList :title="$t('examplePages.list.items.systemSettings')">
+        <TListItem :title="$t('examplePages.list.items.general')" arrow clickable />
+        <TListItem :title="$t('examplePages.list.items.accountSecurity')" arrow clickable />
+        <TListItem :title="$t('examplePages.list.items.privacy')" arrow clickable />
       </TList>
     </TCard>
   </view>

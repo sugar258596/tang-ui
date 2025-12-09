@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TPicker from '@/components/TPicker'
 import type { TPickerOption } from '@/components/TPicker/type.uts'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TPicker 选择器示例页面
  */
+
+const { $t } = useI18n()
 
 // 单列选择器
 const singleVisible = ref<boolean>(false)
@@ -163,15 +166,15 @@ const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]
 <template>
   <view class="page">
     <view class="page-header">
-      <text class="page-title">Picker 选择器</text>
-      <text class="page-desc">通用的数据选择组件</text>
+      <text class="page-title">{{ $t('examplePages.picker.title') }}</text>
+      <text class="page-desc">{{ $t('examplePages.picker.description') }}</text>
     </view>
 
     <view class="page-content">
       <!-- 单列选择器 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">单列选择器</text>
+          <text class="section-title-text">{{ $t('examplePages.picker.sections.basic') }}</text>
         </view>
         <view class="section-content">
           <view class="picker-trigger" @click="showSinglePicker">

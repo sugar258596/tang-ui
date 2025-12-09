@@ -1,10 +1,13 @@
 <script  setup lang="uts" >
 import TCell from '@/components/TCell'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 单元格组件示例页面
  */
+
+const { $t } = useI18n()
 
 const handleClick = (): void => {
   console.log('单元格被点击')
@@ -14,74 +17,74 @@ const handleClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TCell 单元格组件</text>
-      <text class="example-desc">单元格列表项组件</text>
+      <text class="example-title">{{ $t('examplePages.cell.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.cell.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
-      <TCell title="单元格" value="内容" />
-      <TCell title="单元格" value="内容" description="描述信息" />
+    <TCard :title="$t('examplePages.cell.sections.basic')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.cell')" :value="$t('examplePages.cell.labels.content')" />
+      <TCell :title="$t('examplePages.cell.labels.cell')" :value="$t('examplePages.cell.labels.content')" :description="$t('examplePages.cell.labels.description')" />
     </TCard>
 
-    <TCard title="展示图标" class="example-section">
-      <TCell title="设置" icon="⚙️" />
-      <TCell title="消息" icon="💬" value="3" />
-      <TCell title="通知" icon="🔔" value="开启" />
+    <TCard :title="$t('examplePages.cell.sections.withIcon')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.settings')" icon="⚙️" />
+      <TCell :title="$t('examplePages.cell.labels.message')" icon="💬" value="3" />
+      <TCell :title="$t('examplePages.cell.labels.notification')" icon="🔔" :value="$t('examplePages.cell.labels.enabled')" />
     </TCard>
 
-    <TCard title="展示箭头" class="example-section">
-      <TCell title="个人信息" isLink />
-      <TCell title="系统设置" isLink value="进入" />
-      <TCell title="关于我们" isLink />
+    <TCard :title="$t('examplePages.cell.groups.showArrow')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.personalInfo')" isLink />
+      <TCell :title="$t('examplePages.cell.labels.systemSettings')" isLink :value="$t('examplePages.cell.labels.enter')" />
+      <TCell :title="$t('examplePages.cell.labels.aboutUs')" isLink />
     </TCard>
 
-    <TCard title="可点击单元格" class="example-section">
-      <TCell title="可点击单元格" isLink clickable @click="handleClick" />
-      <TCell title="不可点击单元格" />
+    <TCard :title="$t('examplePages.cell.groups.clickableCell')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.clickable')" isLink clickable @click="handleClick" />
+      <TCell :title="$t('examplePages.cell.labels.notClickable')" />
     </TCard>
 
-    <TCard title="自定义大小" class="example-section">
-      <TCell title="大号单元格" size="large" isLink />
-      <TCell title="默认单元格" isLink />
-      <TCell title="小号单元格" size="small" isLink />
+    <TCard :title="$t('examplePages.cell.groups.customSize')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.largeCell')" size="large" isLink />
+      <TCell :title="$t('examplePages.cell.labels.defaultCell')" isLink />
+      <TCell :title="$t('examplePages.cell.labels.smallCell')" size="small" isLink />
     </TCard>
 
-    <TCard title="自定义内容" class="example-section">
+    <TCard :title="$t('examplePages.cell.groups.customContent')" class="example-section">
       <TCell>
         <template #title>
           <view style="display: flex; align-items: center;">
             <text style="font-size: 20px; margin-right: 8px;">🏠</text>
-            <text>自定义标题</text>
+            <text>{{ $t('examplePages.cell.labels.customTitle') }}</text>
           </view>
         </template>
         <template #value>
           <view style="display: flex; align-items: center;">
-            <text style="color: #67c23a;">已认证</text>
+            <text style="color: #67c23a;">{{ $t('examplePages.cell.labels.verified') }}</text>
             <text style="margin-left: 8px;">✓</text>
           </view>
         </template>
       </TCell>
     </TCard>
 
-    <TCard title="分组" class="example-section">
+    <TCard :title="$t('examplePages.cell.groups.group')" class="example-section">
       <view class="cell-group">
-        <text class="group-title">基础设置</text>
-        <TCell title="账号管理" isLink />
-        <TCell title="隐私设置" isLink />
-        <TCell title="通知设置" isLink value="已开启" />
+        <text class="group-title">{{ $t('examplePages.cell.labels.basicSettings') }}</text>
+        <TCell :title="$t('examplePages.cell.labels.accountManagement')" isLink />
+        <TCell :title="$t('examplePages.cell.labels.privacySettings')" isLink />
+        <TCell :title="$t('examplePages.cell.labels.notificationSettings')" isLink :value="$t('examplePages.cell.labels.enabled')" />
       </view>
       <view class="cell-group" style="margin-top: 20px;">
-        <text class="group-title">其他</text>
-        <TCell title="清除缓存" isLink value="12.3MB" />
-        <TCell title="关于我们" isLink />
-        <TCell title="退出登录" isLink />
+        <text class="group-title">{{ $t('examplePages.cell.labels.other') }}</text>
+        <TCell :title="$t('examplePages.cell.labels.clearCache')" isLink value="12.3MB" />
+        <TCell :title="$t('examplePages.cell.labels.aboutUs')" isLink />
+        <TCell :title="$t('examplePages.cell.labels.logout')" isLink />
       </view>
     </TCard>
 
-    <TCard title="必填标记" class="example-section">
-      <TCell title="用户名" required />
-      <TCell title="手机号" required value="请输入" />
-      <TCell title="邮箱" value="选填" />
+    <TCard :title="$t('examplePages.cell.groups.required')" class="example-section">
+      <TCell :title="$t('examplePages.cell.labels.username')" required />
+      <TCell :title="$t('examplePages.cell.labels.phone')" required :value="$t('examplePages.cell.labels.pleaseEnter')" />
+      <TCell :title="$t('examplePages.cell.labels.email')" :value="$t('examplePages.cell.labels.optional')" />
     </TCard>
   </view>
 </template>

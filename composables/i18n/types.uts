@@ -1,0 +1,46 @@
+/**
+ * i18n 类型定义
+ * 定义多语言系统的所有类型
+ */
+
+/**
+ * 语言包消息类型
+ * 每个模块是一个扁平的键值对对象
+ */
+export type LocaleMessages = {
+  [key: string]: string | LocaleMessages
+}
+
+/**
+ * 模块化语言包类型
+ * 按模块名组织
+ */
+export type ModularLocaleMessages = {
+  [moduleName: string]: {
+    [key: string]: string
+  }
+}
+
+/**
+ * 语言代码类型
+ * 支持内置语言和自定义语言代码
+ */
+export type LocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | string
+
+/**
+ * i18n 配置类型
+ */
+export type I18nConfig = {
+  /** 当前语言 */
+  locale: LocaleCode
+  /** 回退语言 */
+  fallbackLocale: LocaleCode
+  /** 语言包 */
+  messages: Record<string, LocaleMessages>
+}
+
+/**
+ * 翻译参数类型
+ * 用于字符串插值
+ */
+export type TranslateParams = Record<string, string | number>

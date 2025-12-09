@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TRate from '@/components/TRate'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 评分组件示例页面
  */
+
+const { $t } = useI18n()
 
 const value1 = ref<number>(3)
 const value2 = ref<number>(2.5)
@@ -20,25 +23,25 @@ const handleChange = (value: number): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TRate 评分组件</text>
-      <text class="example-desc">用于评分的星级组件</text>
+      <text class="example-title">{{ $t('examplePages.rate.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.rate.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.rate.sections.basic')" class="example-section">
       <TRate v-model="value1" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
         当前评分: {{ value1 }}
       </text>
     </TCard>
 
-    <TCard title="半星" class="example-section">
+    <TCard :title="$t('examplePages.rate.sections.halfStar')" class="example-section">
       <TRate v-model="value2" allowHalf />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
         支持半星评分: {{ value2 }}
       </text>
     </TCard>
 
-    <TCard title="只读" class="example-section">
+    <TCard :title="$t('examplePages.rate.sections.readonly')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <TRate :value="3.5" readonly allowHalf />
         <TRate :value="4" readonly />
@@ -69,9 +72,9 @@ const handleChange = (value: number): void => {
 
     <TCard title="不同大小" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TRate size="small" />
-        <TRate size="medium" />
-        <TRate size="large" />
+        <TRate :size="30" />
+        <TRate :size="40" />
+        <TRate :size="50" />
       </view>
     </TCard>
 

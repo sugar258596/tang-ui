@@ -1,4 +1,8 @@
 <script  setup lang="uts" >
+	import { computed } from 'vue'
+	import TButton from '../TButton/index.uvue'
+	import { useI18n } from '../../composables/useI18n.uts'
+
 	interface EmptyProps {
 		/** 标题  */
 		title ?: string;
@@ -15,17 +19,22 @@
 	}
 
 	const props = withDefaults(defineProps<EmptyProps>(), {
-		title: '暂无数据',
-		description: '当前没有相关内容',
 		image: '/static/images/empty.png',
 		showAction: false,
-		actionText: '刷新试试',
 		compact: false
 	});
 
 	const emits = defineEmits<{
 		actionClick : []
 	}>();
+
+	// 使用 i18n
+	const { $t } = useI18n()
+
+	// 优先使用用户传入的值，否则使用翻译
+	const displayTitle = computed(() => props.title || $t('empty.title'))
+	const displayDescription = computed(() => props.description || $t('empty.description'))
+	const displayActionText = computed(() => props.actionText || $t('empty.actionText'))
 
 	const handleActionClick = () => {
 		emits('actionClick');
@@ -43,7 +52,7 @@
 			'empty-image',
 			compact ? 'w-24 h-24 mb-3' : 'w-32 h-32 mb-4'
 			]">
-				<LazyImage :src="image" class="w-full h-full" mode="aspectFit" :show-loading="false" />
+				<image :src="image" class="w-full h-full" mode="aspectFit" :show-loading="false" />
 			</view>
 		</slot>
 
@@ -52,21 +61,25 @@
 					'empty-title block text-gray-700 dark:text-gray-300 text-center',
 					compact ? 'text-base font-medium' : 'text-lg font-medium',
 				]">
-				{{ title }}
+				{{ displayTitle }}
 			</text>
 
-			<text v-if="description" :class="[
+			<text v-if="displayDescription" :class="[
 					'empty-description block mt-2 text-gray-500 dark:text-gray-400',
 					compact ? 'text-xs' : 'text-sm',
 				]">
-				{{ description }}
+				{{ displayDescription }}
 			</text>
 		</view>
 
 		<view v-if="showAction" class="empty-action mt-6">
-			<ButtonX size='small' :block="true" @tap="handleActionClick">
-				{{ actionText }}
-			</ButtonX>
+			<TButton 
+				type="primary" 
+				size="medium" 
+				@click="handleActionClick"
+			>
+				{{ displayActionText }}
+			</TButton>
 		</view>
 	</view>
 </template>
@@ -105,6 +118,11 @@
 		max-width: 80vw;
 	}
 
+	.empty-action {
+		width: 100%;
+		max-width: 200px;
+	}
+
 	// 动画效果
 	.empty-image {
 		animation: fadeIn 0.5s ease;
@@ -120,9 +138,5 @@
 			opacity: 0.65;
 			transform: translateY(0);
 		}
-	}
-
-	:deep(.btn-small) {
-		padding: 0 1rem
 	}
 </style>

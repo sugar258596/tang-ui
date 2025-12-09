@@ -1,6 +1,7 @@
 <script  setup lang="uts" >
 import { computed } from 'vue'
 import type { TDialogProps } from './type.uts'
+import { useI18n } from '../../composables/useI18n.uts'
 
 /**
  * TDialog 对话框组件
@@ -18,8 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
   maskClosable: true,
   showClose: true,
   showCancel: true,
-  confirmText: '确定',
-  cancelText: '取消',
   confirmType: 'primary'
 })
 
@@ -32,6 +31,22 @@ const emit = defineEmits<{
   cancel: []
   close: []
 }>()
+
+// 使用 i18n
+const { $t } = useI18n()
+
+// 优先使用用户传入的值，否则使用翻译
+const displayConfirmText = computed(() => {
+  return props.confirmText !== undefined && props.confirmText !== '' 
+    ? props.confirmText 
+    : $t('dialog.confirmText')
+})
+
+const displayCancelText = computed(() => {
+  return props.cancelText !== undefined && props.cancelText !== '' 
+    ? props.cancelText 
+    : $t('dialog.cancelText')
+})
 
 /**
  * 计算对话框样式
@@ -129,10 +144,10 @@ const handleClose = (): void => {
             <view class="t-dialog__footer">
                 <slot name="footer">
                   <view v-if="showCancel" class="t-dialog__btn t-dialog__btn--cancel" @click="handleCancel">
-                    <text class="t-dialog__btn-text">{{ cancelText }}</text>
+                    <text class="t-dialog__btn-text">{{ displayCancelText }}</text>
                   </view>
                   <view :class="confirmBtnClass" @click="handleConfirm">
-                    <text class="t-dialog__btn-text t-dialog__btn-text--confirm">{{ confirmText }}</text>
+                    <text class="t-dialog__btn-text t-dialog__btn-text--confirm">{{ displayConfirmText }}</text>
                   </view>
                 </slot>
             </view>

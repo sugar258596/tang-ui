@@ -3,10 +3,13 @@
 	import TPopup from '@/components/TPopup'
 	import TCard from '@/components/TCard'
 	import TButton from '@/components/TButton'
+	import { useI18n } from '@/composables/useI18n.uts'
 
 	/**
 	 * 弹出层组件示例页面
 	 */
+
+	const { $t } = useI18n()
 
 	const popup1 = ref<boolean>(false)
 	const popup2 = ref<boolean>(false)
@@ -18,50 +21,50 @@
 <template>
 	<view class="example-page">
 		<view class="example-header">
-			<text class="example-title">TPopup 弹出层组件</text>
-			<text class="example-desc">弹出层容器，用于展示弹出内容</text>
+			<text class="example-title">{{ $t('examplePages.popup.title') }}</text>
+			<text class="example-desc">{{ $t('examplePages.popup.description') }}</text>
 		</view>
 
-		<TCard title="基础用法" class="example-section">
-			<TButton type="primary" @click="popup1 = true">底部弹出</TButton>
+		<TCard :title="$t('examplePages.popup.sections.basic')" class="example-section">
+			<TButton type="primary" @click="popup1 = true">{{ $t('examplePages.popup.buttons.bottom') }}</TButton>
 
 		</TCard>
 
-		<TCard title="不同方向" class="example-section">
+		<TCard :title="$t('examplePages.popup.sections.position')" class="example-section">
 			<view style="display: flex; flex-wrap: wrap; gap: 10px;">
-				<TButton @click="popup2 = true">顶部弹出</TButton>
-				<TButton @click="popup3 = true">左侧弹出</TButton>
-				<TButton @click="popup4 = true">右侧弹出</TButton>
-				<TButton @click="popup5 = true">中心弹出</TButton>
+				<TButton @click="popup2 = true">{{ $t('examplePages.popup.buttons.top') }}</TButton>
+				<TButton @click="popup3 = true">{{ $t('examplePages.popup.buttons.left') }}</TButton>
+				<TButton @click="popup4 = true">{{ $t('examplePages.popup.buttons.right') }}</TButton>
+				<TButton @click="popup5 = true">{{ $t('examplePages.popup.buttons.center') }}</TButton>
 			</view>
 
 			<TPopup v-model="popup2" position="top">
 				<view style="padding: 20px; background: white; min-height: 150px;">
-					<text>顶部弹出内容</text>
+					<text>{{ $t('examplePages.popup.content.top') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup3" position="left">
 				<view style="padding: 20px; background: white; width: 250px; height: 100vh;">
-					<text>左侧弹出内容</text>
+					<text>{{ $t('examplePages.popup.content.left') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup4" position="right">
 				<view style="padding: 20px; background: white; width: 250px; height: 100vh;">
-					<text>右侧弹出内容</text>
+					<text>{{ $t('examplePages.popup.content.right') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup5" position="center">
 				<view style="padding: 30px; background: white; border-radius: 8px; min-width: 280px;">
-					<text style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">中心弹出</text>
-					<text>这是一个中心弹出的内容区域</text>
+					<text style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">{{ $t('examplePages.popup.content.center') }}</text>
+					<text>{{ $t('examplePages.popup.content.centerDesc') }}</text>
 				</view>
 			</TPopup>
 			<TPopup v-model="popup1" position="bottom">
 				<view style="padding: 20px; background: white; min-height: 200px;">
-					<text>这是弹出层内容</text>
+					<text>{{ $t('examplePages.popup.content.bottom') }}</text>
 				</view>
 			</TPopup>
 		</TCard>

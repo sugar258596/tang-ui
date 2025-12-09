@@ -1,5 +1,5 @@
 import App from './App.uvue'
-
+import './locales/index.uts'
 
 import { createSSRApp } from 'vue'
 export function createApp() {

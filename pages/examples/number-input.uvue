@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TNumberInput from '@/components/TNumberInput'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 数字输入框组件示例页面
  */
+
+const { $t } = useI18n()
 
 const value1 = ref<number>(0)
 const value2 = ref<number>(5)
@@ -13,68 +16,68 @@ const value3 = ref<number>(10)
 const value4 = ref<number>(1)
 
 const handleChange = (value: number): void => {
-  console.log('数值变化:', value)
+  console.log($t('examplePages.numberInput.labels.currentValue'), value)
 }
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TNumberInput 数字输入组件</text>
-      <text class="example-desc">用于输入数字的增强组件</text>
+      <text class="example-title">{{ $t('examplePages.numberInput.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.numberInput.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.basic')" class="example-section">
       <TNumberInput v-model="value1" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        当前值: {{ value1 }}
+        {{ $t('examplePages.numberInput.labels.currentValue') }}: {{ value1 }}
       </text>
     </TCard>
 
-    <TCard title="设置范围" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.range')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
         <view>
           <TNumberInput v-model="value2" :min="0" :max="10" />
-          <text style="font-size: 12px; color: #909399;">范围: 0-10</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.range') }}: 0-10</text>
         </view>
         <view>
           <TNumberInput v-model="value3" :min="-10" :max="100" />
-          <text style="font-size: 12px; color: #909399;">范围: -10-100</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.range') }}: -10-100</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="步长设置" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.step')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
         <view>
           <TNumberInput :step="1" />
-          <text style="font-size: 12px; color: #909399;">步长: 1</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.step') }}: 1</text>
         </view>
         <view>
           <TNumberInput :step="5" />
-          <text style="font-size: 12px; color: #909399;">步长: 5</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.step') }}: 5</text>
         </view>
         <view>
           <TNumberInput :step="0.1" />
-          <text style="font-size: 12px; color: #909399;">步长: 0.1</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.step') }}: 0.1</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="精度控制" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.precision')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
         <view>
           <TNumberInput :precision="0" />
-          <text style="font-size: 12px; color: #909399;">整数</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.integer') }}</text>
         </view>
         <view>
           <TNumberInput :precision="2" :step="0.01" />
-          <text style="font-size: 12px; color: #909399;">保留2位小数</text>
+          <text style="font-size: 12px; color: #909399;">{{ $t('examplePages.numberInput.labels.decimal') }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard title="不同大小" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
         <TNumberInput size="small" />
         <TNumberInput size="medium" />
@@ -82,14 +85,14 @@ const handleChange = (value: number): void => {
       </view>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.disabled')" class="example-section">
       <TNumberInput :value="100" disabled />
     </TCard>
 
-    <TCard title="事件处理" class="example-section">
+    <TCard :title="$t('examplePages.numberInput.sections.events')" class="example-section">
       <TNumberInput v-model="value4" @change="handleChange" />
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        查看控制台了解数值变化
+        {{ $t('examplePages.numberInput.labels.checkConsole') }}
       </text>
     </TCard>
   </view>

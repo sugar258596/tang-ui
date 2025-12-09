@@ -1,0 +1,218 @@
+{
+  "groups": {
+    "basic": "Basic",
+    "layout": "Layout",
+    "form": "Form",
+    "display": "Display",
+    "feedback": "Feedback",
+    "navigation": "Navigation",
+    "tools": "Tools"
+  },
+  "components": {
+    "TButton": {
+      "name": "Button",
+      "enName": "Button",
+      "description": "Trigger an action"
+    },
+    "TIcon": {
+      "name": "Icon",
+      "enName": "Icon",
+      "description": "Semantic icons"
+    },
+    "TText": {
+      "name": "Text",
+      "enName": "Text",
+      "description": "Text display component"
+    },
+    "TImage": {
+      "name": "Image",
+      "enName": "Image",
+      "description": "Enhanced image component"
+    },
+    "TDivider": {
+      "name": "Divider",
+      "enName": "Divider",
+      "description": "Content divider"
+    },
+    "TCard": {
+      "name": "Card",
+      "enName": "Card",
+      "description": "Card container"
+    },
+    "TList": {
+      "name": "List",
+      "enName": "List",
+      "description": "List display"
+    },
+    "TCell": {
+      "name": "Cell",
+      "enName": "Cell",
+      "description": "Cell component"
+    },
+    "TGrid": {
+      "name": "Grid",
+      "enName": "Grid",
+      "description": "Grid layout"
+    },
+    "TRow/TCol": {
+      "name": "Layout",
+      "enName": "Layout",
+      "description": "24-column grid layout"
+    },
+    "TInput": {
+      "name": "Input",
+      "enName": "Input",
+      "description": "Text input"
+    },
+    "TTextarea": {
+      "name": "Textarea",
+      "enName": "Textarea",
+      "description": "Multi-line text input"
+    },
+    "TSearchBar": {
+      "name": "SearchBar",
+      "enName": "SearchBar",
+      "description": "Search input box"
+    },
+    "TNumberInput": {
+      "name": "NumberInput",
+      "enName": "NumberInput",
+      "description": "Number input box"
+    },
+    "TSwitch": {
+      "name": "Switch",
+      "enName": "Switch",
+      "description": "Switch selector"
+    },
+    "TCheckbox": {
+      "name": "Checkbox",
+      "enName": "Checkbox",
+      "description": "Checkbox"
+    },
+    "TCheckboxGroup": {
+      "name": "CheckboxGroup",
+      "enName": "CheckboxGroup",
+      "description": "Checkbox group"
+    },
+    "TRadioButton": {
+      "name": "Radio",
+      "enName": "Radio",
+      "description": "Radio button"
+    },
+    "TRadioGroup": {
+      "name": "RadioGroup",
+      "enName": "RadioGroup",
+      "description": "Radio group"
+    },
+    "TSelect": {
+      "name": "Select",
+      "enName": "Select",
+      "description": "Dropdown selector"
+    },
+    "TPicker": {
+      "name": "Picker",
+      "enName": "Picker",
+      "description": "Multi-column data picker"
+    },
+    "TSlider": {
+      "name": "Slider",
+      "enName": "Slider",
+      "description": "Slider selector"
+    },
+    "TRate": {
+      "name": "Rate",
+      "enName": "Rate",
+      "description": "Rating component"
+    },
+    "TForm": {
+      "name": "Form",
+      "enName": "Form",
+      "description": "Form component"
+    },
+    "Tags": {
+      "name": "Tags",
+      "enName": "Tags",
+      "description": "Tag classification"
+    },
+    "TBadge": {
+      "name": "Badge",
+      "enName": "Badge",
+      "description": "Number badge"
+    },
+    "TAvatar": {
+      "name": "Avatar",
+      "enName": "Avatar",
+      "description": "User avatar"
+    },
+    "TProgress": {
+      "name": "Progress",
+      "enName": "Progress",
+      "description": "Progress indicator"
+    },
+    "TNoticeBar": {
+      "name": "NoticeBar",
+      "enName": "NoticeBar",
+      "description": "Scrolling notice"
+    },
+    "TCollapse": {
+      "name": "Collapse",
+      "enName": "Collapse",
+      "description": "Collapsible content area"
+    },
+    "TSwiper": {
+      "name": "Swiper",
+      "enName": "Swiper",
+      "description": "Image/content carousel"
+    },
+    "TEmpty": {
+      "name": "Empty",
+      "enName": "Empty",
+      "description": "Empty state display"
+    },
+    "TErrorState": {
+      "name": "Error",
+      "enName": "Error",
+      "description": "Error prompt"
+    },
+    "TLoading": {
+      "name": "Loading",
+      "enName": "Loading",
+      "description": "Loading state"
+    },
+    "TToast": {
+      "name": "Toast",
+      "enName": "Toast",
+      "description": "Lightweight prompt"
+    },
+    "TDialog": {
+      "name": "Dialog",
+      "enName": "Dialog",
+      "description": "Modal dialog"
+    },
+    "TPopup": {
+      "name": "Popup",
+      "enName": "Popup",
+      "description": "Popup container"
+    },
+    "TActionSheet": {
+      "name": "ActionSheet",
+      "enName": "ActionSheet",
+      "description": "Bottom action sheet"
+    },
+    "Tabs": {
+      "name": "Tabs",
+      "enName": "Tabs",
+      "description": "Tab switching"
+    },
+    "TNavBar": {
+      "name": "NavBar",
+      "enName": "NavBar",
+      "description": "Top navigation bar"
+    },
+    "I18nDemo": {
+      "name": "I18n Demo",
+      "enName": "I18n",
+      "description": "Internationalization demo"
+    }
+  }
+}

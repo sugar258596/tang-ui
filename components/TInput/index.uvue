@@ -16,6 +16,8 @@ const props = withDefaults(defineProps<TInputProps>(), {
   clearable: false,
   showCount: false,
   maxlength: -1,
+  prefix: '',
+  suffix: '',
   prefixIcon: '',
   suffixIcon: '',
   rows: 3,
@@ -70,13 +72,13 @@ const inputWrapperClasses = computed((): string => {
     classes.push('t-input--focused')
   }
 
-  // 前缀图标
-  if (props.prefixIcon) {
+  // 前缀文本或图标
+  if (props.prefix || props.prefixIcon) {
     classes.push('t-input--prefix')
   }
 
-  // 后缀图标或清除按钮
-  if (props.suffixIcon || props.clearable) {
+  // 后缀文本、图标或清除按钮
+  if (props.suffix || props.suffixIcon || props.clearable) {
     classes.push('t-input--suffix')
   }
 
@@ -142,8 +144,13 @@ const handleConfirm = () => {
 
 <template>
   <view class="t-input" :class="inputWrapperClasses" :style="customStyle">
+    <!-- 前缀文本 -->
+    <view v-if="prefix" class="t-input__prefix">
+      <text class="t-input__prefix-text">{{ prefix }}</text>
+    </view>
+
     <!-- 前缀图标 -->
-    <view v-if="prefixIcon" class="t-input__prefix">
+    <view v-else-if="prefixIcon" class="t-input__prefix">
       <text class="t-input__icon">{{ prefixIcon }}</text>
     </view>
 
@@ -187,6 +194,11 @@ const handleConfirm = () => {
       @click="handleClear"
     >
       <text class="t-input__icon">✕</text>
+    </view>
+
+    <!-- 后缀文本 -->
+    <view v-else-if="suffix" class="t-input__suffix">
+      <text class="t-input__suffix-text">{{ suffix }}</text>
     </view>
 
     <!-- 后缀图标 -->
@@ -240,6 +252,13 @@ const handleConfirm = () => {
 
   &__icon {
     font-size: 16px;
+  }
+
+  &__prefix-text,
+  &__suffix-text {
+    font-size: 14px;
+    color: #606266;
+    white-space: nowrap;
   }
 
   &__inner,

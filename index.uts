@@ -30,6 +30,29 @@ export { useTheme } from './composables/useTheme.uts'
 export { useToast } from './composables/useToast.uts'
 export { useModal } from './composables/useModal.uts'
 
+// 导出 i18n composable
+export { useI18n } from './composables/useI18n.uts'
+export type { UseI18nReturn } from './composables/useI18n.uts'
+
+// 导出 i18n 全局函数
+export {
+  setLanguage,
+  registerLocale,
+  registerLocaleWithMode,
+  replaceLocale,
+  getCurrentLocale,
+  getAvailableLocales
+} from './composables/i18n/index.uts'
+
+// 导出 i18n 类型定义
+export type {
+  LocaleMessages,
+  ModularLocaleMessages,
+  LocaleCode,
+  I18nConfig,
+  TranslateParams
+} from './composables/i18n/types.uts'
+
 // 版本信息
 export const version: string = '1.0.5'
 

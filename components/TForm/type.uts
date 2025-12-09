@@ -74,6 +74,10 @@ export type TFormProps = {
   labelWidth?: string
   /** 是否隐藏默认按钮 */
   hideButtons?: boolean
+  /** 提交按钮文本 */
+  submitText?: string
+  /** 重置按钮文本 */
+  resetText?: string
 }
 
 // 导出所有类型

@@ -1,10 +1,13 @@
 <script  setup lang="uts" >
 import TIcon from '@/components/TIcon'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 图标组件示例页面
  */
+
+const { $t } = useI18n()
 
 const icons = [
   'home', 'user', 'search', 'setting', 'message', 'star',
@@ -21,11 +24,11 @@ const handleClick = (name: string): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TIcon 图标组件</text>
-      <text class="example-desc">语义化的矢量图标</text>
+      <text class="example-title">{{ $t('examplePages.icon.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.icon.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.icon.sections.basic')" class="example-section">
       <view class="icon-grid">
         <view v-for="icon in icons.slice(0, 6)" :key="icon" class="icon-item">
           <TIcon :name="icon" />
@@ -34,7 +37,7 @@ const handleClick = (name: string): void => {
       </view>
     </TCard>
 
-    <TCard title="不同大小" class="example-section">
+    <TCard :title="$t('examplePages.icon.sections.size')" class="example-section">
       <view class="icon-row">
         <TIcon name="star" size="16" />
         <TIcon name="star" size="24" />
@@ -44,7 +47,7 @@ const handleClick = (name: string): void => {
       </view>
     </TCard>
 
-    <TCard title="不同颜色" class="example-section">
+    <TCard :title="$t('examplePages.icon.sections.color')" class="example-section">
       <view class="icon-row">
         <TIcon name="heart" color="#409eff" />
         <TIcon name="heart" color="#67c23a" />

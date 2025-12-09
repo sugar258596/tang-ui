@@ -3,66 +3,69 @@ import { ref } from 'vue'
 import Tags from '@/components/Tags'
 import TCard from '@/components/TCard'
 import type { TabItem } from '@/components/Tags/type'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * Tags 标签组件示例页面
  * 展示 Tags 组件的各种使用场景
  */
 
+const { $t } = useI18n()
+
 // 基础用法
 const basicTabs: TabItem[] = [
-  { key: 'home', label: '首页' },
-  { key: 'product', label: '产品' },
-  { key: 'service', label: '服务' },
-  { key: 'about', label: '关于' }
+  { key: 'home', label: $t('examplePages.tags.labels.home') },
+  { key: 'product', label: $t('examplePages.tags.labels.product') },
+  { key: 'service', label: $t('examplePages.tags.labels.service') },
+  { key: 'about', label: $t('examplePages.tags.labels.about') }
 ]
 const activeTab1 = ref<string | number>('home')
 
 // 卡片类型
 const cardTabs: TabItem[] = [
-  { key: 'all', label: '全部' },
-  { key: 'ongoing', label: '进行中' },
-  { key: 'finished', label: '已完成' }
+  { key: 'all', label: $t('examplePages.tags.labels.all') },
+  { key: 'ongoing', label: $t('examplePages.tags.labels.ongoing') },
+  { key: 'finished', label: $t('examplePages.tags.labels.finished') }
 ]
 const activeTab2 = ref<string | number>('all')
 
 // 不同尺寸
 const sizeTabs: TabItem[] = [
-  { key: 'tab1', label: '选项1' },
-  { key: 'tab2', label: '选项2' },
-  { key: 'tab3', label: '选项3' }
+  { key: 'tab1', label: $t('examplePages.tags.labels.tab1') },
+  { key: 'tab2', label: $t('examplePages.tags.labels.tab2') },
+  { key: 'tab3', label: $t('examplePages.tags.labels.tab3') }
 ]
 const activeTab3 = ref<string | number>('tab1')
 
 // 带徽章
 const badgeTabs: TabItem[] = [
-  { key: 'message', label: '消息', badge: 5 },
-  { key: 'notification', label: '通知', badge: 99 },
-  { key: 'todo', label: '待办', badge: '新' }
+  { key: 'message', label: $t('examplePages.tags.labels.message'), badge: 5 },
+  { key: 'notification', label: $t('examplePages.tags.labels.notification'), badge: 99 },
+  { key: 'todo', label: $t('examplePages.tags.labels.todo'), badge: '新' }
 ]
 const activeTab4 = ref<string | number>('message')
 
 // 禁用状态
 const disabledTabs: TabItem[] = [
-  { key: 'enabled1', label: '可用选项1' },
-  { key: 'disabled', label: '禁用选项', disabled: true },
-  { key: 'enabled2', label: '可用选项2' }
+  { key: 'enabled1', label: $t('examplePages.tags.labels.enabled1') },
+  { key: 'disabled', label: $t('examplePages.tags.labels.disabled'), disabled: true },
+  { key: 'enabled2', label: $t('examplePages.tags.labels.enabled2') }
 ]
 const activeTab5 = ref<string | number>('enabled1')
 
 // 底部标签栏
 const bottomTabs: TabItem[] = [
-  { key: 'home', label: '首页' },
-  { key: 'discover', label: '发现' },
-  { key: 'profile', label: '我的' }
+  { key: 'home', label: $t('examplePages.tags.labels.home') },
+  { key: 'discover', label: $t('examplePages.tags.labels.discover') },
+  { key: 'profile', label: $t('examplePages.tags.labels.profile') }
 ]
 const activeTab6 = ref<string | number>('home')
 
 // 自定义颜色
 const colorTabs: TabItem[] = [
-  { key: 'tab1', label: '红色主题' },
-  { key: 'tab2', label: '绿色主题' },
-  { key: 'tab3', label: '蓝色主题' }
+  { key: 'tab1', label: $t('examplePages.tags.labels.redTheme') },
+  { key: 'tab2', label: $t('examplePages.tags.labels.greenTheme') },
+  { key: 'tab3', label: $t('examplePages.tags.labels.blueTheme') }
 ]
 const activeTab7 = ref<string | number>('tab1')
 
@@ -90,13 +93,13 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
   <scroll-view class="example-page" scroll-y>
     <!-- 页面头部 -->
     <view class="example-header">
-      <text class="example-title">Tags 标签组件</text>
-      <text class="example-desc">用于标记和分类的标签组件</text>
+      <text class="example-title">{{ $t('examplePages.tags.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.tags.description') }}</text>
     </view>
 
     <!-- 基础用法 -->
     <view class="example-section">
-      <TCard title="基础用法" description="最简单的标签页">
+      <TCard :title="$t('examplePages.tags.sections.basic')" :description="$t('examplePages.tags.sections.basic')">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -104,30 +107,30 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">当前激活的 Key: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.currentKey') }}: {{ activeKey }}</text>
               <view v-if="activeKey === 'home'" class="content-body">
-                <text class="content-desc">首页内容区域</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.home') }}</text>
               </view>
               <view v-if="activeKey === 'product'" class="content-body">
-                <text class="content-desc">产品展示区域</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.product') }}</text>
               </view>
               <view v-if="activeKey === 'service'" class="content-body">
-                <text class="content-desc">服务介绍区域</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.service') }}</text>
               </view>
               <view v-if="activeKey === 'about'" class="content-body">
-                <text class="content-desc">关于我们区域</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.about') }}</text>
               </view>
             </view>
           </template>
         </Tags>
 
-        <text class="current-value">当前选中: {{ activeTab1 }}</text>
+        <text class="current-value">{{ $t('examplePages.tags.content.currentSelected') }}: {{ activeTab1 }}</text>
       </TCard>
     </view>
 
     <!-- 卡片类型 -->
     <view class="example-section">
-      <TCard title="卡片类型" description="type='card' 显示卡片样式">
+      <TCard :title="$t('examplePages.tags.sections.card')" description="type='card'">
         <Tags
           :items="cardTabs"
           v-model="activeTab2"
@@ -137,16 +140,16 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content card-content">
               <view v-if="activeKey === 'all'">
-                <text class="content-title">全部任务</text>
-                <text class="content-text">显示所有任务列表</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.allTasks') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.allTasksDesc') }}</text>
               </view>
               <view v-if="activeKey === 'ongoing'">
-                <text class="content-title">进行中</text>
-                <text class="content-text">显示正在进行的任务</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.ongoing') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.ongoingDesc') }}</text>
               </view>
               <view v-if="activeKey === 'finished'">
-                <text class="content-title">已完成</text>
-                <text class="content-text">显示已完成的任务</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.finished') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.finishedDesc') }}</text>
               </view>
             </view>
           </template>
@@ -156,24 +159,24 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 不同尺寸 -->
     <view class="example-section">
-      <TCard title="不同尺寸" description="支持 small、medium、large">
+      <TCard :title="$t('examplePages.tags.sections.size')" description="small、medium、large">
         <view class="size-demo">
           <text class="size-label">Small:</text>
           <Tags :items="sizeTabs" v-model="activeTab3" size="small" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>当前: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
         </view>
 
         <view class="size-demo">
-          <text class="size-label">Medium (默认):</text>
+          <text class="size-label">Medium:</text>
           <Tags :items="sizeTabs" v-model="activeTab3" size="medium" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>当前: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
@@ -184,7 +187,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
           <Tags :items="sizeTabs" v-model="activeTab3" size="large" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>当前: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
@@ -194,7 +197,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 带徽章 -->
     <view class="example-section">
-      <TCard title="带徽章" description="可以显示徽章提示">
+      <TCard :title="$t('examplePages.tags.sections.badge')" :description="$t('examplePages.tags.sections.badge')">
         <Tags
           :items="badgeTabs"
           v-model="activeTab4"
@@ -204,16 +207,16 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content">
               <view v-if="activeKey === 'message'">
-                <text class="content-title">消息中心</text>
-                <text class="content-text">您有 5 条未读消息</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.messageCenter') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.unreadMessages') }}</text>
               </view>
               <view v-if="activeKey === 'notification'">
-                <text class="content-title">通知</text>
-                <text class="content-text">您有 99+ 条通知</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.notifications') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.notificationCount') }}</text>
               </view>
               <view v-if="activeKey === 'todo'">
-                <text class="content-title">待办事项</text>
-                <text class="content-text">您有新的待办事项</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.todoList') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.newTodo') }}</text>
               </view>
             </view>
           </template>
@@ -223,7 +226,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 禁用状态 -->
     <view class="example-section">
-      <TCard title="禁用状态" description="可以禁用某些选项">
+      <TCard :title="$t('examplePages.tags.sections.disabled')" :description="$t('examplePages.tags.sections.disabled')">
         <Tags
           :items="disabledTabs"
           v-model="activeTab5"
@@ -231,8 +234,8 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">当前选中: {{ activeKey }}</text>
-              <text class="content-desc">中间的选项已被禁用，无法点击</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.currentSelected') }}: {{ activeKey }}</text>
+              <text class="content-desc">{{ $t('examplePages.tags.content.disabledDesc') }}</text>
             </view>
           </template>
         </Tags>
@@ -241,7 +244,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 底部标签栏 -->
     <view class="example-section">
-      <TCard title="底部标签栏" description="tabPosition='bottom' 显示在底部">
+      <TCard :title="$t('examplePages.tags.sections.bottom')" description="tabPosition='bottom'">
         <Tags
           :items="bottomTabs"
           v-model="activeTab6"
@@ -251,16 +254,16 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content-bottom">
               <view v-if="activeKey === 'home'">
-                <text class="content-title">首页</text>
-                <text class="content-text">标签栏显示在底部，适合底部导航</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.homeContent') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.bottomNavDesc') }}</text>
               </view>
               <view v-if="activeKey === 'discover'">
-                <text class="content-title">发现</text>
-                <text class="content-text">发现页面内容</text>
+                <text class="content-title">{{ $t('examplePages.tags.labels.discover') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.discoverContent') }}</text>
               </view>
               <view v-if="activeKey === 'profile'">
-                <text class="content-title">我的</text>
-                <text class="content-text">个人中心内容</text>
+                <text class="content-title">{{ $t('examplePages.tags.labels.profile') }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.profileContent') }}</text>
               </view>
             </view>
           </template>
@@ -270,7 +273,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 自定义颜色 -->
     <view class="example-section">
-      <TCard title="自定义颜色" description="可以自定义激活和非激活颜色">
+      <TCard :title="$t('examplePages.tags.sections.customColor')" :description="$t('examplePages.tags.sections.customColor')">
         <Tags
           :items="colorTabs"
           v-model="activeTab7"
@@ -281,9 +284,9 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content">
               <text class="content-text" style="color: #e74c3c;">
-                自定义颜色主题: {{ activeKey }}
+                {{ $t('examplePages.tags.content.customColorTheme') }}: {{ activeKey }}
               </text>
-              <text class="content-desc">激活颜色为红色 (#e74c3c)</text>
+              <text class="content-desc">{{ $t('examplePages.tags.content.redTheme') }}</text>
             </view>
           </template>
         </Tags>
@@ -292,7 +295,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 居中显示 -->
     <view class="example-section">
-      <TCard title="居中显示" description="centered 属性可以让标签居中">
+      <TCard :title="$t('examplePages.tags.sections.centered')" description="centered">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -301,7 +304,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">居中显示: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.centered') }}: {{ activeKey }}</text>
             </view>
           </template>
         </Tags>
@@ -310,7 +313,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 无动画 -->
     <view class="example-section">
-      <TCard title="禁用动画" description="animated=false 关闭切换动画">
+      <TCard :title="$t('examplePages.tags.sections.noAnimation')" description="animated=false">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -318,7 +321,7 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">无动画效果: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.noAnimation') }}: {{ activeKey }}</text>
             </view>
           </template>
         </Tags>
@@ -327,33 +330,33 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
 
     <!-- 使用说明 -->
     <view class="example-section">
-      <TCard title="使用说明">
+      <TCard :title="$t('examplePages.tags.sections.usage')">
         <view class="usage-info">
-          <text class="info-title">主要属性:</text>
-          <text class="info-item">• v-model: 绑定当前激活的标签</text>
-          <text class="info-item">• items: 标签数据数组</text>
-          <text class="info-item">• type: 标签类型 (line | card)</text>
-          <text class="info-item">• size: 标签大小 (small | medium | large)</text>
-          <text class="info-item">• tabPosition: 标签位置 (top | bottom)</text>
-          <text class="info-item">• scrollable: 是否可滚动</text>
-          <text class="info-item">• centered: 是否居中显示</text>
-          <text class="info-item">• activeColor: 激活颜色</text>
-          <text class="info-item">• inactiveColor: 非激活颜色</text>
-          <text class="info-item">• animated: 是否显示动画</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.props') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.vModel') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.items') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.type') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.size') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.tabPosition') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.scrollable') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.centered') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.activeColor') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.inactiveColor') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.animated') }}</text>
 
-          <text class="info-title">主要事件:</text>
-          <text class="info-item">• @change: 标签切换时触发</text>
-          <text class="info-item">• @tab-click: 点击标签时触发</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.events') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.change') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.tabClick') }}</text>
 
-          <text class="info-title">插槽:</text>
-          <text class="info-item">• default: 内容区域,接收 activeKey 参数</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.slots') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.default') }}</text>
 
-          <text class="info-title">TabItem 类型:</text>
-          <text class="info-item">• key: 唯一标识 (必填)</text>
-          <text class="info-item">• label: 标签文本 (必填)</text>
-          <text class="info-item">• disabled: 是否禁用</text>
-          <text class="info-item">• badge: 徽章内容</text>
-          <text class="info-item">• icon: 图标路径</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.tabItem') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.key') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.label') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.disabled') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.badge') }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.icon') }}</text>
         </view>
       </TCard>
     </view>

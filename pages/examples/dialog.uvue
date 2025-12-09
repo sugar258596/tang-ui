@@ -3,10 +3,13 @@ import { ref } from 'vue'
 import TDialog from '@/components/TDialog'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 对话框组件示例页面
  */
+
+const { $t } = useI18n()
 
 const dialog1Visible = ref<boolean>(false)
 const dialog2Visible = ref<boolean>(false)
@@ -30,18 +33,18 @@ const handleClose = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TDialog 对话框组件</text>
-      <text class="example-desc">模态对话框，用于消息提示、确认消息和提交内容</text>
+      <text class="example-title">{{ $t('examplePages.dialog.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.dialog.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.dialog.sections.basic')" class="example-section">
       <TButton type="primary" @click="dialog1Visible = true">
-        打开对话框
+        {{ $t('examplePages.dialog.buttons.show') }}
       </TButton>
       <TDialog
         v-model="dialog1Visible"
-        title="提示"
-        content="这是一个基础对话框"
+        :title="$t('examplePages.dialog.content.title')"
+        :content="$t('examplePages.dialog.content.message')"
         @confirm="handleConfirm"
         @cancel="handleCancel"
       />

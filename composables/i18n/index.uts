@@ -1,0 +1,188 @@
+/**
+ * i18n 全局导出函数
+ * 提供全局访问的便捷方法
+ */
+
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+/**
+ * 设置语言（全局）
+ * 切换整个应用的显示语言
+ * 
+ * @param locale 语言代码（如 'zh-CN', 'en-US', 'zh-TW'）
+ * @returns 是否切换成功
+ * 
+ * @example
+ * ```typescript
+ * import { setLanguage } from 'tang-ui-x'
+ * 
+ * // 切换到英语
+ * const success = setLanguage('en-US')
+ * if (success) {
+ *   console.log('语言切换成功')
+ * } else {
+ *   console.log('语言切换失败，语言包未注册')
+ * }
+ * ```
+ */
+export function setLanguage(locale: string): boolean {
+  const manager = I18nManager.getInstance()
+  return manager.setLocale(locale)
+}
+
+/**
+ * 注册语言包（默认使用合并模式）
+ * 添加新语言或覆盖现有语言的翻译
+ * 默认使用合并模式，新内容会与现有内容合并，新键覆盖旧键，未覆盖的键保留
+ * 
+ * @param locale 语言代码
+ * @param messages 模块化语言包
+ * 
+ * @example
+ * ```typescript
+ * import { registerLocale } from 'tang-ui-x'
+ * 
+ * // 注册日语语言包
+ * registerLocale('ja-JP', {
+ *   common: {
+ *     confirm: '確認',
+ *     cancel: 'キャンセル',
+ *     ok: 'OK'
+ *   },
+ *   dialog: {
+ *     title: 'ヒント',
+ *     confirmText: '確認',
+ *     cancelText: 'キャンセル'
+ *   }
+ * })
+ * 
+ * // 覆盖部分中文翻译（合并模式）
+ * registerLocale('zh-CN', {
+ *   common: {
+ *     confirm: '好的'  // 只覆盖这个键，其他保持不变
+ *   }
+ * })
+ * ```
+ */
+export function registerLocale(locale: string, messages: ModularLocaleMessages): void {
+  const manager = I18nManager.getInstance()
+  manager.registerMessages(locale, messages)
+}
+
+/**
+ * 注册语言包（指定模式）
+ * 支持合并模式和替换模式
+ * - 合并模式：新内容与现有内容合并，新键覆盖旧键，未覆盖的键保留
+ * - 替换模式：完全替换现有语言包，不保留任何原有内容
+ * 
+ * @param locale 语言代码
+ * @param messages 模块化语言包
+ * @param mode 注册模式：'merge' 合并（默认），'replace' 替换
+ * 
+ * @example
+ * ```typescript
+ * import { registerLocaleWithMode } from 'tang-ui-x'
+ * 
+ * // 使用合并模式（与 registerLocale 相同）
+ * registerLocaleWithMode('zh-CN', {
+ *   common: {
+ *     confirm: '好的'  // 只覆盖这个键，其他保持不变
+ *   }
+ * }, 'merge')
+ * 
+ * // 使用替换模式（完全替换）
+ * registerLocaleWithMode('zh-CN', {
+ *   common: {
+ *     confirm: '好的',
+ *     cancel: '取消'
+ *   }
+ *   // 必须提供所有模块，否则缺失的模块将为空
+ * }, 'replace')
+ * ```
+ */
+export function registerLocaleWithMode(
+  locale: string,
+  messages: ModularLocaleMessages,
+  mode: 'merge' | 'replace'
+): void {
+  const manager = I18nManager.getInstance()
+  manager.registerMessagesWithMode(locale, messages, mode)
+}
+
+/**
+ * 替换语言包（完全替换）
+ * 完全替换指定语言的所有翻译内容，不保留任何原有内容
+ * 这是 registerLocaleWithMode(locale, messages, 'replace') 的便捷方法
+ * 
+ * @param locale 语言代码
+ * @param messages 模块化语言包
+ * 
+ * @example
+ * ```typescript
+ * import { replaceLocale } from 'tang-ui-x'
+ * 
+ * // 完全替换中文翻译
+ * replaceLocale('zh-CN', {
+ *   common: {
+ *     confirm: '好的',
+ *     cancel: '取消',
+ *     ok: 'OK'
+ *   },
+ *   dialog: {
+ *     title: '提示',
+ *     confirmText: '好的',
+ *     cancelText: '取消'
+ *   }
+ *   // 必须提供所有模块，否则缺失的模块将为空
+ * })
+ * ```
+ */
+export function replaceLocale(locale: string, messages: ModularLocaleMessages): void {
+  const manager = I18nManager.getInstance()
+  manager.replaceMessages(locale, messages)
+}
+
+/**
+ * 获取当前语言
+ * 返回当前激活的语言代码
+ * 
+ * @returns 当前语言代码
+ * 
+ * @example
+ * ```typescript
+ * import { getCurrentLocale } from 'tang-ui-x'
+ * 
+ * const current = getCurrentLocale()
+ * console.log('当前语言:', current)  // 输出: '当前语言: zh-CN'
+ * ```
+ */
+export function getCurrentLocale(): string {
+  const manager = I18nManager.getInstance()
+  return manager.getCurrentLocale()
+}
+
+/**
+ * 获取可用语言列表
+ * 返回所有已注册语言的语言代码数组
+ * 
+ * @returns 可用语言代码数组
+ * 
+ * @example
+ * ```typescript
+ * import { getAvailableLocales } from 'tang-ui-x'
+ * 
+ * const locales = getAvailableLocales()
+ * console.log('可用语言:', locales)  // 输出: ['zh-CN', 'en-US', 'zh-TW']
+ * 
+ * // 在语言选择器中使用
+ * locales.forEach(locale => {
+ *   console.log(`语言选项: ${locale}`)
+ * })
+ * ```
+ */
+export function getAvailableLocales(): string[] {
+  const manager = I18nManager.getInstance()
+  // 注意：这里返回的是计算属性的当前值，而不是响应式引用
+  return manager.getAvailableLocales().value
+}

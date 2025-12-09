@@ -2,16 +2,19 @@
 import TDivider from '@/components/TDivider'
 import TCard from '@/components/TCard'
 import TText from '@/components/TText'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TDivider 组件示例页面
  */
+
+const { $t } = useI18n()
 </script>
 
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.basic')" padding="medium">
       <view class="demo-section">
         <TText text="默认分割线" />
         <TDivider />
@@ -20,33 +23,33 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 虚线样式 -->
-    <TCard title="虚线样式" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.dashed')" padding="medium">
       <view class="demo-section">
-        <TText text="虚线分割" />
+        <TText :text="$t('examplePages.divider.labels.dashedLine')" />
         <TDivider type="dashed" />
-        <TText text="点线分割" />
+        <TText :text="$t('examplePages.divider.labels.dottedLine')" />
         <TDivider type="dotted" />
-        <TText text="实线分割" />
+        <TText :text="$t('examplePages.divider.labels.solidLine')" />
         <TDivider type="solid" />
       </view>
     </TCard>
 
     <!-- 自定义颜色 -->
-    <TCard title="自定义颜色" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.customColor')" padding="medium">
       <view class="demo-section">
-        <TText text="蓝色分割线" />
+        <TText :text="$t('examplePages.divider.labels.blueLine')" />
         <TDivider color="#1890ff" />
-        <TText text="红色分割线" />
+        <TText :text="$t('examplePages.divider.labels.redLine')" />
         <TDivider color="#f5222d" />
-        <TText text="绿色分割线" />
+        <TText :text="$t('examplePages.divider.labels.greenLine')" />
         <TDivider color="#52c41a" />
       </view>
     </TCard>
 
     <!-- 自定义粗细 -->
-    <TCard title="自定义粗细" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.customThickness')" padding="medium">
       <view class="demo-section">
-        <TText text="细线 (hairline)" />
+        <TText :text="$t('examplePages.divider.labels.hairline')" />
         <TDivider :hairline="true" />
         <TText text="1px" />
         <TDivider :thickness="1" :hairline="false" />
@@ -58,91 +61,91 @@ import TText from '@/components/TText'
     </TCard>
 
     <!-- 文字分割线 -->
-    <TCard title="文字分割线" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.withText')" padding="medium">
       <view class="demo-section">
-        <TText text="上方内容" />
-        <TDivider content="默认居中" />
-        <TText text="中间内容" />
-        <TDivider content="左对齐" content-position="left" />
-        <TText text="中间内容" />
-        <TDivider content="右对齐" content-position="right" />
-        <TText text="下方内容" />
+        <TText :text="$t('examplePages.divider.labels.topContent')" />
+        <TDivider :content="$t('examplePages.divider.labels.defaultCenter')" />
+        <TText :text="$t('examplePages.divider.labels.middleContent')" />
+        <TDivider :content="$t('examplePages.divider.labels.leftAlign')" content-position="left" />
+        <TText :text="$t('examplePages.divider.labels.middleContent')" />
+        <TDivider :content="$t('examplePages.divider.labels.rightAlign')" content-position="right" />
+        <TText :text="$t('examplePages.divider.labels.bottomContent')" />
       </view>
     </TCard>
 
     <!-- 自定义文字样式 -->
-    <TCard title="自定义文字样式" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.customTextStyle')" padding="medium">
       <view class="demo-section">
-        <TText text="上方内容" />
+        <TText :text="$t('examplePages.divider.labels.topContent')" />
         <TDivider
-          content="蓝色文字"
+          :content="$t('examplePages.divider.labels.blueText')"
           color="#1890ff"
           content-style="color: #1890ff; font-weight: bold"
         />
-        <TText text="中间内容" />
+        <TText :text="$t('examplePages.divider.labels.middleContent')" />
         <TDivider
-          content="大号文字"
+          :content="$t('examplePages.divider.labels.largeText')"
           content-style="font-size: 16px; color: #f5222d"
           color="#f5222d"
         />
-        <TText text="下方内容" />
+        <TText :text="$t('examplePages.divider.labels.bottomContent')" />
       </view>
     </TCard>
 
     <!-- 自定义间距 -->
-    <TCard title="自定义间距" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.customMargin')" padding="medium">
       <view class="demo-section">
-        <TText text="小间距" />
+        <TText :text="$t('examplePages.divider.labels.smallMargin')" />
         <TDivider :margin="8" />
-        <TText text="默认间距" />
+        <TText :text="$t('examplePages.divider.labels.defaultMargin')" />
         <TDivider />
-        <TText text="大间距" />
+        <TText :text="$t('examplePages.divider.labels.largeMargin')" />
         <TDivider :margin="32" />
-        <TText text="底部内容" />
+        <TText :text="$t('examplePages.divider.labels.bottomContent')" />
       </view>
     </TCard>
 
     <!-- 垂直分割线 -->
-    <TCard title="垂直分割线" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.vertical')" padding="medium">
       <view class="demo-section">
         <view class="demo-vertical-row">
-          <TText text="选项一" />
+          <TText :text="$t('examplePages.divider.labels.option1')" />
           <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
-          <TText text="选项二" />
+          <TText :text="$t('examplePages.divider.labels.option2')" />
           <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
-          <TText text="选项三" />
+          <TText :text="$t('examplePages.divider.labels.option3')" />
           <TDivider direction="vertical" :margin="8" custom-style="height: 20px" />
-          <TText text="选项四" />
+          <TText :text="$t('examplePages.divider.labels.option4')" />
         </view>
       </view>
     </TCard>
 
     <!-- 垂直分割线样式 -->
-    <TCard title="垂直分割线样式" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.verticalStyle')" padding="medium">
       <view class="demo-section">
         <view class="demo-vertical-row">
-          <TText text="实线" />
+          <TText :text="$t('examplePages.divider.labels.solid')" />
           <TDivider
             direction="vertical"
             type="solid"
             :margin="12"
             custom-style="height: 20px"
           />
-          <TText text="虚线" />
+          <TText :text="$t('examplePages.divider.labels.dashed')" />
           <TDivider
             direction="vertical"
             type="dashed"
             :margin="12"
             custom-style="height: 20px"
           />
-          <TText text="点线" />
+          <TText :text="$t('examplePages.divider.labels.dotted')" />
           <TDivider
             direction="vertical"
             type="dotted"
             :margin="12"
             custom-style="height: 20px"
           />
-          <TText text="彩色" />
+          <TText :text="$t('examplePages.divider.labels.colorful')" />
           <TDivider
             direction="vertical"
             color="#1890ff"
@@ -151,19 +154,19 @@ import TText from '@/components/TText'
             :margin="12"
             custom-style="height: 20px"
           />
-          <TText text="结束" />
+          <TText :text="$t('examplePages.divider.labels.end')" />
         </view>
       </view>
     </TCard>
 
     <!-- 插槽用法 -->
-    <TCard title="插槽用法" padding="medium">
+    <TCard :title="$t('examplePages.divider.sections.slot')" padding="medium">
       <view class="demo-section">
-        <TText text="上方内容" />
+        <TText :text="$t('examplePages.divider.labels.topContent')" />
         <TDivider>
-          <text style="color: #1890ff; font-weight: bold">自定义插槽内容</text>
+          <text style="color: #1890ff; font-weight: bold">{{ $t('examplePages.divider.labels.customSlot') }}</text>
         </TDivider>
-        <TText text="下方内容" />
+        <TText :text="$t('examplePages.divider.labels.bottomContent')" />
       </view>
     </TCard>
   </view>

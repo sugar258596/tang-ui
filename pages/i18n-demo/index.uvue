@@ -1,0 +1,275 @@
+<script setup lang="uts">
+import { ref, computed } from 'vue'
+import { useI18n } from '../../composables/useI18n.uts'
+import TButton from '../../components/TButton/index.uvue'
+import TCard from '../../components/TCard/index.uvue'
+
+/**
+ * 多语言演示页面
+ * 展示如何使用 Tang UI 的多语言功能
+ */
+
+// 使用 i18n
+const { $t, locale, availableLocales, setLocale } = useI18n()
+
+// 语言列表（带安全检查）
+const localesList = computed(() => {
+  return availableLocales.value || []
+})
+
+// 语言数量
+const localesCount = computed(() => {
+  return localesList.value.length
+})
+
+/**
+ * 切换语言
+ */
+const handleLanguageChange = (lang: string) => {
+  const success = setLocale(lang)
+  if (success) {
+    console.log(`语言已切换到: ${lang}`)
+  } else {
+    console.error(`语言切换失败: ${lang}`)
+  }
+}
+
+/**
+ * 获取语言显示名称
+ */
+const getLanguageName = (code: string): string => {
+  const names: Record<string, string> = {
+    'zh-CN': '简体中文',
+    'en-US': 'English',
+    'zh-TW': '繁體中文'
+  }
+  return names[code] || code
+}
+
+/**
+ * 返回首页
+ */
+const goBack = () => {
+  uni.navigateBack()
+}
+</script>
+
+<template>
+  <view class="i18n-demo">
+    <!-- 页面标题 -->
+    <view class="demo-header">
+      <text class="demo-title">多语言演示</text>
+      <text class="demo-subtitle">Tang UI I18n Demo</text>
+    </view>
+
+    <!-- 语言切换器 -->
+    <view class="demo-section">
+      <text class="section-title">当前语言 / Current Language</text>
+      <view class="language-selector">
+        <view
+          v-for="lang in localesList"
+          :key="lang"
+          class="language-item"
+          :class="{ 'language-item--active': locale === lang }"
+          @click="() => handleLanguageChange(lang)"
+        >
+          <text class="language-text">{{ getLanguageName(lang) }}</text>
+          <text v-if="locale === lang" class="language-check">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 当前语言信息 -->
+    <view class="demo-section">
+      <text class="section-title">当前语言信息 / Current Locale Info</text>
+      <TCard :shadow="true" padding="medium">
+        <view class="info-row">
+          <text class="info-label">当前语言代码:</text>
+          <text class="info-value">{{ locale }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">语言名称:</text>
+          <text class="info-value">{{ getLanguageName(locale) }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">可用语言数:</text>
+          <text class="info-value">{{ localesCount }}</text>
+        </view>
+      </TCard>
+    </view>
+
+    <!-- 翻译函数演示 -->
+    <view class="demo-section">
+      <text class="section-title">翻译示例 / Translation Examples</text>
+      <TCard :shadow="true" padding="medium">
+        <view class="translation-demo">
+          <view class="translation-item">
+            <text class="translation-key">common.confirm</text>
+            <text class="translation-value">{{ $t('common.confirm') }}</text>
+          </view>
+          <view class="translation-item">
+            <text class="translation-key">common.cancel</text>
+            <text class="translation-value">{{ $t('common.cancel') }}</text>
+          </view>
+          <view class="translation-item">
+            <text class="translation-key">dialog.title</text>
+            <text class="translation-value">{{ $t('dialog.title') }}</text>
+          </view>
+          <view class="translation-item">
+            <text class="translation-key">empty.title</text>
+            <text class="translation-value">{{ $t('empty.title') }}</text>
+          </view>
+          <view class="translation-item">
+            <text class="translation-key">loading.text</text>
+            <text class="translation-value">{{ $t('loading.text') }}</text>
+          </view>
+        </view>
+      </TCard>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="demo-section">
+      <TButton type="primary" size="large" @click="goBack" block>
+        返回首页
+      </TButton>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.i18n-demo {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.demo-header {
+  text-align: center;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+.demo-title {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.demo-subtitle {
+  display: block;
+  font-size: 14px;
+  color: #909399;
+}
+
+.demo-section {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+}
+
+.language-selector {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.language-item {
+  flex: 1;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+
+  &--active {
+    background-color: #409eff;
+    color: #ffffff;
+
+    .language-text {
+      color: #ffffff;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.language-text {
+  display: block;
+  font-size: 14px;
+  color: #606266;
+}
+
+.language-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  font-size: 14px;
+  color: #606266;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #303133;
+  font-weight: 500;
+}
+
+.translation-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.translation-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+}
+
+.translation-key {
+  font-size: 12px;
+  color: #909399;
+  font-family: monospace;
+}
+
+.translation-value {
+  font-size: 14px;
+  color: #303133;
+  font-weight: 500;
+}
+</style>

@@ -1,87 +1,90 @@
 <script setup lang="uts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import TForm from '@/components/TForm'
 import TCard from '@/components/TCard'
 import type { FormSchema } from '@/components/TForm/type.uts'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 表单组件示例页面
  */
 
+const { $t } = useI18n()
+
 // 基础表单
 const basicFormRef = ref(null)
 const basicFormData = ref({})
-const basicSchemas: FormSchema[] = [
+const basicSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'username',
-		label: '用户名',
+		label: $t('examplePages.form.labels.username'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入用户名',
+			placeholder: $t('examplePages.form.placeholders.username'),
 			maxlength: 20
 		}
 	},
 	{
 		field: 'password',
-		label: '密码',
+		label: $t('examplePages.form.labels.password'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入密码',
+			placeholder: $t('examplePages.form.placeholders.password'),
 			type: 'password'
 		}
 	}
-]
+])
 
 // 完整表单
 const fullFormData = ref({})
-const fullSchemas: FormSchema[] = [
+const fullSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'name',
-		label: '姓名',
+		label: $t('examplePages.form.labels.name'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入姓名'
+			placeholder: $t('examplePages.form.placeholders.name')
 		}
 	},
 	{
 		field: 'age',
-		label: '年龄',
+		label: $t('examplePages.form.labels.age'),
 		component: 'InputNumber',
 		componentProps: {
-			placeholder: '请输入年龄',
+			placeholder: $t('examplePages.form.placeholders.age'),
 			min: 1,
 			max: 120
 		}
 	},
 	{
 		field: 'bio',
-		label: '简介',
+		label: $t('examplePages.form.labels.bio'),
 		component: 'Textarea',
 		componentProps: {
-			placeholder: '请输入个人简介',
+			placeholder: $t('examplePages.form.placeholders.bio'),
 			maxlength: 200
 		}
 	},
 	{
 		field: 'city',
-		label: '城市',
+		label: $t('examplePages.form.labels.city'),
 		component: 'Select',
 		required: true,
 		componentProps: {
 			options: [
-				{ label: '北京', value: 'beijing' },
-				{ label: '上海', value: 'shanghai' },
-				{ label: '广州', value: 'guangzhou' },
-				{ label: '深圳', value: 'shenzhen' }
+				{ label: $t('examplePages.form.options.beijing'), value: 'beijing' },
+				{ label: $t('examplePages.form.options.shanghai'), value: 'shanghai' },
+				{ label: $t('examplePages.form.options.guangzhou'), value: 'guangzhou' },
+				{ label: $t('examplePages.form.options.shenzhen'), value: 'shenzhen' }
 			]
 		}
 	},
 	{
 		field: 'birthday',
-		label: '生日',
+		label: $t('examplePages.form.labels.birthday'),
 		component: 'Date',
 		componentProps: {
 			start: '1900-01-01',
@@ -90,36 +93,36 @@ const fullSchemas: FormSchema[] = [
 	},
 	{
 		field: 'gender',
-		label: '性别',
+		label: $t('examplePages.form.labels.gender'),
 		component: 'Radio',
 		required: true,
 		componentProps: {
 			options: [
-				{ label: '男', value: 'male' },
-				{ label: '女', value: 'female' }
+				{ label: $t('examplePages.form.options.male'), value: 'male' },
+				{ label: $t('examplePages.form.options.female'), value: 'female' }
 			]
 		}
 	},
 	{
 		field: 'hobbies',
-		label: '爱好',
+		label: $t('examplePages.form.labels.hobbies'),
 		component: 'Checkbox',
 		componentProps: {
 			options: [
-				{ label: '阅读', value: 'reading' },
-				{ label: '运动', value: 'sports' },
-				{ label: '音乐', value: 'music' }
+				{ label: $t('examplePages.form.options.reading'), value: 'reading' },
+				{ label: $t('examplePages.form.options.sports'), value: 'sports' },
+				{ label: $t('examplePages.form.options.music'), value: 'music' }
 			]
 		}
 	},
 	{
 		field: 'notify',
-		label: '通知',
+		label: $t('examplePages.form.labels.notify'),
 		component: 'Switch'
 	},
 	{
 		field: 'rating',
-		label: '评分',
+		label: $t('examplePages.form.labels.rating'),
 		component: 'Rate',
 		componentProps: {
 			max: 5
@@ -127,7 +130,7 @@ const fullSchemas: FormSchema[] = [
 	},
 	{
 		field: 'volume',
-		label: '音量',
+		label: $t('examplePages.form.labels.volume'),
 		component: 'Slider',
 		componentProps: {
 			min: 0,
@@ -135,60 +138,60 @@ const fullSchemas: FormSchema[] = [
 			showValue: true
 		}
 	}
-]
+])
 
 // 自定义按钮表单
 const customBtnFormRef = ref(null)
 const customBtnFormData = ref({})
-const customBtnSchemas: FormSchema[] = [
+const customBtnSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'email',
-		label: '邮箱',
+		label: $t('examplePages.form.labels.email'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入邮箱',
+			placeholder: $t('examplePages.form.placeholders.email'),
 			type: 'email'
 		}
 	},
 	{
 		field: 'phone',
-		label: '手机号',
+		label: $t('examplePages.form.labels.phone'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入手机号',
+			placeholder: $t('examplePages.form.placeholders.phone'),
 			type: 'number',
 			maxlength: 11
 		}
 	}
-]
+])
 
 // 自定义插槽表单
 const slotFormData = ref({})
-const slotSchemas: FormSchema[] = [
+const slotSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'nickname',
-		label: '昵称',
+		label: $t('examplePages.form.labels.nickname'),
 		component: 'Input',
 		required: true,
 		componentProps: {
-			placeholder: '请输入昵称'
+			placeholder: $t('examplePages.form.placeholders.nickname')
 		}
 	},
 	{
 		field: 'avatar',
-		label: '头像',
+		label: $t('examplePages.form.labels.avatar'),
 		component: 'Input',
 		required: true
 	}
-]
+])
 
 // 事件处理
 const handleBasicSubmit = (values: any) => {
 	console.log('基础表单提交:', values)
 	uni.showToast({
-		title: '提交成功',
+		title: $t('examplePages.form.messages.submitSuccess'),
 		icon: 'success'
 	})
 }
@@ -196,14 +199,14 @@ const handleBasicSubmit = (values: any) => {
 const handleFullSubmit = (values: any) => {
 	console.log('完整表单提交:', values)
 	uni.showToast({
-		title: '提交成功',
+		title: $t('examplePages.form.messages.submitSuccess'),
 		icon: 'success'
 	})
 }
 
 const handleReset = () => {
 	uni.showToast({
-		title: '已重置',
+		title: $t('examplePages.form.messages.reset'),
 		icon: 'none'
 	})
 }
@@ -212,12 +215,12 @@ const handleValidate = () => {
 	const isValid = customBtnFormRef.value?.validate()
 	if (isValid) {
 		uni.showToast({
-			title: '验证通过',
+			title: $t('examplePages.form.messages.validateSuccess'),
 			icon: 'success'
 		})
 	} else {
 		uni.showToast({
-			title: '验证失败',
+			title: $t('examplePages.form.messages.validateFail'),
 			icon: 'error'
 		})
 	}
@@ -228,7 +231,7 @@ const handleCustomSubmit = async () => {
 	if (result.valid) {
 		console.log('提交成功:', result.values)
 		uni.showToast({
-			title: '提交成功',
+			title: $t('examplePages.form.messages.submitSuccess'),
 			icon: 'success'
 		})
 	}
@@ -238,7 +241,7 @@ const handleGetData = () => {
 	const data = customBtnFormRef.value?.getFormData()
 	console.log('表单数据:', data)
 	uni.showModal({
-		title: '表单数据',
+		title: $t('examplePages.form.messages.formData'),
 		content: JSON.stringify(data),
 		showCancel: false
 	})
@@ -250,7 +253,7 @@ const handleUploadAvatar = () => {
 		success: (res) => {
 			slotFormData.value.avatar = res.tempFilePaths[0]
 			uni.showToast({
-				title: '上传成功',
+				title: $t('examplePages.form.messages.uploadSuccess'),
 				icon: 'success'
 			})
 		}
@@ -261,12 +264,12 @@ const handleUploadAvatar = () => {
 <template>
 	<view class="example-page">
 		<view class="example-header">
-			<text class="example-title">TForm 表单组件</text>
-			<text class="example-desc">动态表单，支持多种表单控件</text>
+			<text class="example-title">{{ $t('examplePages.form.title') }}</text>
+			<text class="example-desc">{{ $t('examplePages.form.description') }}</text>
 		</view>
 
 		<!-- 基础用法 -->
-		<TCard title="基础用法" class="example-section">
+		<TCard :title="$t('examplePages.form.sections.basic')" class="example-section">
 			<TForm 
 				ref="basicFormRef"
 				v-model="basicFormData" 
@@ -276,7 +279,7 @@ const handleUploadAvatar = () => {
 		</TCard>
 
 		<!-- 完整表单 -->
-		<TCard title="完整表单（所有组件类型）" class="example-section">
+		<TCard :title="$t('examplePages.form.sections.full')" class="example-section">
 			<TForm 
 				v-model="fullFormData" 
 				:schemas="fullSchemas"
@@ -285,7 +288,7 @@ const handleUploadAvatar = () => {
 		</TCard>
 
 		<!-- 自定义按钮 -->
-		<TCard title="自定义按钮" class="example-section">
+		<TCard :title="$t('examplePages.form.sections.customButtons')" class="example-section">
 			<TForm 
 				ref="customBtnFormRef"
 				v-model="customBtnFormData" 
@@ -293,14 +296,14 @@ const handleUploadAvatar = () => {
 				:hide-buttons="true" />
 			
 			<view class="custom-buttons">
-				<button @click="handleValidate" class="btn-validate" size="mini">验证</button>
-				<button @click="handleCustomSubmit" class="btn-submit" type="primary" size="mini">提交</button>
-				<button @click="handleGetData" class="btn-data" size="mini">获取数据</button>
+				<button @click="handleValidate" class="btn-validate" size="mini">{{ $t('examplePages.form.buttons.validate') }}</button>
+				<button @click="handleCustomSubmit" class="btn-submit" type="primary" size="mini">{{ $t('examplePages.form.buttons.submit') }}</button>
+				<button @click="handleGetData" class="btn-data" size="mini">{{ $t('examplePages.form.buttons.getData') }}</button>
 			</view>
 		</TCard>
 
 		<!-- 自定义插槽 -->
-		<TCard title="自定义插槽" class="example-section">
+		<TCard :title="$t('examplePages.form.sections.customSlot')" class="example-section">
 			<TForm 
 				v-model="slotFormData" 
 				:schemas="slotSchemas"
@@ -313,7 +316,7 @@ const handleUploadAvatar = () => {
 							class="avatar-preview"
 							mode="aspectFill" />
 						<button @click="handleUploadAvatar" class="upload-btn" size="mini">
-							上传头像
+							{{ $t('examplePages.form.buttons.uploadAvatar') }}
 						</button>
 						<text v-if="error" class="error-text">{{ error }}</text>
 					</view>

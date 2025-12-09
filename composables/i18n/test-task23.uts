@@ -1,0 +1,9 @@
+/**
+ * Task 23 简单测试
+ * 快速验证新函数是否可用
+ */
+
+import { runTask23Verification } from './task23-verification.uts'
+
+// 运行验证
+runTask23Verification()

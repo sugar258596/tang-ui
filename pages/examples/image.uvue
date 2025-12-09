@@ -4,10 +4,13 @@ import TImage from '@/components/TImage'
 import TCard from '@/components/TCard'
 import TText from '@/components/TText'
 import TDivider from '@/components/TDivider'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TImage 组件示例页面
  */
+
+const { $t } = useI18n()
 
 // 示例图片
 const demoImage = ref<string>('https://picsum.photos/400/300')
@@ -26,7 +29,7 @@ const errorImage = ref<string>('https://invalid-image-url.com/error.jpg')
 const handleLoad = (event: Event): void => {
   console.log('图片加载完成', event)
   uni.showToast({
-    title: '图片加载完成',
+    title: $t('examplePages.image.messages.loadComplete'),
     icon: 'success',
     duration: 1500
   })
@@ -38,7 +41,7 @@ const handleLoad = (event: Event): void => {
 const handleError = (event: Event): void => {
   console.log('图片加载失败', event)
   uni.showToast({
-    title: '图片加载失败',
+    title: $t('examplePages.image.messages.loadFailed'),
     icon: 'error',
     duration: 1500
   })
@@ -55,7 +58,7 @@ const handleClick = (): void => {
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.basic')" padding="medium">
       <view class="demo-section">
         <TImage
           :src="demoImage"
@@ -68,27 +71,27 @@ const handleClick = (): void => {
     </TCard>
 
     <!-- 图片形状 -->
-    <TCard title="图片形状" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.shape')" padding="medium">
       <view class="demo-section">
         <view class="demo-row">
           <view class="demo-col">
             <TImage :src="demoImage" width="100px" height="100px" shape="square" />
-            <TText text="方形" size="small" align="center" />
+            <TText :text="$t('examplePages.image.labels.square')" size="small" align="center" />
           </view>
           <view class="demo-col">
             <TImage :src="demoImage" width="100px" height="100px" shape="round" />
-            <TText text="圆角" size="small" align="center" />
+            <TText :text="$t('examplePages.image.labels.round')" size="small" align="center" />
           </view>
           <view class="demo-col">
             <TImage :src="demoImage" width="100px" height="100px" shape="circle" />
-            <TText text="圆形" size="small" align="center" />
+            <TText :text="$t('examplePages.image.labels.circle')" size="small" align="center" />
           </view>
         </view>
       </view>
     </TCard>
 
     <!-- 裁剪模式 -->
-    <TCard title="裁剪模式" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.mode')" padding="medium">
       <view class="demo-section">
         <view class="demo-grid">
           <view class="demo-grid-item">
@@ -112,7 +115,7 @@ const handleClick = (): void => {
     </TCard>
 
     <!-- 自定义圆角 -->
-    <TCard title="自定义圆角" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.radius')" padding="medium">
       <view class="demo-section">
         <view class="demo-row">
           <view class="demo-col">
@@ -132,20 +135,20 @@ const handleClick = (): void => {
     </TCard>
 
     <!-- 加载失败 -->
-    <TCard title="加载失败" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.error')" padding="medium">
       <view class="demo-section">
         <TImage
           :src="errorImage"
           width="100%"
           height="150px"
-          error-text="图片加载失败"
+          :error-text="$t('examplePages.image.messages.errorText')"
           @error="handleError"
         />
       </view>
     </TCard>
 
     <!-- 图片预览 -->
-    <TCard title="图片预览" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.preview')" padding="medium">
       <view class="demo-section">
         <view class="demo-row">
           <view class="demo-col" v-for="(img, index) in demoImages" :key="index">
@@ -161,7 +164,7 @@ const handleClick = (): void => {
           </view>
         </view>
         <TText
-          text="点击图片可预览"
+          :text="$t('examplePages.image.labels.clickToPreview')"
           size="small"
           color="secondary"
           align="center"
@@ -171,17 +174,17 @@ const handleClick = (): void => {
     </TCard>
 
     <!-- 懒加载 -->
-    <TCard title="懒加载" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.lazy')" padding="medium">
       <view class="demo-section">
         <TImage
           :src="demoImage"
           width="100%"
           height="200px"
           :lazy-load="true"
-          loading-text="懒加载中..."
+          :loading-text="$t('examplePages.image.messages.lazyLoading')"
         />
         <TText
-          text="向下滚动时才会加载图片"
+          :text="$t('examplePages.image.labels.lazyLoadDesc')"
           size="small"
           color="secondary"
           align="center"
@@ -191,7 +194,7 @@ const handleClick = (): void => {
     </TCard>
 
     <!-- 自定义加载提示 -->
-    <TCard title="自定义提示文本" padding="medium">
+    <TCard :title="$t('examplePages.image.sections.customText')" padding="medium">
       <view class="demo-section">
         <view class="demo-row">
           <view class="demo-col">
@@ -199,18 +202,18 @@ const handleClick = (): void => {
               src="https://picsum.photos/200/200?t=1"
               width="100px"
               height="100px"
-              loading-text="请稍候..."
+              :loading-text="$t('examplePages.image.messages.loadingText')"
             />
-            <TText text="自定义加载文本" size="small" align="center" />
+            <TText :text="$t('examplePages.image.labels.customLoading')" size="small" align="center" />
           </view>
           <view class="demo-col">
             <TImage
               :src="errorImage"
               width="100px"
               height="100px"
-              error-text="无法加载"
+              :error-text="$t('examplePages.image.messages.errorCustomText')"
             />
-            <TText text="自定义错误文本" size="small" align="center" />
+            <TText :text="$t('examplePages.image.labels.customError')" size="small" align="center" />
           </view>
         </view>
       </view>

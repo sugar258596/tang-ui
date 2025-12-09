@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TSwitch from '@/components/TSwitch'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 开关组件示例页面
  */
+
+const { $t } = useI18n()
 
 const switch1 = ref<boolean>(false)
 const switch2 = ref<boolean>(true)
@@ -20,69 +23,69 @@ const handleChange = (value: boolean): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TSwitch 开关组件</text>
-      <text class="example-desc">表示两种状态之间的切换</text>
+      <text class="example-title">{{ $t('examplePages.switch.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.switch.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.basic')" class="example-section">
       <view class="switch-row">
         <TSwitch v-model="switch1" />
-        <text style="margin-left: 10px;">状态: {{ switch1 ? '开' : '关' }}</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.status') }}: {{ switch1 ? $t('examplePages.switch.labels.on') : $t('examplePages.switch.labels.off') }}</text>
       </view>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.disabled')" class="example-section">
       <view class="switch-row">
         <TSwitch :model-value="false" disabled />
-        <text style="margin-left: 20px;">禁用状态（关）</text>
+        <text style="margin-left: 20px;">{{ $t('examplePages.switch.labels.disabledOff') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch :model-value="true" disabled />
-        <text style="margin-left: 20px;">禁用状态（开）</text>
+        <text style="margin-left: 20px;">{{ $t('examplePages.switch.labels.disabledOn') }}</text>
       </view>
     </TCard>
 
-    <TCard title="不同尺寸" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.size')" class="example-section">
       <view class="switch-row">
         <TSwitch v-model="switch2" size="small" />
-        <text style="margin-left: 10px;">小尺寸</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.small') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch v-model="switch2" size="medium" />
-        <text style="margin-left: 10px;">中尺寸</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.medium') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch v-model="switch2" size="large" />
-        <text style="margin-left: 10px;">大尺寸</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.large') }}</text>
       </view>
     </TCard>
 
-    <TCard title="自定义颜色" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.customColor')" class="example-section">
       <view class="switch-row">
         <TSwitch
           v-model="switch3"
           activeColor="#67c23a"
           inactiveColor="#f56c6c"
         />
-        <text style="margin-left: 10px;">自定义颜色</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.customColor') }}</text>
       </view>
     </TCard>
 
-    <TCard title="带文字提示" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.withText')" class="example-section">
       <view class="switch-row">
         <TSwitch
           v-model="switch4"
-          activeText="开启"
-          inactiveText="关闭"
+          :activeText="$t('examplePages.switch.text.active')"
+          :inactiveText="$t('examplePages.switch.text.inactive')"
           showText
         />
       </view>
     </TCard>
 
-    <TCard title="change 事件" class="example-section">
+    <TCard :title="$t('examplePages.switch.sections.events')" class="example-section">
       <view class="switch-row">
         <TSwitch @change="handleChange" />
-        <text style="margin-left: 10px;">打开控制台查看事件</text>
+        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.openConsole') }}</text>
       </view>
     </TCard>
   </view>

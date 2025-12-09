@@ -1,0 +1,198 @@
+/**
+ * Task 22 验证脚本
+ * 验证语言包注册模式功能
+ */
+
+import { I18nManager } from './manager.uts'
+import type { ModularLocaleMessages } from './types.uts'
+
+/**
+ * 测试语言包注册模式功能
+ */
+export function testRegistrationModes(): void {
+  console.log('=== Task 22: 语言包注册模式功能验证 ===\n')
+  
+  const manager = I18nManager.getInstance()
+  
+  // 测试 1: 合并模式（默认）
+  console.log('测试 1: 合并模式（默认 registerMessages）')
+  const initialMessages: ModularLocaleMessages = {
+    common: {
+      confirm: '确定',
+      cancel: '取消',
+      ok: '好的'
+    },
+    dialog: {
+      title: '提示',
+      confirmText: '确定'
+    }
+  }
+  
+  manager.registerMessages('test-locale', initialMessages)
+  console.log('✓ 初始语言包已注册')
+  
+  // 部分覆盖
+  const partialMessages: ModularLocaleMessages = {
+    common: {
+      confirm: '好的',  // 覆盖
+      close: '关闭'     // 新增
+    },
+    empty: {            // 新模块
+      title: '暂无数据'
+    }
+  }
+  
+  manager.registerMessages('test-locale', partialMessages)
+  console.log('✓ 部分语言包已合并')
+  
+  // 验证合并结果
+  manager.setLocale('test-locale')
+  const confirmText = manager.translate('common.confirm')
+  const cancelText = manager.translate('common.cancel')
+  const okText = manager.translate('common.ok')
+  const closeText = manager.translate('common.close')
+  const dialogTitle = manager.translate('dialog.title')
+  const emptyTitle = manager.translate('empty.title')
+  
+  console.log(`  common.confirm: ${confirmText} (应为 "好的")`)
+  console.log(`  common.cancel: ${cancelText} (应为 "取消" - 保留)`)
+  console.log(`  common.ok: ${okText} (应为 "好的" - 保留)`)
+  console.log(`  common.close: ${closeText} (应为 "关闭" - 新增)`)
+  console.log(`  dialog.title: ${dialogTitle} (应为 "提示" - 保留)`)
+  console.log(`  empty.title: ${emptyTitle} (应为 "暂无数据" - 新模块)`)
+  
+  const mergeSuccess = 
+    confirmText === '好的' &&
+    cancelText === '取消' &&
+    okText === '好的' &&
+    closeText === '关闭' &&
+    dialogTitle === '提示' &&
+    emptyTitle === '暂无数据'
+  
+  if (mergeSuccess) {
+    console.log('✅ 合并模式测试通过\n')
+  } else {
+    console.log('❌ 合并模式测试失败\n')
+  }
+  
+  // 测试 2: 替换模式（registerMessagesWithMode）
+  console.log('测试 2: 替换模式（registerMessagesWithMode）')
+  const replaceMessages: ModularLocaleMessages = {
+    button: {
+      submit: '提交',
+      reset: '重置'
+    }
+  }
+  
+  manager.registerMessagesWithMode('test-locale', replaceMessages, 'replace')
+  console.log('✓ 语言包已完全替换')
+  
+  // 验证替换结果 - 旧内容应该不存在
+  const submitText = manager.translate('button.submit')
+  const oldConfirmText = manager.translate('common.confirm')
+  const oldDialogTitle = manager.translate('dialog.title')
+  
+  console.log(`  button.submit: ${submitText} (应为 "提交")`)
+  console.log(`  common.confirm: ${oldConfirmText} (应为 "common.confirm" - 已被清除)`)
+  console.log(`  dialog.title: ${oldDialogTitle} (应为 "dialog.title" - 已被清除)`)
+  
+  const replaceSuccess = 
+    submitText === '提交' &&
+    oldConfirmText === 'common.confirm' &&
+    oldDialogTitle === 'dialog.title'
+  
+  if (replaceSuccess) {
+    console.log('✅ 替换模式测试通过\n')
+  } else {
+    console.log('❌ 替换模式测试失败\n')
+  }
+  
+  // 测试 3: replaceMessages 方法
+  console.log('测试 3: replaceMessages 方法')
+  const newMessages: ModularLocaleMessages = {
+    search: {
+      placeholder: '搜索',
+      cancel: '取消'
+    }
+  }
+  
+  manager.replaceMessages('test-locale', newMessages)
+  console.log('✓ 使用 replaceMessages 方法替换')
+  
+  const searchPlaceholder = manager.translate('search.placeholder')
+  const oldSubmitText = manager.translate('button.submit')
+  
+  console.log(`  search.placeholder: ${searchPlaceholder} (应为 "搜索")`)
+  console.log(`  button.submit: ${oldSubmitText} (应为 "button.submit" - 已被清除)`)
+  
+  const replaceMethodSuccess = 
+    searchPlaceholder === '搜索' &&
+    oldSubmitText === 'button.submit'
+  
+  if (replaceMethodSuccess) {
+    console.log('✅ replaceMessages 方法测试通过\n')
+  } else {
+    console.log('❌ replaceMessages 方法测试失败\n')
+  }
+  
+  // 测试 4: 合并模式使用 registerMessagesWithMode
+  console.log('测试 4: 合并模式使用 registerMessagesWithMode')
+  const baseMessages: ModularLocaleMessages = {
+    common: {
+      yes: '是',
+      no: '否'
+    }
+  }
+  
+  manager.registerMessagesWithMode('test-locale-2', baseMessages, 'merge')
+  console.log('✓ 基础语言包已注册')
+  
+  const additionalMessages: ModularLocaleMessages = {
+    common: {
+      yes: 'Yes',  // 覆盖
+      maybe: 'Maybe'  // 新增
+    }
+  }
+  
+  manager.registerMessagesWithMode('test-locale-2', additionalMessages, 'merge')
+  console.log('✓ 额外语言包已合并')
+  
+  manager.setLocale('test-locale-2')
+  const yesText = manager.translate('common.yes')
+  const noText = manager.translate('common.no')
+  const maybeText = manager.translate('common.maybe')
+  
+  console.log(`  common.yes: ${yesText} (应为 "Yes")`)
+  console.log(`  common.no: ${noText} (应为 "否" - 保留)`)
+  console.log(`  common.maybe: ${maybeText} (应为 "Maybe" - 新增)`)
+  
+  const mergeWithModeSuccess = 
+    yesText === 'Yes' &&
+    noText === '否' &&
+    maybeText === 'Maybe'
+  
+  if (mergeWithModeSuccess) {
+    console.log('✅ registerMessagesWithMode 合并模式测试通过\n')
+  } else {
+    console.log('❌ registerMessagesWithMode 合并模式测试失败\n')
+  }
+  
+  // 总结
+  console.log('=== 测试总结 ===')
+  const allSuccess = mergeSuccess && replaceSuccess && replaceMethodSuccess && mergeWithModeSuccess
+  
+  if (allSuccess) {
+    console.log('✅ 所有测试通过！')
+    console.log('\n实现的功能：')
+    console.log('1. registerMessages() - 默认使用合并模式')
+    console.log('2. registerMessagesWithMode() - 支持 merge 和 replace 模式')
+    console.log('3. replaceMessages() - 完全替换语言包')
+    console.log('4. 合并模式正确保留未覆盖的内容')
+    console.log('5. 替换模式完全清除旧内容')
+  } else {
+    console.log('❌ 部分测试失败，请检查实现')
+  }
+}
+
+// 执行测试
+testRegistrationModes()

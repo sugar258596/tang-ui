@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import TInput from '@/components/TInput'
 import TCard from '@/components/TCard'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 输入框组件示例页面
  */
+
+const { $t } = useI18n()
 
 const inputValue1 = ref<string>('')
 const inputValue2 = ref<string>('')
@@ -29,59 +32,59 @@ const handleBlur = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TInput 输入框组件</text>
-      <text class="example-desc">文本输入组件</text>
+      <text class="example-title">{{ $t('examplePages.input.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.input.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
-      <TInput v-model="inputValue1" placeholder="请输入内容" />
+    <TCard :title="$t('examplePages.input.sections.basic')" class="example-section">
+      <TInput v-model="inputValue1" :placeholder="$t('examplePages.input.placeholder')" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        输入值: {{ inputValue1 }}
+        {{ $t('examplePages.input.labels.inputValue') }}: {{ inputValue1 }}
       </text>
     </TCard>
 
-    <TCard title="不同类型" class="example-section">
+    <TCard :title="$t('examplePages.input.sections.type')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput type="text" placeholder="文本输入" />
-        <TInput type="password" placeholder="密码输入" />
-        <TInput type="number" placeholder="数字输入" />
-        <TInput type="tel" placeholder="电话号码" />
-        <TInput type="email" placeholder="邮箱地址" />
+        <TInput type="text" :placeholder="$t('examplePages.input.labels.textInput')" />
+        <TInput type="password" :placeholder="$t('examplePages.input.labels.passwordInput')" />
+        <TInput type="number" :placeholder="$t('examplePages.input.labels.numberInput')" />
+        <TInput type="tel" :placeholder="$t('examplePages.input.labels.phoneInput')" />
+        <TInput type="email" :placeholder="$t('examplePages.input.labels.emailInput')" />
       </view>
     </TCard>
 
-    <TCard title="不同大小" class="example-section">
+    <TCard :title="$t('examplePages.input.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput size="small" placeholder="小尺寸输入框" />
-        <TInput size="medium" placeholder="中等尺寸输入框" />
-        <TInput size="large" placeholder="大尺寸输入框" />
+        <TInput size="small" :placeholder="$t('examplePages.input.labels.smallSize')" />
+        <TInput size="medium" :placeholder="$t('examplePages.input.labels.mediumSize')" />
+        <TInput size="large" :placeholder="$t('examplePages.input.labels.largeSize')" />
       </view>
     </TCard>
 
-    <TCard title="禁用状态" class="example-section">
-      <TInput value="禁用的输入框" disabled />
+    <TCard :title="$t('examplePages.input.sections.disabled')" class="example-section">
+      <TInput :value="$t('examplePages.input.labels.disabled')" disabled />
     </TCard>
 
-    <TCard title="只读状态" class="example-section">
-      <TInput value="只读的输入框" readonly />
+    <TCard :title="$t('examplePages.input.sections.readonly')" class="example-section">
+      <TInput :value="$t('examplePages.input.labels.readonly')" readonly />
     </TCard>
 
-    <TCard title="带清除按钮" class="example-section">
-      <TInput v-model="inputValue2" clearable placeholder="可清除内容" />
+    <TCard :title="$t('examplePages.input.sections.clearable')" class="example-section">
+      <TInput v-model="inputValue2" clearable :placeholder="$t('examplePages.input.labels.clearable')" />
     </TCard>
 
-    <TCard title="带前后缀" class="example-section">
+    <TCard :title="$t('examplePages.input.sections.affix')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput prefix="￥" placeholder="请输入金额" />
-        <TInput suffix=".com" placeholder="请输入网址" />
-        <TInput prefix="https://" suffix=".com" placeholder="请输入域名" />
+        <TInput prefix="￥" :placeholder="$t('examplePages.input.labels.amount')" />
+        <TInput suffix=".com" :placeholder="$t('examplePages.input.labels.website')" />
+        <TInput prefix="https://" suffix=".com" :placeholder="$t('examplePages.input.labels.domain')" />
       </view>
     </TCard>
 
-    <TCard title="事件处理" class="example-section">
+    <TCard :title="$t('examplePages.input.sections.events')" class="example-section">
       <TInput
         v-model="inputValue3"
-        placeholder="查看控制台"
+        :placeholder="$t('examplePages.input.labels.checkConsole')"
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"

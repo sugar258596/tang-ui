@@ -1,0 +1,705 @@
+{
+  "button": {
+    "title": "TButton 按鈕組件",
+    "description": "按鈕用於觸發操作",
+    "sections": {
+      "basic": "基礎用法",
+      "plain": "樸素按鈕",
+      "size": "按鈕尺寸",
+      "disabled": "禁用狀態",
+      "loading": "加載狀態",
+      "round": "圓角按鈕",
+      "block": "塊級按鈕"
+    },
+    "buttons": {
+      "primary": "主要按鈕",
+      "success": "成功按鈕",
+      "warning": "警告按鈕",
+      "danger": "危險按鈕",
+      "info": "信息按鈕",
+      "plain": "樸素按鈕",
+      "large": "大型按鈕",
+      "medium": "中等按鈕",
+      "small": "小型按鈕",
+      "disabled": "禁用按鈕",
+      "loading": "加載中",
+      "clickToLoad": "點擊加載",
+      "round": "圓角按鈕",
+      "block": "塊級按鈕"
+    },
+    "messages": {
+      "clicked": "按鈕被點擊"
+    }
+  },
+  "icon": {
+    "title": "TIcon 圖標組件",
+    "description": "語義化圖標",
+    "sections": {
+      "basic": "基礎用法",
+      "size": "圖標尺寸",
+      "color": "圖標顏色"
+    }
+  },
+  "text": {
+    "title": "TText 文本組件",
+    "description": "文本展示組件",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "文本類型",
+      "size": "文本尺寸",
+      "weight": "文本粗細",
+      "ellipsis": "文本省略"
+    }
+  },
+  "image": {
+    "title": "TImage 圖片組件",
+    "description": "增強的圖片組件",
+    "sections": {
+      "basic": "基礎用法",
+      "mode": "裁剪模式",
+      "loading": "加載狀態",
+      "error": "加載失敗"
+    }
+  },
+  "divider": {
+    "title": "TDivider 分割線",
+    "description": "內容分割線",
+    "sections": {
+      "basic": "基礎用法",
+      "withText": "帶文字",
+      "dashed": "虛線",
+      "vertical": "垂直分割線"
+    }
+  },
+  "card": {
+    "title": "TCard 卡片組件",
+    "description": "卡片容器，用於組織內容",
+    "sections": {
+      "basic": "基礎卡片",
+      "withSubtitle": "帶副標題的卡片",
+      "noShadow": "無陰影卡片",
+      "withBorder": "帶邊框卡片",
+      "padding": "不同內邊距",
+      "largePadding": "大內邊距卡片",
+      "radius": "不同圓角",
+      "largeRadius": "大圓角卡片",
+      "clickable": "可點擊卡片",
+      "customSlot": "自定義插槽"
+    },
+    "content": {
+      "basic": "這是卡片的內容區域",
+      "subtitle": "這是副標題",
+      "anyContent": "卡片內容可以是任何元素",
+      "noShadow": "這個卡片沒有陰影效果",
+      "withBorder": "這個卡片使用邊框而不是陰影",
+      "smallPadding": "小內邊距卡片",
+      "largePadding": "大內邊距卡片",
+      "noRadius": "無圓角卡片",
+      "largeRadius": "大圓角卡片",
+      "clickable": "點擊這個卡片會觸發事件",
+      "customHeader": "自定義頭部",
+      "customSlot": "這個卡片使用了自定義頭部插槽"
+    },
+    "buttons": {
+      "action": "操作",
+      "cancel": "取消",
+      "confirm": "確定"
+    },
+    "messages": {
+      "clicked": "卡片被點擊"
+    }
+  },
+  "input": {
+    "title": "TInput 輸入框",
+    "description": "文本輸入",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "輸入類型",
+      "clearable": "可清空",
+      "disabled": "禁用狀態",
+      "maxlength": "字數限制"
+    },
+    "placeholder": "請輸入內容"
+  },
+  "form": {
+    "title": "TForm 表單",
+    "description": "表單組件",
+    "sections": {
+      "basic": "基礎用法",
+      "validation": "表單驗證",
+      "layout": "表單佈局"
+    },
+    "labels": {
+      "username": "用戶名",
+      "password": "密碼",
+      "email": "郵箱",
+      "phone": "手機號"
+    },
+    "buttons": {
+      "submit": "提交",
+      "reset": "重置"
+    }
+  },
+  "list": {
+    "title": "TList 列表組件",
+    "description": "用於展示列表數據",
+    "sections": {
+      "basic": "基礎列表",
+      "withDescription": "帶描述的列表",
+      "withIcon": "帶圖標的列表",
+      "withExtra": "帶右側內容",
+      "clickable": "可點擊列表",
+      "customSpacing": "自定義間距",
+      "withTitle": "帶標題的列表"
+    },
+    "items": {
+      "item1": "列表項 1",
+      "item2": "列表項 2",
+      "item3": "列表項 3",
+      "titleText": "標題文字",
+      "anotherTitle": "另一個標題",
+      "description1": "這裡是描述信息，可以是多行文字內容",
+      "description2": "描述信息支持較長的文本內容顯示",
+      "settings": "設置",
+      "notification": "通知",
+      "privacy": "隱私",
+      "about": "關於",
+      "balance": "賬戶餘額",
+      "coupon": "優惠券",
+      "points": "積分",
+      "clickable1": "可點擊項 1",
+      "clickable2": "可點擊項 2",
+      "disabled": "禁用的項目",
+      "noSpacing1": "無間距列表項 1",
+      "noSpacing2": "無間距列表項 2",
+      "largeSpacing1": "大間距列表項 1",
+      "largeSpacing2": "大間距列表項 2",
+      "systemSettings": "系統設置",
+      "general": "通用",
+      "accountSecurity": "賬號與安全"
+    },
+    "extra": {
+      "balance": "¥100.00",
+      "couponCount": "5張",
+      "pointsCount": "1000"
+    }
+  },
+  "dialog": {
+    "title": "TDialog 對話框",
+    "description": "模態對話框",
+    "sections": {
+      "basic": "基礎用法",
+      "confirm": "確認對話框",
+      "custom": "自定義內容"
+    },
+    "buttons": {
+      "show": "顯示對話框",
+      "confirm": "確認",
+      "cancel": "取消"
+    },
+    "content": {
+      "title": "提示",
+      "message": "這是一條消息"
+    }
+  },
+  "toast": {
+    "title": "TToast 輕提示",
+    "description": "輕量級提示",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "提示類型",
+      "duration": "顯示時長"
+    },
+    "buttons": {
+      "show": "顯示提示",
+      "success": "成功提示",
+      "error": "錯誤提示",
+      "warning": "警告提示",
+      "loading": "加載提示"
+    }
+  },
+  "loading": {
+    "title": "TLoading 加載",
+    "description": "加載狀態",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "加載類型",
+      "text": "加載文案"
+    },
+    "text": {
+      "loading": "加載中..."
+    }
+  },
+  "empty": {
+    "title": "TEmpty 空狀態",
+    "description": "空數據展示",
+    "sections": {
+      "basic": "基礎用法",
+      "custom": "自定義內容"
+    },
+    "text": {
+      "noData": "暫無數據",
+      "noResult": "暫無搜索結果"
+    }
+  },
+  "picker": {
+    "title": "TPicker 選擇器",
+    "description": "多列數據選擇",
+    "sections": {
+      "basic": "基礎用法",
+      "multiColumn": "多列選擇",
+      "cascade": "級聯選擇"
+    },
+    "buttons": {
+      "confirm": "確認",
+      "cancel": "取消"
+    }
+  },
+  "actionSheet": {
+    "title": "TActionSheet 動作面板",
+    "description": "底部動作面板",
+    "sections": {
+      "basic": "基礎用法",
+      "withTitle": "帶標題描述",
+      "customColor": "自定義顏色"
+    },
+    "buttons": {
+      "show": "打開操作面板",
+      "cancel": "取消"
+    },
+    "actions": {
+      "option1": "選項一",
+      "option2": "選項二",
+      "option3": "選項三",
+      "shareToFriend": "分享給朋友",
+      "shareToMoments": "分享到朋友圈",
+      "copyLink": "複製鏈接",
+      "delete": "刪除"
+    },
+    "dialog": {
+      "title": "操作選擇",
+      "description": "請選擇您要進行的操作"
+    },
+    "messages": {
+      "selected": "選擇了"
+    }
+  },
+  "checkbox": {
+    "title": "TCheckbox 複選框組件",
+    "description": "多選框組件",
+    "sections": {
+      "basic": "基礎用法",
+      "defaultChecked": "默認選中",
+      "group": "複選框組",
+      "disabled": "禁用狀態",
+      "size": "不同大小",
+      "customColor": "自定義顏色",
+      "indeterminate": "中間狀態",
+      "events": "事件處理"
+    },
+    "labels": {
+      "checkbox": "複選框",
+      "defaultChecked": "默認選中的複選框",
+      "option1": "選項一",
+      "option2": "選項二",
+      "option3": "選項三",
+      "disabledUnchecked": "禁用未選中",
+      "disabledChecked": "禁用已選中",
+      "small": "小尺寸",
+      "medium": "中等尺寸",
+      "large": "大尺寸",
+      "red": "紅色複選框",
+      "green": "綠色複選框",
+      "orange": "橙色複選框",
+      "indeterminate": "半選狀態",
+      "clickToConsole": "點擊查看控制台"
+    },
+    "status": {
+      "checked": "選中狀態",
+      "selected": "選中值",
+      "notSelected": "未選擇",
+      "indeterminateDesc": "用於表示部分選中狀態",
+      "checkConsole": "切換複選框查看控制台"
+    }
+  },
+  "radio": {
+    "title": "TRadioButton 單選組件",
+    "description": "單選按鈕組件",
+    "sections": {
+      "basic": "基礎用法",
+      "group": "單選組",
+      "disabled": "禁用狀態",
+      "size": "不同大小",
+      "customColor": "自定義顏色",
+      "events": "事件處理"
+    },
+    "labels": {
+      "option1": "選項一",
+      "option2": "選項二",
+      "option3": "選項三",
+      "optionA": "選項 A",
+      "optionB": "選項 B",
+      "optionC": "選項 C",
+      "optionD": "選項 D",
+      "disabledUnchecked": "禁用未選中",
+      "disabledChecked": "禁用已選中",
+      "small": "小尺寸",
+      "medium": "中等尺寸",
+      "large": "大尺寸",
+      "red": "紅色",
+      "green": "綠色",
+      "orange": "橙色"
+    },
+    "status": {
+      "selected": "選中值",
+      "notSelected": "未選擇",
+      "checkConsole": "切換選項查看控制台"
+    }
+  },
+  "switch": {
+    "title": "TSwitch 開關組件",
+    "description": "表示兩種狀態之間的切換",
+    "sections": {
+      "basic": "基礎用法",
+      "disabled": "禁用狀態",
+      "size": "不同尺寸",
+      "customColor": "自定義顏色",
+      "withText": "帶文字提示",
+      "events": "change 事件"
+    },
+    "labels": {
+      "status": "狀態",
+      "on": "開",
+      "off": "關",
+      "disabledOff": "禁用狀態（關）",
+      "disabledOn": "禁用狀態（開）",
+      "small": "小尺寸",
+      "medium": "中尺寸",
+      "large": "大尺寸",
+      "customColor": "自定義顏色",
+      "openConsole": "打開控制台查看事件"
+    },
+    "text": {
+      "active": "開啟",
+      "inactive": "關閉"
+    }
+  },
+  "textarea": {
+    "title": "TTextarea 多行輸入",
+    "description": "多行文本輸入",
+    "sections": {
+      "basic": "基礎用法",
+      "disabled": "禁用狀態",
+      "maxlength": "字數統計",
+      "autoHeight": "自動高度",
+      "clearable": "顯示清空按鈕",
+      "customRows": "自定義行數",
+      "complete": "完整示例"
+    },
+    "placeholder": "請輸入內容",
+    "labels": {
+      "disabled": "禁用狀態",
+      "limit100": "最多輸入100個字符",
+      "autoGrow": "自動增長高度",
+      "clearable": "可清空內容",
+      "rows3": "3行",
+      "rows3Height": "固定3行高度",
+      "rows5": "5行",
+      "rows5Height": "固定5行高度",
+      "feedback": "請輸入您的反饋意見"
+    }
+  },
+  "searchBar": {
+    "title": "TSearchBar 搜索框",
+    "description": "搜索輸入框",
+    "sections": {
+      "basic": "基礎用法",
+      "withButton": "帶按鈕",
+      "custom": "自定義樣式"
+    },
+    "placeholder": "搜索",
+    "buttons": {
+      "search": "搜索",
+      "cancel": "取消"
+    }
+  },
+  "numberInput": {
+    "title": "TNumberInput 數字輸入",
+    "description": "數字輸入框",
+    "sections": {
+      "basic": "基礎用法",
+      "minMax": "最小/最大值",
+      "step": "步長",
+      "disabled": "禁用狀態"
+    }
+  },
+  "select": {
+    "title": "TSelect 選擇器",
+    "description": "下拉選擇",
+    "sections": {
+      "basic": "基礎用法",
+      "multiple": "多選",
+      "disabled": "禁用狀態"
+    },
+    "placeholder": "請選擇"
+  },
+  "slider": {
+    "title": "TSlider 滑塊",
+    "description": "滑動選擇器",
+    "sections": {
+      "basic": "基礎用法",
+      "range": "範圍選擇",
+      "step": "步長",
+      "disabled": "禁用狀態"
+    }
+  },
+  "rate": {
+    "title": "TRate 評分",
+    "description": "評分組件",
+    "sections": {
+      "basic": "基礎用法",
+      "halfStar": "半星",
+      "readonly": "只讀",
+      "customIcon": "自定義圖標"
+    }
+  },
+  "tags": {
+    "title": "Tags 標籤",
+    "description": "標記分類",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "標籤類型",
+      "size": "標籤尺寸",
+      "closable": "可關閉"
+    }
+  },
+  "badge": {
+    "title": "TBadge 徽標組件",
+    "description": "用於顯示數字或狀態標記",
+    "sections": {
+      "basic": "基礎用法",
+      "max": "最大值",
+      "dot": "小圓點",
+      "type": "不同類型",
+      "customColor": "自定義顏色",
+      "offset": "偏移量",
+      "dynamic": "動態控制"
+    },
+    "labels": {
+      "comment": "評論",
+      "reply": "回覆",
+      "message": "消息",
+      "warning": "警告",
+      "online": "在線",
+      "offline": "離線",
+      "primary": "主要",
+      "danger": "危險",
+      "success": "成功",
+      "info": "信息",
+      "bgColor": "背景色",
+      "blue": "藍色",
+      "green": "綠色",
+      "offset": "偏移",
+      "dynamic": "動態"
+    },
+    "buttons": {
+      "increase": "增加",
+      "decrease": "減少",
+      "show": "顯示",
+      "hide": "隱藏"
+    }
+  },
+  "avatar": {
+    "title": "TAvatar 頭像組件",
+    "description": "用於展示用戶頭像或圖標",
+    "sections": {
+      "basic": "基礎用法",
+      "size": "不同尺寸",
+      "shape": "不同形狀",
+      "customColor": "自定義顏色",
+      "fit": "圖片填充模式",
+      "events": "帶事件",
+      "customContent": "自定義內容"
+    },
+    "messages": {
+      "clicked": "頭像被點擊",
+      "error": "圖片加載失敗",
+      "clickOrConsole": "點擊頭像或查看控制台日誌"
+    }
+  },
+  "progress": {
+    "title": "TProgress 進度條",
+    "description": "進度指示器",
+    "sections": {
+      "basic": "基礎用法",
+      "type": "進度條類型",
+      "status": "進度條狀態",
+      "custom": "自定義顏色"
+    }
+  },
+  "noticeBar": {
+    "title": "TNoticeBar 通知欄",
+    "description": "滾動通知",
+    "sections": {
+      "basic": "基礎用法",
+      "scrollable": "滾動播放",
+      "closable": "可關閉",
+      "withIcon": "帶圖標"
+    }
+  },
+  "collapse": {
+    "title": "TCollapse 折疊面板",
+    "description": "可折疊內容區域",
+    "sections": {
+      "basic": "基礎用法",
+      "accordion": "手風琴模式",
+      "custom": "自定義內容"
+    }
+  },
+  "swiper": {
+    "title": "TSwiper 輪播圖",
+    "description": "圖片/內容輪播",
+    "sections": {
+      "basic": "基礎用法",
+      "autoplay": "自動播放",
+      "vertical": "垂直方向",
+      "custom": "自定義指示器"
+    }
+  },
+  "error": {
+    "title": "TErrorState 錯誤狀態",
+    "description": "錯誤提示",
+    "sections": {
+      "basic": "基礎用法",
+      "custom": "自定義內容"
+    },
+    "text": {
+      "error": "發生錯誤",
+      "retry": "重試"
+    }
+  },
+  "navbar": {
+    "title": "TNavBar 導航欄",
+    "description": "頂部導航欄",
+    "sections": {
+      "basic": "基礎用法",
+      "withIcon": "帶圖標",
+      "custom": "自定義內容"
+    },
+    "text": {
+      "title": "標題",
+      "back": "返回"
+    }
+  },
+  "tabs": {
+    "title": "Tabs 標籤頁",
+    "description": "選項卡切換",
+    "sections": {
+      "basic": "基礎用法",
+      "card": "卡片風格",
+      "scrollable": "可滾動"
+    }
+  },
+  "popup": {
+    "title": "TPopup 彈出層",
+    "description": "彈出層容器",
+    "sections": {
+      "basic": "基礎用法",
+      "position": "彈出位置",
+      "custom": "自定義內容"
+    },
+    "buttons": {
+      "show": "顯示彈出層"
+    }
+  },
+  "cell": {
+    "title": "TCell 單元格",
+    "description": "單元格組件",
+    "sections": {
+      "basic": "基礎用法",
+      "withIcon": "帶圖標",
+      "withValue": "帶值",
+      "link": "鏈接單元格"
+    }
+  },
+  "grid": {
+    "title": "TGrid 宮格",
+    "description": "宮格佈局",
+    "sections": {
+      "basic": "基礎用法",
+      "custom": "自定義列數",
+      "customGap": "自定義間距",
+      "border": "顯示邊框",
+      "square": "正方形格子",
+      "clickable": "可點擊",
+      "customColor": "自定義圖標顏色",
+      "badge": "徽標提示",
+      "image": "使用圖片",
+      "customContent": "自定義內容"
+    },
+    "labels": {
+      "home": "首頁",
+      "mail": "郵件",
+      "favorite": "收藏",
+      "settings": "設置",
+      "phone": "電話",
+      "bulb": "燈泡",
+      "palette": "調色板",
+      "camera": "相機",
+      "red": "紅色",
+      "blue": "藍色",
+      "green": "綠色",
+      "yellow": "黃色",
+      "image1": "圖片1",
+      "image2": "圖片2",
+      "image3": "圖片3",
+      "custom": "自定義",
+      "customDesc": "自定義內容",
+      "normalGrid": "普通宮格",
+      "blueColor": "藍色",
+      "background": "背景色",
+      "fast": "快速"
+    }
+  },
+  "layout": {
+    "title": "TRow/TCol 柵格",
+    "description": "24柵格佈局",
+    "sections": {
+      "basic": "基礎用法",
+      "gutter": "區塊間隔",
+      "offset": "列偏移",
+      "align": "水平對齊",
+      "verticalAlign": "垂直對齊",
+      "responsive": "響應式"
+    },
+    "labels": {
+      "leftAlign": "左對齊",
+      "centerAlign": "居中對齊",
+      "rightAlign": "右對齊",
+      "spaceBetween": "兩端對齊",
+      "spaceAround": "分散對齊",
+      "topAlign": "頂部對齊",
+      "middleAlign": "居中對齊",
+      "bottomAlign": "底部對齊",
+      "height": "高度"
+    }
+  },
+  "checkboxGroup": {
+    "title": "TCheckboxGroup 複選組",
+    "description": "複選框組",
+    "sections": {
+      "basic": "基礎用法",
+      "disabled": "禁用狀態",
+      "max": "最大選擇數"
+    }
+  },
+  "radioGroup": {
+    "title": "TRadioGroup 單選組",
+    "description": "單選框組",
+    "sections": {
+      "basic": "基礎用法",
+      "disabled": "禁用狀態",
+      "button": "按鈕樣式"
+    }
+  }
+}

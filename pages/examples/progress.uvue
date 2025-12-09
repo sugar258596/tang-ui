@@ -3,6 +3,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import TProgress from '@/components/TProgress'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
+
+const { $t } = useI18n()
 
 const percentage = ref<number>(50)
 let timer: number | null = null
@@ -25,18 +28,18 @@ onUnmounted(() => {
 
 <template>
   <view class="demo-page">
-    <TCard title="基础用法" padding="medium">
+    <TCard :title="$t('examplePages.progress.sections.basic')" padding="medium">
       <TProgress :percentage="50" />
     </TCard>
 
-    <TCard title="不同进度" padding="medium">
+    <TCard :title="$t('examplePages.progress.sections.type')" padding="medium">
       <TProgress :percentage="0" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="30" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="70" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="100" />
     </TCard>
 
-    <TCard title="自定义颜色" padding="medium">
+    <TCard :title="$t('examplePages.progress.sections.custom')" padding="medium">
       <TProgress :percentage="30" color="#f5222d" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="50" color="#52c41a" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="70" color="#faad14" />

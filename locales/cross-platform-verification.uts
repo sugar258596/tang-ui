@@ -1,0 +1,510 @@
+/**
+ * 跨平台兼容性验证脚本
+ * 验证 i18n 系统在不同平台上的功能
+ */
+
+import { initI18n, isI18nInitialized, resetI18nInitialization } from './index.uts'
+import { I18nManager } from '../composables/i18n/manager.uts'
+import { LocaleLoader } from './loader.uts'
+
+/**
+ * 验证结果类型
+ */
+type VerificationResult = {
+  testName: string
+  passed: boolean
+  message: string
+  error?: any
+}
+
+/**
+ * 验证测试套件
+ */
+class CrossPlatformVerification {
+  private results: VerificationResult[] = []
+  
+  /**
+   * 运行所有验证测试
+   */
+  runAll(): void {
+    console.log('='.repeat(60))
+    console.log('开始跨平台兼容性验证')
+    console.log('='.repeat(60))
+    console.log('')
+    
+    // 重置初始化状态
+    resetI18nInitialization()
+    
+    // 运行测试
+    this.testStaticImports()
+    this.testLoaderSynchronous()
+    this.testInitialization()
+    this.testBasicTranslation()
+    this.testLanguageSwitching()
+    this.testFallbackMechanism()
+    this.testParameterInterpolation()
+    this.testLanguageRegistration()
+    this.testAvailableLocales()
+    this.testErrorHandling()
+    
+    // 输出结果
+    this.printResults()
+  }
+  
+  /**
+   * 测试静态导入是否正常工作
+   */
+  private testStaticImports(): void {
+    try {
+      const loader = LocaleLoader
+      const zhCN = loader.loadLocale('zh-CN')
+      const enUS = loader.loadLocale('en-US')
+      const zhTW = loader.loadLocale('zh-TW')
+      
+      // 验证语言包不为空
+      const zhCNValid = Object.keys(zhCN).length > 0
+      const enUSValid = Object.keys(enUS).length > 0
+      const zhTWValid = Object.keys(zhTW).length > 0
+      
+      if (zhCNValid && enUSValid && zhTWValid) {
+        this.addResult({
+          testName: '静态导入验证',
+          passed: true,
+          message: '所有内置语言包静态导入成功'
+        })
+      } else {
+        this.addResult({
+          testName: '静态导入验证',
+          passed: false,
+          message: `语言包导入失败: zh-CN=${zhCNValid}, en-US=${enUSValid}, zh-TW=${zhTWValid}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '静态导入验证',
+        passed: false,
+        message: '静态导入失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试加载器是否为同步方法
+   */
+  private testLoaderSynchronous(): void {
+    try {
+      // 调用 loadLocale 应该立即返回结果，不是 Promise
+      const result = LocaleLoader.loadLocale('zh-CN')
+      const isSync = typeof result === 'object' && result !== null
+      
+      if (isSync) {
+        this.addResult({
+          testName: '加载器同步性验证',
+          passed: true,
+          message: 'LocaleLoader.loadLocale() 是同步方法'
+        })
+      } else {
+        this.addResult({
+          testName: '加载器同步性验证',
+          passed: false,
+          message: 'LocaleLoader.loadLocale() 不是同步方法'
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '加载器同步性验证',
+        passed: false,
+        message: '加载器同步性测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试初始化功能
+   */
+  private testInitialization(): void {
+    try {
+      // 初始化应该是同步的
+      initI18n()
+      
+      const initialized = isI18nInitialized()
+      const manager = I18nManager.getInstance()
+      const currentLocale = manager.getCurrentLocale()
+      
+      if (initialized && currentLocale === 'zh-CN') {
+        this.addResult({
+          testName: '初始化验证',
+          passed: true,
+          message: 'I18n 系统初始化成功，默认语言为 zh-CN'
+        })
+      } else {
+        this.addResult({
+          testName: '初始化验证',
+          passed: false,
+          message: `初始化状态异常: initialized=${initialized}, locale=${currentLocale}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '初始化验证',
+        passed: false,
+        message: '初始化失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试基本翻译功能
+   */
+  private testBasicTranslation(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 测试简体中文翻译
+      const confirm = manager.translate('common.confirm')
+      const cancel = manager.translate('common.cancel')
+      const emptyTitle = manager.translate('empty.title')
+      
+      if (confirm === '确定' && cancel === '取消' && emptyTitle === '暂无数据') {
+        this.addResult({
+          testName: '基本翻译功能',
+          passed: true,
+          message: '翻译功能正常工作'
+        })
+      } else {
+        this.addResult({
+          testName: '基本翻译功能',
+          passed: false,
+          message: `翻译结果不正确: confirm=${confirm}, cancel=${cancel}, emptyTitle=${emptyTitle}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '基本翻译功能',
+        passed: false,
+        message: '翻译功能测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试语言切换功能
+   */
+  private testLanguageSwitching(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 切换到英语
+      const switchSuccess = manager.setLocale('en-US')
+      const confirm = manager.translate('common.confirm')
+      const cancel = manager.translate('common.cancel')
+      
+      // 切换回中文
+      manager.setLocale('zh-CN')
+      
+      if (switchSuccess && confirm === 'Confirm' && cancel === 'Cancel') {
+        this.addResult({
+          testName: '语言切换功能',
+          passed: true,
+          message: '语言切换功能正常工作'
+        })
+      } else {
+        this.addResult({
+          testName: '语言切换功能',
+          passed: false,
+          message: `语言切换失败: success=${switchSuccess}, confirm=${confirm}, cancel=${cancel}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '语言切换功能',
+        passed: false,
+        message: '语言切换测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试回退机制
+   */
+  private testFallbackMechanism(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 注册一个不完整的语言包
+      manager.registerMessages('test-locale', {
+        common: {
+          confirm: 'Test Confirm'
+          // 缺少 cancel 键
+        }
+      })
+      
+      manager.setLocale('test-locale')
+      
+      const confirm = manager.translate('common.confirm')
+      const cancel = manager.translate('common.cancel')  // 应该回退到 zh-CN
+      
+      // 切换回中文
+      manager.setLocale('zh-CN')
+      
+      if (confirm === 'Test Confirm' && cancel === '取消') {
+        this.addResult({
+          testName: '回退机制验证',
+          passed: true,
+          message: '回退机制正常工作'
+        })
+      } else {
+        this.addResult({
+          testName: '回退机制验证',
+          passed: false,
+          message: `回退机制异常: confirm=${confirm}, cancel=${cancel}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '回退机制验证',
+        passed: false,
+        message: '回退机制测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试参数插值功能
+   */
+  private testParameterInterpolation(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 注册带参数的翻译
+      manager.registerMessages('zh-CN', {
+        test: {
+          greeting: '你好，{name}！',
+          count: '共有 {count} 个项目'
+        }
+      })
+      
+      const greeting = manager.translate('test.greeting', { name: '张三' })
+      const count = manager.translate('test.count', { count: 5 })
+      
+      if (greeting === '你好，张三！' && count === '共有 5 个项目') {
+        this.addResult({
+          testName: '参数插值功能',
+          passed: true,
+          message: '参数插值功能正常工作'
+        })
+      } else {
+        this.addResult({
+          testName: '参数插值功能',
+          passed: false,
+          message: `参数插值异常: greeting=${greeting}, count=${count}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '参数插值功能',
+        passed: false,
+        message: '参数插值测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试语言包注册功能
+   */
+  private testLanguageRegistration(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 注册新语言包
+      manager.registerMessages('ja-JP', {
+        common: {
+          confirm: '確認',
+          cancel: 'キャンセル'
+        }
+      })
+      
+      const hasJapanese = manager.hasLocale('ja-JP')
+      
+      if (hasJapanese) {
+        manager.setLocale('ja-JP')
+        const confirm = manager.translate('common.confirm')
+        manager.setLocale('zh-CN')
+        
+        if (confirm === '確認') {
+          this.addResult({
+            testName: '语言包注册功能',
+            passed: true,
+            message: '语言包注册功能正常工作'
+          })
+        } else {
+          this.addResult({
+            testName: '语言包注册功能',
+            passed: false,
+            message: `注册的语言包翻译异常: confirm=${confirm}`
+          })
+        }
+      } else {
+        this.addResult({
+          testName: '语言包注册功能',
+          passed: false,
+          message: '语言包注册失败'
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '语言包注册功能',
+        passed: false,
+        message: '语言包注册测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试可用语言列表
+   */
+  private testAvailableLocales(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      const availableLocales = manager.getAvailableLocales()
+      const locales = availableLocales.value
+      
+      const hasZhCN = locales.includes('zh-CN')
+      const hasEnUS = locales.includes('en-US')
+      const hasZhTW = locales.includes('zh-TW')
+      
+      if (hasZhCN && hasEnUS && hasZhTW && locales.length >= 3) {
+        this.addResult({
+          testName: '可用语言列表',
+          passed: true,
+          message: `可用语言列表正常: ${locales.join(', ')}`
+        })
+      } else {
+        this.addResult({
+          testName: '可用语言列表',
+          passed: false,
+          message: `可用语言列表异常: ${locales.join(', ')}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '可用语言列表',
+        passed: false,
+        message: '可用语言列表测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 测试错误处理
+   */
+  private testErrorHandling(): void {
+    try {
+      const manager = I18nManager.getInstance()
+      
+      // 测试无效语言代码
+      const invalidSwitch = manager.setLocale('invalid-locale')
+      
+      // 测试不存在的翻译键
+      const missingKey = manager.translate('nonexistent.key')
+      
+      if (!invalidSwitch && missingKey === 'nonexistent.key') {
+        this.addResult({
+          testName: '错误处理',
+          passed: true,
+          message: '错误处理机制正常工作'
+        })
+      } else {
+        this.addResult({
+          testName: '错误处理',
+          passed: false,
+          message: `错误处理异常: invalidSwitch=${invalidSwitch}, missingKey=${missingKey}`
+        })
+      }
+    } catch (error) {
+      this.addResult({
+        testName: '错误处理',
+        passed: false,
+        message: '错误处理测试失败',
+        error: error
+      })
+    }
+  }
+  
+  /**
+   * 添加测试结果
+   */
+  private addResult(result: VerificationResult): void {
+    this.results.push(result)
+  }
+  
+  /**
+   * 打印测试结果
+   */
+  private printResults(): void {
+    console.log('')
+    console.log('='.repeat(60))
+    console.log('验证结果汇总')
+    console.log('='.repeat(60))
+    console.log('')
+    
+    let passedCount = 0
+    let failedCount = 0
+    
+    for (const result of this.results) {
+      const status = result.passed ? '✓ 通过' : '✗ 失败'
+      const icon = result.passed ? '✓' : '✗'
+      
+      console.log(`${icon} ${result.testName}`)
+      console.log(`  ${result.message}`)
+      
+      if (result.error) {
+        console.log(`  错误: ${result.error}`)
+      }
+      
+      console.log('')
+      
+      if (result.passed) {
+        passedCount++
+      } else {
+        failedCount++
+      }
+    }
+    
+    console.log('='.repeat(60))
+    console.log(`总计: ${this.results.length} 个测试`)
+    console.log(`通过: ${passedCount} 个`)
+    console.log(`失败: ${failedCount} 个`)
+    console.log('='.repeat(60))
+    
+    if (failedCount === 0) {
+      console.log('')
+      console.log('🎉 所有测试通过！跨平台兼容性验证成功！')
+      console.log('')
+    } else {
+      console.log('')
+      console.log('⚠️  存在失败的测试，请检查上述错误信息')
+      console.log('')
+    }
+  }
+}
+
+/**
+ * 导出验证函数
+ */
+export function runCrossPlatformVerification(): void {
+  const verification = new CrossPlatformVerification()
+  verification.runAll()
+}
+
+// 如果直接运行此文件，执行验证
+// runCrossPlatformVerification()

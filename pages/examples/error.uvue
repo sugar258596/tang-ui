@@ -2,10 +2,13 @@
 import TErrorState from '@/components/TErrorState'
 import TCard from '@/components/TCard'
 import TButton from '@/components/TButton'
+import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 错误状态组件示例页面
  */
+
+const { $t } = useI18n()
 
 const handleRetry = (): void => {
   console.log('重试操作')
@@ -15,82 +18,82 @@ const handleRetry = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">TErrorState 错误状态组件</text>
-      <text class="example-desc">用于展示错误状态</text>
+      <text class="example-title">{{ $t('examplePages.error.title') }}</text>
+      <text class="example-desc">{{ $t('examplePages.error.description') }}</text>
     </view>
 
-    <TCard title="基础用法" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.basic')" class="example-section">
       <TErrorState />
     </TCard>
 
-    <TCard title="自定义错误信息" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.custom')" class="example-section">
       <TErrorState
-        title="加载失败"
-        message="网络连接异常，请检查网络设置"
+        :title="$t('examplePages.error.text.error')"
+        :message="$t('examplePages.error.text.networkError')"
       />
     </TCard>
 
-    <TCard title="404 错误" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.404')" class="example-section">
       <TErrorState
         type="404"
-        title="页面不存在"
-        message="抱歉，您访问的页面不存在"
+        :title="$t('examplePages.error.text.404Title')"
+        :message="$t('examplePages.error.text.404Message')"
       />
     </TCard>
 
-    <TCard title="500 错误" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.500')" class="example-section">
       <TErrorState
         type="500"
-        title="服务器错误"
-        message="服务器开小差了，请稍后再试"
+        :title="$t('examplePages.error.text.500Title')"
+        :message="$t('examplePages.error.text.500Message')"
       />
     </TCard>
 
-    <TCard title="网络错误" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.network')" class="example-section">
       <TErrorState
         type="network"
-        title="网络异常"
-        message="请检查您的网络连接"
+        :title="$t('examplePages.error.text.networkTitle')"
+        :message="$t('examplePages.error.text.networkMessage')"
       />
     </TCard>
 
-    <TCard title="带操作按钮" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.withButton')" class="example-section">
       <TErrorState
-        title="加载失败"
-        message="数据加载失败，请重试"
+        :title="$t('examplePages.error.text.loadFailed')"
+        :message="$t('examplePages.error.text.loadFailedMessage')"
         showButton
-        buttonText="重新加载"
+        :buttonText="$t('examplePages.error.text.reload')"
         @retry="handleRetry"
       />
     </TCard>
 
-    <TCard title="自定义图标" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.customIcon')" class="example-section">
       <TErrorState
         icon="⚠️"
-        title="操作失败"
-        message="请稍后重试"
+        :title="$t('examplePages.error.text.operationFailed')"
+        :message="$t('examplePages.error.text.tryAgain')"
       />
     </TCard>
 
-    <TCard title="自定义插槽" class="example-section">
+    <TCard :title="$t('examplePages.error.sections.customSlot')" class="example-section">
       <TErrorState>
         <template #icon>
           <text style="font-size: 48px;">😵</text>
         </template>
         <template #title>
           <text style="font-size: 20px; font-weight: bold; color: #f56c6c;">
-            出错了！
+            {{ $t('examplePages.error.text.errorOccurred') }}
           </text>
         </template>
         <template #message>
           <text style="color: #909399;">
-            这是通过插槽自定义的错误信息
+            {{ $t('examplePages.error.text.customError') }}
           </text>
         </template>
         <template #footer>
           <view style="display: flex; gap: 10px; margin-top: 20px;">
-            <TButton size="small">返回</TButton>
-            <TButton type="primary" size="small">重试</TButton>
+            <TButton size="small">{{ $t('examplePages.error.text.back') }}</TButton>
+            <TButton type="primary" size="small">{{ $t('examplePages.error.text.retry') }}</TButton>
           </view>
         </template>
       </TErrorState>

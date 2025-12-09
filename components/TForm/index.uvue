@@ -1,10 +1,12 @@
 <script setup lang="uts">
+	import { computed } from 'vue'
 	import TRadioButton from '../TRadioButton/index.uvue'
 	import TCheckbox from '../TCheckbox/index.uvue'
 	import TSwitch from '../TSwitch/index.uvue'
 	import TRate from '../TRate/index.uvue'
 	import TSlider from '../TSlider/index.uvue'
 	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
+	import { useI18n } from '../../composables/useI18n.uts'
 
 	const props = withDefaults(defineProps<TFormProps>(), {
 		labelWidth: '160rpx',
@@ -16,8 +18,27 @@
 	const model = defineModel<Record<string, any>>({ default: () => ({}) })
 	const errors = reactive<Record<string, string>>({})
 
+	// 使用 i18n
+	const { $t } = useI18n()
+
+	// 按钮文本
+	const submitButtonText = computed(() => {
+		return props.submitText !== undefined && props.submitText !== '' 
+			? props.submitText 
+			: $t('form.submitButton')
+	})
+
+	const resetButtonText = computed(() => {
+		return props.resetText !== undefined && props.resetText !== '' 
+			? props.resetText 
+			: $t('form.resetButton')
+	})
+
 	const handlePlaceholder = (item: FormSchema): string => {
-		return item.componentProps?.placeholder || `请输入${item.label}`
+		if (item.componentProps?.placeholder) {
+			return item.componentProps.placeholder
+		}
+		return $t('form.inputPlaceholder', { label: item.label })
 	}
 
 	const handleRange = (item: FormSchema) => {
@@ -46,7 +67,7 @@
 
 	const validateField = (item: FormSchema) => {
 		if (item.required && !model.value[item.field]) {
-			errors[item.field] = `请输入${item.label}`
+			errors[item.field] = $t('form.requiredError', { label: item.label })
 		} else {
 			delete errors[item.field]
 		}
@@ -89,7 +110,7 @@
 		}
 
 		if (hasError) {
-			console.warn('表单验证失败')
+			console.warn($t('form.validationFailed'))
 			return { valid: false, values: null }
 		}
 
@@ -97,7 +118,7 @@
 			await emit('submit', model.value)
 			return { valid: true, values: model.value }
 		} catch (err) {
-			console.error('表单提交失败:', err)
+			console.error($t('form.submitFailed'), err)
 			return { valid: false, values: null }
 		}
 	}
@@ -180,7 +201,7 @@
 						v-bind="item.componentProps || {}"
 						@change="onSelectChange($event, item)">
 						<view class="picker">
-							{{ getSelectLabel(item) || '请选择' }}
+							{{ getSelectLabel(item) || $t('form.selectPlaceholder') }}
 						</view>
 					</picker>
 
@@ -192,7 +213,7 @@
 						v-bind="item.componentProps || {}"
 						@change="onTimeChange($event, item)">
 						<view class="picker">
-							{{ model[item.field] || '请选择日期' }}
+							{{ model[item.field] || $t('form.datePlaceholder') }}
 						</view>
 					</picker>
 
@@ -204,7 +225,7 @@
 						v-bind="item.componentProps || {}"
 						@change="onTimeChange($event, item)">
 						<view class="picker">
-							{{ model[item.field] || '请选择时间' }}
+							{{ model[item.field] || $t('form.timePlaceholder') }}
 						</view>
 					</picker>
 
@@ -269,8 +290,8 @@
 
 			<!-- 按钮区域 -->
 			<view v-if="!hideButtons" class="form-footer">
-				<button class="btn btn-submit" form-type="submit">提交</button>
-				<button class="btn btn-reset" form-type="reset">重置</button>
+				<button class="btn btn-submit" form-type="submit">{{ submitButtonText }}</button>
+				<button class="btn btn-reset" form-type="reset">{{ resetButtonText }}</button>
 			</view>
 		</form>
 	</view>

@@ -1,0 +1,1236 @@
+{
+  "button": {
+    "title": "TButton 按钮组件",
+    "description": "按钮用于触发操作",
+    "sections": {
+      "basic": "基础用法",
+      "plain": "朴素按钮",
+      "size": "按钮尺寸",
+      "disabled": "禁用状态",
+      "loading": "加载状态",
+      "round": "圆角按钮",
+      "block": "块级按钮"
+    },
+    "buttons": {
+      "primary": "主要按钮",
+      "success": "成功按钮",
+      "warning": "警告按钮",
+      "danger": "危险按钮",
+      "info": "信息按钮",
+      "plain": "朴素按钮",
+      "large": "大型按钮",
+      "medium": "中等按钮",
+      "small": "小型按钮",
+      "disabled": "禁用按钮",
+      "loading": "加载中",
+      "clickToLoad": "点击加载",
+      "round": "圆角按钮",
+      "block": "块级按钮"
+    },
+    "messages": {
+      "clicked": "按钮被点击"
+    }
+  },
+  "icon": {
+    "title": "TIcon 图标组件",
+    "description": "语义化图标",
+    "sections": {
+      "basic": "基础用法",
+      "size": "图标尺寸",
+      "color": "图标颜色"
+    }
+  },
+  "text": {
+    "title": "TText 文本组件",
+    "description": "文本展示组件",
+    "sections": {
+      "basic": "基础用法",
+      "type": "文本类型",
+      "size": "文本尺寸",
+      "weight": "文本粗细",
+      "align": "文本对齐",
+      "ellipsis": "文本省略",
+      "customColor": "自定义颜色"
+    },
+    "content": {
+      "normal": "这是一段普通文本",
+      "primary": "主要文本 Primary",
+      "success": "成功文本 Success",
+      "warning": "警告文本 Warning",
+      "danger": "危险文本 Danger",
+      "info": "信息文本 Info",
+      "extraSmall": "超小号文本 Extra Small",
+      "small": "小号文本 Small",
+      "medium": "中号文本 Medium",
+      "large": "大号文本 Large",
+      "extraLarge": "超大号文本 Extra Large",
+      "bold": "加粗文本",
+      "italic": "斜体文本",
+      "underline": "下划线文本",
+      "lineThrough": "删除线文本",
+      "combined": "组合修饰文本",
+      "alignLeft": "左对齐文本",
+      "alignCenter": "居中对齐文本",
+      "alignRight": "右对齐文本",
+      "ellipsisOneLine": "这是一段很长的文本，当超过一行时会显示省略号。这是一段很长的文本，当超过一行时会显示省略号。",
+      "ellipsisTwoLines": "这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。这是一段很长的文本，当超过两行时会显示省略号。",
+      "customColor": "自定义颜色文本"
+    }
+  },
+  "image": {
+    "title": "TImage 图片组件",
+    "description": "增强的图片组件",
+    "sections": {
+      "basic": "基础用法",
+      "shape": "图片形状",
+      "mode": "裁剪模式",
+      "radius": "自定义圆角",
+      "error": "加载失败",
+      "preview": "图片预览",
+      "lazy": "懒加载",
+      "customText": "自定义提示文本"
+    },
+    "labels": {
+      "square": "方形",
+      "round": "圆角",
+      "circle": "圆形",
+      "clickToPreview": "点击图片可预览",
+      "lazyLoadDesc": "向下滚动时才会加载图片",
+      "customLoading": "自定义加载文本",
+      "customError": "自定义错误文本"
+    },
+    "messages": {
+      "loadComplete": "图片加载完成",
+      "loadFailed": "图片加载失败",
+      "errorText": "图片加载失败",
+      "loadingText": "请稍候...",
+      "errorCustomText": "无法加载",
+      "lazyLoading": "懒加载中..."
+    }
+  },
+  "divider": {
+    "title": "TDivider 分割线",
+    "description": "内容分割线",
+    "sections": {
+      "basic": "基础用法",
+      "dashed": "虚线样式",
+      "customColor": "自定义颜色",
+      "customThickness": "自定义粗细",
+      "withText": "文字分割线",
+      "customTextStyle": "自定义文字样式",
+      "customMargin": "自定义间距",
+      "vertical": "垂直分割线",
+      "verticalStyle": "垂直分割线样式",
+      "slot": "插槽用法"
+    },
+    "labels": {
+      "default": "默认分割线",
+      "secondPart": "第二部分内容",
+      "dashedLine": "虚线分割",
+      "dottedLine": "点线分割",
+      "solidLine": "实线分割",
+      "blueLine": "蓝色分割线",
+      "redLine": "红色分割线",
+      "greenLine": "绿色分割线",
+      "hairline": "细线 (hairline)",
+      "defaultCenter": "默认居中",
+      "leftAlign": "左对齐",
+      "rightAlign": "右对齐",
+      "topContent": "上方内容",
+      "middleContent": "中间内容",
+      "bottomContent": "下方内容",
+      "blueText": "蓝色文字",
+      "largeText": "大号文字",
+      "smallMargin": "小间距",
+      "defaultMargin": "默认间距",
+      "largeMargin": "大间距",
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "option4": "选项四",
+      "solid": "实线",
+      "dashed": "虚线",
+      "dotted": "点线",
+      "colorful": "彩色",
+      "end": "结束",
+      "customSlot": "自定义插槽内容"
+    }
+  },
+  "card": {
+    "title": "TCard 卡片组件",
+    "description": "卡片容器，用于组织内容",
+    "sections": {
+      "basic": "基础卡片",
+      "withSubtitle": "带副标题的卡片",
+      "noShadow": "无阴影卡片",
+      "withBorder": "带边框卡片",
+      "padding": "不同内边距",
+      "largePadding": "大内边距卡片",
+      "radius": "不同圆角",
+      "largeRadius": "大圆角卡片",
+      "clickable": "可点击卡片",
+      "customSlot": "自定义插槽"
+    },
+    "content": {
+      "basic": "这是卡片的内容区域",
+      "subtitle": "这是副标题",
+      "anyContent": "卡片内容可以是任何元素",
+      "noShadow": "这个卡片没有阴影效果",
+      "withBorder": "这个卡片使用边框而不是阴影",
+      "smallPadding": "小内边距卡片",
+      "largePadding": "大内边距卡片",
+      "noRadius": "无圆角卡片",
+      "largeRadius": "大圆角卡片",
+      "clickable": "点击这个卡片会触发事件",
+      "customHeader": "自定义头部",
+      "customSlot": "这个卡片使用了自定义头部插槽"
+    },
+    "buttons": {
+      "action": "操作",
+      "cancel": "取消",
+      "confirm": "确定"
+    },
+    "messages": {
+      "clicked": "卡片被点击"
+    }
+  },
+  "input": {
+    "title": "TInput 输入框",
+    "description": "文本输入",
+    "sections": {
+      "basic": "基础用法",
+      "type": "输入类型",
+      "size": "不同大小",
+      "disabled": "禁用状态",
+      "readonly": "只读状态",
+      "clearable": "可清空",
+      "affix": "带前后缀",
+      "events": "事件处理",
+      "maxlength": "字数限制"
+    },
+    "placeholder": "请输入内容",
+    "labels": {
+      "inputValue": "输入值",
+      "textInput": "文本输入",
+      "passwordInput": "密码输入",
+      "numberInput": "数字输入",
+      "phoneInput": "电话号码",
+      "emailInput": "邮箱地址",
+      "smallSize": "小尺寸输入框",
+      "mediumSize": "中等尺寸输入框",
+      "largeSize": "大尺寸输入框",
+      "disabled": "禁用的输入框",
+      "readonly": "只读的输入框",
+      "clearable": "可清除内容",
+      "amount": "请输入金额",
+      "website": "请输入网址",
+      "domain": "请输入域名",
+      "checkConsole": "查看控制台"
+    }
+  },
+  "form": {
+    "title": "TForm 表单组件",
+    "description": "动态表单，支持多种表单控件",
+    "sections": {
+      "basic": "基础用法",
+      "full": "完整表单（所有组件类型）",
+      "customButtons": "自定义按钮",
+      "customSlot": "自定义插槽"
+    },
+    "labels": {
+      "username": "用户名",
+      "password": "密码",
+      "name": "姓名",
+      "age": "年龄",
+      "bio": "简介",
+      "city": "城市",
+      "birthday": "生日",
+      "gender": "性别",
+      "hobbies": "爱好",
+      "notify": "通知",
+      "rating": "评分",
+      "volume": "音量",
+      "email": "邮箱",
+      "phone": "手机号",
+      "nickname": "昵称",
+      "avatar": "头像"
+    },
+    "placeholders": {
+      "username": "请输入用户名",
+      "password": "请输入密码",
+      "name": "请输入姓名",
+      "age": "请输入年龄",
+      "bio": "请输入个人简介",
+      "email": "请输入邮箱",
+      "phone": "请输入手机号",
+      "nickname": "请输入昵称"
+    },
+    "options": {
+      "beijing": "北京",
+      "shanghai": "上海",
+      "guangzhou": "广州",
+      "shenzhen": "深圳",
+      "male": "男",
+      "female": "女",
+      "reading": "阅读",
+      "sports": "运动",
+      "music": "音乐"
+    },
+    "buttons": {
+      "submit": "提交",
+      "reset": "重置",
+      "validate": "验证",
+      "getData": "获取数据",
+      "uploadAvatar": "上传头像"
+    },
+    "messages": {
+      "submitSuccess": "提交成功",
+      "reset": "已重置",
+      "validateSuccess": "验证通过",
+      "validateFail": "验证失败",
+      "uploadSuccess": "上传成功",
+      "formData": "表单数据"
+    }
+  },
+  "list": {
+    "title": "TList 列表组件",
+    "description": "用于展示列表数据",
+    "sections": {
+      "basic": "基础列表",
+      "withDescription": "带描述的列表",
+      "withIcon": "带图标的列表",
+      "withExtra": "带右侧内容",
+      "clickable": "可点击列表",
+      "customSpacing": "自定义间距",
+      "withTitle": "带标题的列表"
+    },
+    "items": {
+      "item1": "列表项 1",
+      "item2": "列表项 2",
+      "item3": "列表项 3",
+      "titleText": "标题文本",
+      "description1": "这是第一项的描述信息",
+      "anotherTitle": "另一个标题",
+      "description2": "这是第二项的描述信息",
+      "settings": "设置",
+      "notification": "通知",
+      "privacy": "隐私",
+      "about": "关于",
+      "balance": "余额",
+      "coupon": "优惠券",
+      "points": "积分",
+      "clickable1": "可点击项 1",
+      "clickable2": "可点击项 2",
+      "disabled": "禁用项",
+      "noSpacing1": "无间距项 1",
+      "noSpacing2": "无间距项 2",
+      "largeSpacing1": "大间距项 1",
+      "largeSpacing2": "大间距项 2",
+      "systemSettings": "系统设置",
+      "general": "通用",
+      "accountSecurity": "账号与安全"
+    },
+    "extra": {
+      "balance": "¥1,234.56",
+      "couponCount": "3 张",
+      "pointsCount": "1,234"
+    }
+  },
+  "dialog": {
+    "title": "TDialog 对话框",
+    "description": "模态对话框",
+    "sections": {
+      "basic": "基础用法",
+      "confirm": "确认对话框",
+      "custom": "自定义内容"
+    },
+    "buttons": {
+      "show": "显示对话框",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "content": {
+      "title": "提示",
+      "message": "这是一条消息"
+    }
+  },
+  "toast": {
+    "title": "TToast 轻提示",
+    "description": "轻量级提示",
+    "sections": {
+      "basic": "基础用法",
+      "type": "提示类型",
+      "duration": "显示时长"
+    },
+    "buttons": {
+      "show": "显示提示",
+      "success": "成功提示",
+      "error": "错误提示",
+      "warning": "警告提示",
+      "loading": "加载提示"
+    },
+    "messages": {
+      "text": "这是一条文本提示",
+      "success": "操作成功",
+      "fail": "操作失败",
+      "loading": "加载中...",
+      "loadComplete": "加载完成"
+    }
+  },
+  "loading": {
+    "title": "TLoading 加载",
+    "description": "加载状态",
+    "sections": {
+      "basic": "基础用法",
+      "type": "加载类型",
+      "text": "加载文案"
+    },
+    "text": {
+      "loading": "加载中..."
+    }
+  },
+  "empty": {
+    "title": "TEmpty 空状态",
+    "description": "空数据展示",
+    "sections": {
+      "basic": "基础用法",
+      "custom": "自定义内容"
+    },
+    "text": {
+      "noData": "暂无数据",
+      "noResult": "暂无搜索结果"
+    }
+  },
+  "picker": {
+    "title": "TPicker 选择器",
+    "description": "多列数据选择",
+    "sections": {
+      "basic": "基础用法",
+      "multiColumn": "多列选择",
+      "cascade": "级联选择"
+    },
+    "buttons": {
+      "confirm": "确认",
+      "cancel": "取消"
+    }
+  },
+  "actionSheet": {
+    "title": "TActionSheet 动作面板",
+    "description": "底部动作面板",
+    "sections": {
+      "basic": "基础用法",
+      "withTitle": "带标题描述",
+      "customColor": "自定义颜色"
+    },
+    "buttons": {
+      "show": "打开操作面板",
+      "cancel": "取消"
+    },
+    "actions": {
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "shareToFriend": "分享给朋友",
+      "shareToMoments": "分享到朋友圈",
+      "copyLink": "复制链接",
+      "delete": "删除"
+    },
+    "dialog": {
+      "title": "操作选择",
+      "description": "请选择您要进行的操作"
+    },
+    "messages": {
+      "selected": "选择了"
+    }
+  },
+  "checkbox": {
+    "title": "TCheckbox 复选框组件",
+    "description": "多选框组件",
+    "sections": {
+      "basic": "基础用法",
+      "defaultChecked": "默认选中",
+      "group": "复选框组",
+      "disabled": "禁用状态",
+      "size": "不同大小",
+      "customColor": "自定义颜色",
+      "indeterminate": "中间状态",
+      "events": "事件处理"
+    },
+    "labels": {
+      "checkbox": "复选框",
+      "defaultChecked": "默认选中的复选框",
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "disabledUnchecked": "禁用未选中",
+      "disabledChecked": "禁用已选中",
+      "small": "小尺寸",
+      "medium": "中等尺寸",
+      "large": "大尺寸",
+      "red": "红色复选框",
+      "green": "绿色复选框",
+      "orange": "橙色复选框",
+      "indeterminate": "半选状态",
+      "clickToConsole": "点击查看控制台"
+    },
+    "status": {
+      "checked": "选中状态",
+      "selected": "选中值",
+      "notSelected": "未选择",
+      "indeterminateDesc": "用于表示部分选中状态",
+      "checkConsole": "切换复选框查看控制台"
+    }
+  },
+  "cell": {
+    "title": "TCell 单元格",
+    "description": "单元格组件",
+    "sections": {
+      "basic": "基础用法",
+      "withIcon": "带图标",
+      "withValue": "带值",
+      "link": "链接单元格"
+    },
+    "groups": {
+      "showArrow": "显示箭头",
+      "clickableCell": "可点击单元格",
+      "customSize": "自定义尺寸",
+      "customContent": "自定义内容",
+      "group": "单元格组",
+      "required": "必填项"
+    },
+    "labels": {
+      "cell": "单元格",
+      "content": "内容",
+      "description": "描述信息",
+      "settings": "设置",
+      "message": "消息",
+      "notification": "通知",
+      "enabled": "已启用",
+      "personalInfo": "个人信息",
+      "systemSettings": "系统设置",
+      "enter": "进入",
+      "aboutUs": "关于我们",
+      "clickable": "可点击",
+      "notClickable": "不可点击",
+      "largeCell": "大尺寸单元格",
+      "defaultCell": "默认单元格",
+      "smallCell": "小尺寸单元格",
+      "customTitle": "自定义标题",
+      "accountManagement": "账号管理",
+      "privacySettings": "隐私设置",
+      "notificationSettings": "通知设置",
+      "basicSettings": "基础设置",
+      "clearCache": "清除缓存",
+      "logout": "退出登录",
+      "other": "其他",
+      "username": "用户名",
+      "phone": "手机号",
+      "pleaseEnter": "请输入",
+      "email": "邮箱",
+      "optional": "选填"
+    }
+  },
+  "grid": {
+    "title": "TGrid 宫格",
+    "description": "宫格布局",
+    "sections": {
+      "basic": "基础用法",
+      "custom": "自定义列数",
+      "customGap": "自定义间距",
+      "border": "显示边框",
+      "square": "正方形格子",
+      "clickable": "可点击",
+      "customColor": "自定义图标颜色",
+      "badge": "徽标提示",
+      "image": "使用图片",
+      "customContent": "自定义内容"
+    },
+    "labels": {
+      "home": "首页",
+      "mail": "邮件",
+      "favorite": "收藏",
+      "settings": "设置",
+      "phone": "电话",
+      "bulb": "灯泡",
+      "palette": "调色板",
+      "camera": "相机",
+      "red": "红色",
+      "blue": "蓝色",
+      "green": "绿色",
+      "yellow": "黄色",
+      "image1": "图片1",
+      "image2": "图片2",
+      "image3": "图片3",
+      "custom": "自定义",
+      "customDesc": "自定义内容",
+      "normalGrid": "普通宫格",
+      "blueColor": "蓝色",
+      "background": "背景色",
+      "fast": "快速"
+    }
+  },
+  "layout": {
+    "title": "TRow/TCol 栅格",
+    "description": "24栅格布局",
+    "sections": {
+      "basic": "基础用法",
+      "gutter": "区块间隔",
+      "offset": "列偏移",
+      "align": "水平对齐",
+      "verticalAlign": "垂直对齐",
+      "responsive": "响应式"
+    },
+    "labels": {
+      "leftAlign": "左对齐",
+      "centerAlign": "居中对齐",
+      "rightAlign": "右对齐",
+      "spaceBetween": "两端对齐",
+      "spaceAround": "分散对齐",
+      "topAlign": "顶部对齐",
+      "middleAlign": "居中对齐",
+      "bottomAlign": "底部对齐",
+      "height": "高度"
+    }
+  },
+  "textarea": {
+    "title": "TTextarea 多行输入",
+    "description": "多行文本输入",
+    "sections": {
+      "basic": "基础用法",
+      "disabled": "禁用状态",
+      "maxlength": "字数统计",
+      "autoHeight": "自动高度",
+      "clearable": "显示清空按钮",
+      "customRows": "自定义行数",
+      "complete": "完整示例"
+    },
+    "placeholder": "请输入内容",
+    "labels": {
+      "disabled": "禁用状态",
+      "limit100": "最多输入100个字符",
+      "autoGrow": "自动增长高度",
+      "clearable": "可清空内容",
+      "rows3": "3行",
+      "rows3Height": "固定3行高度",
+      "rows5": "5行",
+      "rows5Height": "固定5行高度",
+      "feedback": "请输入您的反馈意见"
+    }
+  },
+  "error": {
+    "title": "TErrorState 错误状态",
+    "description": "错误提示",
+    "sections": {
+      "basic": "基础用法",
+      "custom": "自定义内容",
+      "404": "404 错误",
+      "500": "500 错误",
+      "network": "网络错误",
+      "withButton": "带按钮",
+      "customIcon": "自定义图标",
+      "customSlot": "自定义插槽"
+    },
+    "text": {
+      "error": "发生错误",
+      "retry": "重试",
+      "networkError": "网络连接失败",
+      "404Title": "页面未找到",
+      "404Message": "抱歉，您访问的页面不存在",
+      "500Title": "服务器错误",
+      "500Message": "抱歉，服务器出现了一些问题",
+      "networkTitle": "网络异常",
+      "networkMessage": "请检查您的网络连接",
+      "loadFailed": "加载失败",
+      "loadFailedMessage": "数据加载失败，请重试",
+      "reload": "重新加载",
+      "operationFailed": "操作失败",
+      "tryAgain": "请稍后再试",
+      "errorOccurred": "出错了",
+      "customError": "这是自定义的错误提示内容",
+      "back": "返回"
+    }
+  },
+  "radio": {
+    "title": "TRadioButton 单选组件",
+    "description": "单选按钮组件",
+    "sections": {
+      "basic": "基础用法",
+      "group": "单选组",
+      "disabled": "禁用状态",
+      "size": "不同大小",
+      "customColor": "自定义颜色",
+      "events": "事件处理"
+    },
+    "labels": {
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "optionA": "选项 A",
+      "optionB": "选项 B",
+      "optionC": "选项 C",
+      "optionD": "选项 D",
+      "disabledUnchecked": "禁用未选中",
+      "disabledChecked": "禁用已选中",
+      "small": "小尺寸",
+      "medium": "中等尺寸",
+      "large": "大尺寸",
+      "red": "红色",
+      "green": "绿色",
+      "orange": "橙色"
+    },
+    "status": {
+      "selected": "选中值",
+      "notSelected": "未选择",
+      "checkConsole": "切换选项查看控制台"
+    }
+  },
+  "switch": {
+    "title": "TSwitch 开关组件",
+    "description": "表示两种状态之间的切换",
+    "sections": {
+      "basic": "基础用法",
+      "disabled": "禁用状态",
+      "size": "不同尺寸",
+      "customColor": "自定义颜色",
+      "withText": "带文字提示",
+      "events": "change 事件"
+    },
+    "labels": {
+      "status": "状态",
+      "on": "开",
+      "off": "关",
+      "disabledOff": "禁用状态（关）",
+      "disabledOn": "禁用状态（开）",
+      "small": "小尺寸",
+      "medium": "中尺寸",
+      "large": "大尺寸",
+      "customColor": "自定义颜色",
+      "openConsole": "打开控制台查看事件"
+    },
+    "text": {
+      "active": "开启",
+      "inactive": "关闭"
+    }
+  },
+  "searchBar": {
+    "title": "TSearchBar 搜索框",
+    "description": "搜索输入框",
+    "sections": {
+      "basic": "基础用法",
+      "round": "圆角样式",
+      "showCancel": "显示取消按钮",
+      "customBackground": "自定义背景色",
+      "disabled": "禁用状态",
+      "customIcon": "自定义图标",
+      "maxlength": "限制长度"
+    },
+    "placeholder": {
+      "default": "请输入搜索内容",
+      "round": "圆角搜索框",
+      "background": "浅蓝色背景",
+      "disabled": "禁用状态",
+      "customIcon": "自定义搜索图标",
+      "maxlength": "最多输入20个字符"
+    },
+    "buttons": {
+      "cancel": "取消"
+    },
+    "messages": {
+      "search": "搜索",
+      "cancelled": "已取消"
+    }
+  },
+  "numberInput": {
+    "title": "TNumberInput 数字输入组件",
+    "description": "用于输入数字的增强组件",
+    "sections": {
+      "basic": "基础用法",
+      "range": "设置范围",
+      "step": "步长设置",
+      "precision": "精度控制",
+      "size": "不同大小",
+      "disabled": "禁用状态",
+      "events": "事件处理"
+    },
+    "labels": {
+      "currentValue": "当前值",
+      "range": "范围",
+      "step": "步长",
+      "integer": "整数",
+      "decimal": "保留2位小数",
+      "checkConsole": "查看控制台了解数值变化"
+    }
+  },
+  "select": {
+    "title": "TSelect 选择器组件",
+    "description": "下拉选择器组件",
+    "sections": {
+      "basic": "基础用法",
+      "upward": "向上展开",
+      "default": "默认值",
+      "disabled": "禁用状态",
+      "disabledOptions": "禁用选项",
+      "clearable": "可清空",
+      "filterable": "可搜索",
+      "multiple": "多选",
+      "size": "不同大小",
+      "events": "事件处理"
+    },
+    "labels": {
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "option4": "选项四",
+      "option5": "选项五",
+      "item1": "第一项",
+      "item2": "第二项",
+      "item3": "第三项",
+      "available1": "可选项一",
+      "disabled": "禁用项",
+      "available2": "可选项二",
+      "available3": "可选项三",
+      "small": "小尺寸",
+      "medium": "中等尺寸",
+      "large": "大尺寸"
+    },
+    "placeholder": {
+      "default": "请选择",
+      "upward": "向上展开",
+      "disabled": "禁用状态",
+      "partialDisabled": "部分选项禁用",
+      "clearable": "可清空选择",
+      "filterable": "可搜索选项",
+      "multiple": "请选择多个选项",
+      "checkConsole": "选择查看控制台"
+    },
+    "messages": {
+      "selected": "选中值",
+      "notSelected": "未选择",
+      "upwardDesc": "设置 placement=\"top\" 可以让下拉列表向上展开"
+    }
+  },
+  "slider": {
+    "title": "TSlider 滑块",
+    "description": "滑动选择器",
+    "sections": {
+      "basic": "基础用法",
+      "showValue": "显示当前值",
+      "customColor": "自定义颜色",
+      "step": "设置步长",
+      "disabled": "禁用状态"
+    }
+  },
+  "rate": {
+    "title": "TRate 评分",
+    "description": "评分组件",
+    "sections": {
+      "basic": "基础用法",
+      "halfStar": "半星",
+      "readonly": "只读",
+      "customIcon": "自定义图标"
+    }
+  },
+  "tags": {
+    "title": "Tags 标签组件",
+    "description": "用于标记和分类的标签组件",
+    "sections": {
+      "basic": "基础用法",
+      "card": "卡片类型",
+      "size": "不同尺寸",
+      "badge": "带徽章",
+      "disabled": "禁用状态",
+      "bottom": "底部标签栏",
+      "customColor": "自定义颜色",
+      "centered": "居中显示",
+      "noAnimation": "禁用动画",
+      "usage": "使用说明"
+    },
+    "labels": {
+      "home": "首页",
+      "product": "产品",
+      "service": "服务",
+      "about": "关于",
+      "all": "全部",
+      "ongoing": "进行中",
+      "finished": "已完成",
+      "tab1": "选项1",
+      "tab2": "选项2",
+      "tab3": "选项3",
+      "message": "消息",
+      "notification": "通知",
+      "todo": "待办",
+      "enabled1": "可用选项1",
+      "disabled": "禁用选项",
+      "enabled2": "可用选项2",
+      "discover": "发现",
+      "profile": "我的",
+      "redTheme": "红色主题",
+      "greenTheme": "绿色主题",
+      "blueTheme": "蓝色主题"
+    },
+    "content": {
+      "currentKey": "当前激活的 Key",
+      "home": "首页内容区域",
+      "product": "产品展示区域",
+      "service": "服务介绍区域",
+      "about": "关于我们区域",
+      "currentSelected": "当前选中",
+      "allTasks": "全部任务",
+      "allTasksDesc": "显示所有任务列表",
+      "ongoing": "进行中",
+      "ongoingDesc": "显示正在进行的任务",
+      "finished": "已完成",
+      "finishedDesc": "显示已完成的任务",
+      "current": "当前",
+      "messageCenter": "消息中心",
+      "unreadMessages": "您有 5 条未读消息",
+      "notifications": "通知",
+      "notificationCount": "您有 99+ 条通知",
+      "todoList": "待办事项",
+      "newTodo": "您有新的待办事项",
+      "disabledDesc": "中间的选项已被禁用，无法点击",
+      "homeContent": "首页",
+      "bottomNavDesc": "标签栏显示在底部，适合底部导航",
+      "discoverContent": "发现页面内容",
+      "profileContent": "个人中心内容",
+      "customColorTheme": "自定义颜色主题",
+      "redTheme": "激活颜色为红色 (#e74c3c)",
+      "centered": "居中显示",
+      "noAnimation": "无动画效果"
+    },
+    "usage": {
+      "props": "主要属性",
+      "vModel": "• v-model: 绑定当前激活的标签",
+      "items": "• items: 标签数据数组",
+      "type": "• type: 标签类型 (line | card)",
+      "size": "• size: 标签大小 (small | medium | large)",
+      "tabPosition": "• tabPosition: 标签位置 (top | bottom)",
+      "scrollable": "• scrollable: 是否可滚动",
+      "centered": "• centered: 是否居中显示",
+      "activeColor": "• activeColor: 激活颜色",
+      "inactiveColor": "• inactiveColor: 非激活颜色",
+      "animated": "• animated: 是否显示动画",
+      "events": "主要事件",
+      "change": "• @change: 标签切换时触发",
+      "tabClick": "• @tab-click: 点击标签时触发",
+      "slots": "插槽",
+      "default": "• default: 内容区域,接收 activeKey 参数",
+      "tabItem": "TabItem 类型",
+      "key": "• key: 唯一标识 (必填)",
+      "label": "• label: 标签文本 (必填)",
+      "disabled": "• disabled: 是否禁用",
+      "badge": "• badge: 徽章内容",
+      "icon": "• icon: 图标路径"
+    }
+  },
+  "badge": {
+    "title": "TBadge 徽标组件",
+    "description": "用于显示数字或状态标记",
+    "sections": {
+      "basic": "基础用法",
+      "max": "最大值",
+      "dot": "小圆点",
+      "type": "不同类型",
+      "customColor": "自定义颜色",
+      "offset": "偏移量",
+      "dynamic": "动态控制"
+    },
+    "labels": {
+      "comment": "评论",
+      "reply": "回复",
+      "message": "消息",
+      "warning": "警告",
+      "online": "在线",
+      "offline": "离线",
+      "primary": "主要",
+      "danger": "危险",
+      "success": "成功",
+      "info": "信息",
+      "bgColor": "背景色",
+      "blue": "蓝色",
+      "green": "绿色",
+      "offset": "偏移",
+      "dynamic": "动态"
+    },
+    "buttons": {
+      "increase": "增加",
+      "decrease": "减少",
+      "show": "显示",
+      "hide": "隐藏"
+    }
+  },
+  "avatar": {
+    "title": "TAvatar 头像组件",
+    "description": "用于展示用户头像或图标",
+    "sections": {
+      "basic": "基础用法",
+      "size": "不同尺寸",
+      "shape": "不同形状",
+      "customColor": "自定义颜色",
+      "fit": "图片填充模式",
+      "events": "带事件",
+      "customContent": "自定义内容"
+    },
+    "messages": {
+      "clicked": "头像被点击",
+      "error": "图片加载失败",
+      "clickOrConsole": "点击头像或查看控制台日志"
+    }
+  },
+  "progress": {
+    "title": "TProgress 进度条",
+    "description": "进度指示器",
+    "sections": {
+      "basic": "基础用法",
+      "type": "进度条类型",
+      "status": "进度条状态",
+      "custom": "自定义颜色"
+    }
+  },
+  "noticeBar": {
+    "title": "TNoticeBar 通知栏",
+    "description": "滚动通知",
+    "sections": {
+      "basic": "基础用法",
+      "closable": "可关闭",
+      "link": "链接模式",
+      "scrollable": "滚动播放",
+      "customColor": "自定义颜色"
+    },
+    "text": {
+      "notice": "这是一条通知消息",
+      "closable": "这是一条可关闭的通知消息",
+      "link": "点击查看详情",
+      "scrollable": "这是一条很长的通知消息，会自动滚动播放以便用户查看完整内容",
+      "customColor": "自定义颜色的通知栏",
+      "danger": "危险提示信息"
+    }
+  },
+  "collapse": {
+    "title": "Collapse 折叠面板",
+    "description": "可以折叠/展开的内容区域",
+    "sections": {
+      "basic": "基础用法",
+      "accordion": "手风琴模式",
+      "disabled": "禁用状态",
+      "customTitle": "自定义标题",
+      "noBorder": "无边框",
+      "currentState": "当前状态"
+    },
+    "titles": {
+      "consistency": "一致性 Consistency",
+      "feedback": "反馈 Feedback",
+      "efficiency": "效率 Efficiency",
+      "designPrinciples": "设计原则",
+      "navigation": "导航",
+      "feedbackTitle": "反馈",
+      "normalItem": "正常项",
+      "disabledItem": "禁用项",
+      "mobileComponents": "移动端组件",
+      "richComponents": "丰富的组件",
+      "highPerformance": "高性能",
+      "item1": "第一项",
+      "item2": "第二项"
+    },
+    "content": {
+      "consistency": "与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念。",
+      "feedback": "控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作。",
+      "efficiency": "简化流程：设计简洁直观的操作流程，让用户快速完成目标。",
+      "designPrinciples": "一致、反馈、效率、可控是我们的设计原则。",
+      "navigation": "导航可以解决用户在访问页面时，在哪里、去哪里、怎么去的问题。",
+      "feedbackContent": "反馈是对用户行为的一种回应，给用户一个交代。",
+      "normalItem": "这是一个正常的折叠面板项，可以正常展开收起。",
+      "disabledItem": "这是一个禁用的折叠面板项，无法展开。",
+      "mobileComponents": "专为移动端设计的轻量级 UI 组件库。",
+      "richComponents": "提供丰富的基础组件，覆盖移动端各类场景。",
+      "highPerformance": "性能优异，轻量级实现，保证流畅体验。",
+      "item1Content": "这是第一项的内容。",
+      "item2Content": "这是第二项的内容。"
+    },
+    "labels": {
+      "expandedItems": "基础用法展开项",
+      "accordionExpanded": "手风琴展开项",
+      "none": "无"
+    }
+  },
+  "swiper": {
+    "title": "Swiper 轮播图",
+    "description": "用于循环播放图片或内容",
+    "sections": {
+      "basic": "基础用法",
+      "customIndicator": "自定义指示器颜色",
+      "numberIndicator": "数字指示器",
+      "topIndicator": "顶部指示器",
+      "vertical": "垂直轮播",
+      "noAutoplay": "禁用自动播放",
+      "noIndicator": "无指示器",
+      "customHeight": "自定义高度和间隔"
+    },
+    "labels": {
+      "carousel1": "轮播图 1",
+      "carousel2": "轮播图 2",
+      "carousel3": "轮播图 3",
+      "carousel4": "轮播图 4",
+      "currentIndex": "当前索引",
+      "manualSwipe": "手动滑动切换",
+      "heightDesc": "高度 150px，间隔 5秒，动画 500ms"
+    }
+  },
+  "navbar": {
+    "title": "TNavBar 导航栏",
+    "description": "顶部导航栏",
+    "sections": {
+      "basic": "基础用法",
+      "leftBack": "左侧返回",
+      "rightButton": "右侧按钮",
+      "bothButtons": "左右按钮"
+    },
+    "labels": {
+      "title": "标题",
+      "back": "返回",
+      "button": "按钮",
+      "more": "更多"
+    },
+    "messages": {
+      "clickLeft": "点击左侧",
+      "clickRight": "点击右侧"
+    }
+  },
+  "tabs": {
+    "title": "Tabs 标签页组件",
+    "description": "选项卡切换组件,支持多种样式和配置",
+    "sections": {
+      "basic": "基础用法",
+      "card": "卡片类型",
+      "size": "不同尺寸",
+      "badge": "带徽章",
+      "disabled": "禁用状态",
+      "bottom": "底部标签栏",
+      "customColor": "自定义颜色",
+      "centered": "居中显示",
+      "noAnimation": "禁用动画",
+      "usage": "使用说明"
+    },
+    "labels": {
+      "home": "首页",
+      "profile": "个人中心",
+      "settings": "设置",
+      "about": "关于",
+      "user": "用户信息",
+      "order": "订单管理",
+      "wallet": "我的钱包",
+      "option1": "选项1",
+      "option2": "选项2",
+      "option3": "选项3",
+      "message": "消息",
+      "notification": "通知",
+      "todo": "待办",
+      "enabled1": "可用选项1",
+      "disabled": "禁用选项",
+      "enabled2": "可用选项2",
+      "discover": "发现",
+      "me": "我的"
+    },
+    "content": {
+      "currentKey": "当前激活的 Key",
+      "home": "这是首页的内容区域",
+      "profile": "这是个人中心的内容区域",
+      "settings": "这是设置页面的内容区域",
+      "about": "这是关于页面的内容区域",
+      "user": "用户信息",
+      "userPanel": "卡片样式的用户信息面板",
+      "order": "订单管理",
+      "orderPanel": "卡片样式的订单管理面板",
+      "wallet": "我的钱包",
+      "walletPanel": "卡片样式的钱包面板",
+      "currentSelected": "当前选中",
+      "messageCenter": "消息中心",
+      "unreadMessages": "您有 5 条未读消息",
+      "notifications": "通知",
+      "notificationCount": "您有 99+ 条通知",
+      "todoList": "待办事项",
+      "newTodo": "您有新的待办事项",
+      "disabledDesc": "中间的选项已被禁用，无法点击",
+      "homeContent": "首页",
+      "bottomNavDesc": "标签栏显示在底部，适合作为底部导航",
+      "discoverContent": "发现页内容",
+      "meContent": "个人中心内容",
+      "customColorTheme": "自定义颜色",
+      "redTheme": "激活颜色为红色 (#ff6b6b)",
+      "centered": "居中显示的标签",
+      "noAnimation": "无动画效果"
+    },
+    "usage": {
+      "props": "主要属性",
+      "vModel": "• v-model: 绑定当前激活的标签",
+      "type": "• type: 标签类型 (line | card)",
+      "size": "• size: 标签大小 (small | medium | large)",
+      "tabPosition": "• tabPosition: 标签位置 (top | bottom)",
+      "scrollable": "• scrollable: 是否可滚动",
+      "centered": "• centered: 是否居中显示",
+      "activeColor": "• activeColor: 激活颜色",
+      "inactiveColor": "• inactiveColor: 非激活颜色",
+      "animated": "• animated: 是否显示动画",
+      "events": "主要事件",
+      "change": "• @change: 标签切换时触发",
+      "slots": "插槽",
+      "default": "• default: 内容区域,接收 activePane 和 activeIndex"
+    }
+  },
+  "popup": {
+    "title": "TPopup 弹出层组件",
+    "description": "弹出层容器，用于展示弹出内容",
+    "sections": {
+      "basic": "基础用法",
+      "position": "不同方向"
+    },
+    "buttons": {
+      "bottom": "底部弹出",
+      "top": "顶部弹出",
+      "left": "左侧弹出",
+      "right": "右侧弹出",
+      "center": "中心弹出"
+    },
+    "content": {
+      "bottom": "这是弹出层内容",
+      "top": "顶部弹出内容",
+      "left": "左侧弹出内容",
+      "right": "右侧弹出内容",
+      "center": "中心弹出",
+      "centerDesc": "这是一个中心弹出的内容区域"
+    }
+  },
+  "checkboxGroup": {
+    "title": "TCheckboxGroup 复选组",
+    "description": "复选框组",
+    "sections": {
+      "basic": "基础用法",
+      "horizontal": "水平排列",
+      "disabled": "禁用选项",
+      "max": "限制最多选择",
+      "disabledAll": "禁用所有"
+    },
+    "labels": {
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "option2Disabled": "选项二（禁用）"
+    }
+  },
+  "radioGroup": {
+    "title": "TRadioGroup 单选组",
+    "description": "单选框组",
+    "sections": {
+      "basic": "基础用法",
+      "horizontal": "水平排列",
+      "disabled": "禁用选项",
+      "disabledAll": "禁用所有"
+    },
+    "labels": {
+      "option1": "选项一",
+      "option2": "选项二",
+      "option3": "选项三",
+      "option2Disabled": "选项二（禁用）"
+    }
+  }
+}

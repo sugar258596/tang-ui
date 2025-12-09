@@ -1,0 +1,82 @@
+/**
+ * i18n 错误处理工具类
+ * 提供统一的错误和警告输出
+ */
+export class I18nError {
+  /**
+   * 警告：语言代码不存在
+   * @param locale 语言代码
+   */
+  static warnLocaleNotFound(locale: string): void {
+    console.warn(`[Tang UI I18n] Locale "${locale}" not found, using fallback locale`)
+  }
+  
+  /**
+   * 警告：翻译键不存在
+   * @param key 翻译键
+   * @param locale 语言代码
+   */
+  static warnKeyNotFound(key: string, locale: string): void {
+    // 仅在开发环境输出警告
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[Tang UI I18n] Translation key "${key}" not found in locale "${locale}"`)
+    }
+  }
+  
+  /**
+   * 错误：语言包格式无效
+   * @param locale 语言代码
+   */
+  static errorInvalidMessages(locale: string): void {
+    console.error(`[Tang UI I18n] Invalid messages format for locale "${locale}"`)
+  }
+  
+  /**
+   * 警告：参数缺失
+   * @param key 翻译键
+   * @param param 参数名
+   */
+  static warnMissingParam(key: string, param: string): void {
+    // 仅在开发环境输出警告
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[Tang UI I18n] Missing parameter "${param}" for key "${key}"`)
+    }
+  }
+  
+  /**
+   * 警告：翻译键格式无效
+   * @param key 翻译键
+   */
+  static warnInvalidKey(key: string): void {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[Tang UI I18n] Invalid translation key format: "${key}". Expected format: "moduleName.key"`)
+    }
+  }
+  
+  /**
+   * 错误：语言包不是有效的对象
+   * @param locale 语言代码
+   */
+  static errorMessagesNotObject(locale: string): void {
+    console.error(`[Tang UI I18n] Messages for locale "${locale}" must be a valid object`)
+  }
+  
+  /**
+   * 错误：模块不是有效的对象
+   * @param locale 语言代码
+   * @param moduleName 模块名
+   */
+  static errorModuleNotObject(locale: string, moduleName: string): void {
+    console.error(`[Tang UI I18n] Module "${moduleName}" in locale "${locale}" must be a valid object`)
+  }
+  
+  /**
+   * 错误：键值不是字符串
+   * @param locale 语言代码
+   * @param moduleName 模块名
+   * @param key 键名
+   */
+  static errorValueNotString(locale: string, moduleName: string, key: string): void {
+    console.error(`[Tang UI I18n] Value for key "${key}" in module "${moduleName}" of locale "${locale}" must be a string`)
+  }
+}

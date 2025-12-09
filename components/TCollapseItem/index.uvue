@@ -18,12 +18,24 @@ const props = withDefaults(defineProps<TCollapseItemProps>(), {
 // 从父组件注入上下文
 const collapseContext = inject<TCollapseContext>('TCollapse')
 
+// 内容高度
+const contentHeight = ref<number>(0)
+const contentRef = ref<any>(null)
+
 // 计算是否展开
 const isActive = computed<boolean>(() => {
   if (collapseContext == null) {
     return false
   }
-  return collapseContext.activeNames.indexOf(props.name) > -1
+  return collapseContext.activeNames.value.indexOf(props.name) > -1
+})
+
+// 计算内容样式
+const contentStyle = computed<string>(() => {
+  if (isActive.value) {
+    return 'max-height: 2000px; opacity: 1; padding-top: 0; padding-bottom: 0;'
+  }
+  return 'max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;'
 })
 
 /**
@@ -88,13 +100,11 @@ const arrowClass = computed<string>(() => {
     </view>
 
     <!-- 内容区域 -->
-    <transition name="t-collapse">
-      <view v-show="isActive" class="t-collapse-item__content">
-        <view class="t-collapse-item__content-inner">
-          <slot></slot>
-        </view>
+    <view class="t-collapse-item__content" :style="contentStyle">
+      <view class="t-collapse-item__content-inner">
+        <slot></slot>
       </view>
-    </transition>
+    </view>
   </view>
 </template>
 
@@ -147,7 +157,7 @@ const arrowClass = computed<string>(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--active {
       transform: rotate(90deg);
@@ -164,31 +174,17 @@ const arrowClass = computed<string>(() => {
   &__content {
     background-color: #ffffff;
     overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
     &-inner {
       padding: 16px 20px;
       font-size: 14px;
       color: #606266;
       line-height: 1.6;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
   }
-}
-
-/* 折叠动画 */
-.t-collapse-enter-active,
-.t-collapse-leave-active {
-  transition: all 0.3s ease;
-}
-
-.t-collapse-enter-from,
-.t-collapse-leave-to {
-  opacity: 0;
-  max-height: 0;
-}
-
-.t-collapse-enter-to,
-.t-collapse-leave-from {
-  opacity: 1;
-  max-height: 1000px;
 }
 </style>

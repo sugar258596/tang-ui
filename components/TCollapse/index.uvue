@@ -53,7 +53,7 @@ const toggle = (name: string): void => {
  * 提供给子组件的上下文
  */
 const collapseContext: TCollapseContext = {
-  activeNames: activeNamesArray.value,
+  activeNames: activeNamesArray,
   accordion: props.accordion,
   toggle
 }

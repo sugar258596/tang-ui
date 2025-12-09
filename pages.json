@@ -247,6 +247,12 @@
 			"style": {
 				"navigationBarTitleText": "Picker 选择器"
 			}
+		},
+		{
+			"path": "pages/i18n-demo/index",
+			"style": {
+				"navigationBarTitleText": "多语言测试"
+			}
 		}
 	],
 	"globalStyle": {

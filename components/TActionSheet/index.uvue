@@ -1,6 +1,8 @@
 <script setup lang="uts">
+import { computed } from 'vue'
 import TPopup from '../TPopup/index.uvue'
 import type { ActionSheetAction, TActionSheetProps } from './type.uts'
+import { useI18n } from '../../composables/useI18n.uts'
 
 /**
  * TActionSheet 动作面板组件
@@ -14,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
   actions: () => [] as ActionSheetAction[],
   title: '',
   description: '',
-  cancelText: '取消',
   closeOnClickAction: true,
   closeOnClickOverlay: true,
   customClass: '',
@@ -29,6 +30,18 @@ const emit = defineEmits<{
   cancel: []
   close: []
 }>()
+
+// 使用 i18n
+const { $t } = useI18n()
+
+// 优先使用用户传入的值，否则使用翻译
+const displayCancelText = computed(() => {
+  // 如果用户明确传入了 cancelText（即使是空字符串），使用用户的值
+  // 否则使用翻译
+  return props.cancelText !== undefined && props.cancelText !== '' 
+    ? props.cancelText 
+    : $t('actionSheet.cancelText')
+})
 
 const handleSelect = (action: ActionSheetAction, index: number): void => {
   if (action.disabled || action.loading) return
@@ -90,7 +103,7 @@ const handleClose = (): void => {
 
       <!-- 取消按钮 -->
       <view class="t-action-sheet__cancel" @click="handleCancel">
-        <text class="t-action-sheet__cancel-text">{{ cancelText }}</text>
+        <text class="t-action-sheet__cancel-text">{{ displayCancelText }}</text>
       </view>
     </view>
   </TPopup>
