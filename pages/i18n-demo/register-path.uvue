@@ -27,19 +27,19 @@
       <view class="translation-list">
         <view class="translation-item">
           <text class="key">common.confirm</text>
-          <text class="value">{{ t('common.confirm') }}</text>
+          <text class="value">{{ $t('common.confirm') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.cancel</text>
-          <text class="value">{{ t('common.cancel') }}</text>
+          <text class="value">{{ $t('common.cancel') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">empty.noData</text>
-          <text class="value">{{ t('empty.noData') }}</text>
+          <text class="value">{{ $t('empty.noData') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">loading.text</text>
-          <text class="value">{{ t('loading.text') }}</text>
+          <text class="value">{{ $t('loading.text') }}</text>
         </view>
       </view>
     </view>
@@ -130,7 +130,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from '@/composables/useI18n.uts'
 import { I18nManager } from '@/composables/i18n/manager.uts'
 
-const { t } = useI18n()
+const { $t } = useI18n()
 const i18nManager = I18nManager.getInstance()
 
 // 当前语言

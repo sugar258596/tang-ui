@@ -27,27 +27,27 @@
       <view class="translation-list">
         <view class="translation-item">
           <text class="key">common.confirm</text>
-          <text class="value">{{ t('common.confirm') }}</text>
+          <text class="value">{{ $t('common.confirm') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.cancel</text>
-          <text class="value">{{ t('common.cancel') }}</text>
+          <text class="value">{{ $t('common.cancel') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.save</text>
-          <text class="value">{{ t('common.save') }}</text>
+          <text class="value">{{ $t('common.save') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.delete</text>
-          <text class="value">{{ t('common.delete') }}</text>
+          <text class="value">{{ $t('common.delete') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.required</text>
-          <text class="value">{{ t('form.required') }}</text>
+          <text class="value">{{ $t('form.required') }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.invalid</text>
-          <text class="value">{{ t('form.invalid') }}</text>
+          <text class="value">{{ $t('form.invalid') }}</text>
         </view>
       </view>
     </view>
@@ -58,11 +58,11 @@
       <view class="translation-list">
         <view class="translation-item">
           <text class="key">form.minLength (min: 6)</text>
-          <text class="value">{{ t('form.minLength', { min: 6 }) }}</text>
+          <text class="value">{{ $t('form.minLength', { min: 6 }) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.maxLength (max: 20)</text>
-          <text class="value">{{ t('form.maxLength', { max: 20 }) }}</text>
+          <text class="value">{{ $t('form.maxLength', { max: 20 }) }}</text>
         </view>
       </view>
     </view>
@@ -113,7 +113,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from '@/composables/useI18n.uts'
 import { I18nManager } from '@/composables/i18n/manager.uts'
 
-const { t } = useI18n()
+const { $t } = useI18n()
 const i18nManager = I18nManager.getInstance()
 
 // 当前语言
