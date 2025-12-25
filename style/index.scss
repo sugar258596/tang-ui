@@ -137,9 +137,9 @@ $z-index-toast: 1080 !default;
   visibility: hidden !important;
 }
 
-uni-view {
-  overflow: visible;
-}
+// uni-view {
+//   overflow: visible;
+// }
 
 // Flex 布局
 .flex {
@@ -232,79 +232,78 @@ uni-view {
 }
 
 // 字体大小
-@each $name, $size in (
-  'xs': $font-size-xs,
+@each $name, $size in ('xs': $font-size-xs,
   'sm': $font-size-sm,
   'base': $font-size-base,
   'md': $font-size-md,
   'lg': $font-size-lg,
   'xl': $font-size-xl,
-  'xxl': $font-size-xxl
-) {
+  'xxl': $font-size-xxl) {
   .text-#{$name} {
     font-size: $size !important;
   }
 }
 
 // 字体粗细
-@each $name, $weight in (
-  'light': $font-weight-light,
+@each $name, $weight in ('light': $font-weight-light,
   'normal': $font-weight-normal,
   'medium': $font-weight-medium,
   'semibold': $font-weight-semibold,
-  'bold': $font-weight-bold
-) {
+  'bold': $font-weight-bold) {
   .font-#{$name} {
     font-weight: $weight !important;
   }
 }
 
 // 圆角
-@each $name, $radius in (
-  'none': $border-radius-none,
+@each $name, $radius in ('none': $border-radius-none,
   'sm': $border-radius-sm,
   'base': $border-radius-base,
   'md': $border-radius-md,
   'lg': $border-radius-lg,
   'xl': $border-radius-xl,
-  'full': $border-radius-full
-) {
+  'full': $border-radius-full) {
   .rounded-#{$name} {
     border-radius: $radius !important;
   }
 }
 
 // 间距（内边距和外边距）
-@each $name, $space in (
-  'xs': $spacing-xs,
+@each $name, $space in ('xs': $spacing-xs,
   'sm': $spacing-sm,
   'base': $spacing-base,
   'md': $spacing-md,
   'lg': $spacing-lg,
   'xl': $spacing-xl,
-  'xxl': $spacing-xxl
-) {
+  'xxl': $spacing-xxl) {
+
   // 内边距
   .p-#{$name} {
     padding: $space !important;
   }
+
   .px-#{$name} {
     padding-left: $space !important;
     padding-right: $space !important;
   }
+
   .py-#{$name} {
     padding-top: $space !important;
     padding-bottom: $space !important;
   }
+
   .pt-#{$name} {
     padding-top: $space !important;
   }
+
   .pr-#{$name} {
     padding-right: $space !important;
   }
+
   .pb-#{$name} {
     padding-bottom: $space !important;
   }
+
   .pl-#{$name} {
     padding-left: $space !important;
   }
@@ -313,23 +312,29 @@ uni-view {
   .m-#{$name} {
     margin: $space !important;
   }
+
   .mx-#{$name} {
     margin-left: $space !important;
     margin-right: $space !important;
   }
+
   .my-#{$name} {
     margin-top: $space !important;
     margin-bottom: $space !important;
   }
+
   .mt-#{$name} {
     margin-top: $space !important;
   }
+
   .mr-#{$name} {
     margin-right: $space !important;
   }
+
   .mb-#{$name} {
     margin-bottom: $space !important;
   }
+
   .ml-#{$name} {
     margin-left: $space !important;
   }
@@ -373,13 +378,11 @@ uni-view {
 }
 
 // 阴影
-@each $name, $shadow in (
-  'sm': $shadow-sm,
+@each $name, $shadow in ('sm': $shadow-sm,
   'base': $shadow-base,
   'md': $shadow-md,
   'lg': $shadow-lg,
-  'xl': $shadow-xl
-) {
+  'xl': $shadow-xl) {
   .shadow-#{$name} {
     box-shadow: $shadow !important;
   }

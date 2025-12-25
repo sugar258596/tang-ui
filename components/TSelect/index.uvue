@@ -306,14 +306,11 @@
 
 
 	/* 基础容器样式 */
-	.select-root,
-	uni-view {
-		overflow: visible;
-	}
-
+ 
 	.select-container {
 		position: relative;
 		width: 100%;
+		overflow: visible;
 	}
 
 	/* 选择框样式 */
