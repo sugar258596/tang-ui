@@ -5,6 +5,7 @@
 	import TSwitch from '../TSwitch/index.uvue'
 	import TRate from '../TRate/index.uvue'
 	import TSlider from '../TSlider/index.uvue'
+	import TSelect from '../TSelect/index.uvue'
 	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
@@ -52,23 +53,9 @@
 		return $t('form.inputPlaceholder', { label: item.label })
 	}
 
-	const handleRange = (item : FormSchema) => {
+	const getSelectOptions = (item : FormSchema) => {
 		const options = item.componentProps?.options as FormOption[] | undefined
-		return options?.map(o => o.label) || []
-	}
-
-	const getSelectLabel = (item : FormSchema) => {
-		const options = item.componentProps?.options as FormOption[] | undefined
-		const opt = options?.find(o => o.value === model.value[item.field])
-		return opt?.label || ''
-	}
-
-	const onSelectChange = (e : any, item : FormSchema) => {
-		const index = e.detail.value as number
-		const options = item.componentProps?.options as FormOption[] | undefined
-		const value = options?.[index]?.value ?? ''
-		model.value[item.field] = value
-		validateField(item)
+		return options?.map(o => ({ label: o.label, value: o.value })) || []
 	}
 
 	const onTimeChange = (e : any, item : FormSchema) => {
@@ -79,9 +66,21 @@
 	const validateField = (item : FormSchema) => {
 		if (item.required && !model.value[item.field]) {
 			errors[item.field] = $t('form.requiredError', { label: item.label })
+			// 触发抖动动画
+			triggerShake(item.field)
 		} else {
 			delete errors[item.field]
 		}
+	}
+
+	// 抖动动画状态
+	const shakeFields = reactive<Record<string, boolean>>({})
+
+	const triggerShake = (field : string) => {
+		shakeFields[field] = true
+		setTimeout(() => {
+			shakeFields[field] = false
+		}, 500)
 	}
 
 	const onRadioChange = (value : string | number) => {
@@ -164,7 +163,9 @@
 <template>
 	<view class="t-form">
 		<form @submit="onFormSubmit" @reset="onFormReset">
-			<view v-for="(item, index) in schemas" class="form-item" :key="index">
+			<view v-for="(item, index) in schemas" class="form-item" 
+				:class="{ 'form-item-error': errors[item.field], 'form-item-shake': shakeFields[item.field] }" 
+				:key="index">
 				<view class="form-item-content" :class="`form-item--${getItemLayout(item)}`">
 					<view class="form-label" >
 						<text class="text" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
@@ -192,13 +193,12 @@
 						v-bind="item.componentProps || {}" @input="validateField(item)"></textarea>
 
 					<!-- 下拉选择 -->
-					<picker v-else-if="item.component === 'Select'" mode="selector" :name="item.field"
-						:range="handleRange(item)" v-bind="item.componentProps || {}"
-						@change="onSelectChange($event, item)">
-						<view class="picker">
-							{{ getSelectLabel(item) || $t('form.selectPlaceholder') }}
-						</view>
-					</picker>
+					<TSelect v-else-if="item.component === 'Select'" 
+						v-model="model[item.field]"
+						:options="getSelectOptions(item)"
+						:placeholder="item.componentProps?.placeholder || $t('form.selectPlaceholder')"
+						v-bind="item.componentProps || {}"
+						@change="validateField(item)" />
 
 					<!-- 日期选择 -->
 					<picker v-else-if="item.component === 'Date'" mode="date" :name="item.field"
@@ -245,7 +245,7 @@
 
 				<!-- 错误提示 -->
 				<view v-if="errors[item.field]" class="error-message">
-					<text>{{ errors[item.field] }}</text>
+					<text class="error-text">{{ errors[item.field] }}</text>
 				</view>
 			</view>
 
@@ -265,6 +265,31 @@
 
 	.form-item {
 		margin-bottom: 32rpx;
+		padding: 24rpx;
+		border-radius: 12rpx;
+		border: 2rpx solid transparent;
+		transition: all 0.3s ease;
+
+		&.form-item-error {
+			border-color: #ff4d4f;
+			background-color: #fff1f0;
+		}
+
+		&.form-item-shake {
+			animation: shake 0.5s ease-in-out;
+		}
+	}
+
+	@keyframes shake {
+		0%, 100% {
+			transform: translateX(0);
+		}
+		10%, 30%, 50%, 70%, 90% {
+			transform: translateX(-8rpx);
+		}
+		20%, 40%, 60%, 80% {
+			transform: translateX(8rpx);
+		}
 	}
 
 	.form-item-content {
@@ -324,8 +349,7 @@
 	}
 
 	.input,
-	.textarea,
-	.picker {
+	.textarea {
 		width: 100%;
 		padding: 20rpx 24rpx;
 		font-size: 28rpx;
@@ -345,13 +369,6 @@
 	.textarea {
 		min-height: 120rpx;
 	}
-
-	.picker {
-		display: flex;
-		align-items: center;
-	}
-
-
 
 	.error-message {
 		margin-top: 8rpx;
