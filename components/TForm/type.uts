@@ -62,6 +62,10 @@ export type FormSchema = {
   required?: boolean
   /** 组件属性 */
   componentProps?: ComponentProps
+  /** 单个配置项的布局方向（优先级高于整体 layout） */
+  layout?: 'horizontal' | 'vertical'
+  /** 单个配置项的标签宽度（优先级高于整体 labelWidth） */
+  labelWidth?: string
 }
 
 /**
@@ -72,6 +76,8 @@ export type TFormProps = {
   schemas: FormSchema[]
   /** 标签宽度 */
   labelWidth?: string
+  /** 表单项布局方向 */
+  layout?: 'horizontal' | 'vertical'
   /** 是否隐藏默认按钮 */
   hideButtons?: boolean
   /** 提交按钮文本 */

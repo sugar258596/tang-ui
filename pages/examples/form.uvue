@@ -97,6 +97,7 @@ const fullSchemas = computed<FormSchema[]>(() => [
 		component: 'Radio',
 		required: true,
 		componentProps: {
+			direction:"horizontal",
 			options: [
 				{ label: $t('examplePages.form.options.male'), value: 'male' },
 				{ label: $t('examplePages.form.options.female'), value: 'female' }
@@ -107,7 +108,10 @@ const fullSchemas = computed<FormSchema[]>(() => [
 		field: 'hobbies',
 		label: $t('examplePages.form.labels.hobbies'),
 		component: 'Checkbox',
+		layout: 'vertical', // 单独配置为垂直布局
+		labelWidth: '200rpx', // 单独配置标签宽度
 		componentProps: {
+			direction:"horizontal",
 			options: [
 				{ label: $t('examplePages.form.options.reading'), value: 'reading' },
 				{ label: $t('examplePages.form.options.sports'), value: 'sports' },
@@ -118,7 +122,9 @@ const fullSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'notify',
 		label: $t('examplePages.form.labels.notify'),
-		component: 'Switch'
+		component: 'Switch',
+		layout: 'horizontal', // 单独配置为水平布局
+		labelWidth: '120rpx' // 单独配置标签宽度
 	},
 	{
 		field: 'rating',
@@ -283,6 +289,7 @@ const handleUploadAvatar = () => {
 			<TForm 
 				v-model="fullFormData" 
 				:schemas="fullSchemas"
+				layout="horizontal"
 				label-width="180rpx"
 				@submit="handleFullSubmit" />
 		</TCard>

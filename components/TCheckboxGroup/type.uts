@@ -3,6 +3,7 @@
  */
 
 export type CheckboxDirection = 'horizontal' | 'vertical'
+export type CheckboxSize = 'small' | 'medium' | 'large'
 
 export interface CheckboxOption {
   label: string
@@ -14,8 +15,17 @@ export interface TCheckboxGroupProps {
   modelValue?: (string | number)[]
   options?: CheckboxOption[]
   direction?: CheckboxDirection
+  /** 按钮尺寸 */
+  size?: CheckboxSize
+  /** 激活状态颜色 */
+  activeColor?: string
+  /** 非激活状态颜色 */
+  inactiveColor?: string
+  /** 最大可选数量 */
   max?: number
   disabled?: boolean
+  /** 名称属性（用于表单提交） */
+  name?: string
   customClass?: string
   customStyle?: string
 }

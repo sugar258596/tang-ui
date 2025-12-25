@@ -3,6 +3,7 @@
  */
 
 export type RadioDirection = 'horizontal' | 'vertical'
+export type RadioSize = 'small' | 'medium' | 'large'
 
 export interface RadioOption {
   label: string
@@ -14,6 +15,12 @@ export interface TRadioGroupProps {
   modelValue?: string | number
   options?: RadioOption[]
   direction?: RadioDirection
+  /** 按钮尺寸 */
+  size?: RadioSize
+  /** 活动状态颜色 */
+  activeColor?: string
+  /** 非活动状态颜色 */
+  inactiveColor?: string
   disabled?: boolean
   customClass?: string
   customStyle?: string

@@ -39,14 +39,12 @@ const handleChange = (value: string | number): void => {
     </TCard>
 
     <TCard :title="$t('examplePages.radio.sections.group')" class="example-section">
-      <radio-group v-model="radioValue2">
-        <view style="display: flex; flex-direction: column; gap: 10px;">
-          <TRadioButton value="A">{{ $t('examplePages.radio.labels.optionA') }}</TRadioButton>
-          <TRadioButton value="B">{{ $t('examplePages.radio.labels.optionB') }}</TRadioButton>
-          <TRadioButton value="C">{{ $t('examplePages.radio.labels.optionC') }}</TRadioButton>
-          <TRadioButton value="D">{{ $t('examplePages.radio.labels.optionD') }}</TRadioButton>
-        </view>
-      </radio-group>
+      <view style="display: flex; flex-direction: column; gap: 10px;">
+        <TRadioButton v-model="radioValue2" name="radio2" value="A">{{ $t('examplePages.radio.labels.optionA') }}</TRadioButton>
+        <TRadioButton v-model="radioValue2" name="radio2" value="B">{{ $t('examplePages.radio.labels.optionB') }}</TRadioButton>
+        <TRadioButton v-model="radioValue2" name="radio2" value="C">{{ $t('examplePages.radio.labels.optionC') }}</TRadioButton>
+        <TRadioButton v-model="radioValue2" name="radio2" value="D">{{ $t('examplePages.radio.labels.optionD') }}</TRadioButton>
+      </view>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
         {{ $t('examplePages.radio.status.selected') }}: {{ radioValue2 || $t('examplePages.radio.status.notSelected') }}
       </text>

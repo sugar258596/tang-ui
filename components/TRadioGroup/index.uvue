@@ -12,6 +12,9 @@ type Props = Omit<TRadioGroupProps, 'modelValue'>
 const props = withDefaults(defineProps<Props>(), {
   options: () => [] as RadioOption[],
   direction: 'vertical',
+  size: 'medium',
+  activeColor: '#00bba7',
+  inactiveColor: '#c8c9cc',
   disabled: false,
   customClass: '',
   customStyle: ''
@@ -34,20 +37,37 @@ const handleChange = (option: RadioOption): void => {
 const isChecked = (option: RadioOption): boolean => {
   return modelValue.value === option.value
 }
+
+// 尺寸映射
+const sizeMap = {
+  small: { icon: 28, dot: 14, fontSize: 24 },
+  medium: { icon: 36, dot: 20, fontSize: 28 },
+  large: { icon: 44, dot: 26, fontSize: 32 }
+}
+
+const currentSize = computed(() => sizeMap[props.size])
+
+const cssVars = computed(() => ({
+  '--icon-size': `${currentSize.value.icon}rpx`,
+  '--dot-size': `${currentSize.value.dot}rpx`,
+  '--font-size': `${currentSize.value.fontSize}rpx`,
+  '--active-color': props.activeColor,
+  '--inactive-color': props.inactiveColor
+}))
 </script>
 
 <template>
   <view
     class="t-radio-group"
     :class="[`t-radio-group--${direction}`, customClass]"
-    :style="customStyle"
+    :style="[customStyle, cssVars]"
   >
     <view
       v-for="(option, index) in options"
       :key="index"
       class="t-radio-group__item"
       :class="{ 't-radio-group__item--disabled': disabled || option.disabled }"
-      @click="() => handleChange(option)"
+      @click="handleChange(option)"
     >
       <view class="t-radio-group__icon" :class="{ 't-radio-group__icon--checked': isChecked(option) }">
         <view v-if="isChecked(option)" class="t-radio-group__dot"></view>
@@ -73,7 +93,7 @@ const isChecked = (option: RadioOption): boolean => {
 
 .t-radio-group__item {
   display: flex;
-  align-items: center;
+	flex-direction: row;
   padding: 12px 0;
   cursor: pointer;
 
@@ -88,30 +108,30 @@ const isChecked = (option: RadioOption): boolean => {
 }
 
 .t-radio-group__icon {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #c8c9cc;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  border: 2rpx solid var(--inactive-color);
   border-radius: 50%;
-  margin-right: 8px;
+  margin-right: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
 
   &--checked {
-    border-color: #1890ff;
+    border-color: var(--active-color);
   }
 }
 
 .t-radio-group__dot {
-  width: 10px;
-  height: 10px;
-  background-color: #1890ff;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  background-color: var(--active-color);
   border-radius: 50%;
 }
 
 .t-radio-group__label {
-  font-size: 14px;
+  font-size: var(--font-size);
   color: #323233;
 }
 </style>

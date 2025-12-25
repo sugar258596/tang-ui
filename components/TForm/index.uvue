@@ -1,7 +1,7 @@
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import TRadioButton from '../TRadioButton/index.uvue'
-	import TCheckbox from '../TCheckbox/index.uvue'
+	import TRadioGroup from '../TRadioGroup/index.uvue'
+	import TCheckboxGroup from '../TCheckboxGroup/index.uvue'
 	import TSwitch from '../TSwitch/index.uvue'
 	import TRate from '../TRate/index.uvue'
 	import TSlider from '../TSlider/index.uvue'
@@ -9,7 +9,8 @@
 	import { useI18n } from '../../composables/useI18n.uts'
 
 	const props = withDefaults(defineProps<TFormProps>(), {
-		labelWidth: '160rpx',
+		labelWidth: '120rpx',
+		layout: 'vertical',
 		hideButtons: false,
 	})
 
@@ -23,36 +24,46 @@
 
 	// 按钮文本
 	const submitButtonText = computed(() => {
-		return props.submitText !== undefined && props.submitText !== '' 
-			? props.submitText 
+		return props.submitText !== undefined && props.submitText !== ''
+			? props.submitText
 			: $t('form.submitButton')
 	})
 
 	const resetButtonText = computed(() => {
-		return props.resetText !== undefined && props.resetText !== '' 
-			? props.resetText 
+		return props.resetText !== undefined && props.resetText !== ''
+			? props.resetText
 			: $t('form.resetButton')
 	})
 
-	const handlePlaceholder = (item: FormSchema): string => {
+	// 获取单个配置项的布局方向（单个配置优先）
+	const getItemLayout = (item : FormSchema) : string => {
+		return item.layout || props.layout
+	}
+
+	// 获取单个配置项的标签宽度（单个配置优先）
+	const getItemLabelWidth = (item : FormSchema) : string => {
+		return item.labelWidth || props.labelWidth
+	}
+
+	const handlePlaceholder = (item : FormSchema) : string => {
 		if (item.componentProps?.placeholder) {
 			return item.componentProps.placeholder
 		}
 		return $t('form.inputPlaceholder', { label: item.label })
 	}
 
-	const handleRange = (item: FormSchema) => {
+	const handleRange = (item : FormSchema) => {
 		const options = item.componentProps?.options as FormOption[] | undefined
 		return options?.map(o => o.label) || []
 	}
 
-	const getSelectLabel = (item: FormSchema) => {
+	const getSelectLabel = (item : FormSchema) => {
 		const options = item.componentProps?.options as FormOption[] | undefined
 		const opt = options?.find(o => o.value === model.value[item.field])
 		return opt?.label || ''
 	}
 
-	const onSelectChange = (e: any, item: FormSchema) => {
+	const onSelectChange = (e : any, item : FormSchema) => {
 		const index = e.detail.value as number
 		const options = item.componentProps?.options as FormOption[] | undefined
 		const value = options?.[index]?.value ?? ''
@@ -60,12 +71,12 @@
 		validateField(item)
 	}
 
-	const onTimeChange = (e: any, item: FormSchema) => {
+	const onTimeChange = (e : any, item : FormSchema) => {
 		model.value[item.field] = e.detail.value
 		validateField(item)
 	}
 
-	const validateField = (item: FormSchema) => {
+	const validateField = (item : FormSchema) => {
 		if (item.required && !model.value[item.field]) {
 			errors[item.field] = $t('form.requiredError', { label: item.label })
 		} else {
@@ -73,32 +84,30 @@
 		}
 	}
 
-	const onRadioChange = (value: string | number, item: FormSchema) => {
+	const onRadioChange = (value : string | number) => {
+		// 值已通过 v-model 更新，只需验证
+	}
+
+	const onCheckboxChange = (values : (string | number)[]) => {
+		// 值已通过 v-model 更新，只需验证
+	}
+
+	const onSwitchChange = (value : boolean, item : FormSchema) => {
 		model.value[item.field] = value
 		validateField(item)
 	}
 
-	const onCheckboxChange = (values: (string | number)[], item: FormSchema) => {
-		model.value[item.field] = values
-		validateField(item)
-	}
-
-	const onSwitchChange = (value: boolean, item: FormSchema) => {
+	const onRateChange = (value : number, item : FormSchema) => {
 		model.value[item.field] = value
 		validateField(item)
 	}
 
-	const onRateChange = (value: number, item: FormSchema) => {
+	const onSliderChange = (value : number, item : FormSchema) => {
 		model.value[item.field] = value
 		validateField(item)
 	}
 
-	const onSliderChange = (value: number, item: FormSchema) => {
-		model.value[item.field] = value
-		validateField(item)
-	}
-
-	const onFormSubmit = async (e: UniFormSubmitEvent): Promise<{ valid: boolean, values: any }> => {
+	const onFormSubmit = async (e : UniFormSubmitEvent) : Promise<{ valid : boolean, values : any }> => {
 		Object.keys(errors).forEach(k => delete errors[k])
 
 		let hasError = false
@@ -156,49 +165,35 @@
 	<view class="t-form">
 		<form @submit="onFormSubmit" @reset="onFormReset">
 			<view v-for="(item, index) in schemas" class="form-item" :key="index">
-				<view class="form-label" :style="{ width: labelWidth }">
-					<text>{{ item.label }}</text>
-					<text v-if="item.required" class="required">*</text>
-				</view>
+				<view class="form-item-content" :class="`form-item--${getItemLayout(item)}`">
+					<view class="form-label" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">
+						<text class="text">{{ item.label }}</text>
+						<text v-if="item.required" class="required">*</text>
+					</view>
 
-				<view class="form-control">
+					<view class="form-control">
 					<!-- 自定义插槽 -->
-					<slot v-if="$slots[item.field]" :name="item.field" :item="item" :value="model[item.field]" :error="errors[item.field]"></slot>
-					
+					<slot :name="item.field" :item="item" :value="model[item.field]"
+						:error="errors[item.field]">
+
 					<!-- 输入框 -->
-					<input v-else-if="item.component === 'Input'" 
-						v-model="model[item.field]" 
-						:placeholder="handlePlaceholder(item)"
-						:name="item.field" 
-						class="input"
-						v-bind="item.componentProps || {}"
-						@input="validateField(item)" />
+					<input v-if="item.component === 'Input'" v-model="model[item.field]"
+						:placeholder="handlePlaceholder(item)" :name="item.field" class="input"
+						v-bind="item.componentProps || {}" @input="validateField(item)" />
 
 					<!-- 数字输入 -->
-					<input v-else-if="item.component === 'InputNumber'" 
-						v-model="model[item.field]" 
-						:placeholder="handlePlaceholder(item)"
-						type="number"
-						:name="item.field" 
-						class="input"
-						v-bind="item.componentProps || {}"
-						@input="validateField(item)" />
+					<input v-else-if="item.component === 'InputNumber'" v-model="model[item.field]"
+						:placeholder="handlePlaceholder(item)" type="number" :name="item.field" class="input"
+						v-bind="item.componentProps || {}" @input="validateField(item)" />
 
 					<!-- 文本域 -->
-					<textarea v-else-if="item.component === 'Textarea'" 
-						v-model="model[item.field]"
-						:placeholder="handlePlaceholder(item)" 
-						:name="item.field" 
-						class="textarea"
-						v-bind="item.componentProps || {}"
-						@input="validateField(item)"></textarea>
+					<textarea v-else-if="item.component === 'Textarea'" v-model="model[item.field]"
+						:placeholder="handlePlaceholder(item)" :name="item.field" class="textarea"
+						v-bind="item.componentProps || {}" @input="validateField(item)"></textarea>
 
 					<!-- 下拉选择 -->
-					<picker v-else-if="item.component === 'Select'" 
-						mode="selector" 
-						:name="item.field"
-						:range="handleRange(item)"
-						v-bind="item.componentProps || {}"
+					<picker v-else-if="item.component === 'Select'" mode="selector" :name="item.field"
+						:range="handleRange(item)" v-bind="item.componentProps || {}"
 						@change="onSelectChange($event, item)">
 						<view class="picker">
 							{{ getSelectLabel(item) || $t('form.selectPlaceholder') }}
@@ -206,11 +201,8 @@
 					</picker>
 
 					<!-- 日期选择 -->
-					<picker v-else-if="item.component === 'Date'" 
-						mode="date" 
-						:name="item.field" 
-						:value="model[item.field]"
-						v-bind="item.componentProps || {}"
+					<picker v-else-if="item.component === 'Date'" mode="date" :name="item.field"
+						:value="model[item.field]" v-bind="item.componentProps || {}"
 						@change="onTimeChange($event, item)">
 						<view class="picker">
 							{{ model[item.field] || $t('form.datePlaceholder') }}
@@ -218,11 +210,8 @@
 					</picker>
 
 					<!-- 时间选择 -->
-					<picker v-else-if="item.component === 'Time'" 
-						mode="time" 
-						:name="item.field" 
-						:value="model[item.field]"
-						v-bind="item.componentProps || {}"
+					<picker v-else-if="item.component === 'Time'" mode="time" :name="item.field"
+						:value="model[item.field]" v-bind="item.componentProps || {}"
 						@change="onTimeChange($event, item)">
 						<view class="picker">
 							{{ model[item.field] || $t('form.timePlaceholder') }}
@@ -230,56 +219,28 @@
 					</picker>
 
 					<!-- 单选 -->
-					<view v-else-if="item.component === 'Radio'" class="radio-group">
-						<TRadioButton 
-							v-for="opt in (item.componentProps?.options as FormOption[])" 
-							:key="opt.value"
-							v-model="model[item.field]"
-							:label="opt.label"
-							:value="opt.value"
-							@change="onRadioChange(opt.value, item)" />
-					</view>
+					<TRadioGroup v-else-if="item.component === 'Radio'" v-model="model[item.field]"
+						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
+						v-bind="item.componentProps || {}" @change="validateField(item)" />
 
 					<!-- 多选 -->
-					<view v-else-if="item.component === 'Checkbox'" class="checkbox-group">
-						<view 
-							v-for="opt in (item.componentProps?.options as FormOption[])" 
-							:key="opt.value"
-							class="checkbox-item">
-							<TCheckbox 
-								:checked="(model[item.field] || []).includes(opt.value)"
-								v-bind="item.componentProps || {}"
-								@change="(checked) => {
-									const values = model[item.field] || []
-									if (checked) {
-										values.push(opt.value)
-									} else {
-										const index = values.indexOf(opt.value)
-										if (index > -1) values.splice(index, 1)
-									}
-									onCheckboxChange(values, item)
-								}" />
-							<text class="checkbox-label">{{ opt.label }}</text>
-						</view>
-					</view>
+					<TCheckboxGroup v-else-if="item.component === 'Checkbox'" v-model="model[item.field]"
+						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
+						v-bind="item.componentProps || {}" @change="validateField(item)" />
 
 					<!-- 开关 -->
-					<TSwitch v-else-if="item.component === 'Switch'"
-						:checked="model[item.field]"
-						v-bind="item.componentProps || {}"
-						@change="onSwitchChange($event, item)" />
+					<TSwitch v-else-if="item.component === 'Switch'" :checked="model[item.field]"
+						v-bind="item.componentProps || {}" @change="onSwitchChange($event, item)" />
 
 					<!-- 评分 -->
-					<TRate v-else-if="item.component === 'Rate'"
-						:value="model[item.field] || 0"
-						v-bind="item.componentProps || {}"
-						@change="onRateChange($event, item)" />
+					<TRate v-else-if="item.component === 'Rate'" :value="model[item.field] || 0"
+						v-bind="item.componentProps || {}" @change="onRateChange($event, item)" />
 
 					<!-- 滑块 -->
-					<TSlider v-else-if="item.component === 'Slider'"
-						:value="model[item.field] || 0"
-						v-bind="item.componentProps || {}"
-						@change="onSliderChange($event, item)" />
+					<TSlider v-else-if="item.component === 'Slider'" :value="model[item.field] || 0"
+						v-bind="item.componentProps || {}" @change="onSliderChange($event, item)" />
+						</slot>
+					</view>
 				</view>
 
 				<!-- 错误提示 -->
@@ -298,116 +259,136 @@
 </template>
 
 <style lang="scss" scoped>
-.t-form {
-	padding: 32rpx;
-}
+	.t-form {
+		padding: 32rpx;
+	}
 
-.form-item {
-	margin-bottom: 32rpx;
-}
+	.form-item {
+		margin-bottom: 32rpx;
+	}
 
-.form-label {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 16rpx;
-	font-size: 28rpx;
-	color: #333;
-	font-weight: 500;
-}
+	.form-item-content {
+		&.form-item--horizontal {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+		}
 
-.required {
-	color: #ff4d4f;
-	margin-left: 4rpx;
-}
+		&.form-item--vertical {
+			display: flex;
+			flex-direction: column;
+		}
+	}
 
-.form-control {
-	width: 100%;
-}
+	.form-label {
+		display: flex;
+		flex-direction: row;
+		gap: 2px;
+		text-align: right;
+		margin-bottom: 12rpx;
+		font-weight: 500;
+		font-size: 28rpx;
+		padding: 10rpx 0;
+		margin-right: 12rpx;
 
-.input,
-.textarea,
-.picker {
-	width: 100%;
-	padding: 20rpx 24rpx;
-	font-size: 28rpx;
-	color: #333;
-	background-color: #f5f5f5;
-	border-radius: 8rpx;
-	border: 1rpx solid #e0e0e0;
-	transition: all 0.3s;
-}
+		.form-item-content.form-item--vertical & {
+			text-align: left;
+			margin-right: 0;
+			margin-bottom: 16rpx;
+		}
 
-.input:focus,
-.textarea:focus {
-	background-color: #fff;
-	border-color: #007aff;
-}
+		.text {
+			display: flow;
+			text-align: justify;
+			text-justify: inter-ideograph;
+			text-align-last: justify;
+			width: 100%;
+			letter-spacing: 0.1em;
+			word-break: break-all;
+			white-space: normal;
+		}
+	}
 
-.textarea {
-	min-height: 120rpx;
-}
+	.required {
+		color: #ff4d4f;
+		margin-left: 4rpx;
+	}
 
-.picker {
-	display: flex;
-	align-items: center;
-}
+	.form-control {
+		flex: 1;
+		width: 100%;
 
-.radio-group,
-.checkbox-group {
-	display: flex;
-	flex-direction: column;
-	gap: 16rpx;
-}
+		.form-item-content.form-item--horizontal & {
+			width: auto;
+		}
+	}
 
-.checkbox-item {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 16rpx;
-}
+	.input,
+	.textarea,
+	.picker {
+		width: 100%;
+		padding: 20rpx 24rpx;
+		font-size: 28rpx;
+		color: #333;
+		background-color: #f5f5f5;
+		border-radius: 8rpx;
+		border: 1rpx solid #e0e0e0;
+		transition: all 0.3s;
+	}
 
-.checkbox-label {
-	font-size: 28rpx;
-	color: #333;
-}
+	.input:focus,
+	.textarea:focus {
+		background-color: #fff;
+		border-color: #007aff;
+	}
 
-.error-message {
-	margin-top: 8rpx;
-	font-size: 24rpx;
-	color: #ff4d4f;
-}
+	.textarea {
+		min-height: 120rpx;
+	}
 
-.form-footer {
-	display: flex;
-	flex-direction: row;
-	gap: 24rpx;
-	margin-top: 48rpx;
-}
+	.picker {
+		display: flex;
+		align-items: center;
+	}
 
-.btn {
-	flex: 1;
-	height: 88rpx;
-	line-height: 88rpx;
-	text-align: center;
-	font-size: 32rpx;
-	border-radius: 8rpx;
-	transition: all 0.3s;
-}
 
-.btn-submit {
-	background-color: #007aff;
-	color: #fff;
-}
 
-.btn-reset {
-	background-color: #fff;
-	color: #007aff;
-	border: 1rpx solid #007aff;
-}
+	.error-message {
+		margin-top: 8rpx;
+		font-size: 24rpx;
+		color: #ff4d4f;
+	}
 
-.btn:active {
-	opacity: 0.7;
-	transform: scale(0.98);
-}
+	.form-footer {
+		display: flex;
+		flex-direction: row;
+		gap: 24rpx;
+		margin-top: 48rpx;
+	}
+
+	.btn {
+		flex: 1;
+		height: 88rpx;
+		line-height: 88rpx;
+		text-align: center;
+		font-size: 32rpx;
+		border-radius: 8rpx;
+		transition: all 0.3s;
+	}
+
+	.btn-submit {
+		background-color: #007aff;
+		color: #fff;
+	}
+
+	.btn-reset {
+		background-color: #fff;
+		color: #007aff;
+		border: 1rpx solid #007aff;
+	}
+
+	.btn:active {
+		opacity: 0.7;
+		transform: scale(0.98);
+	}
 </style>
