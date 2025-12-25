@@ -110,6 +110,22 @@ export interface TInputProps {
    * 自定义样式
    */
   customStyle?: string
+
+  /**
+   * 聚焦时的边框颜色
+   * @default '#409eff'
+   */
+  focusBorderColor?: string
+
+  /**
+   * 聚焦时的背景颜色
+   */
+  focusBackgroundColor?: string
+
+  /**
+   * 聚焦时的阴影
+   */
+  focusBoxShadow?: string
 }
 
 /**

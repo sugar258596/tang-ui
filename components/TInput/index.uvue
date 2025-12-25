@@ -24,7 +24,10 @@ const props = withDefaults(defineProps<TInputProps>(), {
   autoHeight: false,
   autoFocus: false,
   customClass: '',
-  customStyle: ''
+  customStyle: '',
+  focusBorderColor: '#409eff',
+  focusBackgroundColor: '',
+  focusBoxShadow: ''
 })
 
 // 使用 defineModel
@@ -99,6 +102,46 @@ const currentLength = computed((): number => {
 })
 
 /**
+ * 计算聚焦状态的样式
+ */
+const focusStyle = computed((): string => {
+  if (!isFocused.value) return ''
+  
+  const styles: string[] = []
+  
+  if (props.focusBorderColor) {
+    styles.push(`border-color: ${props.focusBorderColor}`)
+  }
+  
+  if (props.focusBackgroundColor) {
+    styles.push(`background-color: ${props.focusBackgroundColor}`)
+  }
+  
+  if (props.focusBoxShadow) {
+    styles.push(`box-shadow: ${props.focusBoxShadow}`)
+  }
+  
+  return styles.join('; ')
+})
+
+/**
+ * 计算完整的样式
+ */
+const computedStyle = computed((): string => {
+  const styles: string[] = []
+  
+  if (props.customStyle) {
+    styles.push(props.customStyle)
+  }
+  
+  if (focusStyle.value) {
+    styles.push(focusStyle.value)
+  }
+  
+  return styles.join('; ')
+})
+
+/**
  * 处理输入事件
  */
 const handleInput = (e: any) => {
@@ -143,7 +186,7 @@ const handleConfirm = () => {
 </script>
 
 <template>
-  <view class="t-input" :class="inputWrapperClasses" :style="customStyle">
+  <view class="t-input" :class="inputWrapperClasses" :style="computedStyle">
     <!-- 前缀文本 -->
     <view v-if="prefix" class="t-input__prefix">
       <text class="t-input__prefix-text">{{ prefix }}</text>

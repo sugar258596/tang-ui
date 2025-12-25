@@ -90,6 +90,38 @@ const handleBlur = (): void => {
         @blur="handleBlur"
       />
     </TCard>
+
+    <TCard title="自定义聚焦状态" class="example-section">
+      <view style="display: flex; flex-direction: column; gap: 15px;">
+        <view>
+          <text style="font-size: 14px; color: #606266; margin-bottom: 8px; display: block;">绿色边框</text>
+          <TInput 
+            v-model="inputValue4" 
+            placeholder="聚焦时显示绿色边框" 
+            focus-border-color="#67c23a"
+          />
+        </view>
+        
+        <view>
+          <text style="font-size: 14px; color: #606266; margin-bottom: 8px; display: block;">紫色边框 + 浅紫背景</text>
+          <TInput 
+            v-model="inputValue5" 
+            placeholder="聚焦时显示紫色边框和背景" 
+            focus-border-color="#9c27b0"
+            focus-background-color="#f3e5f5"
+          />
+        </view>
+        
+        <view>
+          <text style="font-size: 14px; color: #606266; margin-bottom: 8px; display: block;">红色边框 + 阴影</text>
+          <TInput 
+            placeholder="聚焦时显示红色边框和阴影" 
+            focus-border-color="#f56c6c"
+            focus-box-shadow="0 0 8px rgba(245, 108, 108, 0.3)"
+          />
+        </view>
+      </view>
+    </TCard>
   </view>
 </template>
 
