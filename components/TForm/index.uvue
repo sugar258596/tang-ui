@@ -9,7 +9,7 @@
 	import { useI18n } from '../../composables/useI18n.uts'
 
 	const props = withDefaults(defineProps<TFormProps>(), {
-		labelWidth: '120rpx',
+		labelWidth: '110rpx',
 		layout: 'vertical',
 		hideButtons: false,
 	})
@@ -166,8 +166,8 @@
 		<form @submit="onFormSubmit" @reset="onFormReset">
 			<view v-for="(item, index) in schemas" class="form-item" :key="index">
 				<view class="form-item-content" :class="`form-item--${getItemLayout(item)}`">
-					<view class="form-label" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">
-						<text class="text">{{ item.label }}</text>
+					<view class="form-label" >
+						<text class="text" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
 						<text v-if="item.required" class="required">*</text>
 					</view>
 
