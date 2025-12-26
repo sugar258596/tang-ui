@@ -157,7 +157,9 @@ const handleCancel = (): void => {
   <view :class="containerClasses">
     <view class="t-search-bar__content" :style="inputStyle">
       <!-- 左侧图标 -->
-      <text v-if="leftIcon" class="t-search-bar__icon">{{ leftIcon }}</text>
+       <view v-if="leftIcon" slot="icon">
+         <text class="t-search-bar__icon">{{ leftIcon }}</text>
+       </view>
 
       <!-- 输入框 -->
       <input
@@ -200,7 +202,7 @@ const handleCancel = (): void => {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background-color: #fff;
+  flex-direction: row;
 
   &--round {
     .t-search-bar__content {
@@ -257,7 +259,7 @@ const handleCancel = (): void => {
 }
 
 .t-search-bar__cancel {
-  margin-left: 12px;
+  padding-inline: 12px;
   font-size: 14px;
   color: #323233;
   cursor: pointer;
