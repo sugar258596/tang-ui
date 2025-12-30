@@ -157,7 +157,7 @@ const handleCancel = (): void => {
   <view :class="containerClasses">
     <view class="t-search-bar__content" :style="inputStyle">
       <!-- 左侧图标 -->
-       <view v-if="leftIcon" slot="icon">
+       <view v-if="leftIcon" name="icon">
          <text class="t-search-bar__icon">{{ leftIcon }}</text>
        </view>
 

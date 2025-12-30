@@ -54,4 +54,6 @@ export type SelectProps = {
 	size ?: 'small' | 'medium' | 'large'
 	/** 文本对齐方式，支持 left/center/right，默认为 'left' */
 	align ?: 'left' | 'center' | 'right'
+	/** 选中状态的颜色，默认为 '#1890ff' */
+	activeColor ?: string
 }
