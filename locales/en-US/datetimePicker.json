@@ -1,0 +1,10 @@
+{
+  "title": "Select Time",
+  "confirmText": "Confirm",
+  "cancelText": "Cancel",
+  "year": "",
+  "month": "",
+  "day": "",
+  "hour": "",
+  "minute": ""
+}

@@ -114,6 +114,11 @@
       "enName": "Picker",
       "description": "Multi-column data picker"
     },
+    "TDateTimePicker": {
+      "name": "DateTimePicker",
+      "enName": "DateTimePicker",
+      "description": "Date and time picker"
+    },
     "TSlider": {
       "name": "Slider",
       "enName": "Slider",

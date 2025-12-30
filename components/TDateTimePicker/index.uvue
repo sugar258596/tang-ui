@@ -1,0 +1,980 @@
+<script setup lang="uts">
+import { computed, ref, watch, nextTick } from 'vue'
+import type { TDateTimePickerProps, TDateTimePickerMode, TDateTimePickerDayItem } from './type.uts'
+import { useI18n } from '../../composables/useI18n.uts'
+
+/**
+ * TDateTimePicker 日历时间选择器组件
+ * @description 日历面板形式，支持选择年月、年月日、年月日时分三种模式
+ * @description 支持小程序/App/H5 三端
+ * @description 支持日期插槽自定义和选中颜色配置
+ */
+
+// Props 定义
+type Props = Omit<TDateTimePickerProps, 'visible'>
+
+const props = withDefaults(defineProps<Props>(), {
+  mode: 'date',
+  itemHeight: '44px',
+  visibleItemCount: 5,
+  showToolbar: true,
+  activeColor: '#409eff',
+  activeTextColor: '#ffffff',
+  todayColor: '#409eff',
+  confirmColor: '#409eff'
+})
+
+// 使用 defineModel 管理显示状态 (v-model)
+const visible = defineModel<boolean>({ default: false })
+
+// 使用 defineModel 管理选中的值（时间戳）
+const selectedValue = defineModel<number>('value', { default: 0 })
+
+// 定义 emits
+const emit = defineEmits<{
+  confirm: [value: number, formatted: string]
+  cancel: []
+  change: [value: number]
+}>()
+
+// 使用 i18n
+const { $t } = useI18n()
+
+// 获取默认日期范围（当前时间前后100年）
+const getDefaultMinDate = (): number => {
+  const now = new Date()
+  return new Date(now.getFullYear() - 100, 0, 1).getTime()
+}
+
+const getDefaultMaxDate = (): number => {
+  const now = new Date()
+  return new Date(now.getFullYear() + 100, 11, 31, 23, 59).getTime()
+}
+
+// 计算最小/最大日期
+const minDate = computed<number>(() => props.minDate ?? getDefaultMinDate())
+const maxDate = computed<number>(() => props.maxDate ?? getDefaultMaxDate())
+
+// 优先使用用户传入的值，否则使用翻译
+const displayTitle = computed<string>(() => {
+  if (props.title !== undefined && props.title !== '') {
+    return props.title
+  }
+  return $t('datetimePicker.title')
+})
+
+const displayConfirmText = computed<string>(() => {
+  if (props.confirmText !== undefined && props.confirmText !== '') {
+    return props.confirmText
+  }
+  return $t('datetimePicker.confirmText')
+})
+
+const displayCancelText = computed<string>(() => {
+  if (props.cancelText !== undefined && props.cancelText !== '') {
+    return props.cancelText
+  }
+  return $t('datetimePicker.cancelText')
+})
+
+// 当前视图的年月
+const viewYear = ref<number>(new Date().getFullYear())
+const viewMonth = ref<number>(new Date().getMonth() + 1)
+
+// 选中的日期时间
+const selectedYear = ref<number>(new Date().getFullYear())
+const selectedMonth = ref<number>(new Date().getMonth() + 1)
+const selectedDay = ref<number>(new Date().getDate())
+const selectedHour = ref<number>(0)
+const selectedMinute = ref<number>(0)
+
+// 当前面板模式：'year' | 'month' | 'date' | 'time'
+const panelMode = ref<string>('date')
+
+// 星期标题
+const weekDays = computed<string[]>(() => {
+  return ['日', '一', '二', '三', '四', '五', '六']
+})
+
+// 月份列表
+const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+
+// 年份范围
+const minYear = computed<number>(() => new Date(minDate.value).getFullYear())
+const maxYear = computed<number>(() => new Date(maxDate.value).getFullYear())
+
+// 生成年份列表（当前视图年份前后10年）
+const yearList = computed<number[]>(() => {
+  const years: number[] = []
+  const startYear = Math.floor(viewYear.value / 10) * 10
+  for (let i = startYear; i < startYear + 12; i++) {
+    if (i >= minYear.value && i <= maxYear.value) {
+      years.push(i)
+    }
+  }
+  return years
+})
+
+// 获取某月的天数
+const getDaysInMonth = (year: number, month: number): number => {
+  return new Date(year, month, 0).getDate()
+}
+
+// 获取某月第一天是星期几
+const getFirstDayOfMonth = (year: number, month: number): number => {
+  return new Date(year, month - 1, 1).getDay()
+}
+
+// 使用导出的日期项类型
+type DayItem = TDateTimePickerDayItem
+
+// 获取日期单元格样式
+const getDayStyle = (item: DayItem): string => {
+  if (item.isSelected) {
+    return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
+  }
+  if (item.isToday) {
+    return `color: ${props.todayColor}; font-weight: 500;`
+  }
+  return ''
+}
+
+// 获取年份/月份选中样式
+const getSelectedItemStyle = (isSelected: boolean): string => {
+  if (isSelected) {
+    return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
+  }
+  return ''
+}
+
+// 获取确认按钮样式
+const confirmBtnStyle = computed<string>(() => {
+  return `color: ${props.confirmColor};`
+})
+
+// 获取时间选中样式
+const getTimeItemStyle = (isSelected: boolean): string => {
+  if (isSelected) {
+    return `background-color: ${props.activeColor};`
+  }
+  return ''
+}
+
+// 生成日历天数数组
+const calendarDays = computed<DayItem[]>(() => {
+  const days: DayItem[] = []
+  const year = viewYear.value
+  const month = viewMonth.value
+
+  const daysInMonth = getDaysInMonth(year, month)
+  const firstDayOfWeek = getFirstDayOfMonth(year, month)
+
+  // 上月天数
+  const prevMonth = month === 1 ? 12 : month - 1
+  const prevYear = month === 1 ? year - 1 : year
+  const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth)
+
+  // 填充上月日期
+  for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+    const day = daysInPrevMonth - i
+    days.push({
+      day,
+      month: prevMonth,
+      year: prevYear,
+      isCurrentMonth: false,
+      isToday: false,
+      isSelected: false,
+      isDisabled: isDateDisabled(prevYear, prevMonth, day)
+    })
+  }
+
+  // 填充当月日期
+  const today = new Date()
+  const todayYear = today.getFullYear()
+  const todayMonth = today.getMonth() + 1
+  const todayDay = today.getDate()
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    days.push({
+      day,
+      month,
+      year,
+      isCurrentMonth: true,
+      isToday: year === todayYear && month === todayMonth && day === todayDay,
+      isSelected: year === selectedYear.value && month === selectedMonth.value && day === selectedDay.value,
+      isDisabled: isDateDisabled(year, month, day)
+    })
+  }
+
+  // 填充下月日期
+  const nextMonth = month === 12 ? 1 : month + 1
+  const nextYear = month === 12 ? year + 1 : year
+  const remainingDays = 42 - days.length
+
+  for (let day = 1; day <= remainingDays; day++) {
+    days.push({
+      day,
+      month: nextMonth,
+      year: nextYear,
+      isCurrentMonth: false,
+      isToday: false,
+      isSelected: false,
+      isDisabled: isDateDisabled(nextYear, nextMonth, day)
+    })
+  }
+
+  return days
+})
+
+// 检查日期是否禁用
+const isDateDisabled = (year: number, month: number, day: number): boolean => {
+  const date = new Date(year, month - 1, day).getTime()
+  return date < minDate.value || date > maxDate.value
+}
+
+// 检查月份是否禁用
+const isMonthDisabled = (month: number): boolean => {
+  const year = viewYear.value
+  const minD = new Date(minDate.value)
+  const maxD = new Date(maxDate.value)
+
+  if (year < minD.getFullYear() || year > maxD.getFullYear()) {
+    return true
+  }
+  if (year === minD.getFullYear() && month < minD.getMonth() + 1) {
+    return true
+  }
+  if (year === maxD.getFullYear() && month > maxD.getMonth() + 1) {
+    return true
+  }
+  return false
+}
+
+// 检查年份是否禁用
+const isYearDisabled = (year: number): boolean => {
+  return year < minYear.value || year > maxYear.value
+}
+
+// 格式化数字为两位数
+const padZero = (num: number): string => {
+  return num < 10 ? `0${num}` : `${num}`
+}
+
+// 获取当前显示的标题
+const headerTitle = computed<string>(() => {
+  if (panelMode.value === 'year') {
+    const startYear = Math.floor(viewYear.value / 10) * 10
+    return `${startYear} - ${startYear + 11}`
+  }
+  return `${viewYear.value}年${padZero(viewMonth.value)}月`
+})
+
+// 切换到上一个
+const handlePrev = (): void => {
+  if (panelMode.value === 'year') {
+    viewYear.value -= 10
+  } else if (panelMode.value === 'month' || props.mode === 'month') {
+    viewYear.value -= 1
+  } else {
+    if (viewMonth.value === 1) {
+      viewMonth.value = 12
+      viewYear.value -= 1
+    } else {
+      viewMonth.value -= 1
+    }
+  }
+}
+
+// 切换到下一个
+const handleNext = (): void => {
+  if (panelMode.value === 'year') {
+    viewYear.value += 10
+  } else if (panelMode.value === 'month' || props.mode === 'month') {
+    viewYear.value += 1
+  } else {
+    if (viewMonth.value === 12) {
+      viewMonth.value = 1
+      viewYear.value += 1
+    } else {
+      viewMonth.value += 1
+    }
+  }
+}
+
+// 点击头部标题
+const handleHeaderClick = (): void => {
+  if (props.mode === 'month') {
+    // 月份模式下点击标题切换年份选择
+    panelMode.value = panelMode.value === 'year' ? 'month' : 'year'
+  } else {
+    // 其他模式下切换年月选择
+    if (panelMode.value === 'date') {
+      panelMode.value = 'month'
+    } else if (panelMode.value === 'month') {
+      panelMode.value = 'year'
+    } else {
+      panelMode.value = 'date'
+    }
+  }
+}
+
+// 选择年份
+const handleYearSelect = (year: number): void => {
+  if (isYearDisabled(year)) return
+
+  viewYear.value = year
+  selectedYear.value = year
+
+  if (props.mode === 'month') {
+    panelMode.value = 'month'
+  } else {
+    panelMode.value = 'month'
+  }
+}
+
+// 选择月份
+const handleMonthSelect = (month: number): void => {
+  if (isMonthDisabled(month)) return
+
+  viewMonth.value = month
+  selectedMonth.value = month
+
+  if (props.mode === 'month') {
+    // 月份模式下直接选中
+    emitChange()
+  } else {
+    panelMode.value = 'date'
+  }
+}
+
+// 选择日期
+const handleDaySelect = (item: DayItem): void => {
+  if (item.isDisabled) return
+
+  selectedYear.value = item.year
+  selectedMonth.value = item.month
+  selectedDay.value = item.day
+  viewYear.value = item.year
+  viewMonth.value = item.month
+
+  emitChange()
+}
+
+// 小时列表
+const hourList = computed<number[]>(() => {
+  const hours: number[] = []
+  for (let i = 0; i <= 23; i++) {
+    hours.push(i)
+  }
+  return hours
+})
+
+// 分钟列表
+const minuteList = computed<number[]>(() => {
+  const minutes: number[] = []
+  for (let i = 0; i <= 59; i++) {
+    minutes.push(i)
+  }
+  return minutes
+})
+
+// 时间滚动位置
+const hourScrollTop = ref<number>(0)
+const minuteScrollTop = ref<number>(0)
+
+// 更新时间滚动位置
+const updateTimeScrollPosition = (): void => {
+  // 每个选项高度 40px
+  hourScrollTop.value = selectedHour.value * 40
+  minuteScrollTop.value = selectedMinute.value * 40
+}
+
+// 选择小时
+const handleHourSelect = (hour: number): void => {
+  selectedHour.value = hour
+  // 更新滚动位置
+  nextTick(() => {
+    hourScrollTop.value = hour * 40
+  })
+  emitChange()
+}
+
+// 选择分钟
+const handleMinuteSelect = (minute: number): void => {
+  selectedMinute.value = minute
+  // 更新滚动位置
+  nextTick(() => {
+    minuteScrollTop.value = minute * 40
+  })
+  emitChange()
+}
+
+// 获取当前选中的时间戳
+const getCurrentTimestamp = (): number => {
+  const year = selectedYear.value
+  const month = selectedMonth.value
+  const day = props.mode === 'month' ? 1 : selectedDay.value
+  const hour = props.mode === 'datetime' ? selectedHour.value : 0
+  const minute = props.mode === 'datetime' ? selectedMinute.value : 0
+
+  return new Date(year, month - 1, day, hour, minute).getTime()
+}
+
+// 格式化时间戳
+const formatTimestamp = (timestamp: number): string => {
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = padZero(date.getMonth() + 1)
+  const day = padZero(date.getDate())
+  const hour = padZero(date.getHours())
+  const minute = padZero(date.getMinutes())
+
+  if (props.mode === 'month') {
+    return `${year}-${month}`
+  } else if (props.mode === 'date') {
+    return `${year}-${month}-${day}`
+  } else {
+    return `${year}-${month}-${day} ${hour}:${minute}`
+  }
+}
+
+// 触发 change 事件
+const emitChange = (): void => {
+  const timestamp = getCurrentTimestamp()
+  emit('change', timestamp)
+}
+
+// 根据时间戳设置选中值
+const setValueByTimestamp = (timestamp: number): void => {
+  if (timestamp <= 0) {
+    timestamp = Date.now()
+  }
+
+  const date = new Date(timestamp)
+  selectedYear.value = date.getFullYear()
+  selectedMonth.value = date.getMonth() + 1
+  selectedDay.value = date.getDate()
+  selectedHour.value = date.getHours()
+  selectedMinute.value = date.getMinutes()
+
+  viewYear.value = selectedYear.value
+  viewMonth.value = selectedMonth.value
+}
+
+// 监听 visible 变化
+watch(visible, (newVal: boolean) => {
+  if (newVal) {
+    setValueByTimestamp(selectedValue.value || Date.now())
+    // 根据模式设置初始面板
+    if (props.mode === 'month') {
+      panelMode.value = 'month'
+    } else {
+      panelMode.value = 'date'
+    }
+    // datetime 模式下更新时间滚动位置
+    if (props.mode === 'datetime') {
+      nextTick(() => {
+        updateTimeScrollPosition()
+      })
+    }
+  }
+})
+
+// 处理遮罩点击
+const handleMaskClick = (): void => {
+  handleCancel()
+}
+
+// 处理取消
+const handleCancel = (): void => {
+  visible.value = false
+  emit('cancel')
+}
+
+// 处理确认
+const handleConfirm = (): void => {
+  const timestamp = getCurrentTimestamp()
+  const formatted = formatTimestamp(timestamp)
+
+  selectedValue.value = timestamp
+  emit('confirm', timestamp, formatted)
+  visible.value = false
+}
+
+// 快捷选择今天
+const handleToday = (): void => {
+  const now = new Date()
+  selectedYear.value = now.getFullYear()
+  selectedMonth.value = now.getMonth() + 1
+  selectedDay.value = now.getDate()
+  viewYear.value = selectedYear.value
+  viewMonth.value = selectedMonth.value
+  emitChange()
+}
+</script>
+
+<template>
+  <view v-if="visible" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
+    <!-- 遮罩层 -->
+    <view class="t-datetime-picker__mask" @click="handleMaskClick" @touchmove.stop.prevent="() => {}"></view>
+
+    <!-- 选择器容器 -->
+    <view class="t-datetime-picker__container" @touchmove.stop="() => {}">
+      <!-- 工具栏 -->
+      <view v-if="showToolbar" class="t-datetime-picker__toolbar">
+        <view class="t-datetime-picker__btn t-datetime-picker__btn--cancel" @click="handleCancel">
+          <text class="t-datetime-picker__btn-text">{{ displayCancelText }}</text>
+        </view>
+        <view class="t-datetime-picker__title">
+          <text class="t-datetime-picker__title-text">{{ displayTitle }}</text>
+        </view>
+        <view class="t-datetime-picker__btn t-datetime-picker__btn--confirm" @click="handleConfirm">
+          <text class="t-datetime-picker__btn-text t-datetime-picker__btn-text--primary" :style="confirmBtnStyle">{{ displayConfirmText }}</text>
+        </view>
+      </view>
+
+      <!-- 日历头部 -->
+      <view class="t-datetime-picker__header">
+        <view class="t-datetime-picker__header-btn" @click="handlePrev">
+          <text class="t-datetime-picker__header-arrow">‹</text>
+        </view>
+        <view class="t-datetime-picker__header-title" @click="handleHeaderClick">
+          <text class="t-datetime-picker__header-title-text">{{ headerTitle }}</text>
+        </view>
+        <view class="t-datetime-picker__header-btn" @click="handleNext">
+          <text class="t-datetime-picker__header-arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 年份选择面板 -->
+      <view v-if="panelMode === 'year'" class="t-datetime-picker__panel">
+        <view class="t-datetime-picker__year-grid">
+          <view
+            v-for="(year, index) in yearList"
+            :key="index"
+            class="t-datetime-picker__year-item"
+            :class="{
+              't-datetime-picker__year-item--selected': year === selectedYear,
+              't-datetime-picker__year-item--disabled': isYearDisabled(year)
+            }"
+            @click="handleYearSelect(year)"
+          >
+            <text
+              class="t-datetime-picker__year-text"
+              :style="getSelectedItemStyle(year === selectedYear)"
+            >{{ year }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 月份选择面板 -->
+      <view v-else-if="panelMode === 'month' || mode === 'month'" class="t-datetime-picker__panel">
+        <view class="t-datetime-picker__month-grid">
+          <view
+            v-for="(name, index) in monthNames"
+            :key="index"
+            class="t-datetime-picker__month-item"
+            :class="{
+              't-datetime-picker__month-item--selected': (index + 1) === selectedMonth && viewYear === selectedYear,
+              't-datetime-picker__month-item--disabled': isMonthDisabled(index + 1)
+            }"
+            @click="handleMonthSelect(index + 1)"
+          >
+            <text
+              class="t-datetime-picker__month-text"
+              :style="getSelectedItemStyle((index + 1) === selectedMonth && viewYear === selectedYear)"
+            >{{ name }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 日期选择面板 -->
+      <view v-else class="t-datetime-picker__panel">
+        <!-- 星期标题 -->
+        <view class="t-datetime-picker__weekdays">
+          <view v-for="(day, index) in weekDays" :key="index" class="t-datetime-picker__weekday">
+            <text class="t-datetime-picker__weekday-text">{{ day }}</text>
+          </view>
+        </view>
+
+        <!-- 日期网格 -->
+        <view class="t-datetime-picker__days">
+          <view
+            v-for="(item, index) in calendarDays"
+            :key="index"
+            class="t-datetime-picker__day"
+            :class="{
+              't-datetime-picker__day--other': !item.isCurrentMonth,
+              't-datetime-picker__day--disabled': item.isDisabled
+            }"
+            @click="handleDaySelect(item)"
+          >
+            <!-- 日期插槽 -->
+            <slot name="day" :item="item">
+              <text
+                class="t-datetime-picker__day-text"
+                :style="getDayStyle(item)"
+              >{{ item.day }}</text>
+            </slot>
+          </view>
+        </view>
+      </view>
+
+      <!-- 时间选择器（datetime 模式） -->
+      <view v-if="mode === 'datetime' && panelMode === 'date'" class="t-datetime-picker__time">
+        <view class="t-datetime-picker__time-label">
+          <text class="t-datetime-picker__time-label-text">选择时间</text>
+        </view>
+        <view class="t-datetime-picker__time-picker">
+          <!-- 小时选择 -->
+          <scroll-view
+            class="t-datetime-picker__time-scroll"
+            scroll-y
+            :scroll-top="hourScrollTop"
+            :scroll-with-animation="true"
+          >
+            <view
+              v-for="hour in hourList"
+              :key="hour"
+              :id="`hour-${hour}`"
+              class="t-datetime-picker__time-item"
+              :class="{ 't-datetime-picker__time-item--selected': hour === selectedHour }"
+              :style="getTimeItemStyle(hour === selectedHour)"
+              @click="handleHourSelect(hour)"
+            >
+              <text class="t-datetime-picker__time-item-text">{{ padZero(hour) }}</text>
+            </view>
+          </scroll-view>
+          <text class="t-datetime-picker__time-separator">:</text>
+          <!-- 分钟选择 -->
+          <scroll-view
+            class="t-datetime-picker__time-scroll"
+            scroll-y
+            :scroll-top="minuteScrollTop"
+            :scroll-with-animation="true"
+          >
+            <view
+              v-for="minute in minuteList"
+              :key="minute"
+              :id="`minute-${minute}`"
+              class="t-datetime-picker__time-item"
+              :class="{ 't-datetime-picker__time-item--selected': minute === selectedMinute }"
+              :style="getTimeItemStyle(minute === selectedMinute)"
+              @click="handleMinuteSelect(minute)"
+            >
+              <text class="t-datetime-picker__time-item-text">{{ padZero(minute) }}</text>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+
+      <!-- 底部快捷操作 -->
+      <view v-if="mode !== 'month'" class="t-datetime-picker__footer">
+        <view class="t-datetime-picker__footer-btn" @click="handleToday">
+          <text class="t-datetime-picker__footer-btn-text" :style="confirmBtnStyle">今天</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.t-datetime-picker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &__container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    z-index: 1;
+    max-height: 80vh;
+  }
+
+  &__toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebeef5;
+  }
+
+  &__btn {
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &-text {
+      font-size: 16px;
+      color: #606266;
+
+      &--primary {
+        color: #409eff;
+        font-weight: 500;
+      }
+    }
+  }
+
+  &__title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: #303133;
+    }
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background-color: #f5f7fa;
+    }
+
+    &-arrow {
+      font-size: 24px;
+      color: #606266;
+      font-weight: bold;
+    }
+
+    &-title {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 6px;
+      background-color: #f5f7fa;
+      margin: 0 12px;
+
+      &-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #303133;
+      }
+    }
+  }
+
+  &__panel {
+    padding: 8px 12px;
+  }
+
+  &__weekdays {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
+
+  &__weekday {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+
+    &-text {
+      font-size: 14px;
+      color: #909399;
+    }
+  }
+
+  &__days {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  &__day {
+    width: 14.285%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    cursor: pointer;
+
+    &-text {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      font-size: 15px;
+      color: #303133;
+      border-radius: 50%;
+    }
+
+    &--other &-text {
+      color: #c0c4cc;
+    }
+
+    &--today &-text {
+      color: #409eff;
+      font-weight: 500;
+    }
+
+    &--selected &-text {
+      background-color: #409eff;
+      color: #ffffff;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+    }
+
+    &--disabled &-text {
+      color: #c0c4cc;
+      background-color: transparent;
+    }
+  }
+
+  &__year-grid,
+  &__month-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+
+  &__year-item,
+  &__month-item {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    cursor: pointer;
+
+    &--selected {
+      .t-datetime-picker__year-text,
+      .t-datetime-picker__month-text {
+        background-color: #409eff;
+        color: #ffffff;
+      }
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+
+      .t-datetime-picker__year-text,
+      .t-datetime-picker__month-text {
+        color: #c0c4cc;
+      }
+    }
+  }
+
+  &__year-text,
+  &__month-text {
+    font-size: 15px;
+    color: #303133;
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+
+  &__time {
+    padding: 12px 16px;
+    border-top: 1px solid #ebeef5;
+
+    &-label {
+      margin-bottom: 12px;
+
+      &-text {
+        font-size: 14px;
+        color: #606266;
+      }
+    }
+
+    &-picker {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+    }
+
+    &-scroll {
+      width: 80px;
+      height: 120px;
+      background-color: #f5f7fa;
+      border-radius: 8px;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      cursor: pointer;
+
+      &--selected {
+        background-color: #409eff;
+
+        .t-datetime-picker__time-item-text {
+          color: #ffffff;
+        }
+      }
+
+      &-text {
+        font-size: 16px;
+        color: #303133;
+      }
+    }
+
+    &-separator {
+      font-size: 24px;
+      color: #303133;
+      margin: 0 16px;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-top: 1px solid #ebeef5;
+
+    &-btn {
+      padding: 8px 24px;
+      background-color: #f5f7fa;
+      border-radius: 6px;
+
+      &-text {
+        font-size: 14px;
+        color: #409eff;
+      }
+    }
+  }
+}
+</style>

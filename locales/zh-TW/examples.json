@@ -114,6 +114,11 @@
       "enName": "Picker",
       "description": "多列數據選擇"
     },
+    "TDateTimePicker": {
+      "name": "時間選擇器",
+      "enName": "DateTimePicker",
+      "description": "日期時間選擇"
+    },
     "TSlider": {
       "name": "滑塊",
       "enName": "Slider",

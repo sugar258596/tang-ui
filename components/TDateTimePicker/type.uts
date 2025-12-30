@@ -1,0 +1,132 @@
+/**
+ * TDateTimePicker 时间选择器模式类型
+ */
+export type TDateTimePickerMode = 'month' | 'date' | 'datetime'
+
+/**
+ * 日期项类型（用于插槽）
+ */
+export type TDateTimePickerDayItem = {
+  /** 日期数字 */
+  day: number
+  /** 月份 */
+  month: number
+  /** 年份 */
+  year: number
+  /** 是否当前月 */
+  isCurrentMonth: boolean
+  /** 是否今天 */
+  isToday: boolean
+  /** 是否选中 */
+  isSelected: boolean
+  /** 是否禁用 */
+  isDisabled: boolean
+}
+
+/**
+ * TDateTimePicker 时间选择器组件属性类型定义
+ */
+export type TDateTimePickerProps = {
+  /**
+   * 选择器模式
+   * - month: 选择年月
+   * - date: 选择年月日
+   * - datetime: 选择年月日时分
+   * @default 'date'
+   */
+  mode?: TDateTimePickerMode
+
+  /**
+   * 选择器标题
+   */
+  title?: string
+
+  /**
+   * 最小可选日期（时间戳，毫秒）
+   * @default 当前时间往前100年
+   */
+  minDate?: number
+
+  /**
+   * 最大可选日期（时间戳，毫秒）
+   * @default 当前时间往后100年
+   */
+  maxDate?: number
+
+  /**
+   * 确认按钮文字
+   * @default '确定'
+   */
+  confirmText?: string
+
+  /**
+   * 取消按钮文字
+   * @default '取消'
+   */
+  cancelText?: string
+
+  /**
+   * 选项高度
+   * @default '44px'
+   */
+  itemHeight?: string
+
+  /**
+   * 可见选项数量
+   * @default 5
+   */
+  visibleItemCount?: number
+
+  /**
+   * 是否显示工具栏
+   * @default true
+   */
+  showToolbar?: boolean
+
+  /**
+   * 选中日期的背景颜色
+   * @default '#409eff'
+   */
+  activeColor?: string
+
+  /**
+   * 选中日期的文字颜色
+   * @default '#ffffff'
+   */
+  activeTextColor?: string
+
+  /**
+   * 今天日期的文字颜色
+   * @default '#409eff'
+   */
+  todayColor?: string
+
+  /**
+   * 确认按钮颜色
+   * @default '#409eff'
+   */
+  confirmColor?: string
+}
+
+/**
+ * TDateTimePicker 时间选择器组件事件定义
+ */
+export type TDateTimePickerEmits = {
+  /**
+   * 确认选择时触发
+   * @param value 选中的时间戳（毫秒）
+   * @param formatted 格式化后的字符串
+   */
+  confirm: (value: number, formatted: string) => void
+
+  /**
+   * 取消选择时触发
+   */
+  cancel: () => void
+
+  /**
+   * 选项改变时触发
+   * @param value 当前选中的时间戳（毫秒）
+   */
+  change: (value: number) => void
+}

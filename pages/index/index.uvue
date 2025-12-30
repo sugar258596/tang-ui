@@ -48,6 +48,7 @@ const componentPaths: Map<string, string> = new Map([
   ['TRadioGroup', '/pages/examples/radio-group'],
   ['TSelect', '/pages/examples/select'],
   ['TPicker', '/pages/examples/picker'],
+  ['TDateTimePicker', '/pages/examples/datetime-picker'],
   ['TSlider', '/pages/examples/slider'],
   ['TRate', '/pages/examples/rate'],
   ['TForm', '/pages/examples/form'],
@@ -74,7 +75,7 @@ const componentPaths: Map<string, string> = new Map([
 const groupConfig: Map<string, string[]> = new Map([
   ['basic', ['TButton', 'TIcon', 'TText', 'TImage', 'TDivider']],
   ['layout', ['TCard', 'TList', 'TCell', 'TGrid', 'TRow/TCol']],
-  ['form', ['TInput', 'TTextarea', 'TSearchBar', 'TNumberInput', 'TSwitch', 'TCheckbox', 'TCheckboxGroup', 'TRadioButton', 'TRadioGroup', 'TSelect', 'TPicker', 'TSlider', 'TRate', 'TForm']],
+  ['form', ['TInput', 'TTextarea', 'TSearchBar', 'TNumberInput', 'TSwitch', 'TCheckbox', 'TCheckboxGroup', 'TRadioButton', 'TRadioGroup', 'TSelect', 'TPicker', 'TDateTimePicker', 'TSlider', 'TRate', 'TForm']],
   ['display', ['Tags', 'TBadge', 'TAvatar', 'TProgress', 'TNoticeBar', 'TCollapse', 'TSwiper', 'TEmpty', 'TErrorState']],
   ['feedback', ['TLoading', 'TToast', 'TDialog', 'TPopup', 'TActionSheet']],
   ['navigation', ['Tabs', 'TNavBar']],

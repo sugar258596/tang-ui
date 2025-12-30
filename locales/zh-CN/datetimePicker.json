@@ -1,0 +1,10 @@
+{
+  "title": "选择时间",
+  "confirmText": "确定",
+  "cancelText": "取消",
+  "year": "年",
+  "month": "月",
+  "day": "日",
+  "hour": "时",
+  "minute": "分"
+}

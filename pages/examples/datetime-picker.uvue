@@ -1,0 +1,387 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TDateTimePicker from '@/components/TDateTimePicker'
+import { useI18n } from '@/composables/useI18n.uts'
+
+/**
+ * TDateTimePicker 时间选择器示例页面
+ */
+
+const { $t } = useI18n()
+
+// 选择月份
+const monthVisible = ref<boolean>(false)
+const monthValue = ref<number>(0)
+const monthText = ref<string>('请选择月份')
+
+// 选择日期
+const dateVisible = ref<boolean>(false)
+const dateValue = ref<number>(0)
+const dateText = ref<string>('请选择日期')
+
+// 选择日期时间
+const datetimeVisible = ref<boolean>(false)
+const datetimeValue = ref<number>(0)
+const datetimeText = ref<string>('请选择日期时间')
+
+// 自定义范围
+const rangeVisible = ref<boolean>(false)
+const rangeValue = ref<number>(0)
+const rangeText = ref<string>('请选择（2024年范围）')
+
+// 自定义标题
+const customVisible = ref<boolean>(false)
+const customValue = ref<number>(0)
+const customText = ref<string>('请选择预约时间')
+
+/**
+ * 显示月份选择器
+ */
+const showMonthPicker = (): void => {
+  monthVisible.value = true
+}
+
+/**
+ * 月份选择器确认
+ */
+const handleMonthConfirm = (value: number, formatted: string): void => {
+  monthValue.value = value
+  monthText.value = formatted
+  console.log('选择月份:', formatted, value)
+}
+
+/**
+ * 显示日期选择器
+ */
+const showDatePicker = (): void => {
+  dateVisible.value = true
+}
+
+/**
+ * 日期选择器确认
+ */
+const handleDateConfirm = (value: number, formatted: string): void => {
+  dateValue.value = value
+  dateText.value = formatted
+  console.log('选择日期:', formatted, value)
+}
+
+/**
+ * 显示日期时间选择器
+ */
+const showDatetimePicker = (): void => {
+  datetimeVisible.value = true
+}
+
+/**
+ * 日期时间选择器确认
+ */
+const handleDatetimeConfirm = (value: number, formatted: string): void => {
+  datetimeValue.value = value
+  datetimeText.value = formatted
+  console.log('选择日期时间:', formatted, value)
+}
+
+/**
+ * 显示自定义范围选择器
+ */
+const showRangePicker = (): void => {
+  rangeVisible.value = true
+}
+
+/**
+ * 自定义范围选择器确认
+ */
+const handleRangeConfirm = (value: number, formatted: string): void => {
+  rangeValue.value = value
+  rangeText.value = formatted
+  console.log('自定义范围选择:', formatted, value)
+}
+
+/**
+ * 显示自定义标题选择器
+ */
+const showCustomPicker = (): void => {
+  customVisible.value = true
+}
+
+/**
+ * 自定义标题选择器确认
+ */
+const handleCustomConfirm = (value: number, formatted: string): void => {
+  customValue.value = value
+  customText.value = formatted
+  console.log('自定义选择:', formatted, value)
+}
+
+// 计算自定义范围的最小最大日期（2024年全年）
+const minRangeDate = new Date(2024, 0, 1).getTime()
+const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
+</script>
+
+<template>
+  <view class="page">
+    <view class="page-header">
+      <text class="page-title">TDateTimePicker 时间选择器</text>
+      <text class="page-desc">支持选择月份、日期、日期时间三种模式</text>
+    </view>
+
+    <view class="page-content">
+      <!-- 选择月份 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">选择月份 (mode="month")</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showMonthPicker">
+            <text class="picker-trigger-text">{{ monthText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="monthValue > 0" class="result-text">
+            <text class="result-label">时间戳：{{ monthValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 选择日期 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">选择日期 (mode="date")</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showDatePicker">
+            <text class="picker-trigger-text">{{ dateText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="dateValue > 0" class="result-text">
+            <text class="result-label">时间戳：{{ dateValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 选择日期时间 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">选择日期时间 (mode="datetime")</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showDatetimePicker">
+            <text class="picker-trigger-text">{{ datetimeText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="datetimeValue > 0" class="result-text">
+            <text class="result-label">时间戳：{{ datetimeValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 自定义日期范围 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">自定义日期范围</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showRangePicker">
+            <text class="picker-trigger-text">{{ rangeText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="rangeValue > 0" class="result-text">
+            <text class="result-label">时间戳：{{ rangeValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 自定义标题和按钮 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">自定义标题和按钮</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showCustomPicker">
+            <text class="picker-trigger-text">{{ customText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view v-if="customValue > 0" class="result-text">
+            <text class="result-label">时间戳：{{ customValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 使用说明 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">使用说明</text>
+        </view>
+        <view class="section-content">
+          <view class="tip-box">
+            <text class="tip-text">• mode="month" - 选择年月</text>
+            <text class="tip-text">• mode="date" - 选择年月日</text>
+            <text class="tip-text">• mode="datetime" - 选择年月日时分</text>
+            <text class="tip-text">• 支持 minDate/maxDate 限制日期范围</text>
+            <text class="tip-text">• 使用 v-model:value 绑定时间戳</text>
+            <text class="tip-text">• confirm 事件返回时间戳和格式化字符串</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 月份选择器 -->
+    <TDateTimePicker
+      v-model="monthVisible"
+      v-model:value="monthValue"
+      mode="month"
+      title="选择月份"
+      @confirm="handleMonthConfirm"
+    />
+
+    <!-- 日期选择器 -->
+    <TDateTimePicker
+      v-model="dateVisible"
+      v-model:value="dateValue"
+      mode="date"
+      title="选择日期"
+      @confirm="handleDateConfirm"
+    />
+
+    <!-- 日期时间选择器 -->
+    <TDateTimePicker
+      v-model="datetimeVisible"
+      v-model:value="datetimeValue"
+      mode="datetime"
+      title="选择日期时间"
+      @confirm="handleDatetimeConfirm"
+    />
+
+    <!-- 自定义范围选择器 -->
+    <TDateTimePicker
+      v-model="rangeVisible"
+      v-model:value="rangeValue"
+      mode="date"
+      title="选择2024年日期"
+      :min-date="minRangeDate"
+      :max-date="maxRangeDate"
+      @confirm="handleRangeConfirm"
+    />
+
+    <!-- 自定义标题选择器 -->
+    <TDateTimePicker
+      v-model="customVisible"
+      v-model:value="customValue"
+      mode="datetime"
+      title="预约时间"
+      confirm-text="确认预约"
+      cancel-text="返回"
+      @confirm="handleCustomConfirm"
+    />
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+
+  &-header {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  &-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #303133;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  &-desc {
+    font-size: 14px;
+    color: #909399;
+    display: block;
+  }
+
+  &-content {
+    padding: 0;
+  }
+}
+
+.section {
+  margin-bottom: 12px;
+
+  &-title {
+    padding: 12px 20px;
+    background-color: transparent;
+
+    &-text {
+      font-size: 14px;
+      color: #909399;
+    }
+  }
+
+  &-content {
+    background-color: #ffffff;
+    padding: 20px;
+  }
+}
+
+.picker-trigger {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:active {
+    background-color: #e4e7ed;
+  }
+
+  &-text {
+    font-size: 15px;
+    color: #303133;
+    flex: 1;
+  }
+
+  &-arrow {
+    font-size: 20px;
+    color: #909399;
+    margin-left: 12px;
+  }
+}
+
+.result-text {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #ecf5ff;
+  border-radius: 4px;
+}
+
+.result-label {
+  font-size: 14px;
+  color: #409eff;
+  display: block;
+}
+
+.tip-box {
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.tip-text {
+  display: block;
+  font-size: 14px;
+  color: #606266;
+  line-height: 1.8;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+</style>

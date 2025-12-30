@@ -249,6 +249,12 @@
 			}
 		},
 		{
+			"path": "pages/examples/datetime-picker",
+			"style": {
+				"navigationBarTitleText": "DateTimePicker 时间选择器"
+			}
+		},
+		{
 			"path": "pages/i18n-demo/index",
 			"style": {
 				"navigationBarTitleText": "国际化示例"

@@ -89,6 +89,7 @@ export const components: string[] = [
   'TSlider',
   'TRate',
   'TPicker',
+  'TDateTimePicker',
   'TForm',
 
   // 数据展示

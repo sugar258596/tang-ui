@@ -28,6 +28,7 @@ import zhCNPicker from './zh-CN/picker.json'
 import zhCNSearchBar from './zh-CN/searchBar.json'
 import zhCNTextarea from './zh-CN/textarea.json'
 import zhCNToast from './zh-CN/toast.json'
+import zhCNDatetimePicker from './zh-CN/datetimePicker.json'
 
 // 英语 (en-US)
 import enUSActionSheet from './en-US/actionSheet.json'
@@ -47,6 +48,7 @@ import enUSPicker from './en-US/picker.json'
 import enUSSearchBar from './en-US/searchBar.json'
 import enUSTextarea from './en-US/textarea.json'
 import enUSToast from './en-US/toast.json'
+import enUSDatetimePicker from './en-US/datetimePicker.json'
 
 // 繁体中文 (zh-TW)
 import zhTWActionSheet from './zh-TW/actionSheet.json'
@@ -66,6 +68,7 @@ import zhTWPicker from './zh-TW/picker.json'
 import zhTWSearchBar from './zh-TW/searchBar.json'
 import zhTWTextarea from './zh-TW/textarea.json'
 import zhTWToast from './zh-TW/toast.json'
+import zhTWDatetimePicker from './zh-TW/datetimePicker.json'
 
 // ============================================
 // 创建静态导入映射表
@@ -91,7 +94,8 @@ const zhCNModules: ModularLocaleMessages = {
   picker: zhCNPicker,
   searchBar: zhCNSearchBar,
   textarea: zhCNTextarea,
-  toast: zhCNToast
+  toast: zhCNToast,
+  datetimePicker: zhCNDatetimePicker
 }
 
 /**
@@ -114,7 +118,8 @@ const enUSModules: ModularLocaleMessages = {
   picker: enUSPicker,
   searchBar: enUSSearchBar,
   textarea: enUSTextarea,
-  toast: enUSToast
+  toast: enUSToast,
+  datetimePicker: enUSDatetimePicker
 }
 
 /**
@@ -137,7 +142,8 @@ const zhTWModules: ModularLocaleMessages = {
   picker: zhTWPicker,
   searchBar: zhTWSearchBar,
   textarea: zhTWTextarea,
-  toast: zhTWToast
+  toast: zhTWToast,
+  datetimePicker: zhTWDatetimePicker
 }
 
 // ============================================
@@ -169,7 +175,8 @@ export class LocaleLoader {
     'picker',
     'searchBar',
     'textarea',
-    'toast'
+    'toast',
+    'datetimePicker'
   ]
   
   /**
