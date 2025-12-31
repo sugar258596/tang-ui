@@ -6,6 +6,7 @@
 	import TRate from '../TRate/index.uvue'
 	import TSlider from '../TSlider/index.uvue'
 	import TSelect from '../TSelect/index.uvue'
+	import TDateTimePicker from '../TDateTimePicker/index.uvue'
 	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
@@ -58,9 +59,29 @@
 		return options?.map(o => ({ label: o.label, value: o.value })) || []
 	}
 
-	const onTimeChange = (e : any, item : FormSchema) => {
-		model.value[item.field] = e.detail.value
+	// 日期时间选择器状态管理
+	const pickerVisible = reactive<Record<string, boolean>>({})
+	const pickerValues = reactive<Record<string, number>>({})
+
+	const openPicker = (field : string) => {
+		pickerVisible[field] = true
+	}
+
+	const onDateTimeConfirm = (value : number, formatted : string, item : FormSchema) => {
+		model.value[item.field] = formatted
+		pickerValues[item.field] = value
+		pickerVisible[item.field] = false
 		validateField(item)
+	}
+
+	const onDateTimeCancel = (field : string) => {
+		pickerVisible[field] = false
+	}
+
+	const getPickerMode = (component : string) : string => {
+		if (component === 'Date') return 'date'
+		if (component === 'Time') return 'datetime'
+		return 'date'
 	}
 
 	const validateField = (item : FormSchema) => {
@@ -169,7 +190,7 @@
 				<view class="form-item-content" :class="`form-item--${getItemLayout(item)}`">
 					<view class="form-label" >
 						<text class="text" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
-						<text v-if="item.required" class="required">*</text>
+						<text v-show="item.required" class="required">*</text>
 					</view>
 
 					<view class="form-control">
@@ -201,22 +222,32 @@
 						@change="validateField(item)" />
 
 					<!-- 日期选择 -->
-					<picker v-else-if="item.component === 'Date'" mode="date" :name="item.field"
-						:value="model[item.field]" v-bind="item.componentProps || {}"
-						@change="onTimeChange($event, item)">
-						<view class="picker">
-							{{ model[item.field] || $t('form.datePlaceholder') }}
-						</view>
-					</picker>
+					<view v-else-if="item.component === 'Date'" class="picker" @click="openPicker(item.field)">
+						<text>{{ model[item.field] || $t('form.datePlaceholder') }}</text>
+					</view>
+					<TDateTimePicker
+						v-if="item.component === 'Date'"
+						v-model="pickerVisible[item.field]"
+						:value="pickerValues[item.field]"
+						mode="date"
+						v-bind="item.componentProps || {}"
+						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
+						@cancel="onDateTimeCancel(item.field)"
+					/>
 
 					<!-- 时间选择 -->
-					<picker v-else-if="item.component === 'Time'" mode="time" :name="item.field"
-						:value="model[item.field]" v-bind="item.componentProps || {}"
-						@change="onTimeChange($event, item)">
-						<view class="picker">
-							{{ model[item.field] || $t('form.timePlaceholder') }}
-						</view>
-					</picker>
+					<view v-else-if="item.component === 'Time'" class="picker" @click="openPicker(item.field)">
+						<text>{{ model[item.field] || $t('form.timePlaceholder') }}</text>
+					</view>
+					<TDateTimePicker
+						v-if="item.component === 'Time'"
+						v-model="pickerVisible[item.field]"
+						:value="pickerValues[item.field]"
+						mode="datetime"
+						v-bind="item.componentProps || {}"
+						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
+						@cancel="onDateTimeCancel(item.field)"
+					/>
 
 					<!-- 单选 -->
 					<TRadioGroup v-else-if="item.component === 'Radio'" v-model="model[item.field]"
@@ -370,6 +401,17 @@
 
 	.textarea {
 		min-height: 120rpx;
+	}
+
+	.picker {
+		width: 100%;
+		padding: 10rpx 24rpx;
+		font-size: 28rpx;
+		color: #c0c4cc;
+		background-color: #f5f5f5;
+		border-radius: 8rpx;
+		border: 1rpx solid #e0e0e0;
+		transition: all 0.3s;
 	}
 
 	.error-message {

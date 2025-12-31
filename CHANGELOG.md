@@ -1,5 +1,36 @@
 # 更新日志
 
+## [1.2.0] - 2025-12-31
+
+### 优化
+
+- **TForm**: 日期和时间选择改用 TDateTimePicker 组件
+  - `Date` 类型使用 `TDateTimePicker` 的 `mode="date"` 模式
+  - `Time` 类型使用 `TDateTimePicker` 的 `mode="datetime"` 模式
+  - 移除原生 picker 组件，统一使用日历面板选择器
+  - 新增 `.picker` 样式，与输入框风格一致
+
+## [1.1.9] - 2025-12-30
+
+### 新增
+
+- **TDateTimePicker**: 新增日历时间选择器组件
+  - 支持三种选择模式：`month`（年月）、`date`（年月日）、`datetime`（年月日时分）
+  - 日历面板形式，6行7列网格布局，显示上下月溢出日期
+  - 年份选择面板，支持 ±100 年范围翻页浏览
+  - 月份选择面板，12个月网格展示
+  - datetime 模式下底部时间选择器，支持自动滚动锚定
+  - 阻止背景滚动穿透
+  - 支持 `day` 插槽自定义日期单元格内容
+  - 支持颜色配置：`activeColor`、`activeTextColor`、`todayColor`、`confirmColor`
+  - 支持日期范围限制：`minDate`、`maxDate`
+  - 完整的 i18n 国际化支持（中文简体、中文繁体、英文）
+
+### 文档
+
+- **TDateTimePicker**: 添加组件 README 文档
+- **TDateTimePicker**: 添加示例页面
+
 ## [1.1.8] - 2025-12-30
 
 ### 修复
