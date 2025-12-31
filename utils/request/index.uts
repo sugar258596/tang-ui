@@ -1,64 +1,53 @@
 /**
- * 请求方法类型
+ * HTTP 请求封装
+ * @module utils/request
  */
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT'
 
-/**
- * 基础配置
- */
-interface HttpInitOptions {
-	baseURL : string
-	header ?: UTSJSONObject
-	showLoading ?: boolean
-	autoAuth ?: boolean // 是否自动附加 Token
-	timeout ?: number
-	[key : string] : any
+import type {
+	HttpMethod,
+	HttpInitOptions,
+	HttpRequestOptions,
+	ResponseData,
+	DataResponse,
+	HttpInterceptors
+} from './type.uts'
+
+// 导出类型供外部使用
+export type {
+	HttpMethod,
+	HttpInitOptions,
+	HttpRequestOptions,
+	ResponseData,
+	DataResponse,
+	HttpInterceptors
 }
 
 /**
- * 请求配置
- */
-interface HttpRequestOptions {
-	url : string
-	data ?: UTSJSONObject | null
-	header ?: UTSJSONObject | null
-	method ?: HttpMethod
-	timeout ?: number
-	showLoading ?: boolean
-	loadingText ?: string
-	disableAuth ?: boolean
-	[key : string] : any
-}
-
-/**
- * 响应体结构
- */
-interface ResponseData<T = any> {
-	code : number
-	msg : string
-	data : T,
-	count : number
-}
-
-/**
- * 分页数据响应格式
- */
-interface DataResponse<T = any> {
-	data : T | []
-	total ?: number
-}
-
-/**
- * Http 拦截器接口
- */
-interface HttpInterceptors {
-	request ?: (options : HttpRequestOptions) => HttpRequestOptions
-	response ?: <T>(response : ResponseData<T>, options : HttpRequestOptions) => DataResponse<T> | T
-	error ?: (err : any, options : HttpRequestOptions) => void
-}
-
-/**
- * 优化封装 HttpRequest
+ * HTTP 请求类
+ * @description 封装 uni.request，支持拦截器、自动认证、统一错误处理
+ * @example
+ * ```ts
+ * const http = new HttpRequest({
+ *   baseURL: 'https://api.example.com',
+ *   showLoading: true,
+ *   autoAuth: true
+ * })
+ *
+ * // 设置拦截器
+ * http.setInterceptors({
+ *   request: (options) => {
+ *     // 自定义请求处理
+ *     return options
+ *   },
+ *   response: (res, options) => {
+ *     // 自定义响应处理
+ *     return res.data
+ *   }
+ * })
+ *
+ * // 发起请求
+ * const data = await http.get<UserInfo>('/user/info')
+ * ```
  */
 class HttpRequest {
 	private baseURL : string
@@ -83,21 +72,18 @@ class HttpRequest {
 		this.timeout = options.timeout ?? 50000
 	}
 
-	/** 设置拦截器 */
-	public setInterceptors(interceptors : HttpInterceptors) {
-
-
-
+	/**
+	 * 设置拦截器
+	 * @param interceptors 拦截器配置
+	 */
+	public setInterceptors(interceptors : HttpInterceptors) : void {
 		this.interceptors = interceptors
 	}
 
-	/** -------------------
+	/**
 	 * 核心请求逻辑
-	 * ------------------- */
+	 */
 	private coreRequest<T>(options : HttpRequestOptions) : Promise<T> {
-
-		
-
 		const config = this.beforeRequest(options)
 
 		return new Promise<T>((resolve, reject) => {
@@ -118,7 +104,9 @@ class HttpRequest {
 		})
 	}
 
-	/** 请求前拦截与配置处理 */
+	/**
+	 * 请求前拦截与配置处理
+	 */
 	private beforeRequest(options : HttpRequestOptions) : HttpRequestOptions {
 		const config : HttpRequestOptions = {
 			...options,
@@ -130,6 +118,7 @@ class HttpRequest {
 			showLoading: options.showLoading ?? this.showLoading,
 			disableAuth: options.disableAuth ?? this.autoAuth
 		}
+
 		// 加载提示
 		if (config.showLoading ?? this.showLoading) {
 			uni.showLoading({ title: config.loadingText ?? '加载中...', mask: true })
@@ -175,8 +164,10 @@ class HttpRequest {
 		return config
 	}
 
-	/** 响应处理逻辑 */
-	private handleResponse<T>(response : any, options : HttpRequestOptions) {
+	/**
+	 * 响应处理逻辑
+	 */
+	private handleResponse<T>(response : any, options : HttpRequestOptions) : Promise<T> {
 		uni.hideLoading()
 
 		const statusCode = response.statusCode
@@ -189,17 +180,13 @@ class HttpRequest {
 			res = data as ResponseData<T>
 		}
 
-
 		// 自定义响应拦截器（优先）
 		if (this.interceptors.response != null) {
-			this.interceptors.response(res, options)
 			const intercepted = this.interceptors.response(res, options)
 			if (intercepted !== undefined) {
-				res = intercepted as any
-				return Promise.resolve(intercepted)
+				return Promise.resolve(intercepted as T)
 			}
 		}
-
 
 		// HTTP 层错误
 		if (statusCode < 200 || statusCode >= 300) {
@@ -218,11 +205,13 @@ class HttpRequest {
 			return Promise.reject(res)
 		}
 
-		return Promise.resolve(res)
+		return Promise.resolve(res as T)
 	}
 
-	/** 错误统一处理 */
-	private handleError(error : any, options : HttpRequestOptions) {
+	/**
+	 * 错误统一处理
+	 */
+	private handleError(error : any, options : HttpRequestOptions) : void {
 		uni.hideLoading()
 		if (this.interceptors.error != null) {
 			this.interceptors.error(error, options)
@@ -230,24 +219,32 @@ class HttpRequest {
 		uni.showToast({ title: '网络异常，请稍后重试', icon: 'none' })
 	}
 
-	/** HTTP 状态码消息 */
+	/**
+	 * HTTP 状态码消息
+	 */
 	private getHttpErrorMsg(status : number) : string {
-		if (status == 404) {
-			return '请求的资源不存在'
-		} else if (status == 500) {
-			return '服务器错误'
-		} else if (status == 503) {
-			return '服务不可用'
-		} else {
-			return '请求失败'
+		const messages : Record<number, string> = {
+			400: '请求参数错误',
+			401: '未授权，请登录',
+			403: '拒绝访问',
+			404: '请求的资源不存在',
+			405: '请求方法不允许',
+			408: '请求超时',
+			500: '服务器错误',
+			502: '网关错误',
+			503: '服务不可用',
+			504: '网关超时'
 		}
+		return messages[status] ?? '请求失败'
 	}
 
-	/** -------------------
-	 * 快捷请求方法
-	 * ------------------- */
+	/**
+	 * GET 请求
+	 * @param url 请求地址
+	 * @param data 请求参数
+	 * @param options 额外配置
+	 */
 	public get<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
-
 		const config : HttpRequestOptions = {
 			url: url,
 			data: data,
@@ -257,6 +254,12 @@ class HttpRequest {
 		return this.coreRequest<T>(config)
 	}
 
+	/**
+	 * POST 请求
+	 * @param url 请求地址
+	 * @param data 请求数据
+	 * @param options 额外配置
+	 */
 	public post<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
 		const config : HttpRequestOptions = {
 			url: url,
@@ -267,6 +270,12 @@ class HttpRequest {
 		return this.coreRequest<T>(config)
 	}
 
+	/**
+	 * PUT 请求
+	 * @param url 请求地址
+	 * @param data 请求数据
+	 * @param options 额外配置
+	 */
 	public put<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
 		const config : HttpRequestOptions = {
 			url: url,
@@ -277,6 +286,12 @@ class HttpRequest {
 		return this.coreRequest<T>(config)
 	}
 
+	/**
+	 * DELETE 请求
+	 * @param url 请求地址
+	 * @param data 请求数据
+	 * @param options 额外配置
+	 */
 	public delete<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
 		const config : HttpRequestOptions = {
 			url: url,
@@ -287,14 +302,17 @@ class HttpRequest {
 		return this.coreRequest<T>(config)
 	}
 
-	/** -------------------
+	/**
 	 * 文件上传
-	 * ------------------- */
+	 * @param url 上传地址
+	 * @param data 表单数据，需包含 File 字段（文件路径）
+	 * @param options 额外配置
+	 */
 	public upload<T>(
 		url : string,
 		data ?: UTSJSONObject | null,
 		options ?: HttpRequestOptions | null
-	) {
+	) : Promise<T> {
 		const config : HttpRequestOptions = {
 			url: url,
 			data: data,
@@ -330,9 +348,12 @@ class HttpRequest {
 		})
 	}
 
-	/** -------------------
-	 * formData 提交（无文件）
-	 * ------------------- */
+	/**
+	 * FormData 提交（无文件）
+	 * @param url 请求地址
+	 * @param data 表单数据
+	 * @param options 额外配置
+	 */
 	public postFormData<T>(
 		url : string,
 		data ?: UTSJSONObject | null,
@@ -349,7 +370,6 @@ class HttpRequest {
 		}
 		return this.coreRequest<T>(config)
 	}
-
 }
 
 export default HttpRequest

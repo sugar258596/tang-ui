@@ -142,7 +142,7 @@ const handleClick = () => {
 <style lang="scss" scoped>
 // 覆盖 uni-button 原生组件的默认样式
 // 使用 uni-button.t-button 确保覆盖原生样式
-uni-button.t-button {
+.t-button {
   position: relative;
   display: inline-flex;
   align-items: center;

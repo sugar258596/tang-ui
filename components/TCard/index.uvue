@@ -83,7 +83,7 @@ const handleClick = (): void => {
 <style lang="scss" scoped>
 // 覆盖 uni-view 原生组件的默认样式
 // 使用 uni-view.t-card 确保覆盖原生样式
-uni-view.t-card {
+.t-card {
   background-color: #ffffff;
   transition: all 0.3s ease;
   // 重置 uni-view 的默认样式
