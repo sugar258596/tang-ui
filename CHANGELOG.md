@@ -1,5 +1,31 @@
 # 更新日志
 
+## [1.2.1] - 2025-12-31
+
+### 新增
+
+- **HttpRequest**: 新增 HTTP 请求封装工具类 (`utils/request/index.uts`)
+  - 支持 GET、POST、PUT、DELETE 等请求方法
+  - 支持请求/响应拦截器
+  - 自动附加 Token 认证（可配置）
+  - GET 请求自动添加时间戳防缓存
+  - 支持 Loading 状态显示（可配置）
+  - 支持文件上传 `upload()` 方法
+  - 支持 FormData 提交 `postFormData()` 方法
+  - 统一的错误处理和 HTTP 状态码提示
+  - 完整的 TypeScript 类型定义
+
+### 修复
+
+- **TForm**: 修复小程序编译时 `v-bind="" is not supported` 错误
+  - 原生组件（input、textarea）移除 `v-bind` 对象绑定，改为显式绑定具体属性
+  - 新增 `getComponentProps()` 辅助函数，安全获取组件属性
+  - 自定义组件使用 `getComponentProps(item)` 代替 `item.componentProps || {}`
+
+- **i18n-demo**: 修复小程序编译时 WXML 特殊字符解析错误
+  - `register-object.uvue`: 代码块添加条件编译，小程序端显示提示文本
+  - `register-path.uvue`: 代码块和文件树结构添加条件编译
+
 ## [1.2.0] - 2025-12-31
 
 ### 优化

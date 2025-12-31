@@ -1,0 +1,355 @@
+/**
+ * 请求方法类型
+ */
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT'
+
+/**
+ * 基础配置
+ */
+interface HttpInitOptions {
+	baseURL : string
+	header ?: UTSJSONObject
+	showLoading ?: boolean
+	autoAuth ?: boolean // 是否自动附加 Token
+	timeout ?: number
+	[key : string] : any
+}
+
+/**
+ * 请求配置
+ */
+interface HttpRequestOptions {
+	url : string
+	data ?: UTSJSONObject | null
+	header ?: UTSJSONObject | null
+	method ?: HttpMethod
+	timeout ?: number
+	showLoading ?: boolean
+	loadingText ?: string
+	disableAuth ?: boolean
+	[key : string] : any
+}
+
+/**
+ * 响应体结构
+ */
+interface ResponseData<T = any> {
+	code : number
+	msg : string
+	data : T,
+	count : number
+}
+
+/**
+ * 分页数据响应格式
+ */
+interface DataResponse<T = any> {
+	data : T | []
+	total ?: number
+}
+
+/**
+ * Http 拦截器接口
+ */
+interface HttpInterceptors {
+	request ?: (options : HttpRequestOptions) => HttpRequestOptions
+	response ?: <T>(response : ResponseData<T>, options : HttpRequestOptions) => DataResponse<T> | T
+	error ?: (err : any, options : HttpRequestOptions) => void
+}
+
+/**
+ * 优化封装 HttpRequest
+ */
+class HttpRequest {
+	private baseURL : string
+	private header : UTSJSONObject
+	private showLoading : boolean
+	private autoAuth : boolean
+	private interceptors : HttpInterceptors = {}
+	private timeout : number
+
+	constructor(options : HttpInitOptions) {
+		this.baseURL = options.baseURL
+		this.header = {
+			'Content-Type': 'application/json;charset=utf-8'
+		} as UTSJSONObject
+		if (options.header != null) {
+			for (const key in options.header) {
+				this.header[key] = options.header[key]
+			}
+		}
+		this.showLoading = options.showLoading ?? true
+		this.autoAuth = options.autoAuth ?? true
+		this.timeout = options.timeout ?? 50000
+	}
+
+	/** 设置拦截器 */
+	public setInterceptors(interceptors : HttpInterceptors) {
+
+
+
+		this.interceptors = interceptors
+	}
+
+	/** -------------------
+	 * 核心请求逻辑
+	 * ------------------- */
+	private coreRequest<T>(options : HttpRequestOptions) : Promise<T> {
+
+		
+
+		const config = this.beforeRequest(options)
+
+		return new Promise<T>((resolve, reject) => {
+			uni.request({
+				url: config.url,
+				data: config.data as any,
+				header: config.header as any,
+				method: config.method ?? 'GET',
+				timeout: config.timeout ?? 60000,
+				success: (res : any) => {
+					this.handleResponse<T>(res, config).then(resolve).catch(reject)
+				},
+				fail: (err : any) => {
+					this.handleError(err, config)
+					reject(err)
+				},
+			})
+		})
+	}
+
+	/** 请求前拦截与配置处理 */
+	private beforeRequest(options : HttpRequestOptions) : HttpRequestOptions {
+		const config : HttpRequestOptions = {
+			...options,
+			url: options.url,
+			data: options.data,
+			method: options.method,
+			header: options.header || this.header,
+			timeout: options.timeout || this.timeout,
+			showLoading: options.showLoading ?? this.showLoading,
+			disableAuth: options.disableAuth ?? this.autoAuth
+		}
+		// 加载提示
+		if (config.showLoading ?? this.showLoading) {
+			uni.showLoading({ title: config.loadingText ?? '加载中...', mask: true })
+		}
+
+		// 拼接 URL
+		if (!config.url.startsWith('http')) {
+			config.url = this.baseURL + config.url
+		}
+
+		// Token 自动添加
+		if (this.autoAuth && !config.disableAuth) {
+			const token = uni.getStorageSync('token') as string | null
+			if (token != null && token != '') {
+				const newHeader = {} as UTSJSONObject
+				if (config.header != null) {
+					for (const key in config.header) {
+						newHeader[key] = config.header[key]
+					}
+				}
+				newHeader['Authorization'] = `Bearer ${token}`
+				config.header = newHeader
+			}
+		}
+
+		// GET 请求防缓存
+		if (config.method == 'GET') {
+			const newData = {} as UTSJSONObject
+			if (config.data != null) {
+				for (const key in config.data) {
+					newData[key] = config.data[key]
+				}
+			}
+			newData['_t'] = Date.now()
+			config.data = newData
+		}
+
+		// 自定义拦截器
+		if (this.interceptors.request != null) {
+			return this.interceptors.request(config)
+		}
+
+		return config
+	}
+
+	/** 响应处理逻辑 */
+	private handleResponse<T>(response : any, options : HttpRequestOptions) {
+		uni.hideLoading()
+
+		const statusCode = response.statusCode
+		const data = response.data
+
+		let res : ResponseData<T>
+		if (typeof data == 'string') {
+			res = JSON.parse(data) as ResponseData<T>
+		} else {
+			res = data as ResponseData<T>
+		}
+
+
+		// 自定义响应拦截器（优先）
+		if (this.interceptors.response != null) {
+			this.interceptors.response(res, options)
+			const intercepted = this.interceptors.response(res, options)
+			if (intercepted !== undefined) {
+				res = intercepted as any
+				return Promise.resolve(intercepted)
+			}
+		}
+
+
+		// HTTP 层错误
+		if (statusCode < 200 || statusCode >= 300) {
+			const msg = this.getHttpErrorMsg(statusCode)
+			uni.showToast({ title: msg, icon: 'none' })
+			return Promise.reject(new Error(msg))
+		}
+
+		// 业务逻辑错误
+		if (res.code != 200 && res.code != 0) {
+			if (res.code == 401) {
+				uni.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
+			} else {
+				uni.showToast({ title: res.msg ?? '请求失败', icon: 'none' })
+			}
+			return Promise.reject(res)
+		}
+
+		return Promise.resolve(res)
+	}
+
+	/** 错误统一处理 */
+	private handleError(error : any, options : HttpRequestOptions) {
+		uni.hideLoading()
+		if (this.interceptors.error != null) {
+			this.interceptors.error(error, options)
+		}
+		uni.showToast({ title: '网络异常，请稍后重试', icon: 'none' })
+	}
+
+	/** HTTP 状态码消息 */
+	private getHttpErrorMsg(status : number) : string {
+		if (status == 404) {
+			return '请求的资源不存在'
+		} else if (status == 500) {
+			return '服务器错误'
+		} else if (status == 503) {
+			return '服务不可用'
+		} else {
+			return '请求失败'
+		}
+	}
+
+	/** -------------------
+	 * 快捷请求方法
+	 * ------------------- */
+	public get<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
+
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			method: 'GET',
+			...options
+		}
+		return this.coreRequest<T>(config)
+	}
+
+	public post<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			method: 'POST',
+			...options
+		}
+		return this.coreRequest<T>(config)
+	}
+
+	public put<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			method: 'PUT',
+			...options
+		}
+		return this.coreRequest<T>(config)
+	}
+
+	public delete<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestOptions | null) : Promise<T> {
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			method: 'DELETE',
+			...options
+		}
+		return this.coreRequest<T>(config)
+	}
+
+	/** -------------------
+	 * 文件上传
+	 * ------------------- */
+	public upload<T>(
+		url : string,
+		data ?: UTSJSONObject | null,
+		options ?: HttpRequestOptions | null
+	) {
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			...options,
+		}
+
+		const uploadConfig = this.beforeRequest(config)
+
+		const { File, ...formData } = uploadConfig.data || {}
+
+		// 如果没有 File，降级为 postFormData
+		if (!File) {
+			return this.postFormData<T>(url, data, options)
+		}
+
+		return new Promise<T>((resolve, reject) => {
+			uni.uploadFile({
+				url: uploadConfig.url,
+				filePath: File,
+				name: 'file',
+				formData: formData,
+				...options,
+				success: (res) => {
+					this.handleResponse<T>(res, config)
+						.then(resolve)
+						.catch(reject)
+				},
+				fail: (err) => {
+					this.handleError(err, config)
+					reject(err)
+				},
+			})
+		})
+	}
+
+	/** -------------------
+	 * formData 提交（无文件）
+	 * ------------------- */
+	public postFormData<T>(
+		url : string,
+		data ?: UTSJSONObject | null,
+		options ?: HttpRequestOptions | null
+	) : Promise<T> {
+		const config : HttpRequestOptions = {
+			url: url,
+			data: data,
+			method: 'POST',
+			header: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			...options
+		}
+		return this.coreRequest<T>(config)
+	}
+
+}
+
+export default HttpRequest

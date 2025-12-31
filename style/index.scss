@@ -120,12 +120,6 @@ $z-index-toast: 1080 !default;
   --duration-slow: #{$duration-slow};
 }
 
-// 全局样式重置
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
 // 工具类
 // 显示/隐藏

@@ -59,6 +59,14 @@
 		return options?.map(o => ({ label: o.label, value: o.value })) || []
 	}
 
+	// 安全获取组件属性，避免 v-bind="" 编译问题
+	const getComponentProps = (item : FormSchema) : ComponentProps => {
+		if (item.componentProps != null) {
+			return item.componentProps
+		}
+		return {} as ComponentProps
+	}
+
 	// 日期时间选择器状态管理
 	const pickerVisible = reactive<Record<string, boolean>>({})
 	const pickerValues = reactive<Record<string, number>>({})
@@ -201,24 +209,32 @@
 					<!-- 输入框 -->
 					<input v-if="item.component === 'Input'" v-model="model[item.field]"
 						:placeholder="handlePlaceholder(item)" :name="item.field" class="input"
-						v-bind="item.componentProps || {}" @input="validateField(item)" />
+						:disabled="item.componentProps?.disabled || false"
+						:maxlength="item.componentProps?.maxlength || -1"
+						:type="item.componentProps?.type || 'text'"
+						@input="validateField(item)" />
 
 					<!-- 数字输入 -->
 					<input v-else-if="item.component === 'InputNumber'" v-model="model[item.field]"
 						:placeholder="handlePlaceholder(item)" type="number" :name="item.field" class="input"
-						v-bind="item.componentProps || {}" @input="validateField(item)" />
+						:disabled="item.componentProps?.disabled || false"
+						:maxlength="item.componentProps?.maxlength || -1"
+						@input="validateField(item)" />
 
 					<!-- 文本域 -->
 					<textarea v-else-if="item.component === 'Textarea'" v-model="model[item.field]"
 						:placeholder="handlePlaceholder(item)" :name="item.field" class="textarea"
-						v-bind="item.componentProps || {}" @input="validateField(item)"></textarea>
+						:disabled="item.componentProps?.disabled || false"
+						:maxlength="item.componentProps?.maxlength || -1"
+						:auto-height="item.componentProps?.autoHeight || false"
+						@input="validateField(item)"></textarea>
 
 					<!-- 下拉选择 -->
-					<TSelect v-else-if="item.component === 'Select'" 
+					<TSelect v-else-if="item.component === 'Select'"
 						v-model="model[item.field]"
 						:options="getSelectOptions(item)"
 						:placeholder="item.componentProps?.placeholder || $t('form.selectPlaceholder')"
-						v-bind="item.componentProps || {}"
+						v-bind="getComponentProps(item)"
 						@change="validateField(item)" />
 
 					<!-- 日期选择 -->
@@ -230,7 +246,7 @@
 						v-model="pickerVisible[item.field]"
 						:value="pickerValues[item.field]"
 						mode="date"
-						v-bind="item.componentProps || {}"
+						v-bind="getComponentProps(item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
 						@cancel="onDateTimeCancel(item.field)"
 					/>
@@ -244,7 +260,7 @@
 						v-model="pickerVisible[item.field]"
 						:value="pickerValues[item.field]"
 						mode="datetime"
-						v-bind="item.componentProps || {}"
+						v-bind="getComponentProps(item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
 						@cancel="onDateTimeCancel(item.field)"
 					/>
@@ -252,24 +268,24 @@
 					<!-- 单选 -->
 					<TRadioGroup v-else-if="item.component === 'Radio'" v-model="model[item.field]"
 						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
-						v-bind="item.componentProps || {}" @change="validateField(item)" />
+						v-bind="getComponentProps(item)" @change="validateField(item)" />
 
 					<!-- 多选 -->
 					<TCheckboxGroup v-else-if="item.component === 'Checkbox'" v-model="model[item.field]"
 						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
-						v-bind="item.componentProps || {}" @change="validateField(item)" />
+						v-bind="getComponentProps(item)" @change="validateField(item)" />
 
 					<!-- 开关 -->
 					<TSwitch v-else-if="item.component === 'Switch'" :checked="model[item.field]"
-						v-bind="item.componentProps || {}" @change="onSwitchChange($event, item)" />
+					v-bind="getComponentProps(item)" @change="onSwitchChange($event, item)" />
 
 					<!-- 评分 -->
 					<TRate v-else-if="item.component === 'Rate'" :value="model[item.field] || 0"
-						v-bind="item.componentProps || {}" @change="onRateChange($event, item)" />
+						v-bind="getComponentProps(item)" @change="onRateChange($event, item)" />
 
 					<!-- 滑块 -->
 					<TSlider v-else-if="item.component === 'Slider'" :value="model[item.field] || 0"
-						v-bind="item.componentProps || {}" @change="onSliderChange($event, item)" />
+						v-bind="getComponentProps(item)" @change="onSliderChange($event, item)" />
 						</slot>
 					</view>
 				</view>

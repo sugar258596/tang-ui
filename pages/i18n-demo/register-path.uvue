@@ -57,7 +57,8 @@
         <text class="info-text">• empty.json</text>
         <text class="info-text">• loading.json</text>
       </view>
-      
+
+      <!-- #ifndef MP -->
       <view class="code-block">
         <text class="code-text">// 注册日语语言包（异步方式）</text>
         <text class="code-text">await i18nManager.registerLocaleAsync(</text>
@@ -65,6 +66,12 @@
         <text class="code-text">  '/pages/i18n-demo/locales/ja-JP'</text>
         <text class="code-text">)</text>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef MP -->
+      <view class="code-block">
+        <text class="code-text">代码示例请查看源码</text>
+      </view>
+      <!-- #endif -->
       
       <view class="button-group">
         <view class="custom-button" @click="registerJapanese">
@@ -78,8 +85,9 @@
         </view>
       </view>
     </view>
-    
+
     <!-- 文件结构展示 -->
+    <!-- #ifndef MP -->
     <view class="section" v-if="showStructure">
       <text class="section-title">语言包目录结构</text>
       <view class="file-tree">
@@ -100,6 +108,7 @@
         <text class="tree-item indent2">    └── loading.json</text>
       </view>
     </view>
+    <!-- #endif -->
     
     <!-- 已加载的模块 -->
     <view class="section">

@@ -70,6 +70,7 @@
     <!-- 注册新语言演示 -->
     <view class="section">
       <text class="section-title">注册新语言</text>
+      <!-- #ifndef MP -->
       <view class="code-block">
         <text class="code-text">i18nManager.registerLocale('ja-JP', {</text>
         <text class="code-text">  common: {</text>
@@ -84,6 +85,12 @@
         <text class="code-text">  }</text>
         <text class="code-text">})</text>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef MP -->
+      <view class="code-block">
+        <text class="code-text">代码示例请查看源码</text>
+      </view>
+      <!-- #endif -->
       
       <view class="button-group">
         <view class="custom-button" @click="registerJapanese">
