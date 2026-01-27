@@ -1,5 +1,45 @@
 # 更新日志
 
+## [1.2.4] - 2026-01-27
+
+### 新增
+
+- **TDateTimePicker**: 新增日期范围选择功能
+  - 新增 `range` 属性开启范围选择模式
+  - 新增 `rangeColor` 属性自定义范围内日期背景色
+  - 新增 `startText`、`endText` 属性自定义开始/结束提示文字
+  - 新增 `confirmRange` 事件返回范围选择结果
+  - 范围选择时显示开始/结束日期信息栏
+  - 日历中高亮显示选中范围（开始、结束、范围内）
+
+- **TIcon**: 集成 iconfont 字体图标库
+  - 在全局样式中引入 `iconfont.css`
+  - 支持 `shanchu` 或 `icon-shanchu` 两种写法
+  - 新增 `ICON_LIST` 常量导出可用图标列表
+  - 当前可用图标：`shanchu`(删除)、`sousuo`(搜索)
+
+- **TSearchBar**: 取消按钮支持插槽自定义
+  - 新增 `cancel` 插槽，可自定义取消按钮内容
+
+### 优化
+
+- **TDateTimePicker**: 添加打开/关闭过渡动画
+  - 遮罩层淡入淡出动画（0.3s）
+  - 面板滑入滑出动画（0.35s）
+  - 与 TPopup 组件动画效果保持一致
+
+- **TSearchBar**: 使用 TIcon 组件
+  - 左侧搜索图标改用 `TIcon` 组件 (`sousuo`)
+  - 清除按钮改用 `TIcon` 组件 (`shanchu`)
+  - `leftIcon` 属性改为 `showLeftIcon` (boolean)
+
+### 重构
+
+- **组件类型定义**: 统一所有组件类型定义结构
+  - 所有组件类型移至对应的 `type.uts` 文件
+  - 组件通过 `import type` 导入类型
+  - 涉及组件：Tabs、Tags、TButton、TCol、TDivider、TGrid、TNavBar、TNoticeBar、TRow、TText 等
+
 ## [1.2.3] - 2025-01-07
 
 ### 优化
