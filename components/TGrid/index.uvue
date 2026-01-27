@@ -1,26 +1,13 @@
 <script setup lang="uts">
 import { provide, computed } from 'vue'
+import type { TGridProps } from './type.uts'
 
 /**
  * TGrid 宫格容器组件
  * @description 宫格布局容器，配合 TGridItem 使用
  */
 
-// Props 定义
-interface Props {
-  columns?: number
-  gap?: number | string
-  border?: boolean
-  borderColor?: string
-  square?: boolean
-  center?: boolean
-  clickable?: boolean
-  iconSize?: string | number
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TGridProps>(), {
   columns: 4,
   gap: 0,
   border: false,

@@ -2,33 +2,14 @@
 
 <script  setup lang="uts" >
 import { computed } from 'vue'
-import type { TextType, TextSize, TextWeight, TextAlign } from './type.uts'
+import type { TTextProps } from './type.uts'
 
 /**
  * TText 文本组件
  * @description 支持多种类型、尺寸、粗细的文本组件
  */
 
-// Props 定义
-interface Props {
-  text?: string
-  type?: TextType
-  size?: TextSize
-  weight?: TextWeight
-  align?: TextAlign
-  color?: string
-  lineHeight?: number | string
-  maxLines?: number
-  ellipsis?: boolean
-  bold?: boolean
-  italic?: boolean
-  underline?: boolean
-  strikethrough?: boolean
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TTextProps>(), {
   text: '',
   type: 'default',
   size: 'medium',

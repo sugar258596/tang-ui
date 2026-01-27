@@ -1,29 +1,13 @@
 <script setup lang="uts">
 import { computed } from 'vue'
-import type { DividerDirection, DividerType, DividerContentPosition } from './type.uts'
+import type { TDividerProps } from './type.uts'
 
 /**
  * TDivider 分割线组件
  * @description 用于分隔内容的分割线，支持水平、垂直、虚线、文字等多种形式
  */
 
-// Props 定义
-interface Props {
-  direction?: DividerDirection
-  type?: DividerType
-  color?: string
-  thickness?: number
-  hairline?: boolean
-  content?: string
-  contentPosition?: DividerContentPosition
-  contentStyle?: string
-  padding?: string | number
-  margin?: string | number
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TDividerProps>(), {
   direction: 'horizontal',
   type: 'solid',
   color: '#e0e0e0',

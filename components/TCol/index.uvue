@@ -1,20 +1,13 @@
 <script setup lang="uts">
 import { inject, computed } from 'vue'
+import type { TColProps } from './type.uts'
 
 /**
  * TCol 栅格列组件
  * @description 基于 24 栅格系统的列组件，需配合 TRow 使用
  */
 
-// Props 定义
-interface Props {
-  span?: number
-  offset?: number
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TColProps>(), {
   span: 24,
   offset: 0,
   customClass: '',

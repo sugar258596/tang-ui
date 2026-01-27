@@ -1,0 +1,51 @@
+/**
+ * TEmpty 组件类型定义
+ */
+
+/**
+ * TEmpty Props 接口
+ */
+export interface TEmptyProps {
+  /**
+   * 标题
+   */
+  title?: string
+
+  /**
+   * 描述
+   */
+  description?: string
+
+  /**
+   * 图片路径
+   * @default '/static/images/empty.png'
+   */
+  image?: string
+
+  /**
+   * 是否显示操作按钮
+   * @default false
+   */
+  showAction?: boolean
+
+  /**
+   * 操作按钮文本
+   */
+  actionText?: string
+
+  /**
+   * 是否紧凑模式
+   * @default false
+   */
+  compact?: boolean
+}
+
+/**
+ * TEmpty 事件接口
+ */
+export interface TEmptyEmits {
+  /**
+   * 操作按钮点击事件
+   */
+  actionClick: () => void
+}

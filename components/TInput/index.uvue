@@ -1,6 +1,7 @@
 <script  setup lang="uts" >
 import { computed, ref } from 'vue'
 import type {TInputProps, InputType, InputSize } from './type.uts'
+import TIcon from '../TIcon/index.uvue'
 
 /**
  * TInput 输入框组件
@@ -102,6 +103,24 @@ const currentLength = computed((): number => {
 })
 
 /**
+ * 计算图标大小（根据输入框尺寸）
+ */
+const iconSize = computed((): number => {
+  switch (props.size) {
+    case 'large':
+      return 36
+    case 'medium':
+      return 32
+    case 'small':
+      return 28
+    case 'mini':
+      return 24
+    default:
+      return 32
+  }
+})
+
+/**
  * 计算聚焦状态的样式
  */
 const focusStyle = computed((): string => {
@@ -194,7 +213,7 @@ const handleConfirm = () => {
 
     <!-- 前缀图标 -->
     <view v-else-if="prefixIcon" class="t-input__prefix">
-      <text class="t-input__icon">{{ prefixIcon }}</text>
+      <TIcon :name="prefixIcon" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 输入框 -->
@@ -236,7 +255,7 @@ const handleConfirm = () => {
       class="t-input__suffix t-input__clear"
       @click="handleClear"
     >
-      <text class="t-input__icon">✕</text>
+      <TIcon name="icon-close" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 后缀文本 -->
@@ -246,7 +265,7 @@ const handleConfirm = () => {
 
     <!-- 后缀图标 -->
     <view v-else-if="suffixIcon" class="t-input__suffix">
-      <text class="t-input__icon">{{ suffixIcon }}</text>
+      <TIcon :name="suffixIcon" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 字数统计 -->

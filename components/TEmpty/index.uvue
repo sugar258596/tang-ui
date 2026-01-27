@@ -2,23 +2,9 @@
 	import { computed } from 'vue'
 	import TButton from '../TButton/index.uvue'
 	import { useI18n } from '../../composables/useI18n.uts'
+	import type { TEmptyProps } from './type.uts'
 
-	interface EmptyProps {
-		/** 标题  */
-		title ?: string;
-		/**  描述 */
-		description ?: string;
-		/**  图片  */
-		image ?: string;
-		/** 是否显示操作按钮  */
-		showAction ?: boolean;
-		/** 操作按钮文本  */
-		actionText ?: string;
-		/** 是否紧凑模式  */
-		compact ?: boolean;
-	}
-
-	const props = withDefaults(defineProps<EmptyProps>(), {
+	const props = withDefaults(defineProps<TEmptyProps>(), {
 		image: '/static/images/empty.png',
 		showAction: false,
 		compact: false

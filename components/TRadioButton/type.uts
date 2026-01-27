@@ -1,0 +1,81 @@
+/**
+ * TRadioButton 组件类型定义
+ */
+
+/**
+ * 单选按钮尺寸
+ */
+export type RadioButtonSize = 'small' | 'medium' | 'large'
+
+/**
+ * 表单选项
+ */
+export interface FormOption {
+  label: string
+  value: string | number
+}
+
+/**
+ * TRadioButton Props 接口
+ */
+export interface TRadioButtonProps {
+  /**
+   * 选项组模式：选项列表
+   */
+  options?: FormOption[]
+
+  /**
+   * 单个按钮模式：选项值
+   */
+  value?: string | number
+
+  /**
+   * 单个按钮模式：显示标签
+   */
+  label?: string
+
+  /**
+   * 按钮尺寸
+   * @default 'medium'
+   */
+  size?: RadioButtonSize
+
+  /**
+   * 活动状态颜色
+   * @default '#00bba7'
+   */
+  activeColor?: string
+
+  /**
+   * 非活动状态颜色
+   * @default '#666666'
+   */
+  inactiveColor?: string
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 是否选中（仅单个按钮模式）
+   * @default false
+   */
+  checked?: boolean
+
+  /**
+   * 名称属性（用于表单提交）
+   */
+  name?: string
+}
+
+/**
+ * TRadioButton 事件接口
+ */
+export interface TRadioButtonEmits {
+  /**
+   * 值改变事件
+   */
+  change: (value: string | number) => void
+}

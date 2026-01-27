@@ -1,0 +1,93 @@
+/**
+ * TPopup 组件类型定义
+ */
+
+/**
+ * 弹出位置
+ */
+export type PopupPosition = 'bottom' | 'top' | 'left' | 'right' | 'center'
+
+/**
+ * TPopup Props 接口
+ */
+export interface TPopupProps {
+  /**
+   * 弹窗高度，支持百分比或具体数值（rpx）
+   * @default '50%'
+   */
+  height?: string | number
+
+  /**
+   * 弹窗宽度，支持百分比或具体数值（rpx）
+   * @default '100%'
+   */
+  width?: string | number
+
+  /**
+   * 弹出位置
+   * @default 'bottom'
+   */
+  position?: PopupPosition
+
+  /**
+   * 是否显示标题栏
+   * @default true
+   */
+  showTitle?: boolean
+
+  /**
+   * 标题文本
+   */
+  title?: string
+
+  /**
+   * 是否显示关闭按钮
+   * @default true
+   */
+  showClose?: boolean
+
+  /**
+   * 是否显示圆角
+   * @default true
+   */
+  round?: boolean
+
+  /**
+   * 圆角大小
+   * @default 32
+   */
+  borderRadius?: string | number
+
+  /**
+   * 点击遮罩层是否关闭
+   * @default true
+   */
+  closeOnClickOverlay?: boolean
+
+  /**
+   * 弹窗层级
+   * @default 999
+   */
+  zIndex?: number
+
+  /**
+   * 背景色
+   * @default '#ffffff'
+   */
+  background?: string
+}
+
+/**
+ * TPopup 事件接口
+ */
+export interface TPopupEmits {
+  /**
+   * 关闭事件
+   */
+  close: () => void
+
+  /**
+   * 打开事件
+   */
+  open: () => void
+}

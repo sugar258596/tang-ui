@@ -3,34 +3,7 @@
  * Popup 弹出层组件
  * 支持 bottom、top、left、right、center 五种位置
  */
-
-/**
- * 组件属性
- */
-type PopupProps = {
-	/** 弹窗高度，支持百分比或具体数值（rpx） */
-	height ?: string | number
-	/** 弹窗宽度，支持百分比或具体数值（rpx） */
-	width ?: string | number
-	/** 弹出位置 */
-	position ?: 'bottom' | 'top' | 'left' | 'right' | 'center'
-	/** 是否显示标题栏 */
-	showTitle ?: boolean
-	/** 标题文本 */
-	title ?: string
-	/** 是否显示关闭按钮 */
-	showClose ?: boolean
-	/** 是否显示圆角 */
-	round ?: boolean
-	/** 圆角大小 */
-	borderRadius ?: string | number
-	/** 点击遮罩层是否关闭 */
-	closeOnClickOverlay ?: boolean
-	/** 弹窗层级 */
-	zIndex ?: number
-	/** 背景色 */
-	background ?: string
-}
+import type { TPopupProps } from './type.uts'
 
 const model = defineModel<boolean>({ default: false })
 // 内部渲染状态，用于控制 DOM 显示
@@ -38,7 +11,7 @@ const rendered = ref(false)
 // 是否显示遮罩层和内容
 const showOverlay = ref(false)
 
-const props = withDefaults(defineProps<PopupProps>(), {
+const props = withDefaults(defineProps<TPopupProps>(), {
 	height: '50%',
 	width: '100%',
 	position: 'bottom',

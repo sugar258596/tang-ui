@@ -1,19 +1,8 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import type { NoticeBarMode } from './type.uts'
+import type { TNoticeBarProps } from './type.uts'
 
-interface Props {
-  text?: string
-  mode?: NoticeBarMode
-  color?: string
-  background?: string
-  leftIcon?: string
-  scrollable?: boolean
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TNoticeBarProps>(), {
   text: '',
   mode: undefined,
   color: '#ed6a0c',

@@ -1,0 +1,64 @@
+/**
+ * TCheckbox 组件类型定义
+ */
+
+/**
+ * 复选框尺寸
+ */
+export type CheckboxSize = 'small' | 'medium' | 'large'
+
+/**
+ * TCheckbox Props 接口
+ */
+export interface TCheckboxProps {
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 尺寸大小
+   * @default 'medium'
+   */
+  size?: CheckboxSize
+
+  /**
+   * 激活状态颜色
+   * @default '#00bba7'
+   */
+  activeColor?: string
+
+  /**
+   * 未激活状态颜色
+   * @default '#c8c9cc'
+   */
+  inactiveColor?: string
+
+  /**
+   * 是否为方形设计
+   * @default false
+   */
+  square?: boolean
+
+  /**
+   * 自定义边框宽度
+   * @default 2
+   */
+  borderWidth?: number
+}
+
+/**
+ * TCheckbox 事件接口
+ */
+export interface TCheckboxEmits {
+  /**
+   * 值改变事件
+   */
+  change: (value: boolean) => void
+
+  /**
+   * 点击事件
+   */
+  click: (event: any) => void
+}

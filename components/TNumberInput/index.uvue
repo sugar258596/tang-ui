@@ -1,24 +1,9 @@
 <script  setup lang="uts" >
-type NumberInputProps = {
-	/** 最小值 */
-	min?: number
-	/** 最大值 */
-	max?: number
-	/** 步长 */
-	step?: number
-	/** 是否禁用 */
-	disabled?: boolean
-	/** 占位符 */
-	placeholder?: string
-	/** 输入框宽度 */
-	width?: string | number
-	/** 按钮大小 */
-	buttonSize?: string | number
-}
+import type { TNumberInputProps } from './type.uts'
 
 const model = defineModel({ default: 0 })
 
-const props = withDefaults(defineProps<NumberInputProps>(), {
+const props = withDefaults(defineProps<TNumberInputProps>(), {
 	min: 0,
 	max: 999999,
 	step: 1,

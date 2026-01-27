@@ -1,26 +1,14 @@
 <script setup lang="uts">
 import { inject, computed } from 'vue'
 import TBadge from '../TBadge'
+import {TGridItemProps} from './type.uts'
 
 /**
  * TGridItem 宫格项组件
  * @description 宫格布局项，需配合 TGrid 使用
  */
-
-// Props 定义
-interface Props {
-  icon?: string
-  iconColor?: string
-  image?: string
-  text?: string
-  textColor?: string
-  badge?: string | number
-  dot?: boolean
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+ 
+const props = withDefaults(defineProps<TGridItemProps>(), {
   icon: '',
   iconColor: '#323233',
   image: '',

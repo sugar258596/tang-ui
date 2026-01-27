@@ -1,22 +1,7 @@
 <script  setup lang="uts" >
-type ErrorStateProps = {
-	/** 是否为错误状态 */
-	isError?: boolean
-	/** 错误标题 */
-	errorTitle?: string
-	/** 非错误标题 */
-	normalTitle?: string
-	/** 错误描述 */
-	errorDesc?: string
-	/** 非错误描述 */
-	normalDesc?: string
-	/** 是否显示重试按钮 */
-	showRetry?: boolean
-	/** 重试按钮文字 */
-	retryText?: string
-}
+import type { TErrorStateProps } from './type.uts'
 
-const props = withDefaults(defineProps<ErrorStateProps>(), {
+const props = withDefaults(defineProps<TErrorStateProps>(), {
 	isError: false,
 	errorTitle: '加载失败',
 	normalTitle: '数据不存在',

@@ -1,0 +1,100 @@
+/**
+ * TRate 组件类型定义
+ */
+
+/**
+ * TRate Props 接口
+ */
+export interface TRateProps {
+  /**
+   * 最大评分
+   * @default 5
+   */
+  max?: number
+
+  /**
+   * 是否只读
+   * @default false
+   */
+  readonly?: boolean
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 星星大小
+   * @default 40
+   */
+  size?: number
+
+  /**
+   * 星星间距
+   * @default 2
+   */
+  gap?: number
+
+  /**
+   * 激活颜色
+   * @default '#ffc107'
+   */
+  activeColor?: string
+
+  /**
+   * 未激活颜色
+   * @default '#e4e7eb'
+   */
+  inactiveColor?: string
+
+  /**
+   * 是否显示评分
+   * @default false
+   */
+  showScore?: boolean
+
+  /**
+   * 是否允许清除
+   * @default false
+   */
+  allowClear?: boolean
+
+  /**
+   * 精度
+   * @default 0
+   */
+  precision?: number
+
+  /**
+   * 星星字符
+   * @default '★'
+   */
+  starChar?: string
+
+  /**
+   * 是否震动
+   * @default false
+   */
+  vibrate?: boolean
+}
+
+/**
+ * TRate 事件接口
+ */
+export interface TRateEmits {
+  /**
+   * 值改变事件
+   */
+  change: (value: number) => void
+
+  /**
+   * 点击事件
+   */
+  click: (value: number) => void
+
+  /**
+   * 悬停改变事件
+   */
+  hoverChange: (value: number) => void
+}

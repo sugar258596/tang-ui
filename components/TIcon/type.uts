@@ -1,0 +1,51 @@
+/**
+ * TIcon 组件类型定义
+ */
+
+/**
+ * TIcon Props 接口
+ */
+export interface TIconProps {
+  /**
+   * 图标名称
+   */
+  name: string
+
+  /**
+   * 图标大小
+   * @default 48
+   */
+  size?: string | number
+
+  /**
+   * 图标颜色
+   * @default '#333333'
+   */
+  color?: string
+
+  /**
+   * 是否加粗
+   * @default false
+   */
+  bold?: boolean
+
+  /**
+   * 自定义类名
+   */
+  customClass?: string
+
+  /**
+   * 自定义样式
+   */
+  customStyle?: string
+}
+
+/**
+ * TIcon 事件接口
+ */
+export interface TIconEmits {
+  /**
+   * 点击事件
+   */
+  click: () => void
+}

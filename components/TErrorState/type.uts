@@ -1,0 +1,60 @@
+/**
+ * TErrorState 组件类型定义
+ */
+
+/**
+ * TErrorState Props 接口
+ */
+export interface TErrorStateProps {
+  /**
+   * 是否为错误状态
+   * @default false
+   */
+  isError?: boolean
+
+  /**
+   * 错误标题
+   * @default '加载失败'
+   */
+  errorTitle?: string
+
+  /**
+   * 非错误标题
+   * @default '数据不存在'
+   */
+  normalTitle?: string
+
+  /**
+   * 错误描述
+   * @default '请检查网络后重试'
+   */
+  errorDesc?: string
+
+  /**
+   * 非错误描述
+   * @default '请返回上一页重新操作'
+   */
+  normalDesc?: string
+
+  /**
+   * 是否显示重试按钮
+   * @default true
+   */
+  showRetry?: boolean
+
+  /**
+   * 重试按钮文字
+   * @default '重新加载'
+   */
+  retryText?: string
+}
+
+/**
+ * TErrorState 事件接口
+ */
+export interface TErrorStateEmits {
+  /**
+   * 重试事件
+   */
+  retry: () => void
+}

@@ -1,19 +1,7 @@
 <script setup lang="uts">
-interface Props {
-  title?: string
-  leftText?: string
-  rightText?: string
-  leftIcon?: string
-  rightIcon?: string
-  fixed?: boolean
-  placeholder?: boolean
-  zIndex?: number
-  safeAreaInsetTop?: boolean
-  customClass?: string
-  customStyle?: string
-}
+import type { TNavBarProps } from './type.uts'
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TNavBarProps>(), {
   title: '',
   leftText: '',
   rightText: '',

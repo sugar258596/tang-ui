@@ -178,7 +178,7 @@ const handleCancel = (): void => {
 
       <!-- 清除按钮 -->
       <view
-        v-if="clearable && modelValue.length > 0"
+        v-show="clearable && modelValue.length > 0"
         class="t-search-bar__clear"
         @click="handleClear"
       >

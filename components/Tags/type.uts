@@ -1,10 +1,117 @@
 /**
- * Tab 选项项
+ * Tags 组件类型定义
  */
-export type TabItem = {
-  key: string |number,
+
+/**
+ * Tag 选项项
+ */
+export type TagItem = {
+  key: string | number
   label: string
   disabled?: boolean
   badge?: number | string
   icon?: string
+}
+
+/**
+ * 标签类型
+ */
+export type TagType = 'line' | 'card'
+
+/**
+ * 标签位置
+ */
+export type TagPosition = 'top' | 'bottom'
+
+/**
+ * 标签大小
+ */
+export type TagSize = 'small' | 'medium' | 'large'
+
+/**
+ * Tags Props 接口
+ */
+export interface TTagsProps {
+  /**
+   * 选项卡数据
+   */
+  items: TagItem[]
+
+  /**
+   * 当前激活的 tag key
+   */
+  activeKey?: string
+
+  /**
+   * 默认激活的 tag key
+   */
+  defaultActiveKey?: string
+
+  /**
+   * 选项卡类型
+   * @default 'line'
+   */
+  type?: TagType
+
+  /**
+   * 选项卡位置
+   * @default 'top'
+   */
+  tabPosition?: TagPosition
+
+  /**
+   * 是否居中显示
+   * @default false
+   */
+  centered?: boolean
+
+  /**
+   * 是否可滑动
+   * @default true
+   */
+  scrollable?: boolean
+
+  /**
+   * 激活标签的颜色
+   * @default '#00bba7'
+   */
+  activeColor?: string
+
+  /**
+   * 未激活标签的颜色
+   * @default '#666666'
+   */
+  inactiveColor?: string
+
+  /**
+   * 标签大小
+   * @default 'medium'
+   */
+  size?: TagSize
+
+  /**
+   * 是否显示动画
+   * @default true
+   */
+  animated?: boolean
+}
+
+/**
+ * Tags 事件接口
+ */
+export interface TTagsEmits {
+  /**
+   * 切换标签时触发
+   */
+  change: (key: string | number) => void
+
+  /**
+   * 当前激活的 tag 改变时触发
+   */
+  'update:activeKey': (key: string | number) => void
+
+  /**
+   * 点击标签时触发
+   */
+  tagClick: (key: string | number, item: TagItem) => void
 }

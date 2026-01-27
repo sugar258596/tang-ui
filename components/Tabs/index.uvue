@@ -1,39 +1,10 @@
 <script setup lang="uts">
-  import type {TabItem} from './type'
- 
-
-/**
- * Tabs 组件属性
- */
-type TabsProps = {
-  /** 选项卡数据 */
-  items: TabItem[]
-  /** 当前激活的 tab key */
-  activeKey?: string
-  /** 默认激活的 tab key */
-  defaultActiveKey?: string
-  /** 选项卡类型 */
-  type?: "line" | "card"
-  /** 选项卡位置 */
-  tabPosition?: "top" | "bottom"
-  /** 是否居中显示 */
-  centered?: boolean
-  /** 是否可滑动 */
-  scrollable?: boolean
-  /** 激活标签的颜色 */
-  activeColor?: string
-  /** 未激活标签的颜色 */
-  inactiveColor?: string
-  /** 标签大小 */
-  size?: "small" | "medium" | "large"
-  /** 是否显示动画 */
-  animated?: boolean
-}
+import type { TabItem, TTabsProps } from './type.uts'
 
 // v-model 绑定当前激活 key
 const model = defineModel()
 
-const props = withDefaults(defineProps<TabsProps>(), {
+const props = withDefaults(defineProps<TTabsProps>(), {
   items: () => [],
   type: 'line',
   tabPosition: 'top',

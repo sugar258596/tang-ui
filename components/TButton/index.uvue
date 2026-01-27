@@ -1,28 +1,13 @@
 <script  setup lang="uts" >
 import { computed } from 'vue'
-import type { ButtonType, ButtonSize, ButtonShape } from './type.uts'
+import type { TButtonProps } from './type.uts'
 
 /**
  * TButton 按钮组件
  * @description 支持多种类型、尺寸、形状的按钮组件
  */
 
-// Props 定义
-interface Props {
-  type?: ButtonType
-  size?: ButtonSize
-  shape?: ButtonShape
-  plain?: boolean
-  disabled?: boolean
-  loading?: boolean
-  block?: boolean
-  text?: string
-  icon?: string
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TButtonProps>(), {
   type: 'default',
   size: 'medium',
   shape: 'square',

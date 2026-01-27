@@ -1,20 +1,8 @@
 <script  setup lang="uts" >
 	import Icon from '../TIcon'
+	import type { TCellProps } from './type.uts'
 
-
-
-	interface Props {
-		/**标题 */
-		title ?: string,
-		/** 内容 */
-		content? : string
-		/** 是否显示图标 */
-		showIcon ?: boolean
-		/** 图标 */
-		icon ?: string
-	}
-
-	withDefaults(defineProps<Props>(), {
+	withDefaults(defineProps<TCellProps>(), {
 		showIcon: true,
 		icon: "icon-youjiantou"
 	})

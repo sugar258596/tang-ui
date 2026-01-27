@@ -1,0 +1,40 @@
+/**
+ * TCell 组件类型定义
+ */
+
+/**
+ * TCell Props 接口
+ */
+export interface TCellProps {
+  /**
+   * 标题
+   */
+  title?: string
+
+  /**
+   * 内容
+   */
+  content?: string
+
+  /**
+   * 是否显示图标
+   * @default true
+   */
+  showIcon?: boolean
+
+  /**
+   * 图标名称
+   * @default 'icon-youjiantou'
+   */
+  icon?: string
+}
+
+/**
+ * TCell 事件接口
+ */
+export interface TCellEmits {
+  /**
+   * 点击事件
+   */
+  cell: () => void
+}

@@ -1,0 +1,59 @@
+/**
+ * TNumberInput 组件类型定义
+ */
+
+/**
+ * TNumberInput Props 接口
+ */
+export interface TNumberInputProps {
+  /**
+   * 最小值
+   * @default 0
+   */
+  min?: number
+
+  /**
+   * 最大值
+   * @default 999999
+   */
+  max?: number
+
+  /**
+   * 步长
+   * @default 1
+   */
+  step?: number
+
+  /**
+   * 是否禁用
+   * @default false
+   */
+  disabled?: boolean
+
+  /**
+   * 占位符
+   */
+  placeholder?: string
+
+  /**
+   * 输入框宽度
+   * @default 60
+   */
+  width?: string | number
+
+  /**
+   * 按钮大小
+   * @default 64
+   */
+  buttonSize?: string | number
+}
+
+/**
+ * TNumberInput 事件接口
+ */
+export interface TNumberInputEmits {
+  /**
+   * 值改变事件
+   */
+  change: (value: number) => void
+}

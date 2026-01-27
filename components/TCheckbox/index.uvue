@@ -3,22 +3,9 @@
  * 复选框组件 - 适用于购物车、列表等场景
  * 参考 RadioButton 和 CheckboxButton 组件设计
  */
-type Props = {
-  /** 是否禁用 */
-  disabled?: boolean
-  /** 尺寸大小 */
-  size?: 'small' | 'medium' | 'large'
-  /** 激活状态颜色 */
-  activeColor?: string
-  /** 未激活状态颜色 */
-  inactiveColor?: string
-  /** 是否为方形设计 */
-  square?: boolean
-  /** 自定义边框宽度 */
-  borderWidth?: number
-}
+import type { TCheckboxProps, CheckboxSize } from './type.uts'
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TCheckboxProps>(), {
   disabled: false,
   size: 'medium',
   activeColor: '#00bba7',

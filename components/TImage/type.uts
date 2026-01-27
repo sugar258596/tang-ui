@@ -81,6 +81,12 @@ export interface TImageProps {
   lazyLoad?: boolean
 
   /**
+   * 是否显示提示文本
+   * @default false
+   */
+  showText?: boolean
+
+  /**
    * 加载中提示文本
    * @default '加载中...'
    */

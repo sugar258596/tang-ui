@@ -1,39 +1,10 @@
 <script setup lang="uts">
-  import type {TabItem} from './type'
- 
-
-/**
- * Tabs 组件属性
- */
-type TabsProps = {
-  /** 选项卡数据 */
-  items: TabItem[]
-  /** 当前激活的 tab key */
-  activeKey?: string
-  /** 默认激活的 tab key */
-  defaultActiveKey?: string
-  /** 选项卡类型 */
-  type?: "line" | "card"
-  /** 选项卡位置 */
-  tabPosition?: "top" | "bottom"
-  /** 是否居中显示 */
-  centered?: boolean
-  /** 是否可滑动 */
-  scrollable?: boolean
-  /** 激活标签的颜色 */
-  activeColor?: string
-  /** 未激活标签的颜色 */
-  inactiveColor?: string
-  /** 标签大小 */
-  size?: "small" | "medium" | "large"
-  /** 是否显示动画 */
-  animated?: boolean
-}
+import type { TagItem, TTagsProps } from './type.uts'
 
 // v-model 绑定当前激活 key
 const model = defineModel()
 
-const props = withDefaults(defineProps<TabsProps>(), {
+const props = withDefaults(defineProps<TTagsProps>(), {
   items: () => [],
   type: 'line',
   tabPosition: 'top',
@@ -47,11 +18,11 @@ const props = withDefaults(defineProps<TabsProps>(), {
 
 const emit = defineEmits<{
   /** 切换标签时触发 */
-  change: [key: string |number]
-  /** 当前激活的 tab 改变时触发 */
-  'update:activeKey': [key: string |number]
+  change: [key: string | number]
+  /** 当前激活的 tag 改变时触发 */
+  'update:activeKey': [key: string | number]
   /** 点击标签时触发 */
-  tabClick: [key: string |number, item: TabItem]
+  tagClick: [key: string | number, item: TagItem]
 }>()
 
 /** 获取默认激活项的 key */
@@ -120,7 +91,7 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
   model.value = item.key
   emit('update:activeKey', item.key)
   emit('change', item.key)
-  emit('tabClick', item.key, item)
+  emit('tagClick', item.key, item)
 
   // 滚动到激活项
   if (props.scrollable) {

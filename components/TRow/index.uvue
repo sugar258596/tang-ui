@@ -1,23 +1,13 @@
 <script setup lang="uts">
 import { provide, computed } from 'vue'
-import type { RowJustify, RowAlign } from './type.uts'
+import type { TRowProps } from './type.uts'
 
 /**
  * TRow 栅格行组件
  * @description 基于 24 栅格系统的行容器，配合 TCol 使用
  */
 
-// Props 定义
-interface Props {
-  gutter?: number
-  justify?: RowJustify
-  align?: RowAlign
-  wrap?: boolean
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TRowProps>(), {
   gutter: 0,
   justify: 'start',
   align: 'top',

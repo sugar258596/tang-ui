@@ -3,34 +3,9 @@
  * 单选按钮组件
  * @description 支持单个按钮和选项组两种使用方式
  */
+import type { TRadioButtonProps, FormOption } from './type.uts'
 
-type FormOption = {
-  label: string
-  value: string | number
-}
-
-type Props = {
-  /** 选项组模式：选项列表 */
-  options?: FormOption[]
-  /** 单个按钮模式：选项值 */
-  value?: string | number
-  /** 单个按钮模式：显示标签 */
-  label?: string
-  /** 按钮尺寸 */
-  size?: 'small' | 'medium' | 'large'
-  /** 活动状态颜色 */
-  activeColor?: string
-  /** 非活动状态颜色 */
-  inactiveColor?: string
-  /** 是否禁用 */
-  disabled?: boolean
-  /** 是否选中（仅单个按钮模式） */
-  checked?: boolean
-  /** 名称属性（用于表单提交） */
-  name?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TRadioButtonProps>(), {
   options: () => [],
   size: 'medium',
   activeColor: '#00bba7',
