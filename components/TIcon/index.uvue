@@ -49,10 +49,15 @@
 
 	// 计算图标类名
 	const iconClass = computed(() : string => {
-		const classes : string[] = ['icon', 'iconfont']
+		const classes : string[] = ['t-icon', 'iconfont']
 
 		if (props.name) {
-			classes.push(props.name)
+			// 支持传入 icon-xxx 或直接传入 xxx
+			if (props.name.startsWith('icon-')) {
+				classes.push(props.name)
+			} else {
+				classes.push(`icon-${props.name}`)
+			}
 		}
 
 		if (props.customClass) {
@@ -75,5 +80,8 @@
 </template>
 
 <style lang="scss" scoped>
-	 
+	.t-icon {
+		display: inline-block;
+		line-height: 1;
+	}
 </style>

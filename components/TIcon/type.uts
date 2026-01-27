@@ -3,13 +3,24 @@
  */
 
 /**
+ * 可用的图标名称
+ * 来自 iconfont 字体图标库
+ */
+export type TIconName = 
+  | 'shanchu'   // 删除
+  | 'sousuo'    // 搜索
+  | string      // 支持自定义图标名
+
+/**
  * TIcon Props 接口
  */
 export interface TIconProps {
   /**
    * 图标名称
+   * 可以传入 'shanchu' 或 'icon-shanchu'
+   * @example 'shanchu' | 'icon-shanchu'
    */
-  name: string
+  name: TIconName
 
   /**
    * 图标大小
@@ -49,3 +60,11 @@ export interface TIconEmits {
    */
   click: () => void
 }
+
+/**
+ * 图标列表（用于文档和自动补全）
+ */
+export const ICON_LIST = [
+  { name: 'shanchu', label: '删除', unicode: 'e61a' },
+  { name: 'sousuo', label: '搜索', unicode: 'e602' }
+] as const

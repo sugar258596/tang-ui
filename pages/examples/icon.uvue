@@ -2,6 +2,7 @@
 import TIcon from '@/components/TIcon'
 import TCard from '@/components/TCard'
 import { useI18n } from '@/composables/useI18n.uts'
+import { ICON_LIST } from '@/components/TIcon/type.uts'
 
 /**
  * 图标组件示例页面
@@ -9,15 +10,14 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const icons = [
-  'home', 'user', 'search', 'setting', 'message', 'star',
-  'heart', 'phone', 'mail', 'location', 'clock', 'calendar',
-  'camera', 'image', 'video', 'music', 'file', 'folder',
-  'download', 'upload', 'share', 'delete', 'edit', 'save'
-]
+// 使用 iconfont 图标库中的图标
+const icons = ICON_LIST.map(item => item.name)
 
 const handleClick = (name: string): void => {
-  console.log(`点击了图标: ${name}`)
+  uni.showToast({
+    title: `点击了: ${name}`,
+    icon: 'none'
+  })
 }
 </script>
 
@@ -28,52 +28,51 @@ const handleClick = (name: string): void => {
       <text class="example-desc">{{ $t('examplePages.icon.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.icon.sections.basic')" class="example-section">
+    <TCard title="基础用法" class="example-section">
       <view class="icon-grid">
-        <view v-for="icon in icons.slice(0, 6)" :key="icon" class="icon-item">
-          <TIcon :name="icon" />
+        <view v-for="icon in icons" :key="icon" class="icon-item">
+          <TIcon :name="icon" :size="48" />
           <text class="icon-name">{{ icon }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.icon.sections.size')" class="example-section">
+    <TCard title="图标大小" class="example-section">
       <view class="icon-row">
-        <TIcon name="star" size="16" />
-        <TIcon name="star" size="24" />
-        <TIcon name="star" size="32" />
-        <TIcon name="star" size="40" />
-        <TIcon name="star" size="48" />
+        <TIcon name="sousuo" :size="24" />
+        <TIcon name="sousuo" :size="32" />
+        <TIcon name="sousuo" :size="40" />
+        <TIcon name="sousuo" :size="48" />
+        <TIcon name="sousuo" :size="64" />
       </view>
+      <text class="tip-text">size: 24 / 32 / 40 / 48 / 64 (rpx)</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.icon.sections.color')" class="example-section">
+    <TCard title="图标颜色" class="example-section">
       <view class="icon-row">
-        <TIcon name="heart" color="#409eff" />
-        <TIcon name="heart" color="#67c23a" />
-        <TIcon name="heart" color="#e6a23c" />
-        <TIcon name="heart" color="#f56c6c" />
-        <TIcon name="heart" color="#909399" />
+        <TIcon name="shanchu" :size="48" color="#409eff" />
+        <TIcon name="shanchu" :size="48" color="#67c23a" />
+        <TIcon name="shanchu" :size="48" color="#e6a23c" />
+        <TIcon name="shanchu" :size="48" color="#f56c6c" />
+        <TIcon name="shanchu" :size="48" color="#909399" />
       </view>
     </TCard>
 
     <TCard title="点击事件" class="example-section">
       <view class="icon-row">
-        <TIcon name="star" size="32" @click="() => handleClick('star')" />
-        <TIcon name="heart" size="32" color="#f56c6c" @click="() => handleClick('heart')" />
-        <TIcon name="message" size="32" @click="() => handleClick('message')" />
+        <TIcon name="sousuo" :size="48" color="#409eff" @click="() => handleClick('搜索')" />
+        <TIcon name="shanchu" :size="48" color="#f56c6c" @click="() => handleClick('删除')" />
       </view>
-      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        点击图标查看控制台
-      </text>
+      <text class="tip-text">点击图标查看提示</text>
     </TCard>
 
-    <TCard title="所有图标" class="example-section">
-      <view class="icon-grid">
-        <view v-for="icon in icons" :key="icon" class="icon-item">
-          <TIcon :name="icon" size="24" />
-          <text class="icon-name">{{ icon }}</text>
-        </view>
+    <TCard title="使用说明" class="example-section">
+      <view class="tip-box">
+        <text class="tip-item">• 图标来自 iconfont 字体图标库</text>
+        <text class="tip-item">• name 属性支持 'shanchu' 或 'icon-shanchu' 两种写法</text>
+        <text class="tip-item">• size 支持数字(rpx)或字符串</text>
+        <text class="tip-item">• 可通过 color 属性自定义颜色</text>
+        <text class="tip-item">• 支持 click 点击事件</text>
       </view>
     </TCard>
   </view>
@@ -110,14 +109,14 @@ const handleClick = (name: string): void => {
 .icon-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 24px;
 }
 
 .icon-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60px;
+  min-width: 80px;
 }
 
 .icon-name {
@@ -128,7 +127,28 @@ const handleClick = (name: string): void => {
 
 .icon-row {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.tip-text {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #909399;
+}
+
+.tip-box {
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+}
+
+.tip-item {
+  display: block;
+  font-size: 13px;
+  color: #606266;
+  line-height: 1.8;
 }
 </style>
