@@ -21,6 +21,22 @@ export type TDateTimePickerDayItem = {
   isSelected: boolean
   /** 是否禁用 */
   isDisabled: boolean
+  /** 是否为范围开始日期 */
+  isRangeStart?: boolean
+  /** 是否为范围结束日期 */
+  isRangeEnd?: boolean
+  /** 是否在范围内 */
+  isInRange?: boolean
+}
+
+/**
+ * 日期范围值类型
+ */
+export type TDateTimePickerRangeValue = {
+  /** 开始时间戳 */
+  start: number
+  /** 结束时间戳 */
+  end: number
 }
 
 /**
@@ -35,6 +51,12 @@ export type TDateTimePickerProps = {
    * @default 'date'
    */
   mode?: TDateTimePickerMode
+
+  /**
+   * 是否为范围选择模式
+   * @default false
+   */
+  range?: boolean
 
   /**
    * 选择器标题
@@ -106,6 +128,24 @@ export type TDateTimePickerProps = {
    * @default '#409eff'
    */
   confirmColor?: string
+
+  /**
+   * 范围选择时的范围内背景颜色
+   * @default 'rgba(64, 158, 255, 0.1)'
+   */
+  rangeColor?: string
+
+  /**
+   * 开始日期提示文字
+   * @default '开始'
+   */
+  startText?: string
+
+  /**
+   * 结束日期提示文字
+   * @default '结束'
+   */
+  endText?: string
 }
 
 /**
@@ -113,11 +153,18 @@ export type TDateTimePickerProps = {
  */
 export type TDateTimePickerEmits = {
   /**
-   * 确认选择时触发
+   * 确认选择时触发（单选模式）
    * @param value 选中的时间戳（毫秒）
    * @param formatted 格式化后的字符串
    */
   confirm: (value: number, formatted: string) => void
+
+  /**
+   * 确认选择时触发（范围模式）
+   * @param value 选中的范围值
+   * @param formatted 格式化后的字符串数组 [开始, 结束]
+   */
+  confirmRange: (value: TDateTimePickerRangeValue, formatted: string[]) => void
 
   /**
    * 取消选择时触发

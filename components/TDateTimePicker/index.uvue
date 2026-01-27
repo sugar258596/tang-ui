@@ -1,6 +1,6 @@
 <script setup lang="uts">
 import { computed, ref, watch, nextTick } from 'vue'
-import type { TDateTimePickerProps, TDateTimePickerMode, TDateTimePickerDayItem } from './type.uts'
+import type { TDateTimePickerProps, TDateTimePickerMode, TDateTimePickerDayItem, TDateTimePickerRangeValue } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 
 /**
@@ -8,6 +8,7 @@ import { useI18n } from '../../composables/useI18n.uts'
  * @description 日历面板形式，支持选择年月、年月日、年月日时分三种模式
  * @description 支持小程序/App/H5 三端
  * @description 支持日期插槽自定义和选中颜色配置
+ * @description 支持日期范围选择
  */
 
 // Props 定义
@@ -15,13 +16,17 @@ type Props = Omit<TDateTimePickerProps, 'visible'>
 
 const props = withDefaults(defineProps<Props>(), {
   mode: 'date',
+  range: false,
   itemHeight: '44px',
   visibleItemCount: 5,
   showToolbar: true,
   activeColor: '#409eff',
   activeTextColor: '#ffffff',
   todayColor: '#409eff',
-  confirmColor: '#409eff'
+  confirmColor: '#409eff',
+  rangeColor: 'rgba(64, 158, 255, 0.1)',
+  startText: '开始',
+  endText: '结束'
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
@@ -38,6 +43,7 @@ const showOverlay = ref(false)
 // 定义 emits
 const emit = defineEmits<{
   confirm: [value: number, formatted: string]
+  confirmRange: [value: TDateTimePickerRangeValue, formatted: string[]]
   cancel: []
   change: [value: number]
 }>()
@@ -96,6 +102,11 @@ const selectedMinute = ref<number>(0)
 // 当前面板模式：'year' | 'month' | 'date' | 'time'
 const panelMode = ref<string>('date')
 
+// 范围选择状态
+const rangeStart = ref<number | null>(null)
+const rangeEnd = ref<number | null>(null)
+const selectingRange = ref<'start' | 'end'>('start')
+
 // 星期标题
 const weekDays = computed<string[]>(() => {
   return ['日', '一', '二', '三', '四', '五', '六']
@@ -133,15 +144,69 @@ const getFirstDayOfMonth = (year: number, month: number): number => {
 // 使用导出的日期项类型
 type DayItem = TDateTimePickerDayItem
 
+// 将日期转换为时间戳（用于范围比较）
+const dateToTimestamp = (year: number, month: number, day: number): number => {
+  return new Date(year, month - 1, day).getTime()
+}
+
+// 检查日期是否为范围开始
+const isRangeStartDate = (year: number, month: number, day: number): boolean => {
+  if (!props.range || rangeStart.value === null) return false
+  const timestamp = dateToTimestamp(year, month, day)
+  const startDate = new Date(rangeStart.value)
+  return startDate.getFullYear() === year && 
+         startDate.getMonth() + 1 === month && 
+         startDate.getDate() === day
+}
+
+// 检查日期是否为范围结束
+const isRangeEndDate = (year: number, month: number, day: number): boolean => {
+  if (!props.range || rangeEnd.value === null) return false
+  const timestamp = dateToTimestamp(year, month, day)
+  const endDate = new Date(rangeEnd.value)
+  return endDate.getFullYear() === year && 
+         endDate.getMonth() + 1 === month && 
+         endDate.getDate() === day
+}
+
+// 检查日期是否在范围内
+const isInRangeDate = (year: number, month: number, day: number): boolean => {
+  if (!props.range || rangeStart.value === null || rangeEnd.value === null) return false
+  const timestamp = dateToTimestamp(year, month, day)
+  return timestamp > rangeStart.value && timestamp < rangeEnd.value
+}
+
 // 获取日期单元格样式
 const getDayStyle = (item: DayItem): string => {
-  if (item.isSelected) {
-    return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
+  if (props.range) {
+    // 范围模式样式
+    if (item.isRangeStart || item.isRangeEnd) {
+      return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
+    }
+    if (item.isInRange) {
+      return `background-color: ${props.rangeColor}; color: ${props.activeColor};`
+    }
+  } else {
+    // 单选模式样式
+    if (item.isSelected) {
+      return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
+    }
   }
   if (item.isToday) {
     return `color: ${props.todayColor}; font-weight: 500;`
   }
   return ''
+}
+
+// 获取日期单元格类名
+const getDayClass = (item: DayItem): Record<string, boolean> => {
+  return {
+    't-datetime-picker__day--other': !item.isCurrentMonth,
+    't-datetime-picker__day--disabled': item.isDisabled,
+    't-datetime-picker__day--range-start': item.isRangeStart === true,
+    't-datetime-picker__day--range-end': item.isRangeEnd === true,
+    't-datetime-picker__day--in-range': item.isInRange === true
+  }
 }
 
 // 获取年份/月份选中样式
@@ -189,7 +254,10 @@ const calendarDays = computed<DayItem[]>(() => {
       isCurrentMonth: false,
       isToday: false,
       isSelected: false,
-      isDisabled: isDateDisabled(prevYear, prevMonth, day)
+      isDisabled: isDateDisabled(prevYear, prevMonth, day),
+      isRangeStart: isRangeStartDate(prevYear, prevMonth, day),
+      isRangeEnd: isRangeEndDate(prevYear, prevMonth, day),
+      isInRange: isInRangeDate(prevYear, prevMonth, day)
     })
   }
 
@@ -206,8 +274,11 @@ const calendarDays = computed<DayItem[]>(() => {
       year,
       isCurrentMonth: true,
       isToday: year === todayYear && month === todayMonth && day === todayDay,
-      isSelected: year === selectedYear.value && month === selectedMonth.value && day === selectedDay.value,
-      isDisabled: isDateDisabled(year, month, day)
+      isSelected: !props.range && year === selectedYear.value && month === selectedMonth.value && day === selectedDay.value,
+      isDisabled: isDateDisabled(year, month, day),
+      isRangeStart: isRangeStartDate(year, month, day),
+      isRangeEnd: isRangeEndDate(year, month, day),
+      isInRange: isInRangeDate(year, month, day)
     })
   }
 
@@ -224,7 +295,10 @@ const calendarDays = computed<DayItem[]>(() => {
       isCurrentMonth: false,
       isToday: false,
       isSelected: false,
-      isDisabled: isDateDisabled(nextYear, nextMonth, day)
+      isDisabled: isDateDisabled(nextYear, nextMonth, day),
+      isRangeStart: isRangeStartDate(nextYear, nextMonth, day),
+      isRangeEnd: isRangeEndDate(nextYear, nextMonth, day),
+      isInRange: isInRangeDate(nextYear, nextMonth, day)
     })
   }
 
@@ -356,14 +430,59 @@ const handleMonthSelect = (month: number): void => {
 const handleDaySelect = (item: DayItem): void => {
   if (item.isDisabled) return
 
-  selectedYear.value = item.year
-  selectedMonth.value = item.month
-  selectedDay.value = item.day
-  viewYear.value = item.year
-  viewMonth.value = item.month
+  if (props.range) {
+    // 范围选择模式
+    const timestamp = dateToTimestamp(item.year, item.month, item.day)
+    
+    if (selectingRange.value === 'start') {
+      // 选择开始日期
+      rangeStart.value = timestamp
+      rangeEnd.value = null
+      selectingRange.value = 'end'
+    } else {
+      // 选择结束日期
+      if (rangeStart.value !== null && timestamp < rangeStart.value) {
+        // 如果结束日期小于开始日期，交换
+        rangeEnd.value = rangeStart.value
+        rangeStart.value = timestamp
+      } else {
+        rangeEnd.value = timestamp
+      }
+      selectingRange.value = 'start'
+    }
+    
+    viewYear.value = item.year
+    viewMonth.value = item.month
+  } else {
+    // 单选模式
+    selectedYear.value = item.year
+    selectedMonth.value = item.month
+    selectedDay.value = item.day
+    viewYear.value = item.year
+    viewMonth.value = item.month
 
-  emitChange()
+    emitChange()
+  }
 }
+
+// 范围选择显示文本
+const rangeDisplayText = computed<string>(() => {
+  if (!props.range) return ''
+  
+  const startStr = rangeStart.value !== null 
+    ? formatTimestamp(rangeStart.value)
+    : props.startText
+  const endStr = rangeEnd.value !== null 
+    ? formatTimestamp(rangeEnd.value)
+    : props.endText
+  
+  return `${startStr} ~ ${endStr}`
+})
+
+// 检查范围是否完整
+const isRangeComplete = computed<boolean>(() => {
+  return props.range && rangeStart.value !== null && rangeEnd.value !== null
+})
 
 // 小时列表
 const hourList = computed<number[]>(() => {
@@ -474,6 +593,11 @@ watch(visible, (newVal: boolean) => {
     // 初始状态为隐藏
     showOverlay.value = false
     
+    // 重置范围选择状态
+    if (props.range) {
+      resetRange()
+    }
+    
     setValueByTimestamp(selectedValue.value || Date.now())
     // 根据模式设置初始面板
     if (props.mode === 'month') {
@@ -528,30 +652,71 @@ const handleCancel = (): void => {
 
 // 处理确认
 const handleConfirm = (): void => {
-  const timestamp = getCurrentTimestamp()
-  const formatted = formatTimestamp(timestamp)
+  if (props.range) {
+    // 范围模式
+    if (rangeStart.value !== null && rangeEnd.value !== null) {
+      const rangeValue: TDateTimePickerRangeValue = {
+        start: rangeStart.value,
+        end: rangeEnd.value
+      }
+      const formatted = [
+        formatTimestamp(rangeStart.value),
+        formatTimestamp(rangeEnd.value)
+      ]
+      
+      // 触发关闭动画
+      showOverlay.value = false
+      // 等待动画完成后更新状态
+      setTimeout(() => {
+        rendered.value = false
+        visible.value = false
+        emit('confirmRange', rangeValue, formatted)
+      }, 350)
+    }
+  } else {
+    // 单选模式
+    const timestamp = getCurrentTimestamp()
+    const formatted = formatTimestamp(timestamp)
 
-  selectedValue.value = timestamp
-  
-  // 触发关闭动画
-  showOverlay.value = false
-  // 等待动画完成后更新状态
-  setTimeout(() => {
-    rendered.value = false
-    visible.value = false
-    emit('confirm', timestamp, formatted)
-  }, 350)
+    selectedValue.value = timestamp
+    
+    // 触发关闭动画
+    showOverlay.value = false
+    // 等待动画完成后更新状态
+    setTimeout(() => {
+      rendered.value = false
+      visible.value = false
+      emit('confirm', timestamp, formatted)
+    }, 350)
+  }
 }
 
 // 快捷选择今天
 const handleToday = (): void => {
   const now = new Date()
-  selectedYear.value = now.getFullYear()
-  selectedMonth.value = now.getMonth() + 1
-  selectedDay.value = now.getDate()
-  viewYear.value = selectedYear.value
-  viewMonth.value = selectedMonth.value
-  emitChange()
+  
+  if (props.range) {
+    // 范围模式下，今天按钮设置开始日期为今天
+    const todayTimestamp = dateToTimestamp(now.getFullYear(), now.getMonth() + 1, now.getDate())
+    rangeStart.value = todayTimestamp
+    rangeEnd.value = null
+    selectingRange.value = 'end'
+  } else {
+    selectedYear.value = now.getFullYear()
+    selectedMonth.value = now.getMonth() + 1
+    selectedDay.value = now.getDate()
+    emitChange()
+  }
+  
+  viewYear.value = now.getFullYear()
+  viewMonth.value = now.getMonth() + 1
+}
+
+// 重置范围选择
+const resetRange = (): void => {
+  rangeStart.value = null
+  rangeEnd.value = null
+  selectingRange.value = 'start'
 }
 </script>
 
@@ -594,6 +759,19 @@ const handleToday = (): void => {
         </view>
         <view class="t-datetime-picker__header-btn" @click="handleNext">
           <text class="t-datetime-picker__header-arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 范围选择提示 -->
+      <view v-if="range" class="t-datetime-picker__range-info">
+        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'start' }">
+          <text class="t-datetime-picker__range-label">{{ startText }}</text>
+          <text class="t-datetime-picker__range-value">{{ rangeStart !== null ? formatTimestamp(rangeStart) : '请选择' }}</text>
+        </view>
+        <text class="t-datetime-picker__range-separator">~</text>
+        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'end' }">
+          <text class="t-datetime-picker__range-label">{{ endText }}</text>
+          <text class="t-datetime-picker__range-value">{{ rangeEnd !== null ? formatTimestamp(rangeEnd) : '请选择' }}</text>
         </view>
       </view>
 
@@ -654,10 +832,7 @@ const handleToday = (): void => {
             v-for="(item, index) in calendarDays"
             :key="index"
             class="t-datetime-picker__day"
-            :class="{
-              't-datetime-picker__day--other': !item.isCurrentMonth,
-              't-datetime-picker__day--disabled': item.isDisabled
-            }"
+            :class="getDayClass(item)"
             @click="handleDaySelect(item)"
           >
             <!-- 日期插槽 -->
@@ -919,6 +1094,36 @@ const handleToday = (): void => {
       color: #c0c4cc;
       background-color: transparent;
     }
+
+    // 范围选择样式
+    &--range-start,
+    &--range-end {
+      .t-datetime-picker__day-text {
+        background-color: #409eff;
+        color: #ffffff;
+      }
+    }
+
+    &--range-start {
+      background: linear-gradient(to right, transparent 50%, rgba(64, 158, 255, 0.1) 50%);
+    }
+
+    &--range-end {
+      background: linear-gradient(to left, transparent 50%, rgba(64, 158, 255, 0.1) 50%);
+    }
+
+    &--in-range {
+      background-color: rgba(64, 158, 255, 0.1);
+
+      .t-datetime-picker__day-text {
+        color: #409eff;
+      }
+    }
+
+    // 当开始和结束是同一天时
+    &--range-start#{&}--range-end {
+      background: transparent;
+    }
   }
 
   &__year-grid,
@@ -1038,6 +1243,49 @@ const handleToday = (): void => {
         color: #409eff;
       }
     }
+  }
+
+  // 范围选择样式
+  &__range-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background-color: #f5f7fa;
+    margin: 0 12px;
+    border-radius: 8px;
+  }
+
+  &__range-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    min-width: 100px;
+
+    &--active {
+      background-color: rgba(64, 158, 255, 0.1);
+    }
+  }
+
+  &__range-label {
+    font-size: 12px;
+    color: #909399;
+    margin-bottom: 4px;
+  }
+
+  &__range-value {
+    font-size: 14px;
+    color: #303133;
+    font-weight: 500;
+  }
+
+  &__range-separator {
+    font-size: 16px;
+    color: #909399;
+    margin: 0 12px;
   }
 }
 </style>

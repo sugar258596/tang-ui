@@ -1,6 +1,7 @@
 <script setup lang="uts">
 import { ref } from 'vue'
 import TDateTimePicker from '@/components/TDateTimePicker'
+import type { TDateTimePickerRangeValue } from '@/components/TDateTimePicker/type.uts'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -33,6 +34,10 @@ const rangeText = ref<string>('请选择（2024年范围）')
 const customVisible = ref<boolean>(false)
 const customValue = ref<number>(0)
 const customText = ref<string>('请选择预约时间')
+
+// 日期范围选择
+const dateRangeVisible = ref<boolean>(false)
+const dateRangeText = ref<string>('请选择日期范围')
 
 /**
  * 显示月份选择器
@@ -112,6 +117,21 @@ const handleCustomConfirm = (value: number, formatted: string): void => {
   customValue.value = value
   customText.value = formatted
   console.log('自定义选择:', formatted, value)
+}
+
+/**
+ * 显示日期范围选择器
+ */
+const showDateRangePicker = (): void => {
+  dateRangeVisible.value = true
+}
+
+/**
+ * 日期范围选择器确认
+ */
+const handleDateRangeConfirm = (value: TDateTimePickerRangeValue, formatted: string[]): void => {
+  dateRangeText.value = `${formatted[0]} ~ ${formatted[1]}`
+  console.log('选择日期范围:', formatted, value)
 }
 
 // 计算自定义范围的最小最大日期（2024年全年）
@@ -207,6 +227,19 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
         </view>
       </view>
 
+      <!-- 日期范围选择 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">日期范围选择 (range)</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showDateRangePicker">
+            <text class="picker-trigger-text">{{ dateRangeText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+        </view>
+      </view>
+
       <!-- 使用说明 -->
       <view class="section">
         <view class="section-title">
@@ -217,9 +250,11 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
             <text class="tip-text">• mode="month" - 选择年月</text>
             <text class="tip-text">• mode="date" - 选择年月日</text>
             <text class="tip-text">• mode="datetime" - 选择年月日时分</text>
+            <text class="tip-text">• range - 开启日期范围选择模式</text>
             <text class="tip-text">• 支持 minDate/maxDate 限制日期范围</text>
             <text class="tip-text">• 使用 v-model:value 绑定时间戳</text>
             <text class="tip-text">• confirm 事件返回时间戳和格式化字符串</text>
+            <text class="tip-text">• confirmRange 事件返回范围值和格式化字符串数组</text>
           </view>
         </view>
       </view>
@@ -272,6 +307,17 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
       confirm-text="确认预约"
       cancel-text="返回"
       @confirm="handleCustomConfirm"
+    />
+
+    <!-- 日期范围选择器 -->
+    <TDateTimePicker
+      v-model="dateRangeVisible"
+      mode="date"
+      :range="true"
+      title="选择日期范围"
+      start-text="开始日期"
+      end-text="结束日期"
+      @confirm-range="handleDateRangeConfirm"
     />
   </view>
 </template>
