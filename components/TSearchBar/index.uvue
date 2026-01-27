@@ -183,18 +183,16 @@ const handleCancel = (): void => {
         class="t-search-bar__clear"
         @click="handleClear"
       >
-        <TIcon name="shanchu" :size="24" color="#ffffff" />
+        <TIcon name="shanchu" color="#ffffff" />
       </view>
     </view>
 
     <!-- 取消按钮 -->
-    <text
-      v-if="showCancel"
-      class="t-search-bar__cancel"
-      @click="handleCancel"
-    >
-      {{ displayCancelText }}
-    </text>
+    <view v-if="showCancel" class="t-search-bar__cancel" @click="handleCancel">
+      <slot name="cancel">
+        <text class="t-search-bar__cancel-text">{{ displayCancelText }}</text>
+      </slot>
+    </view>
   </view>
 </template>
 
@@ -257,13 +255,16 @@ const handleCancel = (): void => {
 
 .t-search-bar__cancel {
   padding-inline: 12px;
-  font-size: 14px;
-  color: #323233;
   cursor: pointer;
-  white-space: nowrap;
 
   &:active {
     opacity: 0.7;
   }
+}
+
+.t-search-bar__cancel-text {
+  font-size: 14px;
+  color: #323233;
+  white-space: nowrap;
 }
 </style>
