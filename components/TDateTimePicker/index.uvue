@@ -30,6 +30,11 @@ const visible = defineModel<boolean>({ default: false })
 // 使用 defineModel 管理选中的值（时间戳）
 const selectedValue = defineModel<number>('value', { default: 0 })
 
+// 内部渲染状态，用于控制 DOM 显示
+const rendered = ref(false)
+// 是否显示遮罩层和内容（用于动画控制）
+const showOverlay = ref(false)
+
 // 定义 emits
 const emit = defineEmits<{
   confirm: [value: number, formatted: string]
@@ -464,6 +469,11 @@ const setValueByTimestamp = (timestamp: number): void => {
 // 监听 visible 变化
 watch(visible, (newVal: boolean) => {
   if (newVal) {
+    // 打开时立即渲染 DOM
+    rendered.value = true
+    // 初始状态为隐藏
+    showOverlay.value = false
+    
     setValueByTimestamp(selectedValue.value || Date.now())
     // 根据模式设置初始面板
     if (props.mode === 'month') {
@@ -471,14 +481,33 @@ watch(visible, (newVal: boolean) => {
     } else {
       panelMode.value = 'date'
     }
-    // datetime 模式下更新时间滚动位置
-    if (props.mode === 'datetime') {
-      nextTick(() => {
-        updateTimeScrollPosition()
-      })
+    
+    // 下一帧显示遮罩层和内容，触发动画
+    nextTick(() => {
+      setTimeout(() => {
+        showOverlay.value = true
+        // datetime 模式下更新时间滚动位置
+        if (props.mode === 'datetime') {
+          updateTimeScrollPosition()
+        }
+      }, 10)
+    })
+  } else {
+    // 外部关闭时触发关闭动画
+    if (rendered.value) {
+      doClose()
     }
   }
 })
+
+// 执行关闭动画
+const doClose = (): void => {
+  showOverlay.value = false
+  // 等待关闭动画完成后再卸载 DOM
+  setTimeout(() => {
+    rendered.value = false
+  }, 350)
+}
 
 // 处理遮罩点击
 const handleMaskClick = (): void => {
@@ -487,8 +516,14 @@ const handleMaskClick = (): void => {
 
 // 处理取消
 const handleCancel = (): void => {
-  visible.value = false
-  emit('cancel')
+  // 触发关闭动画
+  showOverlay.value = false
+  // 等待动画完成后更新状态
+  setTimeout(() => {
+    rendered.value = false
+    visible.value = false
+    emit('cancel')
+  }, 350)
 }
 
 // 处理确认
@@ -497,8 +532,15 @@ const handleConfirm = (): void => {
   const formatted = formatTimestamp(timestamp)
 
   selectedValue.value = timestamp
-  emit('confirm', timestamp, formatted)
-  visible.value = false
+  
+  // 触发关闭动画
+  showOverlay.value = false
+  // 等待动画完成后更新状态
+  setTimeout(() => {
+    rendered.value = false
+    visible.value = false
+    emit('confirm', timestamp, formatted)
+  }, 350)
 }
 
 // 快捷选择今天
@@ -514,12 +556,21 @@ const handleToday = (): void => {
 </script>
 
 <template>
-  <view v-if="visible" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
+  <view v-if="rendered" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
     <!-- 遮罩层 -->
-    <view class="t-datetime-picker__mask" @click="handleMaskClick" @touchmove.stop.prevent="() => {}"></view>
+    <view 
+      class="t-datetime-picker__mask" 
+      :class="{ 't-datetime-picker__mask--hidden': !showOverlay }"
+      @click="handleMaskClick" 
+      @touchmove.stop.prevent="() => {}"
+    ></view>
 
     <!-- 选择器容器 -->
-    <view class="t-datetime-picker__container" @touchmove.stop="() => {}">
+    <view 
+      class="t-datetime-picker__container" 
+      :class="{ 't-datetime-picker__container--hidden': !showOverlay }"
+      @touchmove.stop="() => {}"
+    >
       <!-- 工具栏 -->
       <view v-if="showToolbar" class="t-datetime-picker__toolbar">
         <view class="t-datetime-picker__btn t-datetime-picker__btn--cancel" @click="handleCancel">
@@ -694,6 +745,12 @@ const handleToday = (): void => {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    &--hidden {
+      opacity: 0;
+    }
   }
 
   &__container {
@@ -706,6 +763,12 @@ const handleToday = (): void => {
     border-top-right-radius: 12px;
     z-index: 1;
     max-height: 80vh;
+    transform: translateY(0);
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    &--hidden {
+      transform: translateY(100%);
+    }
   }
 
   &__toolbar {
