@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   readonly: false,
   autoFocus: false,
-  leftIcon: '🔍',
+  showLeftIcon: true,
   debounce: 300,
   customClass: '',
   customStyle: ''
@@ -156,10 +156,10 @@ const handleCancel = (): void => {
 <template>
   <view :class="containerClasses">
     <view class="t-search-bar__content" :style="inputStyle">
-      <!-- 左侧图标 -->
-       <view v-if="leftIcon" name="icon">
-         <text class="t-search-bar__icon">{{ leftIcon }}</text>
-       </view>
+      <!-- 左侧搜索图标 -->
+      <view v-if="showLeftIcon" class="t-search-bar__icon-wrapper">
+        <text class="t-search-bar__icon iconfont icon-sousuo"></text>
+      </view>
 
       <!-- 输入框 -->
       <input
@@ -182,7 +182,7 @@ const handleCancel = (): void => {
         class="t-search-bar__clear"
         @click="handleClear"
       >
-        <text class="t-search-bar__clear-icon">✕</text>
+        <text class="t-search-bar__clear-icon iconfont icon-shanchu"></text>
       </view>
     </view>
 
@@ -226,9 +226,15 @@ const handleCancel = (): void => {
   border-radius: 4px;
 }
 
+.t-search-bar__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
 .t-search-bar__icon {
   font-size: 16px;
-  margin-right: 8px;
   color: #969799;
 }
 
@@ -245,8 +251,8 @@ const handleCancel = (): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   margin-left: 8px;
   border-radius: 50%;
   background-color: #c8c9cc;

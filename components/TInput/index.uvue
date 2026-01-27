@@ -255,7 +255,7 @@ const handleConfirm = () => {
       class="t-input__suffix t-input__clear"
       @click="handleClear"
     >
-      <TIcon name="icon-close" :size="iconSize" color="#909399" />
+      <TIcon name="icon-shanchu" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 后缀文本 -->

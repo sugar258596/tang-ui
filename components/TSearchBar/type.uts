@@ -77,10 +77,10 @@ export interface TSearchBarProps {
   autoFocus?: boolean
 
   /**
-   * 左侧图标
-   * @default '🔍'
+   * 是否显示左侧搜索图标
+   * @default true
    */
-  leftIcon?: string
+  showLeftIcon?: boolean
 
   /**
    * 防抖延迟（毫秒）
