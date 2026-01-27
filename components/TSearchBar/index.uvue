@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import type { TSearchBarProps } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
+import TIcon from '../TIcon/index.uvue'
 
 /**
  * TSearchBar 搜索框组件
@@ -158,7 +159,7 @@ const handleCancel = (): void => {
     <view class="t-search-bar__content" :style="inputStyle">
       <!-- 左侧搜索图标 -->
       <view v-if="showLeftIcon" class="t-search-bar__icon-wrapper">
-        <text class="t-search-bar__icon iconfont icon-sousuo"></text>
+        <TIcon name="sousuo" :size="32" color="#969799" />
       </view>
 
       <!-- 输入框 -->
@@ -182,7 +183,7 @@ const handleCancel = (): void => {
         class="t-search-bar__clear"
         @click="handleClear"
       >
-        <text class="t-search-bar__clear-icon iconfont icon-shanchu"></text>
+        <TIcon name="shanchu" :size="24" color="#ffffff" />
       </view>
     </view>
 
@@ -233,11 +234,6 @@ const handleCancel = (): void => {
   margin-right: 8px;
 }
 
-.t-search-bar__icon {
-  font-size: 16px;
-  color: #969799;
-}
-
 .t-search-bar__input {
   flex: 1;
   font-size: 14px;
@@ -257,11 +253,6 @@ const handleCancel = (): void => {
   border-radius: 50%;
   background-color: #c8c9cc;
   cursor: pointer;
-}
-
-.t-search-bar__clear-icon {
-  font-size: 10px;
-  color: #fff;
 }
 
 .t-search-bar__cancel {
