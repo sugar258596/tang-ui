@@ -79,12 +79,33 @@
 	<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
 </template>
 
-<style lang="scss">
-	/* 导入字体图标 - 不使用 scoped，确保字体定义全局可用 */
-	@import '@/static/font/iconfont.css';
-	
+<style lang="scss" scoped>
+	/* 字体图标定义 */
+	@font-face {
+		font-family: "iconfont";
+		src: url('/static/font/iconfont.woff2') format('woff2'),
+			 url('/static/font/iconfont.woff') format('woff'),
+			 url('/static/font/iconfont.ttf') format('truetype');
+	}
+
+	.iconfont {
+		font-family: "iconfont" !important;
+		font-style: normal;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
 	.t-icon {
 		display: inline-block;
 		line-height: 1;
+	}
+
+	/* 图标类名 */
+	.icon-shanchu::before {
+		content: "\e61a";
+	}
+
+	.icon-sousuo::before {
+		content: "\e602";
 	}
 </style>
