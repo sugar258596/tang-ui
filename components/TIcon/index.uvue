@@ -79,7 +79,10 @@
 	<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+	/* 导入字体图标 - 不使用 scoped，确保字体定义全局可用 */
+	@import '@/static/font/iconfont.css';
+	
 	.t-icon {
 		display: inline-block;
 		line-height: 1;
