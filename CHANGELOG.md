@@ -13,7 +13,7 @@
   - 日历中高亮显示选中范围（开始、结束、范围内）
 
 - **TIcon**: 集成 iconfont 字体图标库
-  - 在全局样式中引入 `iconfont.css`
+  - 组件内 scoped 样式内联字体定义，不污染全局
   - 支持 `shanchu` 或 `icon-shanchu` 两种写法
   - 新增 `ICON_LIST` 常量导出可用图标列表
   - 当前可用图标：`shanchu`(删除)、`sousuo`(搜索)
