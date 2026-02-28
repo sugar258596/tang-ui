@@ -14,5 +14,8 @@
   "submitButton": "Submit",
   "resetButton": "Reset",
   "validationFailed": "Form validation failed",
-  "submitFailed": "Form submission failed"
+  "submitFailed": "Form submission failed",
+  "noOptions": "No options",
+  "selectAll": "Select all",
+  "clear": "Clear"
 }

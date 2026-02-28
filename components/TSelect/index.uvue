@@ -1,13 +1,14 @@
 <script  setup lang="uts" >
 	import Icon from '../TIcon'
-	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue } from './type.uts'
+	import { useI18n } from '../../composables/useI18n.uts'
+	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue, CascadeSelectValue } from './type.uts'
 
 	// 双向绑定值 - 根据 multiple 属性动态类型
-	const model = defineModel<SingleSelectValue | MultipleSelectValue>({ default: null })
+	const model = defineModel<SingleSelectValue | MultipleSelectValue | CascadeSelectValue>({ default: null })
 
 	const props = withDefaults(defineProps<SelectProps>(), {
 		options: (): SelectOption[] => [],
-		placeholder: '请选择',
+		placeholder: '',
 		disabled: false,
 		readonly: false,
 		multiple: false,
@@ -19,7 +20,9 @@
 		placement: 'bottom',
 		size: 'medium',
 		align: 'left',
-		activeColor: '#1890ff'
+		activeColor: '#1890ff',
+		changeOnSelect: false,
+		separator: ' / '
 	})
 
 	const emit = defineEmits<{
@@ -27,9 +30,26 @@
 		clear : []
 	}>()
 
+	const { $t } = useI18n()
+
 	// ========== 状态管理 ==========
 	const showPopup = ref(false)
 	const isHover = ref(false)
+
+	// ========== 级联状态管理 ==========
+	/** 是否为级联模式：自动检测 options 中是否有 children */
+	const isCascade = computed(() => {
+		return props.options?.some(opt => opt.children != null && opt.children!.length > 0) ?? false
+	})
+
+	/** 级联面板栈：每个元素是该层级的选项列表 */
+	const cascadePanels = ref<SelectOption[][]>([])
+
+	/** 级联各层级选中的选项 */
+	const cascadeSelectedOptions = ref<SelectOption[]>([])
+
+	/** 当前显示的面板层级索引（从0开始） */
+	const currentCascadeLevel = ref(0)
 
 	// ========== 计算属性 ==========
 	const selectHeight = computed(() => {
@@ -39,14 +59,14 @@
 
 	// 获取选中的选项（单选）
 	const selectedOption = computed(() => {
-		if (props.multiple) return null
+		if (isCascade.value || props.multiple) return null
 		if (model.value == null) return null
 		return props.options?.find(opt => opt.value === model.value) ?? null
 	})
 
 	// 获取选中的选项（多选）
 	const selectedOptions = computed(() => {
-		if (!props.multiple) return []
+		if (isCascade.value || !props.multiple) return []
 		if (model.value == null) return []
 		const values = model.value as MultipleSelectValue
 		return props.options?.filter(opt => values.includes(opt.value)) ?? []
@@ -54,6 +74,13 @@
 
 	// 显示的标签
 	const selectedLabels = computed(() => {
+		// 级联模式
+		if (isCascade.value) {
+			const options = cascadeSelectedOptions.value
+			if (options.length === 0) return ''
+			return options.map(opt => opt.label).join(props.separator)
+		}
+
 		if (!props.multiple) {
 			return selectedOption.value?.label ?? ''
 		}
@@ -72,12 +99,16 @@
 	// 显示文本
 	const displayText = computed(() => {
 		const label = selectedLabels.value
-		return label || props.placeholder
+		return label || props.placeholder || $t('form.selectPlaceholder')
 	})
 
 	// 是否显示清空图标
 	const showClearIcon = computed(() => {
 		if (!props.showClear || props.disabled || props.readonly) return false
+
+		if (isCascade.value) {
+			return cascadeSelectedOptions.value.length > 0
+		}
 
 		if (props.multiple) {
 			return (model.value as MultipleSelectValue)?.length > 0
@@ -126,14 +157,70 @@
 		}
 	})
 
+	/** 当前级联面板显示的选项列表 */
+	const currentCascadeOptions = computed(() => {
+		if (cascadePanels.value.length === 0) return []
+		const level = currentCascadeLevel.value
+		if (level < cascadePanels.value.length) {
+			return cascadePanels.value[level]
+		}
+		return []
+	})
+
+	/** 面包屑导航数据（作为 Tabs 使用） */
+	const breadcrumbItems = computed(() => {
+		const items: string[] = []
+		// 面包屑的标签数对应面板的数量（最大为 cascadePanels.length）
+		for (let i = 0; i < cascadePanels.value.length; i++) {
+			if (i < cascadeSelectedOptions.value.length) {
+				items.push(cascadeSelectedOptions.value[i].label)
+			} else {
+				items.push($t('form.selectPlaceholder'))
+			}
+		}
+		return items
+	})
+
 	// ========== 方法 ==========
 	const openPicker = () => {
 		if (props.disabled || props.readonly) return
 		showPopup.value = true
+
+		// 级联模式：初始化面板栈
+		if (isCascade.value) {
+			initCascadePanels()
+		}
 	}
 
 	const closePicker = () => {
 		showPopup.value = false
+	}
+
+	/** 初始化级联面板：根据已选值恢复面板状态 */
+	const initCascadePanels = () => {
+		const panels: SelectOption[][] = [props.options ?? []]
+		const selectedOpts = cascadeSelectedOptions.value
+
+		// 如果有已选值，恢复各级面板
+		if (selectedOpts.length > 0) {
+			let currentOptions = props.options ?? []
+			for (let i = 0; i < selectedOpts.length; i++) {
+				const selectedValue = selectedOpts[i].value
+				const found = currentOptions.find(opt => opt.value === selectedValue)
+				if (found != null && found!.children != null && found!.children!.length > 0) {
+					panels.push(found!.children!)
+					currentOptions = found!.children!
+				} else {
+					break
+				}
+			}
+			// 定位到最后一级面板
+			currentCascadeLevel.value = panels.length - 1
+		} else {
+			currentCascadeLevel.value = 0
+		}
+
+		cascadePanels.value = panels
 	}
 
 	// 检查选项是否被选中
@@ -143,6 +230,64 @@
 			return values.includes(option.value)
 		}
 		return model.value === option.value
+	}
+
+	/** 检查级联选项在当前层级是否被选中 */
+	const isCascadeOptionSelected = (option: SelectOption, level: number): boolean => {
+		if (level < cascadeSelectedOptions.value.length) {
+			return cascadeSelectedOptions.value[level].value === option.value
+		}
+		return false
+	}
+
+	/** 级联选项点击处理 */
+	const handleCascadeSelect = (option: SelectOption, level: number) => {
+		if (option.disabled || props.disabled || props.readonly) {
+			uni.showToast({ title: '该选项不可选', icon: 'none' })
+			return
+		}
+
+		// 更新选中状态：截断当前层级之后的选择
+		const newSelectedOptions = cascadeSelectedOptions.value.slice(0, level)
+		newSelectedOptions.push(option)
+		cascadeSelectedOptions.value = newSelectedOptions
+
+		// 判断是否有子级
+		const hasChildren = option.children != null && option.children!.length > 0
+
+		if (hasChildren && level < 3) {
+			// 有子级且未到第四级（最多四级：0,1,2,3）：进入下一级
+			const newPanels = cascadePanels.value.slice(0, level + 1)
+			newPanels.push(option.children!)
+			cascadePanels.value = newPanels
+			currentCascadeLevel.value = level + 1
+
+			// 如果 changeOnSelect 为 true，选中中间层级也更新值
+			if (props.changeOnSelect) {
+				updateCascadeModel()
+				emit('change', newSelectedOptions[newSelectedOptions.length - 1])
+			}
+		} else {
+			// 叶子节点或已到第四级：完成选择
+			updateCascadeModel()
+			emit('change', option)
+			closePicker()
+		}
+	}
+
+	/** 更新级联模式的 v-model 值 */
+	const updateCascadeModel = () => {
+		const values = cascadeSelectedOptions.value.map(opt => opt.value)
+		model.value = values
+	}
+
+	/** 面包屑点击，返回指定层级 */
+	const goToCascadeLevel = (level: number) => {
+		if (level < 0) level = 0
+		currentCascadeLevel.value = level
+		// 截断面板栈和选中项到目标层级
+		cascadePanels.value = cascadePanels.value.slice(0, level + 1)
+		cascadeSelectedOptions.value = cascadeSelectedOptions.value.slice(0, level)
 	}
 
 	// 选择选项
@@ -180,6 +325,17 @@
 	const clearValue = () => {
 		if (props.disabled || props.readonly) return
 
+		if (isCascade.value) {
+			// 级联模式清空
+			cascadeSelectedOptions.value = []
+			cascadePanels.value = [props.options ?? []]
+			currentCascadeLevel.value = 0
+			model.value = null
+			emit('clear')
+			emit('change', null)
+			return
+		}
+
 		if (props.multiple) {
 			model.value = []
 			emit('clear')
@@ -216,6 +372,37 @@
 	const handleDropdownClick = (e : Event) => {
 		e.stopPropagation()
 	}
+
+	// ========== 监听 v-model 外部变化，同步级联状态 ==========
+	watch(() => model.value, (newVal) => {
+		if (!isCascade.value) return
+		if (newVal == null || (Array.isArray(newVal) && (newVal as CascadeSelectValue).length === 0)) {
+			cascadeSelectedOptions.value = []
+			return
+		}
+
+		// 从 values 路径反查 options 树，恢复 cascadeSelectedOptions
+		if (Array.isArray(newVal)) {
+			const values = newVal as CascadeSelectValue
+			const selectedOpts: SelectOption[] = []
+			let currentOptions = props.options ?? []
+
+			for (let i = 0; i < values.length; i++) {
+				const found = currentOptions.find(opt => opt.value === values[i])
+				if (found != null) {
+					selectedOpts.push(found!)
+					if (found!.children != null && found!.children!.length > 0) {
+						currentOptions = found!.children!
+					} else {
+						break
+					}
+				} else {
+					break
+				}
+			}
+			cascadeSelectedOptions.value = selectedOpts
+		}
+	}, { immediate: true })
 </script>
 
 <template>
@@ -228,14 +415,16 @@
 					'select-disabled': disabled,
 					'select-readonly': readonly,
 					'select-active': showPopup,
-					'has-value': (props.multiple ? (model as MultipleSelectValue)?.length : model) != null
+					'has-value': isCascade
+						? cascadeSelectedOptions.length > 0
+						: (props.multiple ? (model as MultipleSelectValue)?.length : model) != null
 				}
 			]" :style="{
 				height: selectHeight,
 				backgroundColor: disabled ? '#f5f5f5' : background,
 				borderColor: showPopup ? activeColor : borderColor
 			}" @click="openPicker">
-			<text class="select-text truncate" :class="displayText === placeholder ? 'placeholder-text' : 'value-text'">
+			<text class="select-text truncate" :class="displayText === (placeholder || $t('form.selectPlaceholder')) ? 'placeholder-text' : 'value-text'">
 				{{ displayText }}
 			</text>
 
@@ -260,44 +449,100 @@
 
 		<!-- 下拉选项列表 -->
 		<transition name="dropdown">
-			<view v-if="showPopup" class="dropdown-list select-root" :class="`placement-${props.placement}`" :style="dropdownStyle" @tap="handleDropdownClick">
-				<scroll-view class="dropdown-scroll" scroll-y :scroll-top="0">
-					<!-- 多选模式下的全选/清空按钮 -->
-					<view v-if="props.multiple" class="dropdown-actions">
-						<view class="dropdown-action-item" @click.stop="selectAll">
-							<text class="action-text" :style="{ color: activeColor }">全选</text>
-						</view>
-						<view class="dropdown-action-item" @click.stop="clearValue">
-							<text class="action-text" :style="{ color: activeColor }">清空</text>
-						</view>
+			<view v-if="showPopup" class="dropdown-list select-root" :class="[
+					`placement-${props.placement}`,
+					{ 'cascade-dropdown': isCascade }
+				]" :style="dropdownStyle" @tap="handleDropdownClick">
+
+				<!-- ====== 级联模式 ====== -->
+				<template v-if="isCascade">
+					<!-- 面包屑导航 -->
+					<view v-if="breadcrumbItems.length > 0" class="cascade-breadcrumb">
+						<template v-for="(item, idx) in breadcrumbItems" :key="idx">
+							<text v-if="idx > 0" class="cascade-breadcrumb-separator">/</text>
+							<view class="cascade-breadcrumb-item" @click.stop="goToCascadeLevel(idx)">
+								<text class="cascade-breadcrumb-text" :style="{ color: idx === currentCascadeLevel ? activeColor : '#606266' }">{{ item }}</text>
+							</view>
+						</template>
 					</view>
 
-					<!-- 选项列表 -->
-					<view v-for="option in options" :key="option.value" class="dropdown-item select-root" :class="[
-							alignClass,
-							{
-								'dropdown-item-selected': isOptionSelected(option),
-								'dropdown-item-disabled': option.disabled || disabled
-							}
-						]" @click="selectOption(option)">
-						<text class="dropdown-item-text" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
+					<!-- 级联面板 -->
+					<scroll-view class="dropdown-scroll cascade-panel" scroll-y :scroll-top="0">
+						<view v-for="option in currentCascadeOptions" :key="option.value"
+							class="dropdown-item select-root"
+							:class="[
+								alignClass,
+								{
+									'dropdown-item-selected': isCascadeOptionSelected(option, currentCascadeLevel),
+									'dropdown-item-disabled': option.disabled || disabled
+								}
+							]"
+							@click="handleCascadeSelect(option, currentCascadeLevel)">
 
-						<!-- 单选模式的选中标记 -->
-						<text v-if="!props.multiple && isOptionSelected(option)" class="dropdown-item-check" :style="{ color: activeColor }">
-							✓
-						</text>
+							<text class="dropdown-item-text"
+								:style="isCascadeOptionSelected(option, currentCascadeLevel) ? { color: activeColor, fontWeight: '500' } : {}">
+								{{ option.label }}
+							</text>
 
-						<!-- 多选模式的复选框 -->
-						<view v-if="props.multiple" class="dropdown-checkbox" :class="{ 'checkbox-checked': isOptionSelected(option) }" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
-							<text v-if="isOptionSelected(option)" class="checkbox-icon">✓</text>
+							<!-- 有子级时显示右箭头 -->
+							<view v-if="option.children != null && option.children.length > 0" class="cascade-arrow">
+								<Icon name="icon-xiajiantou-copy" :size="12" color="#999" />
+							</view>
+
+							<!-- 叶子节点被选中时显示 ✓ -->
+							<text v-else-if="isCascadeOptionSelected(option, currentCascadeLevel)"
+								class="dropdown-item-check" :style="{ color: activeColor }">
+								✓
+							</text>
 						</view>
-					</view>
 
-					<!-- 空状态 -->
-					<view v-if="options.length === 0" class="dropdown-empty" :class="alignClass">
-						<text class="empty-text">暂无选项</text>
-					</view>
-				</scroll-view>
+						<!-- 空状态 -->
+						<view v-if="currentCascadeOptions.length === 0" class="dropdown-empty" :class="alignClass">
+							<text class="empty-text">{{ $t('form.noOptions') }}</text>
+						</view>
+					</scroll-view>
+				</template>
+
+				<!-- ====== 普通模式（单选/多选） ====== -->
+				<template v-else>
+					<scroll-view class="dropdown-scroll" scroll-y :scroll-top="0">
+						<!-- 多选模式下的全选/清空按钮 -->
+						<view v-if="props.multiple" class="dropdown-actions">
+							<view class="dropdown-action-item" @click.stop="selectAll">
+								<text class="action-text" :style="{ color: activeColor }">{{ $t('form.selectAll') }}</text>
+							</view>
+							<view class="dropdown-action-item" @click.stop="clearValue">
+								<text class="action-text" :style="{ color: activeColor }">{{ $t('form.clear') }}</text>
+							</view>
+						</view>
+
+						<!-- 选项列表 -->
+						<view v-for="option in options" :key="option.value" class="dropdown-item select-root" :class="[
+								alignClass,
+								{
+									'dropdown-item-selected': isOptionSelected(option),
+									'dropdown-item-disabled': option.disabled || disabled
+								}
+							]" @click="selectOption(option)">
+							<text class="dropdown-item-text" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
+
+							<!-- 单选模式的选中标记 -->
+							<text v-if="!props.multiple && isOptionSelected(option)" class="dropdown-item-check" :style="{ color: activeColor }">
+								✓
+							</text>
+
+							<!-- 多选模式的复选框 -->
+							<view v-if="props.multiple" class="dropdown-checkbox" :class="{ 'checkbox-checked': isOptionSelected(option) }" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
+								<text v-if="isOptionSelected(option)" class="checkbox-icon">✓</text>
+							</view>
+						</view>
+
+						<!-- 空状态 -->
+						<view v-if="options.length === 0" class="dropdown-empty" :class="alignClass">
+							<text class="empty-text">{{ $t('form.noOptions') }}</text>
+						</view>
+					</scroll-view>
+				</template>
 			</view>
 		</transition>
 	</view>
@@ -449,6 +694,11 @@
 		z-index: 100;
 		overflow: hidden;
 		border: 1rpx solid #ebeef5;
+
+		/* 级联模式下允许更高的面板 */
+		&.cascade-dropdown {
+			max-height: 500rpx;
+		}
 	}
 
 	.dropdown-scroll {
@@ -647,6 +897,55 @@
 		color: #ffffff;
 		font-weight: bold;
 	}
+}
+
+/* ========== 级联选择样式 ========== */
+
+/* 面包屑导航 */
+.cascade-breadcrumb {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 16rpx 24rpx;
+	background-color: #fafafa;
+	border-bottom: 1rpx solid #ebeef5;
+	flex-wrap: wrap;
+}
+
+.cascade-breadcrumb-item {
+	cursor: pointer;
+	padding: 4rpx 8rpx;
+	border-radius: 4rpx;
+	transition: background-color 0.2s ease;
+
+	&:active {
+		background-color: #ecf5ff;
+	}
+}
+
+.cascade-breadcrumb-text {
+	font-size: 24rpx;
+	color: #606266;
+}
+
+.cascade-breadcrumb-separator {
+	font-size: 22rpx;
+	color: #c0c4cc;
+	margin: 0 4rpx;
+}
+
+/* 级联面板 */
+.cascade-panel {
+	max-height: 440rpx;
+}
+
+/* 级联箭头（指向右侧表示有下级） */
+.cascade-arrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 16rpx;
+	transform: rotate(-90deg);
 }
 
 </style>

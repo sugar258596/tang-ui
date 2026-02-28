@@ -4,6 +4,7 @@
 
 /**
  * 选项数据结构
+ * 当包含 children 时自动启用级联模式，最多支持四级
  */
 export type SelectOption = {
 	/** 选项显示的文本 */
@@ -12,6 +13,8 @@ export type SelectOption = {
 	value : string | number
 	/** 是否禁用该选项，默认为 false */
 	disabled ?: boolean
+	/** 子级选项列表，存在时启用级联选择，最多支持四级 */
+	children ?: SelectOption[]
 }
 
 /**
@@ -23,6 +26,11 @@ export type SingleSelectValue = string | number | null
  * 多选模式下的值类型
  */
 export type MultipleSelectValue = (string | number)[]
+
+/**
+ * 级联选择模式下的值类型，数组中每个元素对应一个层级的选中值
+ */
+export type CascadeSelectValue = (string | number)[]
 
 /**
  * Props 类型定义
@@ -56,4 +64,8 @@ export type SelectProps = {
 	align ?: 'left' | 'center' | 'right'
 	/** 选中状态的颜色，默认为 '#1890ff' */
 	activeColor ?: string
+	/** 级联模式：是否允许选中任意层级（非叶子节点也可选中），默认为 false */
+	changeOnSelect ?: boolean
+	/** 级联模式：显示文本的分隔符，默认为 ' / ' */
+	separator ?: string
 }

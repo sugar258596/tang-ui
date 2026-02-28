@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import TSelect from '@/components/TSelect'
 import TCard from '@/components/TCard'
+import type { SelectOption } from '@/components/TSelect/type.uts'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -14,6 +15,10 @@ const value1 = ref<string>('')
 const value2 = ref<string>('option2')
 const value3 = ref<number>(1)
 const multiValue = ref<string[]>([])
+
+// 级联选择值
+const cascadeValue = ref<(string | number)[] | null>(null)
+const cascadeValue2 = ref<(string | number)[] | null>(null)
 
 const options = [
   { label: $t('examplePages.select.labels.option1'), value: 'option1' },
@@ -29,8 +34,115 @@ const numberOptions = [
   { label: $t('examplePages.select.labels.item3'), value: 3 }
 ]
 
+// 省市区三级级联数据
+const regionOptions: SelectOption[] = [
+  {
+    label: '浙江省', value: 'zhejiang',
+    children: [
+      {
+        label: '杭州市', value: 'hangzhou',
+        children: [
+          { label: '西湖区', value: 'xihu' },
+          { label: '余杭区', value: 'yuhang' },
+          { label: '萧山区', value: 'xiaoshan' }
+        ]
+      },
+      {
+        label: '宁波市', value: 'ningbo',
+        children: [
+          { label: '海曙区', value: 'haishu' },
+          { label: '江北区', value: 'jiangbei' }
+        ]
+      },
+      {
+        label: '温州市', value: 'wenzhou',
+        children: [
+          { label: '鹿城区', value: 'lucheng' },
+          { label: '龙湾区', value: 'longwan' }
+        ]
+      }
+    ]
+  },
+  {
+    label: '江苏省', value: 'jiangsu',
+    children: [
+      {
+        label: '南京市', value: 'nanjing',
+        children: [
+          { label: '玄武区', value: 'xuanwu' },
+          { label: '秦淮区', value: 'qinhuai' },
+          { label: '建邺区', value: 'jianye' }
+        ]
+      },
+      {
+        label: '苏州市', value: 'suzhou',
+        children: [
+          { label: '姑苏区', value: 'gusu' },
+          { label: '工业园区', value: 'gongyeyuan' }
+        ]
+      }
+    ]
+  },
+  {
+    label: '广东省', value: 'guangdong',
+    children: [
+      {
+        label: '广州市', value: 'guangzhou',
+        children: [
+          { label: '天河区', value: 'tianhe' },
+          { label: '越秀区', value: 'yuexiu' }
+        ]
+      },
+      {
+        label: '深圳市', value: 'shenzhen',
+        children: [
+          { label: '南山区', value: 'nanshan' },
+          { label: '福田区', value: 'futian' }
+        ]
+      }
+    ]
+  }
+]
+
+// 分类级联数据（用于 changeOnSelect 示例）
+const categoryOptions: SelectOption[] = [
+  {
+    label: '电子产品', value: 'electronics',
+    children: [
+      {
+        label: '手机', value: 'phone',
+        children: [
+          { label: 'iPhone', value: 'iphone' },
+          { label: 'Android', value: 'android' }
+        ]
+      },
+      {
+        label: '电脑', value: 'computer',
+        children: [
+          { label: '笔记本', value: 'laptop' },
+          { label: '台式机', value: 'desktop' }
+        ]
+      },
+      { label: '平板', value: 'tablet' }
+    ]
+  },
+  {
+    label: '服装', value: 'clothing',
+    children: [
+      { label: '男装', value: 'men' },
+      { label: '女装', value: 'women' },
+      { label: '童装', value: 'kids' }
+    ]
+  },
+  { label: '食品', value: 'food' }
+]
+
 const handleChange = (value: any): void => {
   console.log($t('examplePages.select.messages.selected'), value)
+}
+
+const handleCascadeChange = (value: any): void => {
+  console.log('级联选择变更:', value)
 }
 </script>
 
@@ -132,6 +244,35 @@ const handleChange = (value: any): void => {
       />
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
         {{ $t('examplePages.select.placeholder.checkConsole') }}
+      </text>
+    </TCard>
+
+    <TCard title="级联选择 - 省市区" class="example-section">
+      <TSelect
+        v-model="cascadeValue"
+        :options="regionOptions"
+        placeholder="请选择省/市/区"
+        @change="handleCascadeChange"
+      />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ cascadeValue ? (cascadeValue as (string | number)[]).join(' / ') : '未选择' }}
+      </text>
+    </TCard>
+
+    <TCard title="级联选择 - 允许选中任意层级" class="example-section">
+      <TSelect
+        v-model="cascadeValue2"
+        :options="categoryOptions"
+        placeholder="请选择分类"
+        change-on-select
+        separator=" > "
+        @change="handleCascadeChange"
+      />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        选中值: {{ cascadeValue2 ? (cascadeValue2 as (string | number)[]).join(' > ') : '未选择' }}
+      </text>
+      <text style="margin-top: 5px; font-size: 12px; color: #c0c4cc;">
+        开启 changeOnSelect，选中中间层级也会更新值
       </text>
     </TCard>
   </view>

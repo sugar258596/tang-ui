@@ -14,5 +14,8 @@
   "submitButton": "提交",
   "resetButton": "重置",
   "validationFailed": "表单验证失败",
-  "submitFailed": "表单提交失败"
+  "submitFailed": "表单提交失败",
+  "noOptions": "暂无选项",
+  "selectAll": "全选",
+  "clear": "清空"
 }
