@@ -159,7 +159,7 @@ const handleCancel = (): void => {
     <view class="t-search-bar__content" :style="inputStyle">
       <!-- 左侧搜索图标 -->
       <view v-if="showLeftIcon" class="t-search-bar__icon-wrapper">
-        <TIcon name="sousuo" :size="32" color="#969799" />
+        <TIcon name="icon-sousuo" :size="32" color="#969799" />
       </view>
 
       <!-- 输入框 -->
@@ -183,7 +183,7 @@ const handleCancel = (): void => {
         class="t-search-bar__clear"
         @click="handleClear"
       >
-        <TIcon name="shanchu" color="#ffffff" />
+        <TIcon name="icon-shanchu" color="#ffffff" />
       </view>
     </view>
 

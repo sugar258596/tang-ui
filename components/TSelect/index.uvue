@@ -432,12 +432,12 @@
 			<view class="select-icons">
 				<!-- 清空按钮 -->
 				<view v-if="showClearIcon" class="clear-icon" @click.stop="clearValue">
-					<Icon name="icon-close-circle" :size="14" color="#c0c4cc" />
+					<Icon name="icon-shanchu" color="#c0c4cc" />
 				</view>
 
 				<!-- 下拉箭头 -->
 				<view class="select-arrow" :class="{ 'arrow-up': showPopup }">
-					<Icon name="icon-xiajiantou-copy" :size="12" color="#999" />
+					<Icon name="icon-xiajiantou" :size="20" color="#999" />
 				</view>
 			</view>
 		</view>
@@ -486,7 +486,7 @@
 
 							<!-- 有子级时显示右箭头 -->
 							<view v-if="option.children != null && option.children.length > 0" class="cascade-arrow">
-								<Icon name="icon-xiajiantou-copy" :size="12" color="#999" />
+								<Icon name="icon-xiajiantou" :size="12" color="#999" />
 							</view>
 
 							<!-- 叶子节点被选中时显示 ✓ -->
