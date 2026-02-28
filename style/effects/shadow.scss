@@ -1,0 +1,24 @@
+// ========== 阴影效果 ==========
+
+$shadows: (
+  none: none,
+  sm: (0 2rpx 4rpx 0 rgba(0, 0, 0, 0.05)),
+  base: (0 2rpx 8rpx 0 rgba(0, 0, 0, 0.1), 0 2rpx 4rpx -2rpx rgba(0, 0, 0, 0.1)),
+  md: (0 8rpx 16rpx -4rpx rgba(0, 0, 0, 0.1), 0 4rpx 8rpx -4rpx rgba(0, 0, 0, 0.1)),
+  lg: (0 20rpx 50rpx -24rpx rgba(0, 0, 0, 0.25)),
+  xl: (0 40rpx 100rpx -24rpx rgba(0, 0, 0, 0.25)),
+  2xl: (0 50rpx 100rpx -24rpx rgba(0, 0, 0, 0.25)),
+  inner: inset 0 4rpx 8rpx 0 rgba(0, 0, 0, 0.1)
+);
+
+@each $key, $val in $shadows {
+  @if $key == 'base' {
+    .shadow {
+      box-shadow: $val;
+    }
+  } @else {
+    .shadow-#{$key} {
+      box-shadow: $val;
+    }
+  }
+}

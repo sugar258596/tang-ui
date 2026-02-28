@@ -1,0 +1,278 @@
+// ========== 通用工具类 ==========
+
+// 指针事件
+.pointer-events-none {
+  pointer-events: none;
+}
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+// 光标
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-default {
+  cursor: default;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+// z-index
+.z-0 {
+  z-index: 0;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-20 {
+  z-index: 20;
+}
+.z-30 {
+  z-index: 30;
+}
+.z-40 {
+  z-index: 40;
+}
+.z-50 {
+  z-index: 50;
+}
+.z-auto {
+  z-index: auto;
+}
+
+// 页面容器
+.page {
+  min-height: 100vh;
+  background-color: $uni-bg-color-grey;
+}
+
+.safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+}
+
+.safe-area-top {
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+}
+
+// 清除浮动
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+// 选择器禁用
+.select-none {
+  user-select: none;
+}
+.select-text {
+  user-select: text;
+}
+.select-all {
+  user-select: all;
+}
+.select-auto {
+  user-select: auto;
+}
+
+// 滚动行为
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+.scroll-auto {
+  scroll-behavior: auto;
+}
+
+// 外观
+.appearance-none {
+  appearance: none;
+}
+
+// 轮廓
+.outline-none {
+  outline: 2rpx solid transparent;
+  outline-offset: 2rpx;
+}
+.outline {
+  outline-style: solid;
+}
+
+// 图片禁用拖拽
+.no-drag {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+// 额外的原子类
+.opacity-80 {
+  opacity: 0.8;
+}
+.opacity-90 {
+  opacity: 0.9;
+}
+
+// 渐变背景
+.bg-gradient-to-b {
+  background-image: linear-gradient(
+    to bottom,
+    var(--from-color, transparent),
+    var(--to-color, transparent)
+  );
+}
+.bg-gradient-to-t {
+  background-image: linear-gradient(
+    to top,
+    var(--from-color, transparent),
+    var(--to-color, transparent)
+  );
+}
+.bg-gradient-to-r {
+  background-image: linear-gradient(
+    to right,
+    var(--from-color, transparent),
+    var(--to-color, transparent)
+  );
+}
+.bg-gradient-to-l {
+  background-image: linear-gradient(
+    to left,
+    var(--from-color, transparent),
+    var(--to-color, transparent)
+  );
+}
+
+// 渐变起始颜色 (基于 colors 变量)
+@import '../variables';
+@each $key, $value in $colors {
+  .from-#{'' + $key} {
+    --from-color: #{$value};
+  }
+  .to-#{'' + $key} {
+    --to-color: #{$value};
+  }
+}
+
+// 特殊渐变色
+.from-cyan-50 {
+  --from-color: #ecfeff;
+}
+.to-white {
+  --to-color: #ffffff;
+}
+
+.transform {
+  transform: translateZ(0);
+}
+.translate-x-full {
+  transform: translateX(100%);
+}
+.-translate-y-1 {
+  transform: translateY(-4rpx);
+}
+.-translate-x-1of2 {
+  transform: translateX(-50%);
+}
+
+.backdrop-blur-10 {
+  backdrop-filter: blur(20rpx);
+}
+.backdrop-blur-20 {
+  backdrop-filter: blur(40rpx);
+}
+
+.bg-opacity-5 {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.bg-opacity-20 {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.bg-opacity-30 {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.bg-opacity-50 {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.bg-opacity-80 {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+.bg-opacity-90 {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.bg-opacity-95 {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.bg-black {
+  background-color: #000;
+}
+
+.text-opacity-70 {
+  color: rgba(255, 255, 255, 0.7);
+}
+.text-opacity-80 {
+  color: rgba(255, 255, 255, 0.8);
+}
+.text-opacity-90 {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.border-opacity-5 {
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.border-opacity-20 {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.border-opacity-30 {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.filter {
+  filter: var(--filter-blur) var(--filter-brightness) var(--filter-contrast) var(--filter-grayscale)
+    var(--filter-hue-rotate) var(--filter-invert) var(--filter-saturate) var(--filter-sepia)
+    var(--filter-drop-shadow);
+}
+.blur-8 {
+  --filter-blur: blur(16rpx);
+  filter: var(--filter-blur);
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.font-light {
+  font-weight: 300;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+
+.underline-offset-4 {
+  text-underline-offset: 8rpx;
+}
+
+.activeof:scale-95:active {
+  transform: scale(0.95);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

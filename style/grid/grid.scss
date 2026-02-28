@@ -1,0 +1,120 @@
+// ========== Grid 网格布局 ==========
+
+// 网格容器
+.grid {
+  display: grid;
+}
+
+// 网格列数 (1-12)
+@for $i from 1 through 12 {
+  .grid-cols-#{$i} {
+    grid-template-columns: repeat(#{$i}, 1fr);
+  }
+}
+
+// 网格行数 (1-6)
+@for $i from 1 through 6 {
+  .grid-rows-#{$i} {
+    grid-template-rows: repeat(#{$i}, 1fr);
+  }
+}
+
+// 网格流向
+$grid-flows: (
+  row: row,
+  col: column,
+  dense: dense,
+  row-dense: row dense,
+  col-dense: column dense
+);
+@each $key, $val in $grid-flows {
+  .grid-flow-#{$key} {
+    grid-auto-flow: $val;
+  }
+}
+
+// 列跨度 (1-12)
+@for $i from 1 through 12 {
+  .col-span-#{$i} {
+    grid-column: span #{$i} / span #{$i};
+  }
+}
+.col-span-full {
+  grid-column: 1 / -1;
+}
+
+// 行跨度 (1-6)
+@for $i from 1 through 6 {
+  .row-span-#{$i} {
+    grid-row: span #{$i} / span #{$i};
+  }
+}
+.row-span-full {
+  grid-row: 1 / -1;
+}
+
+// 列起始和结束位置 (1-4)
+@for $i from 1 through 4 {
+  .col-start-#{$i} {
+    grid-column-start: #{$i};
+  }
+  .col-end-#{$i} {
+    grid-column-end: #{$i};
+  }
+}
+.col-start-auto { grid-column-start: auto; }
+.col-end-auto { grid-column-end: auto; }
+
+// 行起始和结束位置 (1-4)
+@for $i from 1 through 4 {
+  .row-start-#{$i} {
+    grid-row-start: #{$i};
+  }
+  .row-end-#{$i} {
+    grid-row-end: #{$i};
+  }
+}
+.row-start-auto { grid-row-start: auto; }
+.row-end-auto { grid-row-end: auto; }
+
+// 自动列宽与自动行高
+$auto-sizes: (
+  auto: auto,
+  min: min-content,
+  max: max-content,
+  fr: minmax(0, 1fr)
+);
+@each $key, $val in $auto-sizes {
+  .auto-cols-#{$key} {
+    grid-auto-columns: $val;
+  }
+  .auto-rows-#{$key} {
+    grid-auto-rows: $val;
+  }
+}
+
+// Grid 对齐方式
+$alignments: start, end, center, stretch;
+@each $val in $alignments {
+  .justify-items-#{$val} { justify-items: $val; }
+  .justify-self-#{$val} { justify-self: $val; }
+  .place-items-#{$val} { place-items: $val; }
+  .place-self-#{$val} { place-self: $val; }
+}
+.justify-self-auto { justify-self: auto; }
+.place-self-auto { place-self: auto; }
+
+$place-content: (
+  start: start,
+  end: end,
+  center: center,
+  between: space-between,
+  around: space-around,
+  evenly: space-evenly,
+  stretch: stretch
+);
+@each $key, $val in $place-content {
+  .place-content-#{$key} {
+    place-content: $val;
+  }
+}

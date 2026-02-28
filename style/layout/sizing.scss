@@ -1,0 +1,117 @@
+// ========== 尺寸 ==========
+
+@import '../variables';
+
+// 宽度/高度特定属性
+$size-props: (
+  0: 0,
+  full: 100%,
+  min: min-content,
+  max: max-content,
+  fit: fit-content
+);
+@each $key, $val in $size-props {
+  .w-#{$key} { width: $val; }
+  .h-#{$key} { height: $val; }
+}
+
+.w-screen { width: 100vw; }
+.h-screen { height: 100vh; }
+
+// #ifdef H5 || WEB
+.h-screen-tab { height: calc(100vh - 60rpx); }
+// #endif
+// #ifndef H5 || WEB
+.h-screen-tab { height: 100vh; }
+// #endif
+
+// 固定尺寸 (0-200) 基于 $sizes
+@each $key, $value in $sizes {
+  .w-#{$key} { width: $value; }
+  .h-#{$key} { height: $value; }
+}
+
+// 分数宽度/高度 (1/2, 1/3, 2/3, 1-3/4, 1-4/5)
+$fractions: (
+  '1-2': 50%,
+  '1-3': 33.333333%,
+  '2-3': 66.666667%,
+  '1-4': 25%,
+  '2-4': 50%,
+  '3-4': 75%,
+  '1-5': 20%,
+  '2-5': 40%,
+  '3-5': 60%,
+  '4-5': 80%
+);
+@each $key, $val in $fractions {
+  .w-#{$key} { width: $val; }
+  @if $key != '1-5' and $key != '2-5' and $key != '3-5' and $key != '4-5' {
+    .h-#{$key} { height: $val; }
+  }
+}
+
+// 最小/最大尺寸
+$min-sizes: (0: 0, full: 100%, min: min-content, max: max-content, fit: fit-content);
+@each $key, $val in $min-sizes {
+  .min-w-#{$key} { min-width: $val; }
+  .max-w-#{$key} { max-width: $val; }
+}
+.max-w-none { max-width: none; }
+.max-w-screen { max-width: 100vw; }
+
+$max-w-breakpoints: (
+  xs: 640rpx, sm: 768rpx, md: 896rpx, lg: 1024rpx, xl: 1280rpx, 2xl: 1408rpx
+);
+@each $key, $val in $max-w-breakpoints {
+  .max-w-#{$key} { max-width: $val; }
+}
+
+$min-h-sizes: (0: 0, full: 100%, screen: 100vh);
+@each $key, $val in $min-h-sizes {
+  .min-h-#{$key} { min-height: $val; }
+}
+.max-h-full { max-height: 100%; }
+.max-h-screen { max-height: 100vh; }
+
+// Display
+$displays: block, inline-block, inline, hidden;
+@each $val in $displays {
+  @if $val == 'hidden' {
+    .hidden { display: none; }
+  } @else {
+    .#{$val} { display: $val; }
+  }
+}
+
+// Position
+$positions: static, fixed, absolute, relative, sticky;
+@each $val in $positions {
+  .#{$val} { position: $val; }
+}
+
+// 定位常量
+$insets: (top: top, right: right, bottom: bottom, left: left);
+.top-0 { top: 0; }
+.right-0 { right: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+
+@each $key, $value in $sizes {
+  @each $dirKey, $dirVal in $insets {
+    .#{$dirKey}-#{$key} { #{$dirVal}: $value; }
+    .-#{$dirKey}-#{$key} { #{$dirVal}: -$value; }
+  }
+}
+
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.inset-x-0 { left: 0; right: 0; }
+.inset-y-0 { top: 0; bottom: 0; }
+
+// 溢出
+$overflows: auto, hidden, visible, scroll;
+@each $val in $overflows {
+  .overflow-#{$val} { overflow: $val; }
+  .overflow-x-#{$val} { overflow-x: $val; }
+  .overflow-y-#{$val} { overflow-y: $val; }
+}

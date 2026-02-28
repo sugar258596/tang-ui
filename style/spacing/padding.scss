@@ -1,0 +1,55 @@
+// ========== Padding 内边距 ==========
+
+@import '../variables';
+
+// 全方向 padding
+@each $key, $value in $spacings {
+  .p-#{$key} {
+    padding: $value;
+  }
+}
+
+// 水平 padding
+@each $key, $value in $spacings {
+  .px-#{$key} {
+    padding-left: $value;
+    padding-right: $value;
+  }
+}
+
+// 垂直 padding
+@each $key, $value in $spacings {
+  .py-#{$key} {
+    padding-top: $value;
+    padding-bottom: $value;
+  }
+}
+
+// 单方向 padding
+@each $key, $value in $spacings {
+  .pt-#{$key} {
+    padding-top: $value;
+  }
+  .pr-#{$key} {
+    padding-right: $value;
+  }
+  .pb-#{$key} {
+    padding-bottom: $value;
+  }
+  .pl-#{$key} {
+    padding-left: $value;
+  }
+}
+
+// 间隙 (gap)
+@each $key, $value in $spacings {
+  .gap-#{$key} {
+    gap: $value;
+  }
+  .gap-x-#{$key} {
+    column-gap: $value;
+  }
+  .gap-y-#{$key} {
+    row-gap: $value;
+  }
+}

@@ -1,0 +1,61 @@
+// ========== 文本样式 ==========
+
+// 文本对齐
+$text-aligns: left, center, right, justify;
+@each $val in $text-aligns {
+  .text-#{$val} { text-align: $val; }
+}
+
+// 文本装饰
+.underline { text-decoration: underline; }
+.line-through { text-decoration: line-through; }
+.no-underline { text-decoration: none; }
+
+// 文本转换
+$text-transforms: (
+  uppercase: uppercase, lowercase: lowercase, capitalize: capitalize, normal-case: none
+);
+@each $key, $val in $text-transforms {
+  .#{$key} { text-transform: $val; }
+}
+
+// 文本溢出
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+$line-clamp-variants: 1, 2, 3, 4;
+@each $line in $line-clamp-variants {
+  .line-clamp-#{$line} {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $line;
+    -webkit-box-orient: vertical;
+  }
+  .indent-#{$line} {
+    text-indent: #{$line}em;
+  }
+}
+
+// 空白符处理
+$white-spaces: (
+  normal: normal, nowrap: nowrap, pre: pre, pre-line: pre-line, pre-wrap: pre-wrap
+);
+@each $key, $val in $white-spaces {
+  .whitespace-#{$key} { white-space: $val; }
+}
+
+// 断词
+.break-normal { overflow-wrap: normal; word-break: normal; }
+.break-words { overflow-wrap: break-word; }
+.break-all { word-break: break-all; }
+
+// 垂直对齐
+$vertical-aligns: (
+  baseline, top, middle, bottom, text-top, text-bottom
+);
+@each $val in $vertical-aligns {
+  .align-#{$val} { vertical-align: $val; }
+}

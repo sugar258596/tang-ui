@@ -1,0 +1,91 @@
+// ========== Margin 外边距 ==========
+
+@import '../variables';
+
+// 全方向 margin
+@each $key, $value in $spacings {
+  .m-#{$key} {
+    margin: $value;
+  }
+  .-m-#{$key} {
+    margin: -$value;
+  }
+}
+
+// 水平 margin
+@each $key, $value in $spacings {
+  .mx-#{$key} {
+    margin-left: $value;
+    margin-right: $value;
+  }
+  .-mx-#{$key} {
+    margin-left: -$value;
+    margin-right: -$value;
+  }
+}
+
+// 垂直 margin
+@each $key, $value in $spacings {
+  .my-#{$key} {
+    margin-top: $value;
+    margin-bottom: $value;
+  }
+  .-my-#{$key} {
+    margin-top: -$value;
+    margin-bottom: -$value;
+  }
+}
+
+// 单方向 margin
+@each $key, $value in $spacings {
+  .mt-#{$key} {
+    margin-top: $value;
+  }
+  .mr-#{$key} {
+    margin-right: $value;
+  }
+  .mb-#{$key} {
+    margin-bottom: $value;
+  }
+  .ml-#{$key} {
+    margin-left: $value;
+  }
+
+  .-mt-#{$key} {
+    margin-top: -$value;
+  }
+  .-mr-#{$key} {
+    margin-right: -$value;
+  }
+  .-mb-#{$key} {
+    margin-bottom: -$value;
+  }
+  .-ml-#{$key} {
+    margin-left: -$value;
+  }
+}
+
+// Auto margin
+.m-auto {
+  margin: auto;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.mt-auto {
+  margin-top: auto;
+}
+.mr-auto {
+  margin-right: auto;
+}
+.mb-auto {
+  margin-bottom: auto;
+}
+.ml-auto {
+  margin-left: auto;
+}

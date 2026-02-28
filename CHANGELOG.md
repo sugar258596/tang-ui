@@ -1,5 +1,24 @@
 # 更新日志
 
+## [1.2.7] - 2026-02-28
+
+### 新增
+
+- **UI 设计规范**: 引入全新的全局样式系统 (原子化 CSS)
+  - 新增 `style/colors/colors.scss` 统一颜色规范，废弃原来的 `colors/index.scss`
+  - 新增 `style/effects` 目录，封装触摸反馈、投影效果、透明度等交互样式
+  - 新增 `style/layout` 目录，提供 Flexbox、Sizing 相关的实用类
+  - 新增 `style/spacing` 目录，提供 Margin、Padding 相关的原子类
+  - 新增 `style/typography` 目录，规范字体大小和文本相关样式
+  - 新增 `style/grid` 目录，提供网格布局系统相关类
+  - 新增 `style/variables.scss` 统一全局 CSS 变量
+  - 新增 `style/README.md` 和 `TOUCH_GUIDE.md` 样式系统开发指南
+
+### 优化
+
+- 优化 `uni.scss`，统一引入全新的模块化样式
+- 移除不再使用的 `static/logo.png`
+
 ## [1.2.6] - 2026-02-28
 
 ### 新增

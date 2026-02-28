@@ -1,0 +1,238 @@
+$color-primary: #14b8a6;
+$color-secondary: #2dd4bf;
+$color-disabled-start: #cfd8dc; // 浅灰
+$color-disabled-end: #b0bec5; // 深灰
+$color-accent: #5eead4;
+$color-error: #ff6b6b;
+$color-warning: #feca57;
+
+$color-text: #333;
+$color-border: rgba(0, 0, 0, 0.05);
+$color-bg-light: rgba(255, 255, 255, 0.8);
+$color-disabled: #e0e0e0;
+$color-disabled-text: #999;
+
+// 深色模式
+$dark-bg: rgba(30, 30, 30, 0.95);
+$dark-bg-sub: rgba(40, 40, 40, 0.8);
+$dark-bg-item: rgba(50, 50, 50, 0.8);
+$dark-border: rgba(255, 255, 255, 0.1);
+$dark-text: #fff;
+
+.auth-container {
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 50%, $color-accent 100%);
+}
+
+/* Logo 背景与闪光动画 */
+.logo-bg {
+  background: linear-gradient(45deg, $color-primary, $color-secondary);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s ease-in-out infinite;
+  }
+}
+
+@keyframes shine {
+  0%,
+  100% {
+    transform: translate(-100%, -100%) rotate(45deg);
+  }
+
+  50% {
+    transform: translate(100%, 100%) rotate(45deg);
+  }
+}
+
+.logo-shadow {
+  bottom: -10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.2);
+  filter: blur(8rpx);
+}
+
+.form-card.loading {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+/* Tabs */
+.tab-item {
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.active .tab-text {
+    color: $color-primary;
+    font-weight: 600;
+  }
+}
+
+.tab-indicator {
+  width: 50%;
+  background: linear-gradient(90deg, $color-primary, $color-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.sms {
+    transform: translateX(100%);
+  }
+}
+
+/* 验证码输入与按钮 */
+.code-input {
+  background: $color-bg-light;
+  border: 1rpx solid $color-border;
+  color: $color-text;
+  transition: all 0.3s ease;
+
+  &:focus {
+    background: #fff;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 4rpx rgba($color-primary, 0.1);
+  }
+}
+
+.code-btn {
+  background: linear-gradient(45deg, $color-primary, $color-secondary);
+  transition: transform 0.2s;
+
+  .action {
+    &:not(.disabled):active {
+      transform: scale(0.95);
+    }
+  }
+
+  &.disabled {
+    background: $color-disabled;
+    color: $color-disabled-text;
+    cursor: not-allowed;
+  }
+
+  &.countdown {
+    background: linear-gradient(45deg, $color-error, $color-warning);
+  }
+}
+
+.code-btn-disabled {
+  background: linear-gradient(45deg, $color-disabled-start, $color-disabled-end);
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  background: linear-gradient(45deg, $color-primary, $color-secondary);
+
+  &:not(.loading):active {
+    transform: scale(0.97);
+    transform: translateY(2rpx);
+    box-shadow: 0 4rpx 16rpx rgba($color-primary, 0.3);
+  }
+
+  &.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+}
+
+// 次要按钮样式
+.secondary-btn {
+  color: $color-text;
+  border: 1px solid $color-disabled;
+}
+
+/** 删除按钮*/
+.deleted-btn {
+  background: linear-gradient(45deg, $color-error, rgb(239, 104, 104));
+
+  &:not(.loading):active {
+    transform: translateY(2rpx);
+    box-shadow: 0 4rpx 16rpx rgba($color-error, 0.3);
+  }
+
+  &.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+}
+
+/* 加载动画 */
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 社交登录 */
+.social-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.wechat-btn {
+  background: rgba(7, 193, 96, 0.9);
+}
+
+/* 响应式优化 */
+@media screen and (max-width: 750rpx) {
+  .auth-content {
+    padding: 0 24rpx;
+  }
+
+  .form-card {
+    margin: 0 -8rpx 40rpx;
+  }
+
+  .logo-bg {
+    width: 100rpx;
+    height: 100rpx;
+  }
+
+  .logo-text {
+    font-size: 28rpx;
+  }
+
+  .title-main {
+    font-size: 40rpx;
+  }
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+  .form-card {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+
+  .form-header {
+    background: $dark-bg-sub;
+  }
+
+  .form-body {
+    :deep(.form-item) {
+      background: $dark-bg-item;
+      border-color: $dark-border;
+    }
+
+    :deep(.input),
+    :deep(.textarea),
+    .code-input {
+      color: $dark-text;
+      background: $dark-bg-item;
+      border-color: $dark-border;
+    }
+  }
+}
+

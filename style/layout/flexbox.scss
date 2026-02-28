@@ -1,0 +1,134 @@
+// ========== Flexbox 布局 ==========
+
+// 容器
+.flex {
+  display: flex;
+}
+.inline-flex {
+  display: inline-flex;
+}
+
+// 方向
+$flex-directions: (
+  row: row,
+  row-reverse: row-reverse,
+  col: column,
+  col-reverse: column-reverse
+);
+@each $key, $val in $flex-directions {
+  .flex-#{$key} {
+    flex-direction: $val;
+  }
+}
+
+// 换行
+$flex-wraps: (
+  wrap: wrap,
+  wrap-reverse: wrap-reverse,
+  nowrap: nowrap
+);
+@each $key, $val in $flex-wraps {
+  .flex-#{$key} {
+    flex-wrap: $val;
+  }
+}
+
+// 主轴对齐
+$justify-content: (
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  between: space-between,
+  around: space-around,
+  evenly: space-evenly
+);
+@each $key, $val in $justify-content {
+  .justify-#{$key} {
+    justify-content: $val;
+  }
+}
+
+// 交叉轴对齐
+$align-items: (
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  baseline: baseline,
+  stretch: stretch
+);
+@each $key, $val in $align-items {
+  .items-#{$key} {
+    align-items: $val;
+  }
+}
+
+// 内容对齐
+$align-content: (
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  between: space-between,
+  around: space-around,
+  evenly: space-evenly
+);
+@each $key, $val in $align-content {
+  .content-#{$key} {
+    align-content: $val;
+  }
+}
+
+// 子项对齐
+$align-self: (
+  auto: auto,
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  stretch: stretch,
+  baseline: baseline
+);
+@each $key, $val in $align-self {
+  .self-#{$key} {
+    align-self: $val;
+  }
+}
+
+// Flex 增长和收缩
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-2 {
+  flex: 2 2 0%;
+}
+.flex-auto {
+  flex: 1 1 auto;
+}
+.flex-initial {
+  flex: 0 1 auto;
+}
+.flex-none {
+  flex: none;
+}
+
+.flex-grow-0 {
+  flex-grow: 0;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+.flex-shrink {
+  flex-shrink: 1;
+}
+
+// 顺序
+@for $i from 1 through 6 {
+  .order-#{$i} {
+    order: $i;
+  }
+}
+.order-first { order: -9999; }
+.order-last { order: 9999; }
+.order-none { order: 0; }

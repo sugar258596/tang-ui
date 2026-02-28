@@ -1,0 +1,177 @@
+// ========== 触点反馈样式 ==========
+
+// 触点缩放与透明度配置
+$tap-scales: (
+  active: (opacity: 0.7, transform: scale(0.98)),
+  scale: (transform: scale(0.95)),
+  scale-lg: (transform: scale(0.9)),
+  combo: (opacity: 0.8, transform: scale(0.97)),
+  button: (transform: scale(0.96), opacity: 0.9),
+  icon: (transform: scale(0.85))
+);
+
+@each $key, $val in $tap-scales {
+  .tap-#{$key} {
+    transition: all 0.15s ease;
+    @if $key == 'button' or $key == 'icon' {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    &:active {
+      @each $prop, $propVal in $val {
+        #{$prop}: $propVal;
+      }
+    }
+  }
+}
+
+// 仅透明度配置
+$tap-opacities: (opacity: 0.6, opacity-light: 0.8, tab: 0.7);
+@each $key, $val in $tap-opacities {
+  .tap-#{$key} {
+    transition: opacity 0.15s ease;
+    @if $key == 'tab' { transition: all 0.2s ease; position: relative; }
+    &:active {
+      opacity: $val;
+    }
+  }
+}
+
+// 高亮背景色配置
+$tap-highlights: (
+  highlight: rgba(0, 0, 0, 0.05),
+  highlight-dark: rgba(0, 0, 0, 0.1),
+  primary: rgba($uni-color-primary, 0.1)
+);
+@each $key, $val in $tap-highlights {
+  .tap-#{$key} {
+    transition: background-color 0.15s ease;
+    &:active {
+      background-color: $val;
+    }
+  }
+}
+
+// 卡片专用反馈
+.tap-card {
+  transition: all 0.2s ease;
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  }
+}
+
+// 列表项反馈
+.tap-list-item {
+  transition: background-color 0.15s ease;
+  &:active {
+    background-color: $uni-bg-color-hover;
+  }
+}
+
+// 弹跳反馈
+.tap-bounce {
+  transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+// 涟漪效果容器
+$ripples: (ripple: rgba(255, 255, 255, 0.5), ripple-dark: rgba(0, 0, 0, 0.2));
+@each $key, $val in $ripples {
+  .tap-#{$key} {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background-color: $val;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &:active::after {
+      width: 200%;
+      height: 200%;
+      opacity: 0.3;
+      transition: width 0s, height 0s, opacity 0.6s ease;
+    }
+  }
+}
+
+// 禁用触点反馈
+.tap-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+// 长按反馈
+.tap-long-press {
+  transition: all 0.3s ease;
+  &:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+}
+
+// 3D 按压效果
+.tap-3d {
+  transition: all 0.1s ease;
+  &:active {
+    transform: translateY(2rpx);
+    box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 悬浮效果
+.tap-float {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    transform: translateY(-4rpx);
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  }
+  &:active {
+    transform: translateY(-2rpx);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 脉冲效果
+@keyframes tap-pulse {
+  0% { box-shadow: 0 0 0 0 rgba($uni-color-primary, 0.4); }
+  70% { box-shadow: 0 0 0 20rpx rgba($uni-color-primary, 0); }
+  100% { box-shadow: 0 0 0 0 rgba($uni-color-primary, 0); }
+}
+.tap-pulse { animation: tap-pulse 2s infinite; }
+
+// 摇晃效果
+@keyframes tap-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4rpx); }
+  75% { transform: translateX(4rpx); }
+}
+.tap-shake:active { animation: tap-shake 0.3s ease; }
+
+// 渐变背景反馈
+.tap-gradient {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  &:active::before { opacity: 1; }
+}

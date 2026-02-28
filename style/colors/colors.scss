@@ -1,0 +1,216 @@
+// ========== 颜色样式 ==========
+
+@import '../../uni.scss';
+@import '../variables';
+
+// ==================================================
+// 🎯 全局取色函数
+// ==================================================
+@function color($name) {
+  @return map-get($colors, $name);
+}
+
+// 文本颜色
+@each $key, $value in $colors {
+  .text-#{'' + $key} {
+    color: $value;
+  }
+}
+
+// uni-app 主题色
+.text-primary {
+  color: $uni-color-primary;
+}
+.text-success {
+  color: $uni-color-success;
+}
+.text-warning {
+  color: $uni-color-warning;
+}
+.text-error {
+  color: $uni-color-error;
+}
+
+// 背景颜色 (支持 bg-opacity 透明度控制)
+@each $key, $value in $colors {
+  .bg-#{'' + $key} {
+    background-color: $value;
+    // 支持通过 CSS 自定义属性控制透明度
+    &[style*='--bg-opacity'] {
+      background-color: rgba($value, var(--bg-opacity, 1));
+    }
+  }
+}
+
+// uni-app 主题背景色 (支持 bg-opacity 透明度控制)
+.bg-primary {
+  background-color: $uni-color-primary;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-color-primary, var(--bg-opacity, 1));
+  }
+}
+.bg-success {
+  background-color: $uni-color-success;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-color-success, var(--bg-opacity, 1));
+  }
+}
+.bg-warning {
+  background-color: $uni-color-warning;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-color-warning, var(--bg-opacity, 1));
+  }
+}
+.bg-error {
+  background-color: $uni-color-error;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-color-error, var(--bg-opacity, 1));
+  }
+}
+
+// 特殊背景色 (支持 bg-opacity 透明度控制)
+.bg-page {
+  background-color: $uni-bg-color;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-bg-color, var(--bg-opacity, 1));
+  }
+}
+.bg-grey {
+  background-color: $uni-bg-color-grey;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-bg-color-grey, var(--bg-opacity, 1));
+  }
+}
+.bg-hover {
+  background-color: $uni-bg-color-hover;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-bg-color-hover, var(--bg-opacity, 1));
+  }
+}
+.bg-mask {
+  background-color: $uni-bg-color-mask;
+  &[style*='--bg-opacity'] {
+    background-color: rgba($uni-bg-color-mask, var(--bg-opacity, 1));
+  }
+}
+
+// 边框颜色
+@each $key, $value in $colors {
+  .border-#{'' + $key} {
+    border-color: $value;
+  }
+}
+
+// uni-app 边框色
+.border-primary {
+  border-color: $uni-color-primary;
+}
+.border-base {
+  border-color: $uni-border-color;
+}
+
+// 边框宽度
+.border-0 {
+  border-width: 0;
+}
+.border {
+  border-width: 1rpx;
+}
+.border-2 {
+  border-width: 2rpx;
+}
+.border-4 {
+  border-width: 4rpx;
+}
+.border-8 {
+  border-width: 8rpx;
+}
+
+// 单边框
+.border-t {
+  border-top-width: 1rpx;
+}
+.border-r {
+  border-right-width: 1rpx;
+}
+.border-b {
+  border-bottom-width: 1rpx;
+}
+.border-l {
+  border-left-width: 1rpx;
+}
+
+.border-t-0 {
+  border-top-width: 0;
+}
+.border-r-0 {
+  border-right-width: 0;
+}
+.border-b-0 {
+  border-bottom-width: 0;
+}
+.border-l-0 {
+  border-left-width: 0;
+}
+
+// 边框样式
+.border-solid {
+  border-style: solid;
+}
+.border-dashed {
+  border-style: dashed;
+}
+.border-dotted {
+  border-style: dotted;
+}
+.border-none {
+  border-style: none;
+}
+
+// 圆角
+@each $key, $value in $border-radius {
+  .rounded-#{$key} {
+    border-radius: $value;
+  }
+}
+
+.rounded {
+  border-radius: 4rpx;
+}
+
+// 单角圆角
+
+.rounded-t-none {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+// 单角圆角
+.rounded-t-none {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.rounded-r-none {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.rounded-b-none {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.rounded-l-none {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rounded-tl {
+  border-top-left-radius: 8rpx;
+}
+.rounded-tr {
+  border-top-right-radius: 8rpx;
+}
+.rounded-br {
+  border-bottom-right-radius: 8rpx;
+}
+.rounded-bl {
+  border-bottom-left-radius: 8rpx;
+}
