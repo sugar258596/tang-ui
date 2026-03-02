@@ -29,7 +29,7 @@ $opacities: (
 // 背景透明度 (bg-opacity-10 到 bg-opacity-100 对应 0.1 到 1)
 @for $i from 1 through 10 {
   $step: $i * 10;
-  $val: $i / 10;
+  $val: $i * 0.1;
   .bg-opacity-#{$step} {
     --bg-opacity: #{$val};
   }

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Tags from '@/components/Tags'
 import TCard from '@/components/TCard'
-import type { TabItem } from '@/components/Tags/type'
+import type { TagItem } from '@/components/Tags/type'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -13,7 +13,7 @@ import { useI18n } from '@/composables/useI18n.uts'
 const { $t } = useI18n()
 
 // 基础用法
-const basicTabs: TabItem[] = [
+const basicTabs: TagItem[] = [
   { key: 'home', label: $t('examplePages.tags.labels.home') },
   { key: 'product', label: $t('examplePages.tags.labels.product') },
   { key: 'service', label: $t('examplePages.tags.labels.service') },
@@ -22,7 +22,7 @@ const basicTabs: TabItem[] = [
 const activeTab1 = ref<string | number>('home')
 
 // 卡片类型
-const cardTabs: TabItem[] = [
+const cardTabs: TagItem[] = [
   { key: 'all', label: $t('examplePages.tags.labels.all') },
   { key: 'ongoing', label: $t('examplePages.tags.labels.ongoing') },
   { key: 'finished', label: $t('examplePages.tags.labels.finished') }
@@ -30,7 +30,7 @@ const cardTabs: TabItem[] = [
 const activeTab2 = ref<string | number>('all')
 
 // 不同尺寸
-const sizeTabs: TabItem[] = [
+const sizeTabs: TagItem[] = [
   { key: 'tab1', label: $t('examplePages.tags.labels.tab1') },
   { key: 'tab2', label: $t('examplePages.tags.labels.tab2') },
   { key: 'tab3', label: $t('examplePages.tags.labels.tab3') }
@@ -38,7 +38,7 @@ const sizeTabs: TabItem[] = [
 const activeTab3 = ref<string | number>('tab1')
 
 // 带徽章
-const badgeTabs: TabItem[] = [
+const badgeTabs: TagItem[] = [
   { key: 'message', label: $t('examplePages.tags.labels.message'), badge: 5 },
   { key: 'notification', label: $t('examplePages.tags.labels.notification'), badge: 99 },
   { key: 'todo', label: $t('examplePages.tags.labels.todo'), badge: '新' }
@@ -46,7 +46,7 @@ const badgeTabs: TabItem[] = [
 const activeTab4 = ref<string | number>('message')
 
 // 禁用状态
-const disabledTabs: TabItem[] = [
+const disabledTabs: TagItem[] = [
   { key: 'enabled1', label: $t('examplePages.tags.labels.enabled1') },
   { key: 'disabled', label: $t('examplePages.tags.labels.disabled'), disabled: true },
   { key: 'enabled2', label: $t('examplePages.tags.labels.enabled2') }
@@ -54,7 +54,7 @@ const disabledTabs: TabItem[] = [
 const activeTab5 = ref<string | number>('enabled1')
 
 // 底部标签栏
-const bottomTabs: TabItem[] = [
+const bottomTabs: TagItem[] = [
   { key: 'home', label: $t('examplePages.tags.labels.home') },
   { key: 'discover', label: $t('examplePages.tags.labels.discover') },
   { key: 'profile', label: $t('examplePages.tags.labels.profile') }
@@ -62,7 +62,7 @@ const bottomTabs: TabItem[] = [
 const activeTab6 = ref<string | number>('home')
 
 // 自定义颜色
-const colorTabs: TabItem[] = [
+const colorTabs: TagItem[] = [
   { key: 'tab1', label: $t('examplePages.tags.labels.redTheme') },
   { key: 'tab2', label: $t('examplePages.tags.labels.greenTheme') },
   { key: 'tab3', label: $t('examplePages.tags.labels.blueTheme') }
@@ -84,7 +84,7 @@ const handleTabChange = (key: string | number): void => {
 /**
  * 标签点击事件处理
  */
-const handleTabClick = (key: string | number, item: TabItem): void => {
+const handleTabClick = (key: string | number, item: TagItem): void => {
   console.log('点击标签:', key, item)
 }
 </script>

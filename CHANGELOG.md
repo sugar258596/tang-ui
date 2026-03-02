@@ -1,5 +1,13 @@
 # 更新日志
 
+## [1.2.8] - 2026-03-02
+
+### 修复
+
+- **Style**: 修复 `style/typography/font.scss` 中 `$font-weights` 导致的 Sass 颜色插值编译警告
+- **Style**: 修复 `style/effects/opacity.scss` 中因直接使用 `/` 导致的 Sass 除法运算符废弃警告
+- **Tags**: 修复 `pages/examples/tags.uvue` 示例页中组件类型 (`TabItem` -> `TagItem`) 引用错误问题
+
 ## [1.2.7] - 2026-02-28
 
 ### 新增
