@@ -134,6 +134,54 @@ const handleDateRangeConfirm = (value: TDateTimePickerRangeValue, formatted: str
   console.log('选择日期范围:', formatted, value)
 }
 
+// 数据回显示例（单选）
+const echoVisible = ref<boolean>(false)
+// 假设回显时间为 2024-01-01 08:00:00 的时间戳
+const echoValue = ref<number>(1704067200000) 
+const echoText = ref<string>('2024-01-01')
+
+const showEchoPicker = (): void => {
+  echoVisible.value = true
+}
+
+const handleEchoConfirm = (value: number, formatted: string): void => {
+  echoValue.value = value
+  echoText.value = formatted
+  console.log('数据回显单选确认:', formatted, value)
+}
+
+// 数据回显示例（范围）
+const echoRangeVisible = ref<boolean>(false)
+const echoRangeValue = ref<TDateTimePickerRangeValue>({
+  start: 1704067200000, // 2024-01-01
+  end: 1704672000000 // 2024-01-08
+})
+const echoRangeText = ref<string>('2024-01-01 ~ 2024-01-08')
+
+const showEchoRangePicker = (): void => {
+  echoRangeVisible.value = true
+}
+
+const handleEchoRangeConfirm = (value: TDateTimePickerRangeValue, formatted: string[]): void => {
+  echoRangeValue.value = value
+  echoRangeText.value = `${formatted[0]} ~ ${formatted[1]}`
+  console.log('数据回显范围确认:', formatted, value)
+}
+
+// 数据回显示例（范围 数组）
+const echoArrayRangeVisible = ref<boolean>(false)
+const echoArrayRangeValue = ref<string[]>(['2024-03-25', '2024-05-05'])
+const echoArrayRangeText = ref<string>('2024-03-25 ~ 2024-05-05')
+
+const showEchoArrayRangePicker = (): void => {
+  echoArrayRangeVisible.value = true
+}
+
+const handleEchoArrayRangeConfirm = (value: any, formatted: string[]): void => {
+  echoArrayRangeText.value = `${formatted[0]} ~ ${formatted[1]}`
+  console.log('数据回显数组范围确认:', formatted, value)
+}
+
 // 计算自定义范围的最小最大日期（2024年全年）
 const minRangeDate = new Date(2024, 0, 1).getTime()
 const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
@@ -240,6 +288,54 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
         </view>
       </view>
 
+      <!-- 数据回选 (单选) -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">数据回显 (单选)</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showEchoPicker">
+            <text class="picker-trigger-text">{{ echoText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view class="result-text">
+            <text class="result-label">时间戳：{{ echoValue }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 数据回选 (范围) -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">数据回显 (范围 对象)</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showEchoRangePicker">
+            <text class="picker-trigger-text">{{ echoRangeText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view class="result-text">
+            <text class="result-label">开始：{{ echoRangeValue.start }}，结束：{{ echoRangeValue.end }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 数据回选 (范围 数组) -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">数据回显 (范围 数组)</text>
+        </view>
+        <view class="section-content">
+          <view class="picker-trigger" @click="showEchoArrayRangePicker">
+            <text class="picker-trigger-text">{{ echoArrayRangeText }}</text>
+            <text class="picker-trigger-arrow">›</text>
+          </view>
+          <view class="result-text">
+            <text class="result-label">值：[{{ echoArrayRangeValue[0] }}, {{ echoArrayRangeValue[1] }}]</text>
+          </view>
+        </view>
+      </view>
+
       <!-- 使用说明 -->
       <view class="section">
         <view class="section-title">
@@ -318,6 +414,35 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
       start-text="开始日期"
       end-text="结束日期"
       @confirm-range="handleDateRangeConfirm"
+    />
+
+    <!-- 数据回显示例选择器 (单选) -->
+    <TDateTimePicker
+      v-model="echoVisible"
+      v-model:value="echoValue"
+      mode="date"
+      title="数据回显 (单选)"
+      @confirm="handleEchoConfirm"
+    />
+
+    <!-- 数据回显示例选择器 (范围) -->
+    <TDateTimePicker
+      v-model="echoRangeVisible"
+      v-model:rangeValue="echoRangeValue"
+      mode="date"
+      :range="true"
+      title="数据回显 (范围 对象)"
+      @confirm-range="handleEchoRangeConfirm"
+    />
+
+    <!-- 数据回显示例选择器 (范围 数组) -->
+    <TDateTimePicker
+      v-model="echoArrayRangeVisible"
+      v-model:rangeValue="echoArrayRangeValue"
+      mode="date"
+      :range="true"
+      title="数据回显 (范围 数组)"
+      @confirm-range="handleEchoArrayRangeConfirm"
     />
   </view>
 </template>

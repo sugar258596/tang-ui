@@ -30,10 +30,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const visible = defineModel<boolean>({ default: false })
+const visible = defineModel({ default: false })
 
 // 使用 defineModel 管理选中的值（时间戳）
-const selectedValue = defineModel<number>('value', { default: 0 })
+const selectedValue = defineModel('value', { default: 0 })
+
+// 使用 defineModel 管理范围选中的值（时间戳对象或数组）
+const selectedRangeValue = defineModel('rangeValue', { default: null })
 
 // 内部渲染状态，用于控制 DOM 显示
 const rendered = ref(false)
@@ -152,8 +155,7 @@ const dateToTimestamp = (year: number, month: number, day: number): number => {
 // 检查日期是否为范围开始
 const isRangeStartDate = (year: number, month: number, day: number): boolean => {
   if (!props.range || rangeStart.value === null) return false
-  const timestamp = dateToTimestamp(year, month, day)
-  const startDate = new Date(rangeStart.value)
+  const startDate = new Date(rangeStart.value as number)
   return startDate.getFullYear() === year && 
          startDate.getMonth() + 1 === month && 
          startDate.getDate() === day
@@ -162,8 +164,7 @@ const isRangeStartDate = (year: number, month: number, day: number): boolean => 
 // 检查日期是否为范围结束
 const isRangeEndDate = (year: number, month: number, day: number): boolean => {
   if (!props.range || rangeEnd.value === null) return false
-  const timestamp = dateToTimestamp(year, month, day)
-  const endDate = new Date(rangeEnd.value)
+  const endDate = new Date(rangeEnd.value as number)
   return endDate.getFullYear() === year && 
          endDate.getMonth() + 1 === month && 
          endDate.getDate() === day
@@ -173,7 +174,15 @@ const isRangeEndDate = (year: number, month: number, day: number): boolean => {
 const isInRangeDate = (year: number, month: number, day: number): boolean => {
   if (!props.range || rangeStart.value === null || rangeEnd.value === null) return false
   const timestamp = dateToTimestamp(year, month, day)
-  return timestamp > rangeStart.value && timestamp < rangeEnd.value
+  
+  // 忽略时分秒进行比较
+  const startTemp = new Date(rangeStart.value as number)
+  const startTimestamp = new Date(startTemp.getFullYear(), startTemp.getMonth(), startTemp.getDate()).getTime()
+  
+  const endTemp = new Date(rangeEnd.value as number)
+  const endTimestamp = new Date(endTemp.getFullYear(), endTemp.getMonth(), endTemp.getDate()).getTime()
+
+  return timestamp > startTimestamp && timestamp < endTimestamp
 }
 
 // 获取日期单元格样式
@@ -441,7 +450,10 @@ const handleDaySelect = (item: DayItem): void => {
       selectingRange.value = 'end'
     } else {
       // 选择结束日期
-      if (rangeStart.value !== null && timestamp < rangeStart.value) {
+      const currentStartObj = new Date(rangeStart.value as number)
+      const currentStartTimestamp = new Date(currentStartObj.getFullYear(), currentStartObj.getMonth(), currentStartObj.getDate()).getTime()
+
+      if (rangeStart.value !== null && timestamp < currentStartTimestamp) {
         // 如果结束日期小于开始日期，交换
         rangeEnd.value = rangeStart.value
         rangeStart.value = timestamp
@@ -593,12 +605,43 @@ watch(visible, (newVal: boolean) => {
     // 初始状态为隐藏
     showOverlay.value = false
     
-    // 重置范围选择状态
+    // 重置范围选择状态或进行数据回显
     if (props.range) {
-      resetRange()
+      let startValue: number = 0
+      let endValue: number = 0
+      const rVal = selectedRangeValue.value
+      
+      if (rVal != null) {
+        if (Array.isArray(rVal) && (rVal as Array<any>).length >= 2) {
+          const arr = rVal as Array<any>
+          const s = arr[0]
+          const e = arr[1]
+          startValue = typeof s === 'string' ? new Date(s as string).getTime() : (typeof s === 'number' ? (s as number) : 0)
+          endValue = typeof e === 'string' ? new Date(e as string).getTime() : (typeof e === 'number' ? (e as number) : 0)
+        } else if (typeof rVal === 'object') {
+          const obj = rVal as any
+          const s = obj['start']
+          const e = obj['end']
+          startValue = typeof s === 'string' ? new Date(s as string).getTime() : (typeof s === 'number' ? (s as number) : 0)
+          endValue = typeof e === 'string' ? new Date(e as string).getTime() : (typeof e === 'number' ? (e as number) : 0)
+        }
+      }
+
+      if (startValue > 0 && endValue > 0) {
+        rangeStart.value = startValue
+        rangeEnd.value = endValue
+        selectingRange.value = 'start' // 回显后默认下一步选择开始时间
+        // 设置年月视图到开始时间
+        const startDate = new Date(rangeStart.value as number)
+        viewYear.value = startDate.getFullYear()
+        viewMonth.value = startDate.getMonth() + 1
+      } else {
+        resetRange()
+        setValueByTimestamp(Date.now())
+      }
+    } else {
+      setValueByTimestamp(selectedValue.value || Date.now())
     }
-    
-    setValueByTimestamp(selectedValue.value || Date.now())
     // 根据模式设置初始面板
     if (props.mode === 'month') {
       panelMode.value = 'month'
@@ -655,22 +698,31 @@ const handleConfirm = (): void => {
   if (props.range) {
     // 范围模式
     if (rangeStart.value !== null && rangeEnd.value !== null) {
-      const rangeValue: TDateTimePickerRangeValue = {
-        start: rangeStart.value,
-        end: rangeEnd.value
-      }
       const formatted = [
-        formatTimestamp(rangeStart.value),
-        formatTimestamp(rangeEnd.value)
+        formatTimestamp(rangeStart.value as number),
+        formatTimestamp(rangeEnd.value as number)
       ]
       
+      let emitValue: any = null
+      if (Array.isArray(selectedRangeValue.value)) {
+        emitValue = formatted
+        selectedRangeValue.value = formatted // 回显字符串数组
+      } else {
+        const rangeValue = {
+          start: rangeStart.value,
+          end: rangeEnd.value
+        }
+        emitValue = rangeValue
+        selectedRangeValue.value = rangeValue
+      }
+
       // 触发关闭动画
       showOverlay.value = false
       // 等待动画完成后更新状态
       setTimeout(() => {
         rendered.value = false
         visible.value = false
-        emit('confirmRange', rangeValue, formatted)
+        emit('confirmRange', emitValue, formatted)
       }, 350)
     }
   } else {

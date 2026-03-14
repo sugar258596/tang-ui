@@ -32,12 +32,7 @@ export type TDateTimePickerDayItem = {
 /**
  * 日期范围值类型
  */
-export type TDateTimePickerRangeValue = {
-  /** 开始时间戳 */
-  start: number
-  /** 结束时间戳 */
-  end: number
-}
+export type TDateTimePickerRangeValue = any
 
 /**
  * TDateTimePicker 时间选择器组件属性类型定义
