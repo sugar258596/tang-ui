@@ -15,6 +15,7 @@ const value1 = ref<string>('')
 const value2 = ref<string>('option2')
 const value3 = ref<number>(1)
 const multiValue = ref<string[]>([])
+const filterKeyword = ref('')
 
 // 级联选择值
 const cascadeValue = ref<(string | number)[] | null>(null)
@@ -144,6 +145,11 @@ const handleChange = (value: any): void => {
 const handleCascadeChange = (value: any): void => {
   console.log('级联选择变更:', value)
 }
+
+const handleFilterInput = (value: string): void => {
+  filterKeyword.value = value
+  console.log('Select 搜索输入:', value)
+}
 </script>
 
 <template>
@@ -213,7 +219,11 @@ const handleCascadeChange = (value: any): void => {
         :options="options"
         filterable
         :placeholder="$t('examplePages.select.placeholder.filterable')"
+        @input="handleFilterInput"
       />
+      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
+        搜索关键词: {{ filterKeyword || '未输入' }}
+      </text>
     </TCard>
 
     <TCard :title="$t('examplePages.select.sections.multiple')" class="example-section">

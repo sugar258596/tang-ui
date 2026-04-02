@@ -9,6 +9,8 @@
 
 	const props = withDefaults(defineProps<SelectProps>(), {
 		options: (): SelectOption[] => [],
+		filterable: false,
+		searchPlaceholder: '',
 		placeholder: '',
 		disabled: false,
 		readonly: false,
@@ -28,6 +30,8 @@
 
 	const emit = defineEmits<{
 		change : [option: SelectOption | SelectOption[] | null]
+		input : [keyword: string]
+		search : [keyword: string]
 		clear : []
 	}>()
 
@@ -36,6 +40,7 @@
 	// ========== 状态管理 ==========
 	const showPopup = ref(false)
 	const isHover = ref(false)
+	const searchKeyword = ref('')
 
 	// ========== 级联状态管理 ==========
 	/** 是否为级联模式：自动检测 options 中是否有 children */
@@ -168,6 +173,23 @@
 		return []
 	})
 
+	const displaySearchPlaceholder = computed(() => {
+		return props.searchPlaceholder || $t('searchBar.placeholder')
+	})
+
+	const filteredOptions = computed(() => {
+		const keyword = normalizeSearchKeyword(searchKeyword.value)
+		if (!keyword) return props.options ?? []
+		return (props.options ?? []).filter(option => matchesSearchKeyword(option, keyword))
+	})
+
+	const filteredCascadeOptions = computed(() => {
+		const keyword = normalizeSearchKeyword(searchKeyword.value)
+		const options = currentCascadeOptions.value
+		if (!keyword) return options
+		return options.filter(option => matchesSearchKeyword(option, keyword))
+	})
+
 	/** 面包屑导航数据（作为 Tabs 使用） */
 	const breadcrumbItems = computed(() => {
 		const items: string[] = []
@@ -183,6 +205,25 @@
 	})
 
 	// ========== 方法 ==========
+	const normalizeSearchKeyword = (keyword: string): string => {
+		return keyword.trim().toLowerCase()
+	}
+
+	const matchesSearchKeyword = (option: SelectOption, keyword: string): boolean => {
+		const label = option.label.toLowerCase()
+		const valueText = `${option.value}`.toLowerCase()
+		return label.includes(keyword) || valueText.includes(keyword)
+	}
+
+	const emitSearchKeyword = (keyword: string) => {
+		emit('input', keyword)
+		emit('search', keyword)
+	}
+
+	const resetSearchKeyword = () => {
+		searchKeyword.value = ''
+	}
+
 	const disableBodyScroll = () => {
 		// #ifdef H5
 		document.body.style.overflow = 'hidden'
@@ -209,6 +250,23 @@
 
 	const closePicker = () => {
 		showPopup.value = false
+		resetSearchKeyword()
+	}
+
+	const handleSearchInput = (e: any) => {
+		const keyword = (e.detail?.value ?? '') as string
+		searchKeyword.value = keyword
+		emitSearchKeyword(keyword)
+	}
+
+	const handleSearchConfirm = () => {
+		emit('search', searchKeyword.value)
+	}
+
+	const clearSearchKeyword = () => {
+		if (!searchKeyword.value) return
+		searchKeyword.value = ''
+		emitSearchKeyword('')
 	}
 
 	/** 初始化级联面板：根据已选值恢复面板状态 */
@@ -365,7 +423,10 @@
 	// 全选
 	const selectAll = () => {
 		if (props.disabled || props.readonly) return
-		const allValues = props.options
+		const sourceOptions = props.filterable && !isCascade.value && normalizeSearchKeyword(searchKeyword.value)
+			? filteredOptions.value
+			: props.options
+		const allValues = sourceOptions
 			.filter(opt => !opt.disabled)
 			.map(opt => opt.value)
 		model.value = props.multiple ? allValues : (allValues[0] || null)
@@ -425,6 +486,7 @@
 			return
 		}
 
+		resetSearchKeyword()
 		enableBodyScroll()
 	}, { immediate: true })
 
@@ -488,6 +550,23 @@
 			:style="dropdownStyle"
 			@tap="handleDropdownClick">
 
+				<view v-if="props.filterable" class="border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[20rpx] py-[16rpx]">
+					<view class="flex flex-row items-center gap-4 rounded-[8rpx] border border-solid border-[#dcdfe6] bg-white px-[16rpx]">
+						<Icon name="icon-sousuo" :size="18" color="#999999" />
+						<input
+							class="ml-[12rpx] h-[68rpx] flex-1 border-none bg-transparent text-[26rpx] text-[#303133]"
+							type="text"
+							:value="searchKeyword"
+							:placeholder="displaySearchPlaceholder"
+							:disabled="disabled || readonly"
+							@input="handleSearchInput"
+							@confirm="handleSearchConfirm" />
+						<view v-if="searchKeyword" class="ml-[12rpx] flex h-[28rpx] w-[28rpx] items-center justify-center rounded-full active:bg-[#f5f5f5]" @click.stop="clearSearchKeyword">
+							<Icon name="icon-shanchu" color="#c0c4cc" />
+						</view>
+					</view>
+				</view>
+
 				<!-- ====== 级联模式 ====== -->
 				<template v-if="isCascade">
 					<!-- 面包屑导航 -->
@@ -502,7 +581,7 @@
 
 					<!-- 级联面板 -->
 					<scroll-view class="max-h-[440rpx]" scroll-y :scroll-top="0">
-						<view v-for="option in currentCascadeOptions" :key="option.value"
+						<view v-for="option in filteredCascadeOptions" :key="option.value"
 							class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0"
 							:class="[
 								alignClass,
@@ -531,7 +610,7 @@
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="currentCascadeOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
+						<view v-if="filteredCascadeOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
 							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>
@@ -551,7 +630,7 @@
 						</view>
 
 						<!-- 选项列表 -->
-						<view v-for="option in options" :key="option.value" class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0" :class="[
+						<view v-for="option in filteredOptions" :key="option.value" class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0" :class="[
 								alignClass,
 								{
 									'bg-[#ecf5ff]': isOptionSelected(option),
@@ -572,7 +651,7 @@
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="options.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
+						<view v-if="filteredOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
 							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>

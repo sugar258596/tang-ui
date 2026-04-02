@@ -40,12 +40,12 @@ export interface TTabsProps {
   /**
    * 当前激活的 tab key
    */
-  activeKey?: string
+  activeKey?: string | number
 
   /**
    * 默认激活的 tab key
    */
-  defaultActiveKey?: string
+  defaultActiveKey?: string | number
 
   /**
    * 选项卡类型

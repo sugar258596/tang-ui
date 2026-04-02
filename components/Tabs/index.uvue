@@ -2,7 +2,7 @@
 import type { TabItem, TTabsProps } from './type.uts'
 
 // v-model 绑定当前激活 key
-const model = defineModel()
+const model = defineModel<string | number | null>({ default: null })
 
 const props = withDefaults(defineProps<TTabsProps>(), {
   items: () => [],
@@ -26,8 +26,8 @@ const emit = defineEmits<{
 }>()
 
 /** 获取默认激活项的 key */
-const getDefaultKey = (): string => {
-  if (props.defaultActiveKey) {
+const getDefaultKey = (): string | number => {
+  if (props.defaultActiveKey !== undefined && props.defaultActiveKey !== null) {
     return props.defaultActiveKey
   }
   if (props.items.length > 0) {
@@ -39,14 +39,25 @@ const getDefaultKey = (): string => {
 
 /** 初始化默认激活项 */
 onMounted(() => {
-  if (!model.value) {
+  if (model.value === undefined || model.value === null || model.value === '') {
     model.value = getDefaultKey()
   }
 })
 
+const isItemActive = (item: TabItem): boolean => {
+  const currentKey = model.value
+  if (currentKey === undefined || currentKey === null || currentKey === '') {
+    return false
+  }
+  if (item.key === undefined || item.key === null || item.key === '') {
+    return false
+  }
+  return item.key === currentKey
+}
+
 /** 计算当前激活项的索引 */
 const activeIndex = computed(() => {
-  return props.items.findIndex(item => item.key === model.value)
+  return props.items.findIndex(item => isItemActive(item))
 })
 
 /** 获取当前激活项的 DOM 元素 */
@@ -174,7 +185,7 @@ const getNavItemClass = (item: TabItem): string => {
     classes.push('mx-[8rpx]', 'rounded-[8rpx]', 'border', 'border-[#e8e8e8]', 'bg-white')
   }
 
-  if (item.key === model.value && props.type !== 'card') {
+  if (isItemActive(item) && props.type !== 'card') {
     classes.push('scale-105')
   }
 
@@ -190,7 +201,7 @@ const getNavItemClass = (item: TabItem): string => {
 const getNavItemStyle = (item: TabItem): string => {
   const styles: string[] = []
 
-  if (props.type === 'card' && item.key === model.value) {
+  if (props.type === 'card' && isItemActive(item)) {
     styles.push(`background-color: rgba(${activeColorRgb.value}, 0.1)`)
     styles.push(`border-color: ${props.activeColor}`)
     styles.push(`box-shadow: 0 4rpx 12rpx rgba(${activeColorRgb.value}, 0.2)`)
@@ -246,7 +257,7 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
 
           <text
             :class="navLabelClass"
-            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+            :style="{ color: isItemActive(item) ? activeColor : inactiveColor }"
           >
             {{ item.label }}
           </text>
@@ -287,7 +298,7 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
 
           <text
             :class="navLabelClass"
-            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+            :style="{ color: isItemActive(item) ? activeColor : inactiveColor }"
           >
             {{ item.label }}
           </text>

@@ -69,6 +69,14 @@ const colorTabs: TabItem[] = [
 ]
 const activeTab7 = ref<string | number>('tab1')
 
+// 中文 key 场景
+const chineseKeyTabs: TabItem[] = [
+  { key: '首页', label: '首页' },
+  { key: '消息', label: '消息' },
+  { key: '设置', label: '设置' }
+]
+const activeTab8 = ref<string | number>('首页')
+
 /**
  * 标签切换事件处理
  */
@@ -290,6 +298,26 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
             </view>
           </template>
         </Tabs>
+      </TCard>
+    </view>
+
+    <!-- 中文 key -->
+    <view class="example-section">
+      <TCard title="中文 Key" description="key 和 label 都使用中文">
+        <Tabs
+          :items="chineseKeyTabs"
+          v-model="activeTab8"
+          @change="handleTabChange"
+        >
+          <template #default="{ activeKey }">
+            <view class="tab-content">
+              <text class="content-text">当前激活 key: {{ activeKey }}</text>
+              <text class="content-desc">这个示例用于验证中文 key 不会出现全部选中的状态。</text>
+            </view>
+          </template>
+        </Tabs>
+
+        <text class="current-value">当前选中: {{ activeTab8 }}</text>
       </TCard>
     </view>
 
