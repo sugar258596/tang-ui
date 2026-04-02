@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<TGridProps>(), {
   columns: 4,
   gap: 0,
   border: false,
-  borderColor: '#e0e0e0',
+  borderColor: 'var(--tui-border)',
   square: false,
   center: true,
   clickable: false,
@@ -67,10 +67,10 @@ const containerStyle = computed((): string => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-grid']
+  const classes: string[] = ['grid', 'w-full']
 
   if (props.border) {
-    classes.push('t-grid--border')
+    classes.push('border-l', 'border-t')
   }
 
   if (props.customClass) {
@@ -86,17 +86,3 @@ const containerClasses = computed((): string => {
     <slot></slot>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-grid {
-  display: grid;
-  width: 100%;
-
-  &--border {
-    border-top-width: 1px;
-    border-top-style: solid;
-    border-left-width: 1px;
-    border-left-style: solid;
-  }
-}
-</style>

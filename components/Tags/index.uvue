@@ -84,8 +84,124 @@ const activeColorRgb = computed(() => {
   return hexToRgb(props.activeColor)
 })
 
+const containerClass = computed((): string => {
+  return 'w-full overflow-hidden bg-white'
+})
+
+const getNavListClass = (isBottom: boolean): string => {
+  const classes: string[] = [
+    'relative',
+    'flex',
+    'flex-row',
+    'items-center',
+    'overflow-x-auto',
+    'overflow-y-hidden',
+    'whitespace-nowrap'
+  ]
+
+  if (props.type === 'card') {
+    classes.push('rounded-t-[12rpx]', 'bg-[#f5f5f5]', 'px-[24rpx]', 'py-[16rpx]')
+  } else {
+    classes.push('py-[20rpx]')
+  }
+
+  if (props.centered) {
+    classes.push('justify-center')
+  }
+
+  if (isBottom) {
+    classes.push('border-t', 'border-[#e8e8e8]')
+  }
+
+  return classes.join(' ')
+}
+
+const getItemPaddingClass = (): string => {
+  if (props.size === 'small') {
+    return 'px-[20rpx] py-[12rpx]'
+  }
+
+  if (props.size === 'large') {
+    return 'px-[40rpx] py-[20rpx]'
+  }
+
+  return props.type === 'card' ? 'px-[32rpx] py-[16rpx]' : 'px-[28rpx] py-[16rpx]'
+}
+
+const navLabelClass = computed((): string => {
+  const classes: string[] = ['transition-all', 'duration-300']
+
+  if (props.size === 'small') {
+    classes.push('text-[24rpx]')
+  } else if (props.size === 'large') {
+    classes.push('text-[32rpx]')
+  } else {
+    classes.push('text-[28rpx]')
+  }
+
+  return classes.join(' ')
+})
+
+const navLineClass = computed((): string => {
+  const classes: string[] = ['absolute', 'h-[4rpx]', 'rounded-[2rpx]', 'transition-all', 'duration-300']
+
+  if (props.tabPosition === 'bottom') {
+    classes.push('top-0')
+  } else {
+    classes.push('bottom-0')
+  }
+
+  return classes.join(' ')
+})
+
+const navLineStyle = computed((): string => {
+  return `background-color: ${props.activeColor}; opacity: ${props.animated ? 1 : 0};`
+})
+
+const getNavItemClass = (item: TagItem): string => {
+  const classes: string[] = [
+    'relative',
+    'inline-flex',
+    'items-center',
+    'justify-center',
+    'origin-center',
+    'transition-all',
+    'duration-300',
+    getItemPaddingClass()
+  ]
+
+  if (props.type === 'card') {
+    classes.push('mx-[8rpx]', 'rounded-[8rpx]', 'border', 'border-[#e8e8e8]', 'bg-white')
+  }
+
+  if (item.key === model.value && props.type !== 'card') {
+    classes.push('scale-105')
+  }
+
+  if (item.disabled) {
+    classes.push('cursor-not-allowed', 'opacity-50')
+  } else {
+    classes.push('cursor-pointer')
+  }
+
+  return classes.join(' ')
+}
+
+const getNavItemStyle = (item: TagItem): string => {
+  const styles: string[] = []
+
+  if (props.type === 'card' && item.key === model.value) {
+    styles.push(`background-color: rgba(${activeColorRgb.value}, 0.1)`)
+    styles.push(`border-color: ${props.activeColor}`)
+    styles.push(`box-shadow: 0 4rpx 12rpx rgba(${activeColorRgb.value}, 0.2)`)
+    styles.push('transform: translateY(-2rpx)')
+  }
+
+  return styles.join('; ')
+}
+
 /** 点击切换 tab */
-const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
+const handleClick = (item: TagItem, index: number, e: UniPointerEvent) => {
   if (item.disabled) return
 
   model.value = item.key
@@ -104,8 +220,7 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
 
 <template>
   <view
-    class="nav-tabs"
-    :class="[type, centered ? 'centered' : '', `size-${size}`]"
+    :class="containerClass"
     :style="{
       '--active-color': activeColor,
       '--active-color-rgb': activeColorRgb
@@ -114,32 +229,33 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
     <scroll-view
       v-if="tabPosition === 'top'"
       ref="navListRef"
-      class="nav-scroll"
+      class="w-full whitespace-nowrap"
       :scroll-x="true"
       :show-scrollbar="false"
     >
-      <view class="nav-list">
+      <view :class="getNavListClass(false)">
         <view
           v-for="(item, index) in items"
           :key="item.key"
-          class="nav-item"
-          :class="{
-            active: item.key === model,
-            disabled: item.disabled
-          }"
+          :class="getNavItemClass(item)"
+          :style="getNavItemStyle(item)"
           :ref="'navItem' + index"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="nav-icon" :src="item.icon" mode="aspectFit" />
+          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
-            class="nav-label"
+            :class="navLabelClass"
             :style="{ color: item.key === model ? activeColor : inactiveColor }"
           >
             {{ item.label }}
           </text>
 
-          <view v-if="item.badge" class="nav-badge">
+          <view
+            v-if="item.badge"
+            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
+            style="height: 28rpx; transform: translateX(30%);"
+          >
             {{ item.badge }}
           </view>
         </view>
@@ -147,7 +263,7 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
     </scroll-view>
 
     <!-- 内容插槽 -->
-    <view class="tab-content">
+    <view class="bg-white">
       <slot :active-key="model"></slot>
     </view>
 
@@ -155,31 +271,32 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
     <scroll-view
       v-if="tabPosition === 'bottom'"
       ref="navListRef"
-      class="nav-scroll"
+      class="w-full whitespace-nowrap"
       :scroll-x="true"
       :show-scrollbar="false"
     >
-      <view class="nav-list">
+      <view :class="getNavListClass(true)">
         <view
           v-for="(item, index) in items"
           :key="item.key"
-          class="nav-item"
-          :class="{
-            active: item.key === model,
-            disabled: item.disabled
-          }"
+          :class="getNavItemClass(item)"
+          :style="getNavItemStyle(item)"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="nav-icon" :src="item.icon" mode="aspectFit" />
+          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
-            class="nav-label"
+            :class="navLabelClass"
             :style="{ color: item.key === model ? activeColor : inactiveColor }"
           >
             {{ item.label }}
           </text>
 
-          <view v-if="item.badge" class="nav-badge">
+          <view
+            v-if="item.badge"
+            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
+            style="height: 28rpx; transform: translateX(30%);"
+          >
             {{ item.badge }}
           </view>
         </view>
@@ -187,168 +304,10 @@ const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
         <!-- 滑动指示器 -->
         <view
           v-if="type === 'line' && animated && activeIndex >= 0"
-          class="nav-line"
-          :style="[{ backgroundColor: activeColor }]"
+          :class="navLineClass"
+          :style="navLineStyle"
         ></view>
       </view>
     </scroll-view>
   </view>
 </template>
-
-<style scoped lang="scss">
-.nav-tabs {
-  width: 100%;
-  background-color: #fff;
-  overflow: hidden;
-
-  &.centered {
-    .nav-list {
-      justify-content: center;
-    }
-  }
-
-  .nav-scroll {
-    width: 100%;
-    white-space: nowrap;
-  }
-
-  .nav-list {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    position: relative;
-    padding: 20rpx 0;
-    overflow: overlay;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .nav-item {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16rpx 28rpx;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    transform-origin: center;
-
-    &.active {
-      transform: scale(1.05);
-    }
-
-    &.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .nav-icon {
-      width: 36rpx;
-      height: 36rpx;
-      margin-right: 8rpx;
-      transition: all 0.3s;
-    }
-
-    .nav-label {
-      font-size: 28rpx;
-      transition: color 0.3s, transform 0.3s;
-    }
-
-    .nav-badge {
-      position: absolute;
-      top: 6rpx;
-      right: 12rpx;
-      min-width: 28rpx;
-      height: 28rpx;
-      border-radius: 14rpx;
-      background-color: #f56c6c;
-      color: #fff;
-      font-size: 20rpx;
-      line-height: 28rpx;
-      text-align: center;
-      padding: 0 6rpx;
-      transform: translateX(30%);
-    }
-  }
-
-  /* 滑动指示器 */
-  .nav-line {
-    position: absolute;
-    bottom: 0;
-    height: 4rpx;
-    border-radius: 2rpx;
-    background-color: var(--active-color);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    opacity: 0;
-
-    &.animated {
-      opacity: 1;
-    }
-  }
-
-  /* 卡片样式 */
-  &.card {
-    .nav-list {
-      padding: 16rpx 24rpx;
-      background-color: #f5f5f5;
-      border-radius: 12rpx 12rpx 0 0;
-    }
-
-    .nav-item {
-      border: 1rpx solid #e8e8e8;
-      border-radius: 8rpx;
-      margin: 0 8rpx;
-      padding: 16rpx 32rpx;
-      background-color: #fff;
-      transition: all 0.3s ease;
-
-      &.active {
-        /* 使用 CSS 变量控制的激活颜色 */
-        background-color: rgba(var(--active-color-rgb, 0, 187, 167), 0.1);
-        border-color: var(--active-color);
-        color: var(--active-color);
-        transform: translateY(-2rpx);
-        box-shadow: 0 4rpx 12rpx rgba(var(--active-color-rgb, 0, 187, 167), 0.2);
-      }
-    }
-  }
-
-  /* 尺寸变体 */
-  &.size-small .nav-item {
-    padding: 12rpx 20rpx;
-
-    .nav-label {
-      font-size: 24rpx;
-    }
-  }
-
-  &.size-large .nav-item {
-    padding: 20rpx 40rpx;
-
-    .nav-label {
-      font-size: 32rpx;
-    }
-  }
-
-  /* 底部位置 */
-  &[tab-position="bottom"] {
-    flex-direction: column-reverse;
-
-    .nav-list {
-      border-top: 1rpx solid #e8e8e8;
-      border-bottom: none;
-    }
-
-    .nav-line {
-      top: 0;
-      bottom: auto;
-    }
-  }
-
-  .tab-content {
-    background-color: #fff;
-  }
-}
-</style>

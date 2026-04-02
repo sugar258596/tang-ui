@@ -18,65 +18,37 @@ const props = withDefaults(defineProps<TListProps>(), {
  * 计算列表样式类
  */
 const listClass = computed<string>(() => {
-  const classes: string[] = ['t-list']
+  const classes: string[] = ['t-list', 'bg-white']
 
   if (props.border) {
-    classes.push('t-list--border')
+    classes.push('border-y border-[#ebeef5]')
   }
 
-  classes.push(`t-list--spacing-${props.spacing}`)
+  switch (props.spacing) {
+    case 'none':
+      break
+    case 'small':
+      classes.push('py-2')
+      break
+    case 'large':
+      classes.push('py-4')
+      break
+    default:
+      classes.push('py-3')
+      break
+  }
 
   return classes.join(' ')
 })
 </script>
 
 <template>
-  <view class="t-list-wrapper">
-    <view v-if="title" class="t-list__title">
-      <text class="t-list__title-text">{{ title }}</text>
+  <view class="t-list-wrapper w-full">
+    <view v-if="title" class="t-list__title px-4 pb-2 pt-3">
+      <text class="t-list__title-text text-sm text-[#909399]">{{ title }}</text>
     </view>
     <view :class="listClass">
       <slot></slot>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-list-wrapper {
-  width: 100%;
-}
-
-.t-list {
-  background-color: #ffffff;
-
-  &--border {
-    border-top: 1px solid #ebeef5;
-    border-bottom: 1px solid #ebeef5;
-  }
-
-  &--spacing-none {
-    padding: 0;
-  }
-
-  &--spacing-small {
-    padding: 8px 0;
-  }
-
-  &--spacing-medium {
-    padding: 12px 0;
-  }
-
-  &--spacing-large {
-    padding: 16px 0;
-  }
-
-  &__title {
-    padding: 12px 16px 8px;
-
-    &-text {
-      font-size: 14px;
-      color: #909399;
-    }
-  }
-}
-</style>

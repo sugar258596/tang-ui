@@ -1,4 +1,8 @@
 <script lang="uts">
+  import { getThemeInstance } from '@/composables/useTheme.uts'
+
+  getThemeInstance()
+
   // #ifdef APP-ANDROID || APP-HARMONY
 	let firstBackTime = 0
   // #endif
@@ -37,5 +41,6 @@
 </script>
 
 <style lang="scss">
-	@import '@/style/index.scss';
+	@import '@/static/tailwind.css';
+	@import '@/static/theme.scss';
 </style>

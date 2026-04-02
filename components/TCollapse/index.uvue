@@ -65,10 +65,10 @@ provide('TCollapse', collapseContext)
  * 计算容器样式类
  */
 const collapseClass = computed<string>(() => {
-  const classes: string[] = ['t-collapse']
+  const classes: string[] = ['bg-white']
 
   if (props.border) {
-    classes.push('t-collapse--border')
+    classes.push('border-t', 'border-b', 'border-[#ebeef5]')
   }
 
   return classes.join(' ')
@@ -80,14 +80,3 @@ const collapseClass = computed<string>(() => {
     <slot></slot>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-collapse {
-  background-color: #ffffff;
-
-  &--border {
-    border-top: 1px solid #ebeef5;
-    border-bottom: 1px solid #ebeef5;
-  }
-}
-</style>

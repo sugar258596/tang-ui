@@ -73,27 +73,27 @@ const handleClose = (): void => {
     height="auto"
     @close="handleClose"
   >
-    <view class="t-action-sheet" :class="customClass" :style="customStyle">
+    <view class="t-action-sheet bg-transparent p-0" :class="customClass" :style="customStyle">
       <!-- 头部：标题和描述 -->
-      <view v-if="title || description" class="t-action-sheet__header">
-        <text v-if="title" class="t-action-sheet__title">{{ title }}</text>
-        <text v-if="description" class="t-action-sheet__description">{{ description }}</text>
+      <view v-if="title || description" class="t-action-sheet__header border-b border-[#ebedf0] p-4 text-center">
+        <text v-if="title" class="t-action-sheet__title mb-2 block text-base font-medium text-[#323233]">{{ title }}</text>
+        <text v-if="description" class="t-action-sheet__description block text-sm text-[#969799]">{{ description }}</text>
       </view>
 
       <!-- 操作列表 -->
-      <view class="t-action-sheet__actions">
+      <view class="t-action-sheet__actions max-h-[400px] overflow-y-auto">
         <view
           v-for="(action, index) in actions"
           :key="index"
-          class="t-action-sheet__action"
+          class="t-action-sheet__action flex items-center justify-center border-b border-[#ebedf0] p-4 text-center active:bg-[#f5f5f5]"
           :class="{
-            't-action-sheet__action--disabled': action.disabled,
-            't-action-sheet__action--loading': action.loading
+            'opacity-50 cursor-not-allowed': action.disabled,
+            'opacity-50': action.loading
           }"
           @click="() => handleSelect(action, index)"
         >
           <text
-            class="t-action-sheet__action-text"
+            class="t-action-sheet__action-text text-base text-[#323233]"
             :style="action.color ? `color: ${action.color}` : ''"
           >
             {{ action.name }}
@@ -102,82 +102,9 @@ const handleClose = (): void => {
       </view>
 
       <!-- 取消按钮 -->
-      <view class="t-action-sheet__cancel" @click="handleCancel">
-        <text class="t-action-sheet__cancel-text">{{ displayCancelText }}</text>
+      <view class="t-action-sheet__cancel flex items-center justify-center border-t-[8px] border-[#f5f5f5] p-4 text-center active:bg-[#f5f5f5]" @click="handleCancel">
+        <text class="t-action-sheet__cancel-text text-base text-[#323233]">{{ displayCancelText }}</text>
       </view>
     </view>
   </TPopup>
 </template>
-
-<style lang="scss" scoped>
-.t-action-sheet {
-  background-color: transparent;
-  padding: 0;
-}
-
-.t-action-sheet__header {
-  padding: 16px;
-  text-align: center;
-  border-bottom: 1px solid #ebedf0;
-}
-
-.t-action-sheet__title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #323233;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.t-action-sheet__description {
-  font-size: 14px;
-  color: #969799;
-  display: block;
-}
-
-.t-action-sheet__actions {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.t-action-sheet__action {
-  padding: 16px;
-  display: flex;;
-  align-items: center;
-  text-align: center;
-  border-bottom: 1px solid #ebedf0;
-  cursor: pointer;
-
-  &:active {
-    background-color: #f5f5f5;
-  }
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.t-action-sheet__action-text {
-  font-size: 16px;
-  color: #323233;
-}
-
-.t-action-sheet__cancel {
-  padding: 16px;
-  display: flex;;
-  align-items: center;
-  text-align: center;
-  border-top: 8px solid #f5f5f5;
-  cursor: pointer;
-
-  &:active {
-    background-color: #f5f5f5;
-  }
-}
-
-.t-action-sheet__cancel-text {
-  font-size: 16px;
-  color: #323233;
-}
-</style>

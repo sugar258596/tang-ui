@@ -10,7 +10,7 @@ import type { TDividerProps } from './type.uts'
 const props = withDefaults(defineProps<TDividerProps>(), {
   direction: 'horizontal',
   type: 'solid',
-  color: '#e0e0e0',
+  color: 'var(--tui-border)',
   thickness: 1,
   hairline: true,
   content: '',
@@ -107,22 +107,69 @@ const textStyle = computed((): string => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-divider']
+  const classes: string[] = ['t-divider relative flex items-center']
 
-  // 方向
-  classes.push(`t-divider--${props.direction}`)
-
-  // 文字位置
-  if (props.content && props.direction === 'horizontal') {
-    classes.push(`t-divider--${props.contentPosition}`)
+  if (props.direction === 'vertical') {
+    classes.push('inline-flex h-full flex-col')
+  } else {
+    classes.push('w-full flex-row')
   }
 
-  // 自定义类名
   if (props.customClass) {
     classes.push(props.customClass)
   }
 
   return classes.join(' ')
+})
+
+const firstLineClasses = computed((): string => {
+  if (props.direction === 'vertical') {
+    return 't-divider__line h-full w-0 border-0'
+  }
+
+  return 't-divider__line border-0'
+})
+
+const secondLineClasses = computed((): string => {
+  if (props.direction === 'vertical') {
+    return 't-divider__line h-full w-0 border-0'
+  }
+
+  return 't-divider__line border-0'
+})
+
+const firstLineStyle = computed((): string => {
+  if (props.direction !== 'horizontal') {
+    return lineStyle.value
+  }
+
+  const styles: string[] = [lineStyle.value]
+
+  if (props.contentPosition === 'left') {
+    styles.push('flex: 0.3')
+    styles.push('max-width: 80px')
+  } else {
+    styles.push('flex: 1')
+  }
+
+  return styles.join('; ')
+})
+
+const secondLineStyle = computed((): string => {
+  if (props.direction !== 'horizontal') {
+    return lineStyle.value
+  }
+
+  const styles: string[] = [lineStyle.value]
+
+  if (props.contentPosition === 'right') {
+    styles.push('flex: 0.3')
+    styles.push('max-width: 80px')
+  } else {
+    styles.push('flex: 1')
+  }
+
+  return styles.join('; ')
 })
 </script>
 
@@ -131,89 +178,19 @@ const containerClasses = computed((): string => {
     <!-- 水平分割线 -->
     <template v-if="direction === 'horizontal'">
       <!-- 无文字 -->
-      <view v-if="!content" class="t-divider__line" :style="lineStyle"></view>
+      <view v-if="!content" class="t-divider__line w-full border-0" :style="lineStyle"></view>
 
       <!-- 有文字 -->
       <template v-else>
-        <view class="t-divider__line" :style="lineStyle"></view>
-        <text class="t-divider__text" :style="textStyle">
+        <view :class="firstLineClasses" :style="firstLineStyle"></view>
+        <text class="t-divider__text whitespace-nowrap text-sm text-[#909399]" :style="textStyle">
           <slot>{{ content }}</slot>
         </text>
-        <view class="t-divider__line" :style="lineStyle"></view>
+        <view :class="secondLineClasses" :style="secondLineStyle"></view>
       </template>
     </template>
 
     <!-- 垂直分割线 -->
-    <view v-else class="t-divider__line" :style="lineStyle"></view>
+    <view v-else :class="firstLineClasses" :style="firstLineStyle"></view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-divider {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  &--horizontal {
-    width: 100%;
-    flex-direction: row;
-  }
-
-  &--vertical {
-    height: 100%;
-    flex-direction: column;
-    display: inline-flex;
-  }
-
-  &--left {
-    .t-divider__line:first-child {
-      flex: 0.3;
-      max-width: 80px;
-    }
-
-    .t-divider__line:last-child {
-      flex: 1;
-    }
-  }
-
-  &--center {
-    .t-divider__line {
-      flex: 1;
-    }
-  }
-
-  &--right {
-    .t-divider__line:first-child {
-      flex: 1;
-    }
-
-    .t-divider__line:last-child {
-      flex: 0.3;
-      max-width: 80px;
-    }
-  }
-}
-
-.t-divider__line {
-  border: none;
-
-  .t-divider--horizontal & {
-    border-top-width: 1px;
-    border-top-style: solid;
-  }
-
-  .t-divider--vertical & {
-    width: 0;
-    height: 100%;
-    border-left-width: 1px;
-    border-left-style: solid;
-  }
-}
-
-.t-divider__text {
-  white-space: nowrap;
-  font-size: 14px;
-  color: #909399;
-  padding: 0 16px;
-}
-</style>

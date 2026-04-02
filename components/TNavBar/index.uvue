@@ -24,85 +24,25 @@ const emit = defineEmits<{
 <template>
   <view class="t-navbar-wrapper">
     <view
-      class="t-navbar"
-      :class="[customClass, { 't-navbar--fixed': fixed }]"
+      class="t-navbar flex h-11 flex-row items-center justify-between border-b border-[#ebedf0] bg-white px-4"
+      :class="[customClass, fixed ? 'fixed left-0 right-0 top-0' : '']"
       :style="`z-index: ${zIndex}; ${customStyle}`"
     >
-      <view class="t-navbar__left" @click="emit('click-left')">
-        <text v-if="leftIcon" class="t-navbar__icon">{{ leftIcon }}</text>
-        <text v-if="leftText" class="t-navbar__text">{{ leftText }}</text>
+      <view class="t-navbar__left flex min-w-[60px] flex-row items-center cursor-pointer" @click="emit('click-left')">
+        <text v-if="leftIcon" class="t-navbar__icon text-lg text-[#323233]">{{ leftIcon }}</text>
+        <text v-if="leftText" class="t-navbar__text text-sm text-[#1890ff]">{{ leftText }}</text>
         <slot name="left"></slot>
       </view>
-      <view class="t-navbar__title">
-        <text class="t-navbar__title-text">{{ title }}</text>
+      <view class="t-navbar__title flex flex-1 items-center text-center">
+        <text class="t-navbar__title-text text-base font-medium text-[#323233]">{{ title }}</text>
         <slot name="title"></slot>
       </view>
-      <view class="t-navbar__right" @click="emit('click-right')">
-        <text v-if="rightText" class="t-navbar__text">{{ rightText }}</text>
-        <text v-if="rightIcon" class="t-navbar__icon">{{ rightIcon }}</text>
+      <view class="t-navbar__right flex min-w-[60px] flex-row items-center justify-end cursor-pointer" @click="emit('click-right')">
+        <text v-if="rightText" class="t-navbar__text text-sm text-[#1890ff]">{{ rightText }}</text>
+        <text v-if="rightIcon" class="t-navbar__icon text-lg text-[#323233]">{{ rightIcon }}</text>
         <slot name="right"></slot>
       </view>
     </view>
-    <view v-if="fixed && placeholder" class="t-navbar__placeholder"></view>
+    <view v-if="fixed && placeholder" class="t-navbar__placeholder h-11"></view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-navbar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 44px;
-  padding: 0 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #ebedf0;
-
-  &--fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-}
-
-.t-navbar__left,
-.t-navbar__right {
-  display: flex;
-  flex-direction: row;;
-  align-items: center;
-  min-width: 60px;
-  cursor: pointer;
-}
-
-.t-navbar__right {
-  justify-content: flex-end;
-}
-
-.t-navbar__title {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-
-.t-navbar__title-text {
-  font-size: 16px;
-  font-weight: 500;
-  color: #323233;
-}
-
-.t-navbar__text {
-  font-size: 14px;
-  color: #1890ff;
-}
-
-.t-navbar__icon {
-  font-size: 18px;
-  color: #323233;
-}
-
-.t-navbar__placeholder {
-  height: 44px;
-}
-</style>

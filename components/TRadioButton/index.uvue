@@ -3,13 +3,14 @@
  * 单选按钮组件
  * @description 支持单个按钮和选项组两种使用方式
  */
-import type { TRadioButtonProps, FormOption } from './type.uts'
+import { computed } from 'vue'
+import type { TRadioButtonProps } from './type.uts'
 
 const props = withDefaults(defineProps<TRadioButtonProps>(), {
   options: () => [],
   size: 'medium',
   activeColor: '#00bba7',
-  inactiveColor: '#666666',
+  inactiveColor: 'var(--tui-border-strong)',
   disabled: false,
   checked: false
 })
@@ -68,145 +69,88 @@ const handleClick = () => {
  */
 const sizeClass = computed(() => {
   const sizeMap = {
-    'small': 'radio-size-small',
-    'medium': 'radio-size-medium',
-    'large': 'radio-size-large'
+    small: {
+      icon: 'h-[28rpx] w-[28rpx]',
+      dot: 'h-[14rpx] w-[14rpx]',
+      label: 'text-[24rpx]',
+    },
+    medium: {
+      icon: 'h-[36rpx] w-[36rpx]',
+      dot: 'h-[20rpx] w-[20rpx]',
+      label: 'text-[28rpx]',
+    },
+    large: {
+      icon: 'h-[44rpx] w-[44rpx]',
+      dot: 'h-[26rpx] w-[26rpx]',
+      label: 'text-[32rpx]',
+    },
   }
-  return sizeMap[props.size] ?? 'radio-size-medium'
+  return sizeMap[props.size] ?? sizeMap.medium
+})
+
+const labelClass = computed(() => {
+  const classes: string[] = ['transition-colors duration-200 text-[#323233]']
+  classes.push(sizeClass.value.label)
+  if (props.disabled) {
+    classes.push('text-[#c0c4cc]')
+  }
+  return classes.join(' ')
 })
 </script>
 
 <template>
   <!-- 选项组模式：使用 options 属性 -->
-  <view v-if="isOptionsMode" class="radio-group" :style="cssVars">
+  <view v-if="isOptionsMode" class="flex flex-col gap-[12rpx]" :style="cssVars">
     <view
       v-for="option in options"
       :key="option.value"
-      class="radio-item"
-      :class="{ 'radio-disabled': disabled }"
+      class="flex flex-row items-center gap-[12rpx] py-[4rpx]"
+      :class="disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'"
       @click="!disabled && handleChange(option.value)"
     >
-      <view class="radio-icon" :class="{ active: model.value === option.value, 'radio-disabled': disabled }">
-        <view v-if="model.value === option.value" class="radio-dot"></view>
+      <view
+        class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
+        :class="sizeClass.icon"
+        :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : model.value === option.value ? props.activeColor : props.inactiveColor}`"
+      >
+        <view
+          v-if="model.value === option.value"
+          class="rounded-full"
+          :class="sizeClass.dot"
+          :style="`background-color: ${props.activeColor}`"
+        ></view>
       </view>
-      <text class="radio-label">{{ option.label }}</text>
+      <text
+        :class="[labelClass, option.disabled ? 'text-[#c0c4cc]' : '']"
+      >{{ option.label }}</text>
     </view>
   </view>
 
   <!-- 单个按钮模式：使用插槽或默认内容 -->
-  <view v-else class="radio-item" :class="[sizeClass, { active: isChecked, 'radio-disabled': disabled }]" :style="cssVars" @tap="handleClick">
-    <view class="radio-icon" :class="{ active: isChecked, 'radio-disabled': disabled }">
-      <view v-if="isChecked" class="radio-dot"></view>
+  <view
+    v-else
+    class="flex flex-row items-center gap-[12rpx] py-[4rpx]"
+    :class="disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'"
+    :style="cssVars"
+    @tap="handleClick"
+  >
+    <view
+      class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
+      :class="sizeClass.icon"
+      :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : isChecked ? props.activeColor : props.inactiveColor}`"
+    >
+      <view
+        v-if="isChecked"
+        class="rounded-full"
+        :class="sizeClass.dot"
+        :style="`background-color: ${props.activeColor}`"
+      ></view>
     </view>
     <slot>
-      <text v-if="label || value !== undefined" class="radio-label">{{ label || value }}</text>
+      <text
+        v-if="label || value !== undefined"
+        :class="labelClass"
+      >{{ label || value }}</text>
     </slot>
   </view>
 </template>
-
-<style lang="scss" scoped>
-/* 选项组容器 */
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-/* 单个按钮容器 */
-.radio-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16rpx;
-  padding: 8rpx 0;
-  cursor: pointer;
-}
-
-.radio-item.radio-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* 单选按钮图标 */
-.radio-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  border-width: 2rpx;
-  border-style: solid;
-  border-color: var(--radio-inactive-color);
-  transition: all 0.2s ease;
-}
-
-.radio-icon.active {
-  border-color: var(--radio-active-color);
-}
-
-.radio-icon.radio-disabled {
-  border-color: #dcdfe6;
-}
-
-/* 单选点 */
-.radio-dot {
-  border-radius: 50%;
-  background-color: var(--radio-active-color);
-}
-
-/* 尺寸样式 */
-.radio-size-small .radio-icon {
-  width: 28rpx;
-  height: 28rpx;
-}
-
-.radio-size-small .radio-dot {
-  width: 14rpx;
-  height: 14rpx;
-}
-
-.radio-size-small .radio-label {
-  font-size: 24rpx;
-}
-
-.radio-size-medium .radio-icon {
-  width: 36rpx;
-  height: 36rpx;
-}
-
-.radio-size-medium .radio-dot {
-  width: 20rpx;
-  height: 20rpx;
-}
-
-.radio-size-medium .radio-label {
-  font-size: 28rpx;
-}
-
-.radio-size-large .radio-icon {
-  width: 44rpx;
-  height: 44rpx;
-}
-
-.radio-size-large .radio-dot {
-  width: 26rpx;
-  height: 26rpx;
-}
-
-.radio-size-large .radio-label {
-  font-size: 32rpx;
-}
-
-/* 文本标签 */
-.radio-label {
-  color: var(--radio-inactive-color);
-  transition: color 0.2s ease;
-}
-
-.radio-item.active .radio-label {
-  color: var(--radio-active-color);
-}
-
-.radio-item.radio-disabled .radio-label {
-  color: #c0c4cc;
-}
-</style>

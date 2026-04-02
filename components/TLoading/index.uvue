@@ -15,17 +15,19 @@ const props = withDefaults(defineProps<TLoadingProps>(), {
   color: '#409eff',
   fullscreen: false,
   mask: true,
-  maskBgColor: 'rgba(255, 255, 255, 0.9)'
+  maskBgColor: 'var(--tui-surface-overlay)'
 })
 
 /**
  * 计算加载容器样式类
  */
 const loadingClass = computed<string>(() => {
-  const classes: string[] = ['t-loading']
+  const classes: string[] = ['t-loading inset-0 flex items-center justify-center']
 
   if (props.fullscreen) {
-    classes.push('t-loading--fullscreen')
+    classes.push('fixed z-[9999]')
+  } else {
+    classes.push('absolute z-[1]')
   }
 
   return classes.join(' ')
@@ -48,9 +50,19 @@ const maskStyle = computed<string>(() => {
  * 计算加载图标样式类
  */
 const spinnerClass = computed<string>(() => {
-  const classes: string[] = ['t-loading__spinner']
+  const classes: string[] = ['t-loading__spinner animate-spin rounded-full border-2 border-solid']
 
-  classes.push(`t-loading__spinner--${props.size}`)
+  switch (props.size) {
+    case 'small':
+      classes.push('h-5 w-5')
+      break
+    case 'large':
+      classes.push('h-10 w-10')
+      break
+    default:
+      classes.push('h-[30px] w-[30px]')
+      break
+  }
 
   return classes.join(' ')
 })
@@ -72,82 +84,10 @@ const spinnerStyle = computed<string>(() => {
 
 <template>
   <view v-if="loading" :class="loadingClass">
-    <view v-if="mask" class="t-loading__mask" :style="maskStyle"></view>
-    <view class="t-loading__content">
+    <view v-if="mask" class="t-loading__mask absolute inset-0" :style="maskStyle"></view>
+    <view class="t-loading__content relative z-[1] flex flex-col items-center justify-center">
       <view :class="spinnerClass" :style="spinnerStyle"></view>
-      <text v-if="text" class="t-loading__text">{{ text }}</text>
+      <text v-if="text" class="t-loading__text mt-3 text-sm text-[#606266]">{{ text }}</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-loading {
-  position: relative;
-
-  &--fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9999;
-  }
-
-  &__mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-
-  &__content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 1;
-  }
-
-  &__spinner {
-    border: 2px solid #409eff;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-
-    &--small {
-      width: 20px;
-      height: 20px;
-    }
-
-    &--medium {
-      width: 30px;
-      height: 30px;
-    }
-
-    &--large {
-      width: 40px;
-      height: 40px;
-    }
-  }
-
-  &__text {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #606266;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-}
-</style>

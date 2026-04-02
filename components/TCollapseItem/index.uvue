@@ -33,9 +33,9 @@ const isActive = computed<boolean>(() => {
 // 计算内容样式
 const contentStyle = computed<string>(() => {
   if (isActive.value) {
-    return 'max-height: 2000px; opacity: 1; padding-top: 0; padding-bottom: 0;'
+    return 'max-height: 2000px; opacity: 1; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);'
   }
-  return 'max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;'
+  return 'max-height: 0; opacity: 0; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);'
 })
 
 /**
@@ -55,14 +55,22 @@ const handleClick = (): void => {
  * 计算头部样式类
  */
 const headerClass = computed<string>(() => {
-  const classes: string[] = ['t-collapse-item__header']
-
-  if (isActive.value) {
-    classes.push('t-collapse-item__header--active')
-  }
+  const classes: string[] = [
+    'flex',
+    'flex-row',
+    'items-center',
+    'justify-between',
+    'bg-white',
+    'px-[20px]',
+    'py-[16px]',
+    'transition-colors',
+    'duration-300'
+  ]
 
   if (props.disabled) {
-    classes.push('t-collapse-item__header--disabled')
+    classes.push('cursor-not-allowed', 'opacity-60')
+  } else {
+    classes.push('cursor-pointer', 'active:bg-[#f5f7fa]')
   }
 
   return classes.join(' ')
@@ -72,10 +80,18 @@ const headerClass = computed<string>(() => {
  * 计算箭头样式类
  */
 const arrowClass = computed<string>(() => {
-  const classes: string[] = ['t-collapse-item__arrow']
+  const classes: string[] = [
+    'flex',
+    'h-[24px]',
+    'w-[24px]',
+    'items-center',
+    'justify-center',
+    'transition-transform',
+    'duration-300'
+  ]
 
   if (isActive.value) {
-    classes.push('t-collapse-item__arrow--active')
+    classes.push('rotate-90')
   }
 
   return classes.join(' ')
@@ -83,108 +99,27 @@ const arrowClass = computed<string>(() => {
 </script>
 
 <template>
-  <view class="t-collapse-item">
+  <view class="border-b border-[#ebeef5] last:border-b-0">
     <!-- 头部 -->
     <view :class="headerClass" @click="handleClick">
       <!-- 标题 -->
-      <view class="t-collapse-item__title">
+      <view class="flex-1">
         <slot name="title">
-          <text class="t-collapse-item__title-text">{{ title }}</text>
+          <text class="text-[15px] font-medium leading-[1.5] text-[#303133]">{{ title }}</text>
         </slot>
       </view>
 
       <!-- 箭头图标 -->
       <view :class="arrowClass">
-        <text class="t-collapse-item__arrow-icon">›</text>
+        <text class="text-[18px] font-bold leading-none text-[#909399]">›</text>
       </view>
     </view>
 
     <!-- 内容区域 -->
-    <view class="t-collapse-item__content" :style="contentStyle">
-      <view class="t-collapse-item__content-inner">
+    <view class="overflow-hidden bg-white" :style="contentStyle">
+      <view class="px-[20px] py-[16px] text-[14px] leading-[1.6] text-[#606266]">
         <slot></slot>
       </view>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-collapse-item {
-  border-bottom: 1px solid #ebeef5;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &__header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background-color: #ffffff;
-    cursor: pointer;
-    transition: background-color 0.3s;
-
-    &:active {
-      background-color: #f5f7fa;
-    }
-
-    &--disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-
-      &:active {
-        background-color: #ffffff;
-      }
-    }
-  }
-
-  &__title {
-    flex: 1;
-
-    &-text {
-      font-size: 15px;
-      font-weight: 500;
-      color: #303133;
-      line-height: 1.5;
-    }
-  }
-
-  &__arrow {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &--active {
-      transform: rotate(90deg);
-    }
-
-    &-icon {
-      font-size: 18px;
-      color: #909399;
-      font-weight: bold;
-      line-height: 1;
-    }
-  }
-
-  &__content {
-    background-color: #ffffff;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-                opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &-inner {
-      padding: 16px 20px;
-      font-size: 14px;
-      color: #606266;
-      line-height: 1.6;
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  }
-}
-</style>

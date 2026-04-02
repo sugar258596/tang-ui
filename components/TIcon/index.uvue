@@ -8,7 +8,7 @@
 	const props = withDefaults(defineProps<TIconProps>(), {
 		name: '',
 		size: 48,
-		color: '#333333',
+		color: 'var(--tui-text-primary)',
 		bold: false,
 		customClass: '',
 		customStyle: ''
@@ -49,7 +49,7 @@
 
 	// 计算图标类名
 	const iconClass = computed(() : string => {
-		const classes : string[] = ['t-icon', 'iconfont']
+		const classes : string[] = ['inline-block', 'leading-none', 'iconfont']
 
 		if (props.name) {
 			// 支持传入 icon-xxx 或直接传入 xxx
@@ -78,6 +78,7 @@
 <template>
 	<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
 </template>
+
 
 <style lang="scss" scoped>
 	/* 导入字体图标 */

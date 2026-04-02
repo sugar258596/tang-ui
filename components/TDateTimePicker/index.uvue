@@ -42,6 +42,11 @@ const selectedRangeValue = defineModel('rangeValue', { default: null })
 const rendered = ref(false)
 // 是否显示遮罩层和内容（用于动画控制）
 const showOverlay = ref(false)
+const contentReady = ref(false)
+const ANIMATION_DURATION = 220
+let openAnimationTimer: ReturnType<typeof setTimeout> | null = null
+let closeAnimationTimer: ReturnType<typeof setTimeout> | null = null
+let contentAnimationTimer: ReturnType<typeof setTimeout> | null = null
 
 // 定义 emits
 const emit = defineEmits<{
@@ -89,6 +94,25 @@ const displayCancelText = computed<string>(() => {
     return props.cancelText
   }
   return $t('datetimePicker.cancelText')
+})
+
+const noopTouchMove = (): void => {}
+
+const maskStyle = computed((): string => {
+  return [
+    'background-color: rgba(0, 0, 0, 0.5)',
+    'opacity: ' + (showOverlay.value ? '1' : '0'),
+    `transition: opacity ${ANIMATION_DURATION}ms ease-out`,
+    'will-change: opacity',
+  ].join('; ')
+})
+
+const containerStyle = computed((): string => {
+  return [
+    'transform: ' + (showOverlay.value ? 'translate3d(0, 0, 0)' : 'translate3d(0, 100%, 0)'),
+    `transition: transform ${ANIMATION_DURATION}ms ease-out`,
+    'will-change: transform',
+  ].join('; ')
 })
 
 // 当前视图的年月
@@ -208,14 +232,42 @@ const getDayStyle = (item: DayItem): string => {
 }
 
 // 获取日期单元格类名
-const getDayClass = (item: DayItem): Record<string, boolean> => {
-  return {
-    't-datetime-picker__day--other': !item.isCurrentMonth,
-    't-datetime-picker__day--disabled': item.isDisabled,
-    't-datetime-picker__day--range-start': item.isRangeStart === true,
-    't-datetime-picker__day--range-end': item.isRangeEnd === true,
-    't-datetime-picker__day--in-range': item.isInRange === true
+const getDayWrapperClasses = (item: DayItem): string[] => {
+  const classes: string[] = ['flex h-11 w-[14.285%] items-center justify-center']
+
+  if (item.isDisabled) {
+    classes.push('cursor-not-allowed')
+  } else {
+    classes.push('cursor-pointer')
   }
+
+  if (item.isRangeStart && item.isRangeEnd) {
+    return classes
+  }
+
+  if (item.isRangeStart) {
+    classes.push('bg-[linear-gradient(to_right,transparent_50%,rgba(64,158,255,0.1)_50%)]')
+  } else if (item.isRangeEnd) {
+    classes.push('bg-[linear-gradient(to_left,transparent_50%,rgba(64,158,255,0.1)_50%)]')
+  } else if (item.isInRange) {
+    classes.push('bg-[rgba(64,158,255,0.1)]')
+  }
+
+  return classes
+}
+
+const getDayTextClasses = (item: DayItem): string[] => {
+  const classes: string[] = ['flex h-9 w-9 items-center justify-center rounded-full text-[15px] text-[#303133]']
+
+  if (!item.isCurrentMonth || item.isDisabled) {
+    classes.push('text-[#c0c4cc]')
+  }
+
+  if (item.isToday) {
+    classes.push('font-medium')
+  }
+
+  return classes
 }
 
 // 获取年份/月份选中样式
@@ -600,10 +652,15 @@ const setValueByTimestamp = (timestamp: number): void => {
 // 监听 visible 变化
 watch(visible, (newVal: boolean) => {
   if (newVal) {
+    if (closeAnimationTimer != null) {
+      clearTimeout(closeAnimationTimer)
+      closeAnimationTimer = null
+    }
     // 打开时立即渲染 DOM
     rendered.value = true
     // 初始状态为隐藏
     showOverlay.value = false
+    contentReady.value = false
     
     // 重置范围选择状态或进行数据回显
     if (props.range) {
@@ -649,15 +706,29 @@ watch(visible, (newVal: boolean) => {
       panelMode.value = 'date'
     }
     
-    // 下一帧显示遮罩层和内容，触发动画
+    if (openAnimationTimer != null) {
+      clearTimeout(openAnimationTimer)
+      openAnimationTimer = null
+    }
+    if (contentAnimationTimer != null) {
+      clearTimeout(contentAnimationTimer)
+      contentAnimationTimer = null
+    }
+
+    // 留一帧给初始样式落地，再触发动画
     nextTick(() => {
-      setTimeout(() => {
+      openAnimationTimer = setTimeout(() => {
         showOverlay.value = true
+        openAnimationTimer = null
+        contentAnimationTimer = setTimeout(() => {
+          contentReady.value = true
+          contentAnimationTimer = null
+        }, 32)
         // datetime 模式下更新时间滚动位置
         if (props.mode === 'datetime') {
           updateTimeScrollPosition()
         }
-      }, 10)
+      }, 16)
     })
   } else {
     // 外部关闭时触发关闭动画
@@ -669,11 +740,46 @@ watch(visible, (newVal: boolean) => {
 
 // 执行关闭动画
 const doClose = (): void => {
+  if (openAnimationTimer != null) {
+    clearTimeout(openAnimationTimer)
+    openAnimationTimer = null
+  }
+  if (contentAnimationTimer != null) {
+    clearTimeout(contentAnimationTimer)
+    contentAnimationTimer = null
+  }
   showOverlay.value = false
   // 等待关闭动画完成后再卸载 DOM
-  setTimeout(() => {
+  if (closeAnimationTimer != null) {
+    clearTimeout(closeAnimationTimer)
+  }
+  closeAnimationTimer = setTimeout(() => {
     rendered.value = false
-  }, 350)
+    contentReady.value = false
+    closeAnimationTimer = null
+  }, ANIMATION_DURATION)
+}
+
+const closeWithAnimation = (callback?: () => void): void => {
+  if (openAnimationTimer != null) {
+    clearTimeout(openAnimationTimer)
+    openAnimationTimer = null
+  }
+  if (contentAnimationTimer != null) {
+    clearTimeout(contentAnimationTimer)
+    contentAnimationTimer = null
+  }
+  showOverlay.value = false
+  if (closeAnimationTimer != null) {
+    clearTimeout(closeAnimationTimer)
+  }
+  closeAnimationTimer = setTimeout(() => {
+    rendered.value = false
+    contentReady.value = false
+    visible.value = false
+    closeAnimationTimer = null
+    callback?.()
+  }, ANIMATION_DURATION)
 }
 
 // 处理遮罩点击
@@ -683,14 +789,9 @@ const handleMaskClick = (): void => {
 
 // 处理取消
 const handleCancel = (): void => {
-  // 触发关闭动画
-  showOverlay.value = false
-  // 等待动画完成后更新状态
-  setTimeout(() => {
-    rendered.value = false
-    visible.value = false
+  closeWithAnimation(() => {
     emit('cancel')
-  }, 350)
+  })
 }
 
 // 处理确认
@@ -717,13 +818,9 @@ const handleConfirm = (): void => {
       }
 
       // 触发关闭动画
-      showOverlay.value = false
-      // 等待动画完成后更新状态
-      setTimeout(() => {
-        rendered.value = false
-        visible.value = false
+      closeWithAnimation(() => {
         emit('confirmRange', emitValue, formatted)
-      }, 350)
+      })
     }
   } else {
     // 单选模式
@@ -732,14 +829,9 @@ const handleConfirm = (): void => {
 
     selectedValue.value = timestamp
     
-    // 触发关闭动画
-    showOverlay.value = false
-    // 等待动画完成后更新状态
-    setTimeout(() => {
-      rendered.value = false
-      visible.value = false
+    closeWithAnimation(() => {
       emit('confirm', timestamp, formatted)
-    }, 350)
+    })
   }
 }
 
@@ -773,75 +865,75 @@ const resetRange = (): void => {
 </script>
 
 <template>
-  <view v-if="rendered" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
+  <view v-if="rendered" class="fixed inset-0 z-[9999]" @touchmove.stop.prevent="noopTouchMove">
     <!-- 遮罩层 -->
     <view 
-      class="t-datetime-picker__mask" 
-      :class="{ 't-datetime-picker__mask--hidden': !showOverlay }"
+      class="absolute inset-0"
+      :style="maskStyle"
       @click="handleMaskClick" 
-      @touchmove.stop.prevent="() => {}"
+      @touchmove.stop.prevent="noopTouchMove"
     ></view>
 
     <!-- 选择器容器 -->
     <view 
-      class="t-datetime-picker__container" 
-      :class="{ 't-datetime-picker__container--hidden': !showOverlay }"
-      @touchmove.stop="() => {}"
+      class="absolute bottom-0 left-0 right-0 z-[1] max-h-[80vh] rounded-t-[12px] bg-white"
+      :style="containerStyle"
+      @touchmove.stop="noopTouchMove"
     >
       <!-- 工具栏 -->
-      <view v-if="showToolbar" class="t-datetime-picker__toolbar">
-        <view class="t-datetime-picker__btn t-datetime-picker__btn--cancel" @click="handleCancel">
-          <text class="t-datetime-picker__btn-text">{{ displayCancelText }}</text>
+      <view v-if="showToolbar" class="flex flex-row items-center justify-between border-b border-[#ebeef5] px-4 py-3">
+        <view class="cursor-pointer px-3 py-2" @click="handleCancel">
+          <text class="text-base text-[#606266]">{{ displayCancelText }}</text>
         </view>
-        <view class="t-datetime-picker__title">
-          <text class="t-datetime-picker__title-text">{{ displayTitle }}</text>
+        <view class="flex flex-1 items-center justify-center">
+          <text class="text-base font-medium text-[#303133]">{{ displayTitle }}</text>
         </view>
-        <view class="t-datetime-picker__btn t-datetime-picker__btn--confirm" @click="handleConfirm">
-          <text class="t-datetime-picker__btn-text t-datetime-picker__btn-text--primary" :style="confirmBtnStyle">{{ displayConfirmText }}</text>
+        <view class="cursor-pointer px-3 py-2" @click="handleConfirm">
+          <text class="text-base font-medium" :style="confirmBtnStyle">{{ displayConfirmText }}</text>
         </view>
       </view>
 
       <!-- 日历头部 -->
-      <view class="t-datetime-picker__header">
-        <view class="t-datetime-picker__header-btn" @click="handlePrev">
-          <text class="t-datetime-picker__header-arrow">‹</text>
+      <view class="flex flex-row items-center justify-between border-b border-[#f0f0f0] px-4 py-3">
+        <view class="flex h-9 w-9 items-center justify-center rounded-md bg-[#f5f7fa]" @click="handlePrev">
+          <text class="text-2xl font-bold text-[#606266]">‹</text>
         </view>
-        <view class="t-datetime-picker__header-title" @click="handleHeaderClick">
-          <text class="t-datetime-picker__header-title-text">{{ headerTitle }}</text>
+        <view class="mx-3 flex flex-1 items-center justify-center rounded-md bg-[#f5f7fa] px-4 py-2" @click="handleHeaderClick">
+          <text class="text-base font-medium text-[#303133]">{{ headerTitle }}</text>
         </view>
-        <view class="t-datetime-picker__header-btn" @click="handleNext">
-          <text class="t-datetime-picker__header-arrow">›</text>
+        <view class="flex h-9 w-9 items-center justify-center rounded-md bg-[#f5f7fa]" @click="handleNext">
+          <text class="text-2xl font-bold text-[#606266]">›</text>
         </view>
       </view>
 
       <!-- 范围选择提示 -->
-      <view v-if="range" class="t-datetime-picker__range-info">
-        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'start' }">
-          <text class="t-datetime-picker__range-label">{{ startText }}</text>
-          <text class="t-datetime-picker__range-value">{{ rangeStart !== null ? formatTimestamp(rangeStart) : '请选择' }}</text>
+      <view v-if="range" class="mx-3 my-3 flex flex-row items-center justify-center rounded-lg bg-[#f5f7fa] px-4 py-3">
+        <view class="flex min-w-[100px] flex-col items-center rounded-md px-4 py-2" :class="selectingRange === 'start' ? 'bg-[rgba(64,158,255,0.1)]' : ''">
+          <text class="mb-1 text-xs text-[#909399]">{{ startText }}</text>
+          <text class="text-sm font-medium text-[#303133]">{{ rangeStart !== null ? formatTimestamp(rangeStart) : '请选择' }}</text>
         </view>
-        <text class="t-datetime-picker__range-separator">~</text>
-        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'end' }">
-          <text class="t-datetime-picker__range-label">{{ endText }}</text>
-          <text class="t-datetime-picker__range-value">{{ rangeEnd !== null ? formatTimestamp(rangeEnd) : '请选择' }}</text>
+        <text class="mx-3 text-base text-[#909399]">~</text>
+        <view class="flex min-w-[100px] flex-col items-center rounded-md px-4 py-2" :class="selectingRange === 'end' ? 'bg-[rgba(64,158,255,0.1)]' : ''">
+          <text class="mb-1 text-xs text-[#909399]">{{ endText }}</text>
+          <text class="text-sm font-medium text-[#303133]">{{ rangeEnd !== null ? formatTimestamp(rangeEnd) : '请选择' }}</text>
         </view>
       </view>
 
+      <view v-if="!contentReady" class="h-[320px]"></view>
+
       <!-- 年份选择面板 -->
-      <view v-if="panelMode === 'year'" class="t-datetime-picker__panel">
-        <view class="t-datetime-picker__year-grid">
+      <view v-else-if="panelMode === 'year'" class="px-3 py-2">
+        <view class="flex flex-row flex-wrap py-2">
           <view
             v-for="(year, index) in yearList"
             :key="index"
-            class="t-datetime-picker__year-item"
-            :class="{
-              't-datetime-picker__year-item--selected': year === selectedYear,
-              't-datetime-picker__year-item--disabled': isYearDisabled(year)
-            }"
+            class="flex h-14 w-1/4 items-center justify-center"
+            :class="isYearDisabled(year) ? 'cursor-not-allowed' : 'cursor-pointer'"
             @click="handleYearSelect(year)"
           >
             <text
-              class="t-datetime-picker__year-text"
+              class="rounded-md px-4 py-2 text-[15px] text-[#303133]"
+              :class="isYearDisabled(year) ? 'text-[#c0c4cc]' : ''"
               :style="getSelectedItemStyle(year === selectedYear)"
             >{{ year }}</text>
           </view>
@@ -849,20 +941,18 @@ const resetRange = (): void => {
       </view>
 
       <!-- 月份选择面板 -->
-      <view v-else-if="panelMode === 'month' || mode === 'month'" class="t-datetime-picker__panel">
-        <view class="t-datetime-picker__month-grid">
+      <view v-else-if="panelMode === 'month' || mode === 'month'" class="px-3 py-2">
+        <view class="flex flex-row flex-wrap py-2">
           <view
             v-for="(name, index) in monthNames"
             :key="index"
-            class="t-datetime-picker__month-item"
-            :class="{
-              't-datetime-picker__month-item--selected': (index + 1) === selectedMonth && viewYear === selectedYear,
-              't-datetime-picker__month-item--disabled': isMonthDisabled(index + 1)
-            }"
+            class="flex h-14 w-1/4 items-center justify-center"
+            :class="isMonthDisabled(index + 1) ? 'cursor-not-allowed' : 'cursor-pointer'"
             @click="handleMonthSelect(index + 1)"
           >
             <text
-              class="t-datetime-picker__month-text"
+              class="rounded-md px-4 py-2 text-[15px] text-[#303133]"
+              :class="isMonthDisabled(index + 1) ? 'text-[#c0c4cc]' : ''"
               :style="getSelectedItemStyle((index + 1) === selectedMonth && viewYear === selectedYear)"
             >{{ name }}</text>
           </view>
@@ -870,27 +960,26 @@ const resetRange = (): void => {
       </view>
 
       <!-- 日期选择面板 -->
-      <view v-else class="t-datetime-picker__panel">
+      <view v-else class="px-3 py-2">
         <!-- 星期标题 -->
-        <view class="t-datetime-picker__weekdays">
-          <view v-for="(day, index) in weekDays" :key="index" class="t-datetime-picker__weekday">
-            <text class="t-datetime-picker__weekday-text">{{ day }}</text>
+        <view class="mb-2 flex flex-row">
+          <view v-for="(day, index) in weekDays" :key="index" class="flex h-9 flex-1 items-center justify-center">
+            <text class="text-sm text-[#909399]">{{ day }}</text>
           </view>
         </view>
 
         <!-- 日期网格 -->
-        <view class="t-datetime-picker__days">
+        <view class="flex flex-row flex-wrap">
           <view
             v-for="(item, index) in calendarDays"
             :key="index"
-            class="t-datetime-picker__day"
-            :class="getDayClass(item)"
+            :class="getDayWrapperClasses(item)"
             @click="handleDaySelect(item)"
           >
             <!-- 日期插槽 -->
             <slot name="day" :item="item">
               <text
-                class="t-datetime-picker__day-text"
+                :class="getDayTextClasses(item)"
                 :style="getDayStyle(item)"
               >{{ item.day }}</text>
             </slot>
@@ -899,14 +988,14 @@ const resetRange = (): void => {
       </view>
 
       <!-- 时间选择器（datetime 模式） -->
-      <view v-if="mode === 'datetime' && panelMode === 'date'" class="t-datetime-picker__time">
-        <view class="t-datetime-picker__time-label">
-          <text class="t-datetime-picker__time-label-text">选择时间</text>
+      <view v-if="contentReady && mode === 'datetime' && panelMode === 'date'" class="border-t border-[#ebeef5] px-4 py-3">
+        <view class="mb-3">
+          <text class="text-sm text-[#606266]">选择时间</text>
         </view>
-        <view class="t-datetime-picker__time-picker">
+        <view class="flex h-[120px] flex-row items-center justify-center">
           <!-- 小时选择 -->
           <scroll-view
-            class="t-datetime-picker__time-scroll"
+            class="h-[120px] w-20 rounded-lg bg-[#f5f7fa]"
             scroll-y
             :scroll-top="hourScrollTop"
             :scroll-with-animation="true"
@@ -915,18 +1004,17 @@ const resetRange = (): void => {
               v-for="hour in hourList"
               :key="hour"
               :id="`hour-${hour}`"
-              class="t-datetime-picker__time-item"
-              :class="{ 't-datetime-picker__time-item--selected': hour === selectedHour }"
+              class="flex h-10 cursor-pointer items-center justify-center"
               :style="getTimeItemStyle(hour === selectedHour)"
               @click="handleHourSelect(hour)"
             >
-              <text class="t-datetime-picker__time-item-text">{{ padZero(hour) }}</text>
+              <text class="text-base" :class="hour === selectedHour ? 'text-white' : 'text-[#303133]'">{{ padZero(hour) }}</text>
             </view>
           </scroll-view>
-          <text class="t-datetime-picker__time-separator">:</text>
+          <text class="mx-4 text-2xl text-[#303133]">:</text>
           <!-- 分钟选择 -->
           <scroll-view
-            class="t-datetime-picker__time-scroll"
+            class="h-[120px] w-20 rounded-lg bg-[#f5f7fa]"
             scroll-y
             :scroll-top="minuteScrollTop"
             :scroll-with-animation="true"
@@ -935,409 +1023,22 @@ const resetRange = (): void => {
               v-for="minute in minuteList"
               :key="minute"
               :id="`minute-${minute}`"
-              class="t-datetime-picker__time-item"
-              :class="{ 't-datetime-picker__time-item--selected': minute === selectedMinute }"
+              class="flex h-10 cursor-pointer items-center justify-center"
               :style="getTimeItemStyle(minute === selectedMinute)"
               @click="handleMinuteSelect(minute)"
             >
-              <text class="t-datetime-picker__time-item-text">{{ padZero(minute) }}</text>
+              <text class="text-base" :class="minute === selectedMinute ? 'text-white' : 'text-[#303133]'">{{ padZero(minute) }}</text>
             </view>
           </scroll-view>
         </view>
       </view>
 
       <!-- 底部快捷操作 -->
-      <view v-if="mode !== 'month'" class="t-datetime-picker__footer">
-        <view class="t-datetime-picker__footer-btn" @click="handleToday">
-          <text class="t-datetime-picker__footer-btn-text" :style="confirmBtnStyle">今天</text>
+      <view v-if="contentReady && mode !== 'month'" class="flex flex-row items-center justify-center border-t border-[#ebeef5] px-4 py-3">
+        <view class="rounded-md bg-[#f5f7fa] px-6 py-2" @click="handleToday">
+          <text class="text-sm" :style="confirmBtnStyle">今天</text>
         </view>
       </view>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-datetime-picker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-
-  &__mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 1;
-    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    
-    &--hidden {
-      opacity: 0;
-    }
-  }
-
-  &__container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ffffff;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    z-index: 1;
-    max-height: 80vh;
-    transform: translateY(0);
-    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    
-    &--hidden {
-      transform: translateY(100%);
-    }
-  }
-
-  &__toolbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid #ebeef5;
-  }
-
-  &__btn {
-    padding: 8px 12px;
-    cursor: pointer;
-
-    &-text {
-      font-size: 16px;
-      color: #606266;
-
-      &--primary {
-        color: #409eff;
-        font-weight: 500;
-      }
-    }
-  }
-
-  &__title {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &-text {
-      font-size: 16px;
-      font-weight: 500;
-      color: #303133;
-    }
-  }
-
-  &__header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f0;
-
-    &-btn {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      background-color: #f5f7fa;
-    }
-
-    &-arrow {
-      font-size: 24px;
-      color: #606266;
-      font-weight: bold;
-    }
-
-    &-title {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 16px;
-      border-radius: 6px;
-      background-color: #f5f7fa;
-      margin: 0 12px;
-
-      &-text {
-        font-size: 16px;
-        font-weight: 500;
-        color: #303133;
-      }
-    }
-  }
-
-  &__panel {
-    padding: 8px 12px;
-  }
-
-  &__weekdays {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 8px;
-  }
-
-  &__weekday {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 36px;
-
-    &-text {
-      font-size: 14px;
-      color: #909399;
-    }
-  }
-
-  &__days {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  &__day {
-    width: 14.285%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-    cursor: pointer;
-
-    &-text {
-      width: 36px;
-      height: 36px;
-      line-height: 36px;
-      text-align: center;
-      font-size: 15px;
-      color: #303133;
-      border-radius: 50%;
-    }
-
-    &--other &-text {
-      color: #c0c4cc;
-    }
-
-    &--today &-text {
-      color: #409eff;
-      font-weight: 500;
-    }
-
-    &--selected &-text {
-      background-color: #409eff;
-      color: #ffffff;
-    }
-
-    &--disabled {
-      cursor: not-allowed;
-    }
-
-    &--disabled &-text {
-      color: #c0c4cc;
-      background-color: transparent;
-    }
-
-    // 范围选择样式
-    &--range-start,
-    &--range-end {
-      .t-datetime-picker__day-text {
-        background-color: #409eff;
-        color: #ffffff;
-      }
-    }
-
-    &--range-start {
-      background: linear-gradient(to right, transparent 50%, rgba(64, 158, 255, 0.1) 50%);
-    }
-
-    &--range-end {
-      background: linear-gradient(to left, transparent 50%, rgba(64, 158, 255, 0.1) 50%);
-    }
-
-    &--in-range {
-      background-color: rgba(64, 158, 255, 0.1);
-
-      .t-datetime-picker__day-text {
-        color: #409eff;
-      }
-    }
-
-    // 当开始和结束是同一天时
-    &--range-start#{&}--range-end {
-      background: transparent;
-    }
-  }
-
-  &__year-grid,
-  &__month-grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 8px 0;
-  }
-
-  &__year-item,
-  &__month-item {
-    width: 25%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 56px;
-    cursor: pointer;
-
-    &--selected {
-      .t-datetime-picker__year-text,
-      .t-datetime-picker__month-text {
-        background-color: #409eff;
-        color: #ffffff;
-      }
-    }
-
-    &--disabled {
-      cursor: not-allowed;
-
-      .t-datetime-picker__year-text,
-      .t-datetime-picker__month-text {
-        color: #c0c4cc;
-      }
-    }
-  }
-
-  &__year-text,
-  &__month-text {
-    font-size: 15px;
-    color: #303133;
-    padding: 8px 16px;
-    border-radius: 6px;
-  }
-
-  &__time {
-    padding: 12px 16px;
-    border-top: 1px solid #ebeef5;
-
-    &-label {
-      margin-bottom: 12px;
-
-      &-text {
-        font-size: 14px;
-        color: #606266;
-      }
-    }
-
-    &-picker {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      height: 120px;
-    }
-
-    &-scroll {
-      width: 80px;
-      height: 120px;
-      background-color: #f5f7fa;
-      border-radius: 8px;
-    }
-
-    &-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 40px;
-      cursor: pointer;
-
-      &--selected {
-        background-color: #409eff;
-
-        .t-datetime-picker__time-item-text {
-          color: #ffffff;
-        }
-      }
-
-      &-text {
-        font-size: 16px;
-        color: #303133;
-      }
-    }
-
-    &-separator {
-      font-size: 24px;
-      color: #303133;
-      margin: 0 16px;
-    }
-  }
-
-  &__footer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 16px;
-    border-top: 1px solid #ebeef5;
-
-    &-btn {
-      padding: 8px 24px;
-      background-color: #f5f7fa;
-      border-radius: 6px;
-
-      &-text {
-        font-size: 14px;
-        color: #409eff;
-      }
-    }
-  }
-
-  // 范围选择样式
-  &__range-info {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 16px;
-    background-color: #f5f7fa;
-    margin: 0 12px;
-    border-radius: 8px;
-  }
-
-  &__range-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 6px;
-    min-width: 100px;
-
-    &--active {
-      background-color: rgba(64, 158, 255, 0.1);
-    }
-  }
-
-  &__range-label {
-    font-size: 12px;
-    color: #909399;
-    margin-bottom: 4px;
-  }
-
-  &__range-value {
-    font-size: 14px;
-    color: #303133;
-    font-weight: 500;
-  }
-
-  &__range-separator {
-    font-size: 16px;
-    color: #909399;
-    margin: 0 12px;
-  }
-}
-</style>

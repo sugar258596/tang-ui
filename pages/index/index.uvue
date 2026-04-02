@@ -4,6 +4,7 @@ import TCard from '@/components/TCard'
 import TList from '@/components/TList'
 import TListItem from '@/components/TListItem'
 import { useI18n } from '@/composables/useI18n.uts'
+import { useTheme } from '@/composables/useTheme.uts'
 
 /**
  * UI组件库首页导航
@@ -11,6 +12,7 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 // 多语言支持
 const { $t, locale, setLocale, availableLocales } = useI18n()
+const { isDarkMode, toggleDarkMode } = useTheme()
 
 // 组件列表
 interface ComponentGroup {
@@ -135,6 +137,25 @@ const handleLanguageChange = (lang: string): void => {
     duration: 1500
   })
 }
+
+const applyNavigationBarTheme = () => {
+  uni.setNavigationBarColor({
+    frontColor: '#ffffff',
+    backgroundColor: isDarkMode.value ? '#111827' : '#667eea',
+    animation: {
+      duration: 200,
+      timingFunc: 'easeIn'
+    }
+  })
+}
+
+const setThemeMode = (dark: boolean): void => {
+  toggleDarkMode(dark)
+}
+
+watch(isDarkMode, () => {
+  applyNavigationBarTheme()
+}, { immediate: true })
 </script>
 
 <template>
@@ -146,6 +167,26 @@ const handleLanguageChange = (lang: string): void => {
         <text class="title">UniApp X UI</text>
         <text class="subtitle">基于 UniApp X 的组件库</text>
         <text class="version">v1.0.0</text>
+
+        <view class="theme-switcher">
+          <text class="theme-label">主题模式</text>
+          <view class="theme-actions">
+            <view
+              class="theme-button"
+              :class="{ 'theme-button--active': !isDarkMode }"
+              @click="() => setThemeMode(false)"
+            >
+              <text class="theme-button-text">浅色</text>
+            </view>
+            <view
+              class="theme-button"
+              :class="{ 'theme-button--active': isDarkMode }"
+              @click="() => setThemeMode(true)"
+            >
+              <text class="theme-button-text">暗黑</text>
+            </view>
+          </view>
+        </view>
         
         <!-- 语言切换 -->
         <view class="language-switcher">
@@ -196,13 +237,13 @@ const handleLanguageChange = (lang: string): void => {
 <style lang="scss" scoped>
 .index-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--tui-page-bg);
 }
 
 .header {
   position: relative;
   padding: 40px 20px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--tui-page-gradient-start) 0%, var(--tui-page-gradient-end) 100%);
 
   &-bg {
     position: absolute;
@@ -228,7 +269,7 @@ const handleLanguageChange = (lang: string): void => {
   .title {
     font-size: 32px;
     font-weight: bold;
-    color: #ffffff;
+    color: var(--tui-text-inverse);
     display: block;
     margin-bottom: 8px;
   }
@@ -247,6 +288,53 @@ const handleLanguageChange = (lang: string): void => {
     padding: 4px 12px;
     border-radius: 20px;
     display: inline-block;
+  }
+}
+
+.theme-switcher {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .theme-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .theme-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .theme-button {
+    min-width: 74px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background-color: rgba(255, 255, 255, 0.12);
+    transition: all 0.25s ease;
+
+    &--active {
+      background-color: rgba(255, 255, 255, 0.92);
+      border-color: rgba(255, 255, 255, 0.92);
+
+      .theme-button-text {
+        color: #4f46e5;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .theme-button-text {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 600;
   }
 }
 
@@ -302,7 +390,7 @@ const handleLanguageChange = (lang: string): void => {
   .group-title {
     font-size: 18px;
     font-weight: 600;
-    color: #303133;
+    color: var(--tui-text-primary);
     margin-bottom: 12px;
     display: block;
     padding-left: 4px;
@@ -320,7 +408,7 @@ const handleLanguageChange = (lang: string): void => {
   &-text {
     display: block;
     font-size: 12px;
-    color: #909399;
+    color: var(--tui-text-tertiary);
     line-height: 1.8;
   }
 }

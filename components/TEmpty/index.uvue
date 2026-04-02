@@ -29,36 +29,35 @@
 
 <template>
 	<view :class="[
-			'empty-container',
-			'flex flex-col items-center justify-center',
+			'flex min-h-[300rpx] flex-col items-center justify-center',
 			compact ? 'py-12' : 'py-20'
 		]">
 		<slot>
 			<view :class="[
-			'empty-image',
-			compact ? 'w-24 h-24 mb-3' : 'w-32 h-32 mb-4'
-			]">
+			'animate-fade-in-soft',
+			compact ? 'mb-3 h-24 w-24' : 'mb-4 h-32 w-32'
+			]" style="opacity: 0.65;">
 				<image :src="image" class="w-full h-full" mode="aspectFit" :show-loading="false" />
 			</view>
 		</slot>
 
-		<view class="empty-content">
+		<view class="w-full">
 			<text :class="[
-					'empty-title block text-gray-700 dark:text-gray-300 text-center',
+					'block text-center text-[#374151] leading-[1.4]',
 					compact ? 'text-base font-medium' : 'text-lg font-medium',
 				]">
 				{{ displayTitle }}
 			</text>
 
 			<text v-if="displayDescription" :class="[
-					'empty-description block mt-2 text-gray-500 dark:text-gray-400',
+					'mx-auto mt-2 block max-w-[80vw] text-center text-[#6b7280] leading-[1.5]',
 					compact ? 'text-xs' : 'text-sm',
 				]">
 				{{ displayDescription }}
 			</text>
 		</view>
 
-		<view v-if="showAction" class="empty-action mt-6">
+		<view v-if="showAction" class="mt-6 w-full max-w-[200px]">
 			<TButton 
 				type="primary" 
 				size="medium" 
@@ -69,60 +68,3 @@
 		</view>
 	</view>
 </template>
-
-<style lang="scss" scoped>
-	.empty-container {
-		min-height: 300rpx;
-	}
-
-	.empty-image {
-		opacity: 0.65;
-
-		// 深色模式适配
-		:deep(img) {
-			filter: var(--empty-image-filter, none);
-		}
-	}
-
-	// 深色模式
-	@media (prefers-color-scheme: dark) {
-		.empty-image {
-			opacity: 0.5;
-
-			:deep(img) {
-				filter: brightness(0.8);
-			}
-		}
-	}
-
-	.empty-title {
-		line-height: 1.4;
-	}
-
-	.empty-description {
-		line-height: 1.5;
-		max-width: 80vw;
-	}
-
-	.empty-action {
-		width: 100%;
-		max-width: 200px;
-	}
-
-	// 动画效果
-	.empty-image {
-		animation: fadeIn 0.5s ease;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(10px);
-		}
-
-		to {
-			opacity: 0.65;
-			transform: translateY(0);
-		}
-	}
-</style>

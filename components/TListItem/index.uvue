@@ -27,14 +27,17 @@ const emit = defineEmits<{
  * 计算列表项样式类
  */
 const itemClass = computed<string>(() => {
-  const classes: string[] = ['t-list-item']
+  const classes: string[] = [
+    't-list-item',
+    "relative flex flex-row items-center gap-[24rpx] bg-white px-4 py-3 after:absolute after:bottom-0 after:left-4 after:right-0 after:h-px after:bg-[#ebeef5] after:content-[''] last:after:hidden",
+  ]
 
   if (props.clickable && !props.disabled) {
-    classes.push('t-list-item--clickable')
+    classes.push('cursor-pointer transition-colors duration-300 active:bg-[#f5f7fa]')
   }
 
   if (props.disabled) {
-    classes.push('t-list-item--disabled')
+    classes.push('cursor-not-allowed opacity-50')
   }
 
   return classes.join(' ')
@@ -53,109 +56,22 @@ const handleClick = (): void => {
 <template>
   <view :class="itemClass" @click="handleClick">
     <!-- 左侧图标 -->
-    <view v-if="icon" class="t-list-item__icon">
-      <text class="t-list-item__icon-text">{{ icon }}</text>
+    <view v-if="icon" class="t-list-item__icon flex items-center justify-center">
+      <text class="t-list-item__icon-text text-[20px] text-[#909399]">{{ icon }}</text>
     </view>
 
     <!-- 中间内容 -->
-    <view class="t-list-item__content">
+    <view class="t-list-item__content flex flex-1 flex-col">
       <slot>
-        <text v-if="title" class="t-list-item__title">{{ title }}</text>
-        <text v-if="description" class="t-list-item__description">{{ description }}</text>
+        <text v-if="title" class="t-list-item__title text-base leading-6 text-[#303133]">{{ title }}</text>
+        <text v-if="description" class="t-list-item__description mt-1 text-sm leading-5 text-[#909399]">{{ description }}</text>
       </slot>
     </view>
 
     <!-- 右侧内容 -->
-    <view class="t-list-item__extra">
-      <text v-if="extra" class="t-list-item__extra-text">{{ extra }}</text>
-      <text v-if="arrow" class="t-list-item__arrow">›</text>
+    <view class="t-list-item__extra ml-3 flex items-center">
+      <text v-if="extra" class="t-list-item__extra-text text-sm text-[#909399]">{{ extra }}</text>
+      <text v-if="arrow" class="t-list-item__arrow ml-2 text-[20px] text-[#c0c4cc]">›</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-list-item {
-  display: flex;
-  flex-direction: row;
-  gap: 24rpx;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 16px;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background-color: #ebeef5;
-  }
-
-  &:last-child::after {
-    display: none;
-  }
-
-  &--clickable {
-    cursor: pointer;
-    transition: background-color 0.3s;
-
-    &:active {
-      background-color: #f5f7fa;
-    }
-  }
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &-text {
-      font-size: 20px;
-      color: #909399;
-    }
-  }
-
-  &__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__title {
-    font-size: 16px;
-    color: #303133;
-    line-height: 24px;
-  }
-
-  &__description {
-    font-size: 14px;
-    color: #909399;
-    line-height: 20px;
-    margin-top: 4px;
-  }
-
-  &__extra {
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
-
-    &-text {
-      font-size: 14px;
-      color: #909399;
-    }
-  }
-
-  &__arrow {
-    font-size: 20px;
-    color: #c0c4cc;
-    margin-left: 8px;
-  }
-}
-</style>

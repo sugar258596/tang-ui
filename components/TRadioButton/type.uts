@@ -48,7 +48,7 @@ export interface TRadioButtonProps {
 
   /**
    * 非活动状态颜色
-   * @default '#666666'
+   * @default '#c8c9cc'
    */
   inactiveColor?: string
 

@@ -49,14 +49,16 @@ const currentLength = computed((): number => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-textarea']
+  const classes: string[] = [
+    't-textarea relative rounded border border-[#dcdfe6] bg-white px-3 py-2 transition-colors duration-200',
+  ]
 
   if (props.disabled) {
-    classes.push('t-textarea--disabled')
+    classes.push('cursor-not-allowed border-[#e4e7ed] bg-[#f5f7fa]')
   }
 
   if (isFocused.value) {
-    classes.push('t-textarea--focused')
+    classes.push('border-[#1890ff]')
   }
 
   if (props.customClass) {
@@ -132,7 +134,8 @@ const handleClear = (): void => {
   <view :class="containerClasses" :style="containerStyle">
     <!-- 文本域 -->
     <textarea
-      class="t-textarea__input"
+      class="t-textarea__input w-full resize-none border-none bg-transparent text-sm leading-[1.5] text-[#303133] outline-none box-border"
+      :class="{ 'cursor-not-allowed text-[#c0c4cc]': disabled }"
       :style="textareaStyle"
       :value="modelValue"
       :placeholder="placeholder"
@@ -147,93 +150,20 @@ const handleClear = (): void => {
     />
 
     <!-- 底部操作栏 -->
-    <view v-if="showCount || clearable" class="t-textarea__footer">
+    <view v-if="showCount || clearable" class="t-textarea__footer mt-2 flex items-center justify-between border-t border-[#f0f0f0] pt-2">
       <!-- 字数统计 -->
-      <text v-if="showCount" class="t-textarea__count">
+      <text v-if="showCount" class="t-textarea__count text-xs text-[#909399]">
         {{ currentLength }}{{ maxlength > 0 ? `/${maxlength}` : '' }}
       </text>
 
       <!-- 清空按钮 -->
       <view
         v-if="clearable && modelValue.length > 0 && !disabled"
-        class="t-textarea__clear"
+        class="t-textarea__clear flex h-5 w-5 items-center justify-center rounded-full bg-[#c0c4cc] transition-colors duration-200 active:bg-[#909399]"
         @click="handleClear"
       >
-        <text class="t-textarea__clear-icon">✕</text>
+        <text class="t-textarea__clear-icon text-xs text-white">✕</text>
       </view>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-textarea {
-  position: relative;
-  background-color: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  padding: 8px 12px;
-  transition: border-color 0.2s;
-
-  &--focused {
-    border-color: #1890ff;
-  }
-
-  &--disabled {
-    background-color: #f5f7fa;
-    border-color: #e4e7ed;
-    cursor: not-allowed;
-
-    .t-textarea__input {
-      color: #c0c4cc;
-      cursor: not-allowed;
-    }
-  }
-}
-
-.t-textarea__input {
-  width: 100%;
-  font-size: 14px;
-  color: #303133;
-  line-height: 1.5;
-  box-sizing: border-box;
-  resize: none;
-  border: none;
-  outline: none;
-  background-color: transparent;
-}
-
-.t-textarea__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.t-textarea__count {
-  font-size: 12px;
-  color: #909399;
-}
-
-.t-textarea__clear {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  border-radius: 50%;
-  background-color: #c0c4cc;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #909399;
-  }
-}
-
-.t-textarea__clear-icon {
-  font-size: 12px;
-  color: #fff;
-}
-</style>

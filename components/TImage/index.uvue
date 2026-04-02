@@ -1,6 +1,6 @@
 <script setup lang="uts">
 import { ref, computed } from 'vue'
-import type { ImageMode, ImageShape,TImageProps } from './type.uts'
+import type { TImageProps } from './type.uts'
 
 /**
  * TImage 图片组件
@@ -140,8 +140,8 @@ const handlePreview = (): void => {
 
 <template>
   <view
-    class="t-image"
-    :class="{ 't-image--clickable': previewable }"
+    class="t-image relative inline-block overflow-hidden bg-[#f5f5f5]"
+    :class="{ 'cursor-pointer': previewable }"
     :style="containerStyle"
     @click="handleClick"
   >
@@ -151,87 +151,24 @@ const handlePreview = (): void => {
       :src="src"
       :mode="mode"
       :lazy-load="lazyLoad"
-      :class="imageClasses"
+      :class="`${imageClasses} h-full w-full block`"
       @load="handleLoad"
       @error="handleError"
     />
 
     <!-- 加载中状态 -->
-    <view v-if="loading && showLoading" class="t-image__loading">
-      <view class="t-image__loading-icon"></view>
-      <text v-if="showText" class="t-image__loading-text">{{ loadingText }}</text>
+    <view v-if="loading && showLoading" class="t-image__loading absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-[#f5f5f5]">
+      <view class="t-image__loading-icon h-8 w-8 animate-spin rounded-full border-[3px] border-solid border-[#e0e0e0] border-t-[#1890ff]"></view>
+      <text v-if="showText" class="t-image__loading-text mt-2 text-xs text-[#999]">{{ loadingText }}</text>
     </view>
 
     <!-- 加载失败状态 -->
-    <view v-if="loadError && showError" class="t-image__error">
-      <text class="t-image__error-icon">✕</text>
-      <text v-if="showText" class="t-image__error-text">{{ errorText }}</text>
+    <view v-if="loadError && showError" class="t-image__error absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-[#f5f5f5]">
+      <text class="t-image__error-icon text-[32px] text-[#ccc]">✕</text>
+      <text v-if="showText" class="t-image__error-text mt-2 text-xs text-[#999]">{{ errorText }}</text>
     </view>
 
     <!-- 插槽：自定义内容 -->
     <slot></slot>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-image {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  background-color: #f5f5f5;
-
-  &--clickable {
-    cursor: pointer;
-  }
-}
-
-.t-image__img {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.t-image__loading,
-.t-image__error {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f5f5f5;
-}
-
-.t-image__loading-icon {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #e0e0e0;
-  border-top-color: #1890ff;
-  border-radius: 50%;
-  animation: t-image-rotate 0.8s linear infinite;
-}
-
-.t-image__loading-text,
-.t-image__error-text {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #999;
-}
-
-.t-image__error-icon {
-  font-size: 32px;
-  color: #ccc;
-}
-
-@keyframes t-image-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

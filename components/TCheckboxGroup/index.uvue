@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   direction: 'vertical',
   size: 'medium',
   activeColor: '#00bba7',
-  inactiveColor: '#c8c9cc',
+  inactiveColor: 'var(--tui-border-strong)',
   max: -1,
   disabled: false,
   customClass: '',
@@ -72,6 +72,7 @@ const currentSize = computed(() => sizeMap[props.size])
 const cssVars = computed(() => ({
   '--icon-size': `${currentSize.value.icon}rpx`,
   '--checkmark-size': `${currentSize.value.fontSize}rpx`,
+  '--label-size': `${currentSize.value.fontSize}rpx`,
   '--active-color': props.activeColor,
   '--inactive-color': props.inactiveColor
 }))
@@ -80,79 +81,26 @@ const cssVars = computed(() => ({
 <template>
   <view
     class="t-checkbox-group"
-    :class="[`t-checkbox-group--${direction}`, customClass]"
+    :class="[direction === 'horizontal' ? 'flex flex-row flex-wrap' : 'flex flex-col', customClass]"
     :style="[customStyle, cssVars]"
   >
     <view
       v-for="(option, index) in options"
       :key="index"
-      class="t-checkbox-group__item"
-      :class="{ 't-checkbox-group__item--disabled': disabled || option.disabled }"
+      class="t-checkbox-group__item flex flex-row items-center py-3"
+      :class="{
+        'opacity-50 cursor-not-allowed': disabled || option.disabled,
+        'mr-6': direction === 'horizontal'
+      }"
       @click="handleChange(option)"
     >
-      <view class="t-checkbox-group__icon" :class="{ 't-checkbox-group__icon--checked': isChecked(option) }">
-        <text v-if="isChecked(option)" class="t-checkbox-group__check">✓</text>
+      <view
+        class="t-checkbox-group__icon mr-4 flex items-center justify-center rounded-[8rpx] border-solid transition-all duration-300"
+        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? props.activeColor : props.inactiveColor}; ${isChecked(option) ? `background-color: ${props.activeColor};` : ''}`"
+      >
+        <text v-if="isChecked(option)" class="t-checkbox-group__check font-bold text-white" :style="`font-size: var(--checkmark-size);`">✓</text>
       </view>
-      <text class="t-checkbox-group__label">{{ option.label }}</text>
+      <text class="t-checkbox-group__label text-[#323233]" :style="`font-size: var(--label-size);`">{{ option.label }}</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-checkbox-group {
-  &--vertical {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &--horizontal {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
-.t-checkbox-group__item {
-  display: flex;
-	flex-direction: row;
-  padding: 12px 0;
-  cursor: pointer;
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .t-checkbox-group--horizontal & {
-    margin-right: 24px;
-  }
-}
-
-.t-checkbox-group__icon {
-  width: var(--icon-size);
-  height: var(--icon-size);
-  border: 2rpx solid var(--inactive-color);
-  border-radius: 8rpx;
-  margin-right: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-
-  &--checked {
-    background-color: var(--active-color);
-    border-color: var(--active-color);
-  }
-}
-
-.t-checkbox-group__check {
-  font-size: var(--checkmark-size);
-  color: #fff;
-  font-weight: bold;
-}
-
-.t-checkbox-group__label {
-  font-size: 14px;
-  color: #323233;
-}
-</style>

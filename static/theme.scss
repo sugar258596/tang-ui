@@ -1,0 +1,235 @@
+:root {
+  --primary-color: #007aff;
+  --success-color: #4cd964;
+  --warning-color: #f0ad4e;
+  --danger-color: #dd524d;
+  --info-color: #909399;
+  --text-color: #303133;
+  --border-color: #dcdfe6;
+  --bg-color: #f5f7fa;
+  --border-radius: 8rpx;
+  --font-size: 28rpx;
+  --tui-page-bg: #f5f7fa;
+  --tui-page-bg-elevated: #ffffff;
+  --tui-surface: #ffffff;
+  --tui-surface-muted: #f5f7fa;
+  --tui-surface-soft: #fafafa;
+  --tui-surface-overlay: rgba(255, 255, 255, 0.92);
+  --tui-surface-primary-soft: #ecf5ff;
+  --tui-surface-success-soft: #f0f9ff;
+  --tui-surface-warning-soft: #fdf6ec;
+  --tui-surface-danger-soft: #fef0f0;
+  --tui-text-primary: #303133;
+  --tui-text-secondary: #606266;
+  --tui-text-tertiary: #909399;
+  --tui-text-disabled: #c0c4cc;
+  --tui-text-inverse: #ffffff;
+  --tui-border: #dcdfe6;
+  --tui-border-soft: #ebeef5;
+  --tui-border-strong: #c8c9cc;
+  --tui-shadow-color: rgba(0, 0, 0, 0.12);
+  --tui-mask: rgba(0, 0, 0, 0.5);
+  --tui-nav-bg: #667eea;
+  --tui-nav-text: #ffffff;
+  --tui-page-gradient-start: #667eea;
+  --tui-page-gradient-end: #764ba2;
+}
+
+page,
+body,
+uni-page-body,
+#app {
+  background-color: var(--tui-page-bg);
+  color: var(--tui-text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.t-dark {
+  color-scheme: dark;
+}
+
+.t-dark .bg-white,
+.t-dark .bg-\[\#ffffff\],
+.t-dark .popup-content,
+.t-dark .t-dialog__content,
+.t-dark .select-root,
+.t-dark .t-image,
+.t-dark .t-navbar,
+.t-dark .t-card,
+.t-dark .group-card {
+  background-color: var(--tui-surface) !important;
+}
+
+.t-dark .bg-\[\#f5f5f5\],
+.t-dark .bg-\[\#f5f7fa\],
+.t-dark .bg-\[\#fafafa\],
+.t-dark .bg-\[\#f9fafb\],
+.t-dark .bg-\[\#f4f4f5\],
+.t-dark .bg-\[\#fffbe8\],
+.t-dark .bg-\[\#f8f8f8\],
+.t-dark .bg-\[\#f5f7fa\],
+.t-dark .t-image__loading,
+.t-dark .t-image__error {
+  background-color: var(--tui-surface-muted) !important;
+}
+
+.t-dark .bg-\[\#ecf5ff\] {
+  background-color: var(--tui-surface-primary-soft) !important;
+}
+
+.t-dark .bg-\[\#f0f9ff\] {
+  background-color: var(--tui-surface-success-soft) !important;
+}
+
+.t-dark .bg-\[\#fdf6ec\] {
+  background-color: var(--tui-surface-warning-soft) !important;
+}
+
+.t-dark .bg-\[\#fef0f0\] {
+  background-color: var(--tui-surface-danger-soft) !important;
+}
+
+.t-dark .bg-black\/50,
+.t-dark .bg-\[rgba\(0\,0\,0\,0\.5\)\],
+.t-dark .popup-overlay {
+  background-color: var(--tui-mask) !important;
+}
+
+.t-dark .text-\[\#303133\],
+.t-dark .text-\[\#323233\],
+.t-dark .text-\[\#333333\],
+.t-dark .text-\[\#374151\],
+.t-dark .text-\[\#2C405A\],
+.t-dark .popup-title,
+.t-dark .group-title {
+  color: var(--tui-text-primary) !important;
+}
+
+.t-dark .text-\[\#606266\],
+.t-dark .text-\[\#646566\],
+.t-dark .text-\[\#6b7280\],
+.t-dark .text-\[\#555555\],
+.t-dark .text-\[\#3F536E\] {
+  color: var(--tui-text-secondary) !important;
+}
+
+.t-dark .text-\[\#909399\],
+.t-dark .text-\[\#969799\],
+.t-dark .text-\[\#999\],
+.t-dark .text-\[\#9ca3af\] {
+  color: var(--tui-text-tertiary) !important;
+}
+
+.t-dark .text-\[\#c0c4cc\],
+.t-dark .text-\[\#ccc\] {
+  color: var(--tui-text-disabled) !important;
+}
+
+.t-dark .border-\[\#dcdfe6\],
+.t-dark .border-\[\#ebeef5\],
+.t-dark .border-\[\#ebedf0\],
+.t-dark .border-\[\#e4e7ed\],
+.t-dark .border-\[\#e8e8e8\],
+.t-dark .border-\[\#e0e0e0\],
+.t-dark .border-\[\#f0f0f0\],
+.t-dark .border-\[\#f5f7fa\],
+.t-dark .border-\[\#c8c9cc\],
+.t-dark .border-\[\#ebedf0\] {
+  border-color: var(--tui-border) !important;
+}
+
+.t-dark .after\:bg-\[\#ebeef5\]::after {
+  background-color: var(--tui-border-soft) !important;
+}
+
+.t-dark .shadow-\[0_2px_12px_0_rgba\(0\,0\,0\,0\.1\)\] {
+  box-shadow: 0 12px 28px 0 var(--tui-shadow-color) !important;
+}
+
+.t-dark .shadow-\[0_4rpx_20rpx_rgba\(0\,0\,0\,0\.15\)\] {
+  box-shadow: 0 8px 24px 0 var(--tui-shadow-color) !important;
+}
+
+.t-dark .shadow-\[0_2px_4px_rgba\(0\,0\,0\,0\.2\)\] {
+  box-shadow: 0 2px 10px 0 var(--tui-shadow-color) !important;
+}
+
+.t-dark .active\:bg-\[\#f5f5f5\]:active,
+.t-dark .active\:bg-\[\#f5f7fa\]:active,
+.t-dark .active\:bg-\[\#e0e0e0\]:active,
+.t-dark .active\:bg-\[\#ecf5ff\]:active {
+  background-color: var(--tui-surface-soft) !important;
+}
+
+.t-dark .placeholder\:text-\[\#c0c4cc\]::placeholder {
+  color: var(--tui-text-disabled) !important;
+}
+
+.t-dark .t-image__loading-icon {
+  border-color: var(--tui-border-soft) !important;
+  border-top-color: var(--primary-color) !important;
+}
+
+.t-dark .index-page,
+.t-dark .component-list {
+  background-color: var(--tui-page-bg) !important;
+}
+
+.t-dark .header {
+  background: linear-gradient(135deg, var(--tui-page-gradient-start) 0%, var(--tui-page-gradient-end) 100%) !important;
+}
+
+.t-dark .language-option {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.t-dark .language-option.active {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.t-dark .footer-text {
+  color: var(--tui-text-tertiary) !important;
+}
+
+.t-dark .popup-close-icon,
+.t-dark .t-dialog__close-icon {
+  color: var(--tui-text-tertiary) !important;
+}
+
+.t-dark .t-switch__text,
+.t-dark .t-list__title-text,
+.t-dark .t-list-item__description,
+.t-dark .t-list-item__extra-text,
+.t-dark .t-divider__text,
+.t-dark .t-loading__text,
+.t-dark .t-input__count-text,
+.t-dark .t-textarea__count {
+  color: var(--tui-text-tertiary) !important;
+}
+
+.t-dark .t-list-item,
+.t-dark .t-list-item__icon-text,
+.t-dark .t-list-item__title,
+.t-dark .t-navbar__title-text,
+.t-dark .t-navbar__icon,
+.t-dark .t-grid-item text,
+.t-dark .t-search-bar__input,
+.t-dark .t-picker__item-text,
+.t-dark .t-picker__title-text {
+  color: var(--tui-text-primary) !important;
+}
+
+.t-dark .t-input,
+.t-dark .t-textarea,
+.t-dark .t-search-bar__content,
+.t-dark .select-root,
+.t-dark .t-number-input input {
+  background-color: var(--tui-surface) !important;
+  border-color: var(--tui-border) !important;
+  color: var(--tui-text-primary) !important;
+}

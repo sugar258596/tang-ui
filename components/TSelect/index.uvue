@@ -1,4 +1,5 @@
 <script  setup lang="uts" >
+	import { computed, onBeforeUnmount, ref, watch } from 'vue'
 	import Icon from '../TIcon'
 	import { useI18n } from '../../composables/useI18n.uts'
 	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue, CascadeSelectValue } from './type.uts'
@@ -13,8 +14,8 @@
 		readonly: false,
 		multiple: false,
 		height: 55,
-		background: '#ffffff',
-		borderColor: '#c1c2c3ff',
+		background: 'var(--tui-surface)',
+		borderColor: 'var(--tui-border-strong)',
 		showClear: true,
 		maxDisplayCount: 3,
 		placement: 'bottom',
@@ -138,11 +139,11 @@
 	const sizeClass = computed(() => {
 		switch (props.size) {
 			case 'small':
-				return 'select-small'
+				return 'h-[44rpx] text-[24rpx]'
 			case 'large':
-				return 'select-large'
+				return 'h-[66rpx] text-[32rpx]'
 			default:
-				return 'select-medium'
+				return 'h-[55rpx] text-[28rpx]'
 		}
 	})
 
@@ -182,6 +183,20 @@
 	})
 
 	// ========== 方法 ==========
+	const disableBodyScroll = () => {
+		// #ifdef H5
+		document.body.style.overflow = 'hidden'
+		document.body.style.touchAction = 'none'
+		// #endif
+	}
+
+	const enableBodyScroll = () => {
+		// #ifdef H5
+		document.body.style.overflow = ''
+		document.body.style.touchAction = ''
+		// #endif
+	}
+
 	const openPicker = () => {
 		if (props.disabled || props.readonly) return
 		showPopup.value = true
@@ -403,19 +418,33 @@
 			cascadeSelectedOptions.value = selectedOpts
 		}
 	}, { immediate: true })
+
+	watch(showPopup, (newVal) => {
+		if (newVal) {
+			disableBodyScroll()
+			return
+		}
+
+		enableBodyScroll()
+	}, { immediate: true })
+
+	onBeforeUnmount(() => {
+		enableBodyScroll()
+	})
 </script>
 
 <template>
-	<view class="select-container select-root">
+	<view class="select-root relative w-full overflow-visible">
 		<!-- 选择框 -->
-		<view class="select-box select-root" :class="[
+		<view class="select-root relative z-[2] flex w-full flex-row items-center justify-between rounded-[8rpx] border border-solid px-[24rpx] transition-all duration-200" :class="[
 				sizeClass,
 				alignClass,
 				{
-					'select-disabled': disabled,
-					'select-readonly': readonly,
-					'select-active': showPopup,
-					'has-value': isCascade
+					'cursor-not-allowed opacity-60': disabled,
+					'cursor-default': readonly && !disabled,
+					'shadow-[0_0_0_2rpx_rgba(24,144,255,0.1)]': showPopup,
+					'cursor-pointer active:scale-[0.99]': !disabled && !readonly,
+					'text-[#333333]': isCascade
 						? cascadeSelectedOptions.length > 0
 						: (props.multiple ? (model as MultipleSelectValue)?.length : model) != null
 				}
@@ -424,528 +453,130 @@
 				backgroundColor: disabled ? '#f5f5f5' : background,
 				borderColor: showPopup ? activeColor : borderColor
 			}" @click="openPicker">
-			<text class="select-text truncate" :class="displayText === (placeholder || $t('form.selectPlaceholder')) ? 'placeholder-text' : 'value-text'">
+			<text
+				class="flex-1 overflow-hidden text-ellipsis text-center whitespace-nowrap"
+				:class="displayText === (placeholder || $t('form.selectPlaceholder')) ? 'text-[#c0c4cc]' : 'font-normal text-[#333333]'">
 				{{ displayText }}
 			</text>
 
 			<!-- 右侧图标容器 -->
-			<view class="select-icons">
+			<view class="ml-[16rpx] flex flex-row items-center gap-[8rpx]">
 				<!-- 清空按钮 -->
-				<view v-if="showClearIcon" class="clear-icon" @click.stop="clearValue">
+				<view v-if="showClearIcon" class="flex h-[28rpx] w-[28rpx] items-center justify-center rounded-full transition-all duration-200 active:scale-90 active:bg-[#f5f5f5]" @click.stop="clearValue">
 					<Icon name="icon-shanchu" color="#c0c4cc" />
 				</view>
 
 				<!-- 下拉箭头 -->
-				<view class="select-arrow" :class="{ 'arrow-up': showPopup }">
+				<view class="flex items-center justify-center transition-transform duration-200" :class="{ 'rotate-180': showPopup }">
 					<Icon name="icon-xiajiantou" :size="20" color="#999" />
 				</view>
 			</view>
 		</view>
 
 		<!-- 遮罩层 -->
-		<transition name="fade">
-			<view v-if="showPopup" class="dropdown-mask" @tap="handleMaskClick"></view>
-		</transition>
+		<view
+			v-if="showPopup"
+			class="fixed inset-0 z-[99] bg-transparent touch-none"
+			@tap="handleMaskClick"
+			@touchmove.stop.prevent></view>
 
 		<!-- 下拉选项列表 -->
-		<transition name="dropdown">
-			<view v-if="showPopup" class="dropdown-list select-root" :class="[
-					`placement-${props.placement}`,
-					{ 'cascade-dropdown': isCascade }
-				]" :style="dropdownStyle" @tap="handleDropdownClick">
+		<view
+			v-if="showPopup"
+			class="select-root absolute left-0 right-0 z-[100] overflow-hidden rounded-[8rpx] border border-solid border-[#ebeef5] bg-white shadow-[0_4rpx_20rpx_rgba(0,0,0,0.15)]"
+			:class="isCascade ? 'max-h-[500rpx]' : 'max-h-[400rpx]'"
+			:style="dropdownStyle"
+			@tap="handleDropdownClick">
 
 				<!-- ====== 级联模式 ====== -->
 				<template v-if="isCascade">
 					<!-- 面包屑导航 -->
-					<view v-if="breadcrumbItems.length > 0" class="cascade-breadcrumb">
+					<view v-if="breadcrumbItems.length > 0" class="flex flex-row flex-wrap items-center border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[24rpx] py-[16rpx]">
 						<template v-for="(item, idx) in breadcrumbItems" :key="idx">
-							<text v-if="idx > 0" class="cascade-breadcrumb-separator">/</text>
-							<view class="cascade-breadcrumb-item" @click.stop="goToCascadeLevel(idx)">
-								<text class="cascade-breadcrumb-text" :style="{ color: idx === currentCascadeLevel ? activeColor : '#606266' }">{{ item }}</text>
+							<text v-if="idx > 0" class="mx-[4rpx] text-[22rpx] text-[#c0c4cc]">/</text>
+							<view class="cursor-pointer rounded-[4rpx] px-[8rpx] py-[4rpx] transition-colors duration-200 active:bg-[#ecf5ff]" @click.stop="goToCascadeLevel(idx)">
+								<text class="text-[24rpx] text-[#606266]" :style="{ color: idx === currentCascadeLevel ? activeColor : '#606266' }">{{ item }}</text>
 							</view>
 						</template>
 					</view>
 
 					<!-- 级联面板 -->
-					<scroll-view class="dropdown-scroll cascade-panel" scroll-y :scroll-top="0">
+					<scroll-view class="max-h-[440rpx]" scroll-y :scroll-top="0">
 						<view v-for="option in currentCascadeOptions" :key="option.value"
-							class="dropdown-item select-root"
+							class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0"
 							:class="[
 								alignClass,
 								{
-									'dropdown-item-selected': isCascadeOptionSelected(option, currentCascadeLevel),
-									'dropdown-item-disabled': option.disabled || disabled
+									'bg-[#ecf5ff]': isCascadeOptionSelected(option, currentCascadeLevel),
+									'cursor-not-allowed bg-[#f9fafb] opacity-50': option.disabled || disabled
 								}
 							]"
 							@click="handleCascadeSelect(option, currentCascadeLevel)">
 
-							<text class="dropdown-item-text"
+							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[28rpx] text-[#606266]"
 								:style="isCascadeOptionSelected(option, currentCascadeLevel) ? { color: activeColor, fontWeight: '500' } : {}">
 								{{ option.label }}
 							</text>
 
 							<!-- 有子级时显示右箭头 -->
-							<view v-if="option.children != null && option.children.length > 0" class="cascade-arrow">
+							<view v-if="option.children != null && option.children.length > 0" class="ml-[16rpx] flex -rotate-90 items-center justify-center">
 								<Icon name="icon-xiajiantou" :size="12" color="#999" />
 							</view>
 
 							<!-- 叶子节点被选中时显示 ✓ -->
 							<text v-else-if="isCascadeOptionSelected(option, currentCascadeLevel)"
-								class="dropdown-item-check" :style="{ color: activeColor }">
+								class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
 								✓
 							</text>
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="currentCascadeOptions.length === 0" class="dropdown-empty" :class="alignClass">
-							<text class="empty-text">{{ $t('form.noOptions') }}</text>
+						<view v-if="currentCascadeOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
+							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>
 				</template>
 
 				<!-- ====== 普通模式（单选/多选） ====== -->
 				<template v-else>
-					<scroll-view class="dropdown-scroll" scroll-y :scroll-top="0">
+					<scroll-view class="max-h-[400rpx]" scroll-y :scroll-top="0">
 						<!-- 多选模式下的全选/清空按钮 -->
-						<view v-if="props.multiple" class="dropdown-actions">
-							<view class="dropdown-action-item" @click.stop="selectAll">
-								<text class="action-text" :style="{ color: activeColor }">{{ $t('form.selectAll') }}</text>
+						<view v-if="props.multiple" class="flex flex-row justify-between border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[16rpx] py-[12rpx]">
+							<view class="cursor-pointer py-[8rpx] text-center transition-all duration-200 active:bg-[#f5f7fa]" @click.stop="selectAll">
+								<text class="text-[24rpx] font-medium" :style="{ color: activeColor }">{{ $t('form.selectAll') }}</text>
 							</view>
-							<view class="dropdown-action-item" @click.stop="clearValue">
-								<text class="action-text" :style="{ color: activeColor }">{{ $t('form.clear') }}</text>
+							<view class="cursor-pointer py-[8rpx] text-center transition-all duration-200 active:bg-[#f5f7fa]" @click.stop="clearValue">
+								<text class="text-[24rpx] font-medium" :style="{ color: activeColor }">{{ $t('form.clear') }}</text>
 							</view>
 						</view>
 
 						<!-- 选项列表 -->
-						<view v-for="option in options" :key="option.value" class="dropdown-item select-root" :class="[
+						<view v-for="option in options" :key="option.value" class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0" :class="[
 								alignClass,
 								{
-									'dropdown-item-selected': isOptionSelected(option),
-									'dropdown-item-disabled': option.disabled || disabled
+									'bg-[#ecf5ff]': isOptionSelected(option),
+									'cursor-not-allowed bg-[#f9fafb] opacity-50': option.disabled || disabled
 								}
 							]" @click="selectOption(option)">
-							<text class="dropdown-item-text" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
+							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[28rpx] text-[#606266]" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
 
 							<!-- 单选模式的选中标记 -->
-							<text v-if="!props.multiple && isOptionSelected(option)" class="dropdown-item-check" :style="{ color: activeColor }">
+							<text v-if="!props.multiple && isOptionSelected(option)" class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
 								✓
 							</text>
 
 							<!-- 多选模式的复选框 -->
-							<view v-if="props.multiple" class="dropdown-checkbox" :class="{ 'checkbox-checked': isOptionSelected(option) }" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
-								<text v-if="isOptionSelected(option)" class="checkbox-icon">✓</text>
+							<view v-if="props.multiple" class="ml-[16rpx] flex h-[32rpx] w-[32rpx] items-center justify-center rounded-[4rpx] border-[2rpx] border-solid border-[#dcdfe6] transition-all duration-200" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
+								<text v-if="isOptionSelected(option)" class="text-[20rpx] font-bold text-white">✓</text>
 							</view>
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="options.length === 0" class="dropdown-empty" :class="alignClass">
-							<text class="empty-text">{{ $t('form.noOptions') }}</text>
+						<view v-if="options.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
+							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>
 				</template>
 			</view>
-		</transition>
 	</view>
 </template>
-
-<style lang="scss" scoped>
-
-
-	/* 基础容器样式 */
- 
-	.select-container {
-		position: relative;
-		width: 100%;
-		overflow: visible;
-	}
-
-	/* 选择框样式 */
-	.select-box {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0 24rpx;
-		border-radius: 8rpx;
-		border: 1rpx solid;
-		transition: all 0.2s ease;
-		cursor: pointer;
-		position: relative;
-		z-index: 2;
-
-		&.select-small {
-			height: 44rpx !important;
-
-			.select-text {
-				font-size: 24rpx;
-			}
-		}
-
-		&.select-medium {
-			height: 55rpx !important;
-
-			.select-text {
-				font-size: 28rpx;
-			}
-		}
-
-		&.select-large {
-			height: 66rpx !important;
-
-			.select-text {
-				font-size: 32rpx;
-			}
-		}
-
-		&:active:not(.select-disabled):not(.select-readonly) {
-			transform: scale(0.99);
-		}
-
-		&.select-disabled {
-			cursor: not-allowed;
-			opacity: 0.6;
-		}
-
-		&.select-readonly {
-			cursor: default;
-		}
-
-		&.select-active {
-			box-shadow: 0 0 0 2rpx rgba(24, 144, 255, 0.1);
-		}
-
-		&.has-value {
-			.select-text {
-				color: #333;
-			}
-		}
-	}
-
-	.select-text {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-		&.placeholder-text {
-			color: #c0c4cc;
-		}
-
-		&.value-text {
-			color: #333;
-			font-weight: 400;
-		}
-	}
-
-	.select-icons {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 8rpx;
-		margin-left: 16rpx;
-	}
-
-	.clear-icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 28rpx;
-		height: 28rpx;
-		border-radius: 50%;
-		transition: all 0.2s ease;
-
-		&:active {
-			background-color: #f5f5f5;
-			transform: scale(0.9);
-		}
-	}
-
-	.select-arrow {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: transform 0.2s ease;
-
-		&.arrow-up {
-			transform: rotate(180deg);
-		}
-	}
-
-	/* 遮罩层 */
-	.dropdown-mask {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 99;
-		background-color: transparent;
-	}
-
-	/* 下拉列表 */
-	.dropdown-list {
-		position: absolute;
-		left: 0;
-		right: 0;
-		max-height: 400rpx;
-		background-color: #ffffff;
-		border-radius: 8rpx;
-		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
-		z-index: 100;
-		overflow: hidden;
-		border: 1rpx solid #ebeef5;
-
-		/* 级联模式下允许更高的面板 */
-		&.cascade-dropdown {
-			max-height: 500rpx;
-		}
-	}
-
-	.dropdown-scroll {
-		max-height: 400rpx;
-	}
-
-	.dropdown-item {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		padding: 24rpx 24rpx;
-		transition: all 0.1s ease;
-		cursor: pointer;
-		border-bottom: 1rpx solid #f5f7fa;
-
-		&:last-child {
-			border-bottom: none;
-		}
-
-		&:active:not(.dropdown-item-disabled) {
-			background-color: #f5f7fa;
-		}
-
-		&.dropdown-item-selected {
-			background-color: #ecf5ff;
-
-			.dropdown-item-text {
-				color: #1890ff;
-				font-weight: 500;
-			}
-
-			.dropdown-item-check {
-				color: #1890ff;
-			}
-		}
-
-		&.dropdown-item-disabled {
-			opacity: 0.5;
-			cursor: not-allowed;
-			background-color: #f9fafb;
-		}
-	}
-
-	.dropdown-item-text {
-		flex: 1;
-		font-size: 28rpx;
-		color: #606266;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.dropdown-item-check {
-		font-size: 24rpx;
-		margin-left: 16rpx;
-		font-weight: bold;
-	}
-
-	/* 空状态 */
-	.dropdown-empty {
-		padding: 60rpx 24rpx;
-		text-align: center;
-
-		.empty-text {
-			font-size: 26rpx;
-			color: #c0c4cc;
-		}
-	}
-
-	/* 过渡动画 */
-	/* 遮罩层淡入淡出 */
-	.fade-enter-active,
-	.fade-leave-active {
-		transition: opacity 0.2s ease;
-	}
-
-	.fade-enter-from,
-	.fade-leave-to {
-		opacity: 0;
-	}
-
-	.fade-enter-to,
-	.fade-leave-from {
-		opacity: 1;
-	}
-
-	/* 下拉列表滑入滑出 */
-	.dropdown-list {
-		&.dropdown-enter-active {
-			transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
-		}
-
-		&.dropdown-leave-active {
-			transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
-		}
-
-		/* 向下展开的动画 */
-		&.placement-bottom.dropdown-enter-from {
-			opacity: 0;
-			transform: translateY(-10rpx) scaleY(0.9);
-			transform-origin: top center;
-		}
-
-		&.placement-bottom.dropdown-enter-to {
-			opacity: 1;
-			transform: translateY(0) scaleY(1);
-			transform-origin: top center;
-		}
-
-		&.placement-bottom.dropdown-leave-from {
-			opacity: 1;
-			transform: translateY(0) scaleY(1);
-			transform-origin: top center;
-		}
-
-		&.placement-bottom.dropdown-leave-to {
-			opacity: 0;
-			transform: translateY(-8rpx) scaleY(0.95);
-			transform-origin: top center;
-		}
-
-		/* 向上展开的动画 */
-		&.placement-top.dropdown-enter-from {
-			opacity: 0;
-			transform: translateY(10rpx) scaleY(0.9);
-			transform-origin: bottom center;
-		}
-
-		&.placement-top.dropdown-enter-to {
-			opacity: 1;
-			transform: translateY(0) scaleY(1);
-			transform-origin: bottom center;
-		}
-
-		&.placement-top.dropdown-leave-from {
-			opacity: 1;
-			transform: translateY(0) scaleY(1);
-			transform-origin: bottom center;
-		}
-
-		&.placement-top.dropdown-leave-to {
-			opacity: 0;
-			transform: translateY(8rpx) scaleY(0.95);
-			transform-origin: bottom center;
-		}
-	}
-
-
-/* 多选操作按钮区域 */
-.dropdown-actions {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	padding: 12rpx 16rpx;
-	background-color: #fafafa;
-	border-bottom: 1rpx solid #ebeef5;
-}
-
-.dropdown-action-item {
-	text-align: center;
-	padding: 8rpx 0;
-	cursor: pointer;
-	transition: all 0.2s ease;
-
-	&:active {
-		background-color: #f5f7fa;
-	}
-
-	.action-text {
-		font-size: 24rpx;
-		color: #1890ff;
-		font-weight: 500;
-	}
-}
-
-/* 复选框样式 */
-.dropdown-checkbox {
-	width: 32rpx;
-	height: 32rpx;
-	border: 2rpx solid #dcdfe6;
-	border-radius: 4rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.2s ease;
-	margin-left: 16rpx;
-
-	&.checkbox-checked {
-		background-color: #1890ff;
-		border-color: #1890ff;
-	}
-
-	.checkbox-icon {
-		font-size: 20rpx;
-		color: #ffffff;
-		font-weight: bold;
-	}
-}
-
-/* ========== 级联选择样式 ========== */
-
-/* 面包屑导航 */
-.cascade-breadcrumb {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding: 16rpx 24rpx;
-	background-color: #fafafa;
-	border-bottom: 1rpx solid #ebeef5;
-	flex-wrap: wrap;
-}
-
-.cascade-breadcrumb-item {
-	cursor: pointer;
-	padding: 4rpx 8rpx;
-	border-radius: 4rpx;
-	transition: background-color 0.2s ease;
-
-	&:active {
-		background-color: #ecf5ff;
-	}
-}
-
-.cascade-breadcrumb-text {
-	font-size: 24rpx;
-	color: #606266;
-}
-
-.cascade-breadcrumb-separator {
-	font-size: 22rpx;
-	color: #c0c4cc;
-	margin: 0 4rpx;
-}
-
-/* 级联面板 */
-.cascade-panel {
-	max-height: 440rpx;
-}
-
-/* 级联箭头（指向右侧表示有下级） */
-.cascade-arrow {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-left: 16rpx;
-	transform: rotate(-90deg);
-}
-
-</style>

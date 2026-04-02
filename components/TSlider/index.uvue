@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   showValue: false,
   activeColor: '#1890ff',
-  inactiveColor: '#e9e9e9',
+  inactiveColor: 'var(--tui-border-soft)',
   customClass: '',
   customStyle: ''
 })
@@ -36,8 +36,9 @@ const handleChange = (event: any): void => {
 </script>
 
 <template>
-  <view class="t-slider" :class="customClass" :style="customStyle">
+  <view class="t-slider flex items-center py-3" :class="customClass" :style="customStyle">
     <slider
+      class="w-full"
       :value="modelValue"
       :min="min"
       :max="max"
@@ -48,25 +49,6 @@ const handleChange = (event: any): void => {
       :block-size="24"
       @change="handleChange"
     />
-    <text v-if="showValue" class="t-slider__value">{{ modelValue }}</text>
+    <text v-if="showValue" class="t-slider__value ml-3 min-w-10 text-right text-sm text-[#323233]">{{ modelValue }}</text>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-slider {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-}
-
-.t-slider__value {
-  margin-left: 12px;
-  font-size: 14px;
-  color: #323233;
-  min-width: 40px;
-  text-align: right;
-}
-uni-slider,slider{
-  width: 100%;
-}
-</style>

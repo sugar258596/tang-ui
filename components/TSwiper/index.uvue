@@ -50,13 +50,46 @@ const swiperStyle = computed<string>(() => {
  * 计算指示器容器样式类
  */
 const indicatorClass = computed<string>(() => {
-  const classes: string[] = ['t-swiper__indicator']
+  const classes: string[] = ['absolute', 'z-10', 'flex', 'items-center']
 
-  classes.push(`t-swiper__indicator--${props.indicatorPosition}`)
-  classes.push(`t-swiper__indicator--${props.direction}`)
+  if (props.direction === 'vertical') {
+    classes.push('top-1/2', '-translate-y-1/2', 'flex-col')
+
+    if (props.indicatorPosition === 'left') {
+      classes.push('left-[12px]')
+    } else {
+      classes.push('right-[12px]')
+    }
+  } else {
+    classes.push('left-1/2', '-translate-x-1/2', 'flex-row')
+
+    if (props.indicatorPosition === 'top') {
+      classes.push('top-[12px]')
+    } else {
+      classes.push('bottom-[12px]')
+    }
+  }
 
   return classes.join(' ')
 })
+
+const getDotClass = (index: number): string => {
+  const classes: string[] = [
+    'mx-[4px]',
+    'my-0',
+    'h-[8px]',
+    'w-[8px]',
+    'rounded-[4px]',
+    'transition-all',
+    'duration-300'
+  ]
+
+  if (index === currentIndex.value) {
+    classes.push('w-[16px]')
+  }
+
+  return classes.join(' ')
+}
 
 /**
  * 获取指示器点样式
@@ -108,10 +141,10 @@ defineExpose({
 </script>
 
 <template>
-  <view class="t-swiper" :style="swiperStyle">
+  <view class="relative w-full overflow-hidden" :style="swiperStyle">
     <!-- 轮播容器 -->
     <swiper
-      class="t-swiper__container"
+      class="h-full w-full"
       :autoplay="autoplay"
       :interval="interval"
       :duration="duration"
@@ -131,92 +164,17 @@ defineExpose({
         <view
           v-for="(item, index) in swiperItemCount"
           :key="index"
-          class="t-swiper__dot"
-          :class="{ 't-swiper__dot--active': index === currentIndex }"
+          :class="getDotClass(index)"
           :style="getDotStyle(index)"
         ></view>
       </template>
 
       <!-- 数字指示器 -->
       <template v-if="indicatorType === 'number'">
-        <view class="t-swiper__number">
-          <text class="t-swiper__number-text">{{ currentIndex + 1 }}/{{ swiperItemCount }}</text>
+        <view class="rounded-[12px] bg-[rgba(0,0,0,0.5)] px-[12px] py-[4px]">
+          <text class="text-[12px] leading-none text-white">{{ currentIndex + 1 }}/{{ swiperItemCount }}</text>
         </view>
       </template>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-swiper {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-
-  &__container {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__indicator {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-
-    // 水平方向指示器位置
-    &--horizontal {
-      left: 50%;
-      transform: translateX(-50%);
-      flex-direction: row;
-
-      &.t-swiper__indicator--top {
-        top: 12px;
-      }
-
-      &.t-swiper__indicator--bottom {
-        bottom: 12px;
-      }
-    }
-
-    // 垂直方向指示器位置
-    &--vertical {
-      top: 50%;
-      transform: translateY(-50%);
-      flex-direction: column;
-
-      &.t-swiper__indicator--left {
-        left: 12px;
-      }
-
-      &.t-swiper__indicator--right {
-        right: 12px;
-      }
-    }
-  }
-
-  &__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    margin: 0 4px;
-    transition: all 0.3s;
-
-    &--active {
-      width: 16px;
-    }
-  }
-
-  &__number {
-    padding: 4px 12px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 12px;
-
-    &-text {
-      font-size: 12px;
-      color: #ffffff;
-      line-height: 1;
-    }
-  }
-}
-</style>

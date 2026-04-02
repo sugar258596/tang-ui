@@ -1,4 +1,5 @@
 <script setup lang="uts">
+import { computed } from 'vue'
 import type { TRadioGroupProps, RadioOption } from './type.uts'
 
 /**
@@ -14,7 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   direction: 'vertical',
   size: 'medium',
   activeColor: '#00bba7',
-  inactiveColor: '#c8c9cc',
+  inactiveColor: 'var(--tui-border-strong)',
   disabled: false,
   customClass: '',
   customStyle: ''
@@ -59,79 +60,30 @@ const cssVars = computed(() => ({
 <template>
   <view
     class="t-radio-group"
-    :class="[`t-radio-group--${direction}`, customClass]"
+    :class="[direction === 'horizontal' ? 'flex flex-row flex-wrap' : 'flex flex-col', customClass]"
     :style="[customStyle, cssVars]"
   >
     <view
       v-for="(option, index) in options"
       :key="index"
-      class="t-radio-group__item"
-      :class="{ 't-radio-group__item--disabled': disabled || option.disabled }"
+      class="t-radio-group__item flex flex-row items-center py-3"
+      :class="{
+        'opacity-50 cursor-not-allowed': disabled || option.disabled,
+        'mr-6': direction === 'horizontal'
+      }"
       @click="handleChange(option)"
     >
-      <view class="t-radio-group__icon" :class="{ 't-radio-group__icon--checked': isChecked(option) }">
-        <view v-if="isChecked(option)" class="t-radio-group__dot"></view>
+      <view
+        class="t-radio-group__icon mr-4 flex items-center justify-center rounded-full border-solid transition-all duration-300"
+        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? props.activeColor : props.inactiveColor}`"
+      >
+        <view
+          v-if="isChecked(option)"
+          class="t-radio-group__dot rounded-full"
+          :style="`width: var(--dot-size); height: var(--dot-size); background-color: ${props.activeColor}`"
+        ></view>
       </view>
-      <text class="t-radio-group__label">{{ option.label }}</text>
+      <text class="t-radio-group__label" :style="`font-size: var(--font-size); color: #323233;`">{{ option.label }}</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-radio-group {
-  &--vertical {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &--horizontal {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
-.t-radio-group__item {
-  display: flex;
-	flex-direction: row;
-  padding: 12px 0;
-  cursor: pointer;
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .t-radio-group--horizontal & {
-    margin-right: 24px;
-  }
-}
-
-.t-radio-group__icon {
-  width: var(--icon-size);
-  height: var(--icon-size);
-  border: 2rpx solid var(--inactive-color);
-  border-radius: 50%;
-  margin-right: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-
-  &--checked {
-    border-color: var(--active-color);
-  }
-}
-
-.t-radio-group__dot {
-  width: var(--dot-size);
-  height: var(--dot-size);
-  background-color: var(--active-color);
-  border-radius: 50%;
-}
-
-.t-radio-group__label {
-  font-size: var(--font-size);
-  color: #323233;
-}
-</style>

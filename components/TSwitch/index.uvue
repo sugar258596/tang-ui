@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<TSwitchProps>(), {
   disabled: false,
   size: 'medium',
   activeColor: '#409eff',
-  inactiveColor: '#dcdfe6',
+  inactiveColor: 'var(--tui-border)',
   activeText: '',
   inactiveText: '',
   showText: false
@@ -38,19 +38,73 @@ watch(() => model.value, (newVal: boolean) => {
  * 计算开关样式类
  */
 const switchClass = computed<string>(() => {
-  const classes: string[] = ['t-switch']
+  const classes: string[] = ['t-switch relative rounded-[100px] transition-colors duration-300']
 
-  classes.push(`t-switch--${props.size}`)
-
-  if (checked.value) {
-    classes.push('t-switch--checked')
-  }
-
-  if (props.disabled) {
-    classes.push('t-switch--disabled')
+  switch (props.size) {
+    case 'small':
+      classes.push('h-[18px] w-8')
+      break
+    case 'large':
+      classes.push('h-6 w-[50px]')
+      break
+    default:
+      classes.push('h-5 w-10')
+      break
   }
 
   return classes.join(' ')
+})
+
+const wrapperClass = computed<string>(() => {
+  const classes: string[] = ['t-switch-wrapper inline-flex flex-row items-center']
+
+  if (props.disabled) {
+    classes.push('cursor-not-allowed opacity-60')
+  } else {
+    classes.push('cursor-pointer')
+  }
+
+  return classes.join(' ')
+})
+
+const buttonClass = computed<string>(() => {
+  const classes: string[] = [
+    't-switch__button absolute left-0.5 top-0.5 rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)]',
+  ]
+
+  switch (props.size) {
+    case 'small':
+      classes.push('h-[14px] w-[14px]')
+      break
+    case 'large':
+      classes.push('h-5 w-5')
+      break
+    default:
+      classes.push('h-4 w-4')
+      break
+  }
+
+  return classes.join(' ')
+})
+
+const buttonStyle = computed<string>(() => {
+  let translateX = '0px'
+
+  if (checked.value) {
+    switch (props.size) {
+      case 'small':
+        translateX = '14px'
+        break
+      case 'large':
+        translateX = '26px'
+        break
+      default:
+        translateX = '20px'
+        break
+    }
+  }
+
+  return `transform: translateX(${translateX}); transition: transform 0.3s;`
 })
 
 /**
@@ -83,95 +137,15 @@ const handleClick = (): void => {
 </script>
 
 <template>
-  <view class="t-switch-wrapper" @click="handleClick">
-    <text v-if="showText && inactiveText" class="t-switch__text t-switch__text--inactive">
+  <view :class="wrapperClass" @click="handleClick">
+    <text v-if="showText && inactiveText" class="t-switch__text t-switch__text--inactive mr-2 text-sm text-[#606266]">
       {{ inactiveText }}
     </text>
     <view :class="switchClass" :style="switchStyle">
-      <view class="t-switch__button"></view>
+      <view :class="buttonClass" :style="buttonStyle"></view>
     </view>
-    <text v-if="showText && activeText" class="t-switch__text t-switch__text--active">
+    <text v-if="showText && activeText" class="t-switch__text t-switch__text--active ml-2 text-sm text-[#606266]">
       {{ activeText }}
     </text>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-switch-wrapper {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-}
-
-.t-switch {
-  position: relative;
-  background-color: #dcdfe6;
-  border-radius: 100px;
-  transition: background-color 0.3s;
-
-  &--small {
-    width: 32px;
-    height: 18px;
-
-    .t-switch__button {
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  &--medium {
-    width: 40px;
-    height: 20px;
-
-    .t-switch__button {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  &--large {
-    width: 50px;
-    height: 24px;
-
-    .t-switch__button {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  &--checked {
-    .t-switch__button {
-      transform: translateX(100%);
-    }
-  }
-
-  &--disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &__button {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  &__text {
-    font-size: 14px;
-    color: #606266;
-
-    &--inactive {
-      margin-right: 8px;
-    }
-
-    &--active {
-      margin-left: 8px;
-    }
-  }
-}
-</style>

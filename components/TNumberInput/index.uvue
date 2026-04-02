@@ -1,4 +1,5 @@
 <script  setup lang="uts" >
+import { computed } from 'vue'
 import type { TNumberInputProps } from './type.uts'
 
 const model = defineModel({ default: 0 })
@@ -107,20 +108,20 @@ const buttonSizeComputed = computed(() => {
 </script>
 
 <template>
-	<view class="number-input-wrapper">
+	<view class="flex flex-row items-center gap-[8rpx]">
 		<!-- 减少按钮 -->
 		<view
-			class="number-input-button"
-			:class="{ 'number-input-button-disabled': disabled || model <= min }"
+			class="flex select-none items-center justify-center rounded-[8rpx] bg-[#f5f5f5] transition-all duration-300"
+			:class="disabled || model <= min ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 active:bg-[#e0e0e0]'"
 			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
 			@tap="handleDecrease">
-			<text class="number-input-button-icon">-</text>
+			<text class="text-[32rpx] font-bold leading-none text-[#333]">-</text>
 		</view>
 
 		<!-- 输入框 -->
 		<input
-			class="number-input"
-			:class="{ 'number-input-disabled': disabled }"
+			class="h-[64rpx] appearance-none rounded-[8rpx] border-[2rpx] border-solid border-transparent bg-[#f5f5f5] text-center text-[28rpx] text-[#333] transition-all duration-300 focus:border-[#007aff] focus:bg-white"
+			:class="{ 'opacity-60 cursor-not-allowed': disabled }"
 			:style="{ width: inputWidth }"
 			type="number"
 			:placeholder="placeholder"
@@ -132,73 +133,16 @@ const buttonSizeComputed = computed(() => {
 
 		<!-- 增加按钮 -->
 		<view
-			class="number-input-button"
-			:class="{ 'number-input-button-disabled': disabled || model >= max }"
+			class="flex select-none items-center justify-center rounded-[8rpx] bg-[#f5f5f5] transition-all duration-300"
+			:class="disabled || model >= max ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 active:bg-[#e0e0e0]'"
 			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
 			@tap="handleIncrease">
-			<text class="number-input-button-icon">+</text>
+			<text class="text-[32rpx] font-bold leading-none text-[#333]">+</text>
 		</view>
 	</view>
 </template>
 
 <style lang="scss" scoped>
-.number-input-wrapper {
-	display: flex;
-	flex-direction: row;	
-	align-items: center;
-	gap: 8rpx;
-}
-
-.number-input-button {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: #f5f5f5;
-	border-radius: 8rpx;
-	transition: all 0.3s;
-	user-select: none;
-	-webkit-user-select: none;
-}
-
-.number-input-button:active:not(.number-input-button-disabled) {
-	background-color: #e0e0e0;
-	transform: scale(0.95);
-}
-
-.number-input-button-disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
-}
-
-.number-input-button-icon {
-	font-size: 32rpx;
-	font-weight: bold;
-	color: #333;
-	line-height: 1;
-}
-
-.number-input {
-	height: 64rpx;
-	background-color: #f5f5f5;
-	border-radius: 8rpx;
-	text-align: center;
-	font-size: 28rpx;
-	color: #333;
-	border: 2rpx solid transparent;
-	transition: all 0.3s;
-}
-
-.number-input:focus {
-	border-color: #007aff;
-	background-color: #fff;
-	outline: none;
-}
-
-.number-input-disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
 	-webkit-appearance: none;

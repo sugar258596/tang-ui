@@ -38,7 +38,18 @@ const basicSchemas = computed<FormSchema[]>(() => [
 ])
 
 // 完整表单
-const fullFormData = ref({})
+const fullFormData = ref({
+	name: '',
+	age: '',
+	bio: '',
+	city: '',
+	birthday: '',
+	gender: '',
+	hobbies: [] as string[],
+	notify: false,
+	rating: 0,
+	volume: 0
+})
 const fullSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'name',

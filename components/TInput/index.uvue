@@ -1,6 +1,6 @@
 <script  setup lang="uts" >
 import { computed, ref } from 'vue'
-import type {TInputProps, InputType, InputSize } from './type.uts'
+import type { TInputProps } from './type.uts'
 import TIcon from '../TIcon/index.uvue'
 
 /**
@@ -51,44 +51,103 @@ const isFocused = ref(false)
  * 计算输入框包装类名
  */
 const inputWrapperClasses = computed((): string => {
-  const classes: string[] = []
+  const classes: string[] = [
+    'relative flex w-full shrink-0 grow-0 basis-auto flex-row items-center box-border min-h-0 min-w-0 border border-solid border-[#dcdfe6] bg-white transition-colors duration-300',
+  ]
 
-  // 尺寸样式
-  classes.push(`t-input--${props.size}`)
+  switch (props.size) {
+    case 'large':
+      classes.push('h-11 rounded text-base')
+      break
+    case 'small':
+      classes.push('h-7 rounded text-xs')
+      break
+    case 'mini':
+      classes.push('h-6 rounded text-xs')
+      break
+    default:
+      classes.push('h-9 rounded text-sm')
+      break
+  }
 
-  // 类型样式
   if (props.type === 'textarea') {
-    classes.push('t-input--textarea')
+    classes.push('h-auto p-0')
   }
 
-  // 禁用状态
   if (props.disabled) {
-    classes.push('t-input--disabled')
+    classes.push('cursor-not-allowed border-[#e4e7ed] bg-[#f5f7fa] text-[#c0c4cc]')
   }
 
-  // 只读状态
   if (props.readonly) {
-    classes.push('t-input--readonly')
+    classes.push('cursor-default')
   }
 
-  // 聚焦状态
   if (isFocused.value) {
-    classes.push('t-input--focused')
-  }
-
-  // 前缀文本或图标
-  if (props.prefix || props.prefixIcon) {
-    classes.push('t-input--prefix')
-  }
-
-  // 后缀文本、图标或清除按钮
-  if (props.suffix || props.suffixIcon || props.clearable) {
-    classes.push('t-input--suffix')
+    classes.push('border-[#409eff]')
   }
 
   // 自定义类名
   if (props.customClass) {
     classes.push(props.customClass)
+  }
+
+  return classes.join(' ')
+})
+
+const affixClasses = computed((): string => {
+  switch (props.size) {
+    case 'small':
+    case 'mini':
+      return 'flex items-center justify-center px-1.5 text-[#909399]'
+    default:
+      return 'flex items-center justify-center px-2 text-[#909399]'
+  }
+})
+
+const inputInnerClasses = computed((): string => {
+  const classes: string[] = [
+    'w-full flex-1 border-none bg-transparent text-[#606266] outline-none box-border',
+  ]
+
+  switch (props.size) {
+    case 'large':
+      classes.push('h-full px-3 text-base')
+      break
+    case 'small':
+    case 'mini':
+      classes.push('h-full px-2 text-xs')
+      break
+    default:
+      classes.push('h-full px-3 text-sm')
+      break
+  }
+
+  if (props.prefix || props.prefixIcon) {
+    classes.push('pl-0')
+  }
+
+  if (props.suffix || props.suffixIcon || props.clearable) {
+    classes.push('pr-0')
+  }
+
+  if (props.disabled) {
+    classes.push('cursor-not-allowed text-[#c0c4cc]')
+  } else if (props.readonly) {
+    classes.push('cursor-default')
+  }
+
+  return classes.join(' ')
+})
+
+const textareaClasses = computed((): string => {
+  const classes: string[] = [
+    'min-h-[60px] w-full flex-1 resize-none border-none bg-transparent px-3 py-2 text-sm leading-[1.5] text-[#606266] outline-none box-border',
+  ]
+
+  if (props.disabled) {
+    classes.push('cursor-not-allowed text-[#c0c4cc]')
+  } else if (props.readonly) {
+    classes.push('cursor-default')
   }
 
   return classes.join(' ')
@@ -207,12 +266,12 @@ const handleConfirm = () => {
 <template>
   <view class="t-input" :class="inputWrapperClasses" :style="computedStyle">
     <!-- 前缀文本 -->
-    <view v-if="prefix" class="t-input__prefix">
-      <text class="t-input__prefix-text">{{ prefix }}</text>
+    <view v-if="prefix" class="t-input__prefix" :class="affixClasses">
+      <text class="t-input__prefix-text whitespace-nowrap text-sm text-[#606266]">{{ prefix }}</text>
     </view>
 
     <!-- 前缀图标 -->
-    <view v-else-if="prefixIcon" class="t-input__prefix">
+    <view v-else-if="prefixIcon" class="t-input__prefix" :class="affixClasses">
       <TIcon :name="prefixIcon" :size="iconSize" color="#909399" />
     </view>
 
@@ -220,6 +279,7 @@ const handleConfirm = () => {
     <input
       v-if="type !== 'textarea'"
       class="t-input__inner"
+      :class="inputInnerClasses"
       :type="type"
       :value="model"
       :placeholder="placeholder"
@@ -237,6 +297,7 @@ const handleConfirm = () => {
     <textarea
       v-else
       class="t-input__textarea"
+      :class="textareaClasses"
       :value="model"
       :placeholder="placeholder"
       :disabled="disabled"
@@ -252,206 +313,26 @@ const handleConfirm = () => {
     <!-- 清除按钮 -->
     <view
       v-if="clearable && model && !disabled && !readonly"
-      class="t-input__suffix t-input__clear"
+      class="t-input__suffix t-input__clear cursor-pointer transition-opacity duration-300 active:opacity-70"
+      :class="affixClasses"
       @click="handleClear"
     >
       <TIcon name="icon-shanchu" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 后缀文本 -->
-    <view v-else-if="suffix" class="t-input__suffix">
-      <text class="t-input__suffix-text">{{ suffix }}</text>
+    <view v-else-if="suffix" class="t-input__suffix" :class="affixClasses">
+      <text class="t-input__suffix-text whitespace-nowrap text-sm text-[#606266]">{{ suffix }}</text>
     </view>
 
     <!-- 后缀图标 -->
-    <view v-else-if="suffixIcon" class="t-input__suffix">
+    <view v-else-if="suffixIcon" class="t-input__suffix" :class="affixClasses">
       <TIcon :name="suffixIcon" :size="iconSize" color="#909399" />
     </view>
 
     <!-- 字数统计 -->
-    <view v-if="showCount && maxlength > 0" class="t-input__count">
-      <text class="t-input__count-text">{{ currentLength }}/{{ maxlength }}</text>
+    <view v-if="showCount && maxlength > 0" class="t-input__count absolute bottom-1 right-2">
+      <text class="t-input__count-text text-xs text-[#909399]">{{ currentLength }}/{{ maxlength }}</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-  .t-input {
-  // 重置 uni-view 的默认样式
-  flex-shrink: 0;
-  flex-grow: 0;
-  flex-basis: auto;
-  min-height: 0;
-  min-width: 0;
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  transition: border-color 0.3s;
-
-  &__prefix,
-  &__suffix {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 8px;
-    color: #909399;
-  }
-
-  &__clear {
-    cursor: pointer;
-    transition: color 0.3s;
-
-    &:hover {
-      color: #606266;
-    }
-  }
-
-  &__icon {
-    font-size: 16px;
-  }
-
-  &__prefix-text,
-  &__suffix-text {
-    font-size: 14px;
-    color: #606266;
-    white-space: nowrap;
-  }
-
-  &__inner,
-  &__textarea {
-    flex: 1;
-    width: 100%;
-    padding: 0 12px;
-    font-size: 14px;
-    color: #606266;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    box-sizing: border-box;
-
-    &::placeholder {
-      color: #c0c4cc;
-    }
-  }
-
-  &__inner {
-    height: 100%;
-  }
-
-  &__textarea {
-    padding: 8px 12px;
-    line-height: 1.5;
-    resize: none;
-  }
-
-  &__count {
-    position: absolute;
-    right: 8px;
-    bottom: 4px;
-    font-size: 12px;
-    color: #909399;
-  }
-
-  // 尺寸样式
-  &--large {
-    height: 44px;
-
-    .t-input__inner {
-      font-size: 16px;
-    }
-  }
-
-  &--medium {
-    height: 36px;
-
-    .t-input__inner {
-      font-size: 14px;
-    }
-  }
-
-  &--small {
-    height: 28px;
-
-    .t-input__inner {
-      font-size: 12px;
-      padding: 0 8px;
-    }
-
-    .t-input__prefix,
-    .t-input__suffix {
-      padding: 0 6px;
-    }
-  }
-
-  &--mini {
-    height: 24px;
-
-    .t-input__inner {
-      font-size: 12px;
-      padding: 0 8px;
-    }
-
-    .t-input__prefix,
-    .t-input__suffix {
-      padding: 0 6px;
-    }
-  }
-
-  // 文本域样式
-  &--textarea {
-    height: auto;
-    padding: 0;
-
-    .t-input__textarea {
-      min-height: 60px;
-    }
-  }
-
-  // 聚焦状态
-  &--focused {
-    border-color: #409eff;
-  }
-
-  // 禁用状态
-  &--disabled {
-    background-color: #f5f7fa;
-    border-color: #e4e7ed;
-    color: #c0c4cc;
-    cursor: not-allowed;
-
-    .t-input__inner,
-    .t-input__textarea {
-      color: #c0c4cc;
-      cursor: not-allowed;
-    }
-  }
-
-  // 只读状态
-  &--readonly {
-    .t-input__inner,
-    .t-input__textarea {
-      cursor: default;
-    }
-  }
-
-  // 前缀图标
-  &--prefix {
-    .t-input__inner {
-      padding-left: 0;
-    }
-  }
-
-  // 后缀图标
-  &--suffix {
-    .t-input__inner {
-      padding-right: 0;
-    }
-  }
-}
-</style>

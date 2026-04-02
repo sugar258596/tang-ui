@@ -1,5 +1,5 @@
 <script  setup lang="uts" >
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import type { TCardProps } from './type.uts'
 
 /**
@@ -27,18 +27,45 @@ const emit = defineEmits<{
  * 计算卡片样式类
  */
 const cardClass = computed<string>(() => {
-  const classes: string[] = ['t-card']
+  const classes: string[] = [
+    't-card',
+    'relative overflow-visible bg-white transition-all duration-300 ease-in-out shrink-0 grow-0 basis-auto min-h-0 min-w-0',
+  ]
 
   if (props.shadow) {
-    classes.push('t-card--shadow')
+    classes.push('shadow-[0_2px_12px_0_rgba(0,0,0,0.1)]')
   }
 
   if (props.border) {
-    classes.push('t-card--border')
+    classes.push('border border-[#e4e7ed]')
   }
 
-  classes.push(`t-card--padding-${props.padding}`)
-  classes.push(`t-card--radius-${props.radius}`)
+  switch (props.padding) {
+    case 'small':
+      classes.push('p-3')
+      break
+    case 'large':
+      classes.push('p-7')
+      break
+    default:
+      classes.push('p-5')
+      break
+  }
+
+  switch (props.radius) {
+    case 'none':
+      classes.push('rounded-none')
+      break
+    case 'small':
+      classes.push('rounded')
+      break
+    case 'large':
+      classes.push('rounded-xl')
+      break
+    default:
+      classes.push('rounded-lg')
+      break
+  }
 
   if (props.customClass != '') {
     classes.push(props.customClass)
@@ -58,117 +85,27 @@ const handleClick = (): void => {
 <template>
   <view :class="cardClass" @click="handleClick">
     <!-- 卡片头部 -->
-    <view v-if="title || subtitle || $slots.header" class="t-card__header">
+    <view
+      v-if="title || subtitle || $slots.header"
+      class="t-card__header mb-4 flex items-center justify-between border-b border-[#ebeef5] pb-4"
+    >
       <slot name="header">
-        <view class="t-card__header-content">
-          <text v-if="title" class="t-card__title">{{ title }}</text>
-          <text v-if="subtitle" class="t-card__subtitle">{{ subtitle }}</text>
+        <view class="t-card__header-content min-w-0 flex-1">
+          <text v-if="title" class="t-card__title text-lg font-semibold leading-6 text-[#303133]">{{ title }}</text>
+          <text v-if="subtitle" class="t-card__subtitle mt-1 text-sm leading-5 text-[#909399]">{{ subtitle }}</text>
         </view>
       </slot>
       <slot name="extra"></slot>
     </view>
 
     <!-- 卡片内容 -->
-    <view class="t-card__body">
+    <view class="t-card__body overflow-visible text-sm leading-6 text-[#606266]">
       <slot></slot>
     </view>
 
     <!-- 卡片底部 -->
-    <view v-if="$slots.footer" class="t-card__footer">
+    <view v-if="$slots.footer" class="t-card__footer mt-4 border-t border-[#ebeef5] pt-4">
       <slot name="footer"></slot>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-// 覆盖 uni-view 原生组件的默认样式
-// 使用 uni-view.t-card 确保覆盖原生样式
-.t-card {
-  background-color: #ffffff;
-  transition: all 0.3s ease;
-  // 重置 uni-view 的默认样式
-  flex-shrink: 0;
-  flex-grow: 0;
-  flex-basis: auto;
-  min-height: 0;
-  min-width: 0;
-  position: relative;
-  overflow: visible;
-
-  &--shadow {
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  &--border {
-    border: 1px solid #e4e7ed;
-  }
-
-  &--padding-small {
-    padding: 12px;
-  }
-
-  &--padding-medium {
-    padding: 20px;
-  }
-
-  &--padding-large {
-    padding: 28px;
-  }
-
-  &--radius-none {
-    border-radius: 0;
-  }
-
-  &--radius-small {
-    border-radius: 4px;
-  }
-
-  &--radius-medium {
-    border-radius: 8px;
-  }
-
-  &--radius-large {
-    border-radius: 12px;
-  }
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #ebeef5;
-    margin-bottom: 16px;
-  }
-
-  &__header-content {
-    flex: 1;
-  }
-
-  &__title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #303133;
-    line-height: 24px;
-  }
-
-  &__subtitle {
-    font-size: 14px;
-    color: #909399;
-    margin-top: 4px;
-    line-height: 20px;
-  }
-
-  &__body {
-    color: #606266;
-    font-size: 14px;
-    line-height: 1.5;
-    overflow:visible
-  }
-
-  &__footer {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #ebeef5;
-  }
-}
-</style>

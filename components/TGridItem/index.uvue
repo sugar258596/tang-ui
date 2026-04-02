@@ -10,10 +10,10 @@ import {TGridItemProps} from './type.uts'
  
 const props = withDefaults(defineProps<TGridItemProps>(), {
   icon: '',
-  iconColor: '#323233',
+  iconColor: 'var(--tui-text-primary)',
   image: '',
   text: '',
-  textColor: '#646566',
+  textColor: 'var(--tui-text-secondary)',
   badge: '',
   dot: false,
   customClass: '',
@@ -62,14 +62,20 @@ const containerStyle = computed((): string => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-grid-item']
+  const classes: string[] = [
+    'relative',
+    'box-border',
+    'bg-white',
+    'px-[8px]',
+    'py-[16px]'
+  ]
 
   if (gridCenter) {
-    classes.push('t-grid-item--center')
+    classes.push('flex', 'items-center', 'justify-center')
   }
 
   if (gridClickable) {
-    classes.push('t-grid-item--clickable')
+    classes.push('cursor-pointer', 'transition-colors', 'duration-200', 'active:bg-[#f5f5f5]')
   }
 
   if (props.customClass) {
@@ -123,9 +129,9 @@ const handleClick = (): void => {
 
 <template>
   <view :class="containerClasses" :style="containerStyle" @click="handleClick">
-    <view class="t-grid-item__content">
+    <view class="flex w-full flex-col items-center">
       <!-- 图标或图片 -->
-      <view class="t-grid-item__icon-wrapper">
+      <view class="relative mb-[8px]">
         <!-- 徽标 -->
         <TBadge
           v-if="badge || dot"
@@ -137,11 +143,11 @@ const handleClick = (): void => {
           <image
             v-if="image"
             :src="image"
-            class="t-grid-item__image"
+            class="h-[28px] w-[28px]"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="icon" class="t-grid-item__icon" :style="iconStyle">
+          <text v-else-if="icon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -154,11 +160,11 @@ const handleClick = (): void => {
           <image
             v-if="image"
             :src="image"
-            class="t-grid-item__image"
+            class="h-[28px] w-[28px]"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="icon" class="t-grid-item__icon" :style="iconStyle">
+          <text v-else-if="icon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -167,7 +173,7 @@ const handleClick = (): void => {
       </view>
 
       <!-- 文字 -->
-      <text v-if="text" class="t-grid-item__text" :style="textStyle">
+      <text v-if="text" class="break-all text-center text-[12px] text-[#646566]" :style="textStyle">
         {{ text }}
       </text>
 
@@ -176,56 +182,3 @@ const handleClick = (): void => {
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-grid-item {
-  position: relative;
-  padding: 16px 8px;
-  box-sizing: border-box;
-  background-color: #fff;
-
-  &--center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  &--clickable {
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:active {
-      background-color: #f5f5f5;
-    }
-  }
-}
-
-.t-grid-item__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.t-grid-item__icon-wrapper {
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.t-grid-item__icon {
-  font-size: 28px;
-  color: #323233;
-}
-
-.t-grid-item__image {
-  width: 28px;
-  height: 28px;
-}
-
-.t-grid-item__text {
-  font-size: 12px;
-  color: #646566;
-  text-align: center;
-  word-break: break-all;
-}
-</style>

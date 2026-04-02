@@ -1,5 +1,6 @@
 <script setup lang="uts">
 	import { computed } from 'vue'
+	import TInput from '../TInput/index.uvue'
 	import TRadioGroup from '../TRadioGroup/index.uvue'
 	import TCheckboxGroup from '../TCheckboxGroup/index.uvue'
 	import TSwitch from '../TSwitch/index.uvue'
@@ -59,12 +60,31 @@
 		return options?.map(o => ({ label: o.label, value: o.value })) || []
 	}
 
+	const getPickerTextClass = (item : FormSchema) : string => {
+		return model.value[item.field] ? 'text-[#333333]' : 'text-[#c0c4cc]'
+	}
+
 	// 安全获取组件属性，避免 v-bind="" 编译问题
 	const getComponentProps = (item : FormSchema) : ComponentProps => {
 		if (item.componentProps != null) {
 			return item.componentProps
 		}
 		return {} as ComponentProps
+	}
+
+	const getInputProps = (item : FormSchema, inputType : string) : Record<string, any> => {
+		const componentProps = getComponentProps(item)
+		const mergedProps: Record<string, any> = {
+			...componentProps,
+			type: inputType,
+			placeholder: handlePlaceholder(item)
+		}
+
+		if (componentProps.focus !== undefined) {
+			mergedProps.autoFocus = componentProps.focus
+		}
+
+		return mergedProps
 	}
 
 	// 日期时间选择器状态管理
@@ -92,8 +112,29 @@
 		return 'date'
 	}
 
+	const isFieldEmpty = (value : any) : boolean => {
+		if (Array.isArray(value)) {
+			return value.length === 0
+		}
+		return value === undefined || value === null || value === ''
+	}
+
+	const getDefaultFieldValue = (item : FormSchema) : any => {
+		switch (item.component) {
+			case 'Checkbox':
+				return []
+			case 'Switch':
+				return false
+			case 'Rate':
+			case 'Slider':
+				return 0
+			default:
+				return ''
+		}
+	}
+
 	const validateField = (item : FormSchema) => {
-		if (item.required && !model.value[item.field]) {
+		if (item.required && isFieldEmpty(model.value[item.field])) {
 			errors[item.field] = $t('form.requiredError', { label: item.label })
 			// 触发抖动动画
 			triggerShake(item.field)
@@ -141,7 +182,7 @@
 		let hasError = false
 		for (const item of props.schemas) {
 			validateField(item)
-			if (item.required && !model.value[item.field]) {
+			if (item.required && isFieldEmpty(model.value[item.field])) {
 				hasError = true
 			}
 		}
@@ -161,7 +202,9 @@
 	}
 
 	const onFormReset = () => {
-		Object.keys(model.value).forEach(k => (model.value[k] = ''))
+		for (const item of props.schemas) {
+			model.value[item.field] = getDefaultFieldValue(item)
+		}
 		Object.keys(errors).forEach(k => delete errors[k])
 		emit('reset')
 	}
@@ -178,7 +221,7 @@
 			let hasError = false
 			for (const item of props.schemas) {
 				validateField(item)
-				if (item.required && !model.value[item.field]) {
+				if (item.required && isFieldEmpty(model.value[item.field])) {
 					hasError = true
 				}
 			}
@@ -190,44 +233,57 @@
 </script>
 
 <template>
-	<view class="t-form">
+	<view class="p-4">
 		<form @submit="onFormSubmit" @reset="onFormReset">
-			<view v-for="(item, index) in schemas" class="form-item" 
-				:class="{ 'form-item-error': errors[item.field], 'form-item-shake': shakeFields[item.field] }" 
+			<view
+				v-for="(item, index) in schemas"
+				class="mb-4 overflow-visible rounded-[12rpx] border-[2rpx] border-transparent p-2 transition-all duration-300"
+				:class="[
+					errors[item.field] ? 'border-[#ff4d4f] bg-[#fff1f0]' : '',
+					shakeFields[item.field] ? 'animate-shake-soft' : ''
+				]"
 				:key="index">
-				<view class="form-item-content" :class="`form-item--${getItemLayout(item)}`">
-					<view class="form-label" >
-						<text class="text" :style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
-						<text v-show="item.required" class="required">*</text>
+				<view
+					class="overflow-visible"
+					:class="getItemLayout(item) === 'horizontal'
+						? 'flex flex-row items-start'
+						: 'flex flex-col'">
+					<view
+						class="mb-3 mr-2 flex flex-row gap-1 text-base font-medium"
+						:class="getItemLayout(item) === 'horizontal' ? 'text-right' : 'mb-4 mr-0 text-left'">
+						<text
+							class="w-full break-all text-justify [text-align-last:justify] [text-justify:inter-ideograph] tracking-[0.1em]"
+							:style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
+							<view  class="w-2">
+								<text  v-show="item.required" class=" text-red-500">*</text>
+							</view>
 					</view>
 
-					<view class="form-control">
+					<view class="w-full flex-1 overflow-visible" :class="getItemLayout(item) === 'horizontal' ? 'min-w-0' : ''">
 					<!-- 自定义插槽 -->
 					<slot :name="item.field" :item="item" :value="model[item.field]"
 						:error="errors[item.field]">
 
 					<!-- 输入框 -->
-					<input v-if="item.component === 'Input'" v-model="model[item.field]"
-						:placeholder="handlePlaceholder(item)" :name="item.field" class="input"
-						:disabled="item.componentProps?.disabled || false"
-						:maxlength="item.componentProps?.maxlength || -1"
-						:type="item.componentProps?.type || 'text'"
-						@input="validateField(item)" />
+					<TInput v-if="item.component === 'Input'"
+						v-model="model[item.field]"
+						v-bind="getInputProps(item, item.componentProps?.type || 'text')"
+						@input="validateField(item)"
+						@change="validateField(item)" />
 
 					<!-- 数字输入 -->
-					<input v-else-if="item.component === 'InputNumber'" v-model="model[item.field]"
-						:placeholder="handlePlaceholder(item)" type="number" :name="item.field" class="input"
-						:disabled="item.componentProps?.disabled || false"
-						:maxlength="item.componentProps?.maxlength || -1"
-						@input="validateField(item)" />
+					<TInput v-else-if="item.component === 'InputNumber'"
+						v-model="model[item.field]"
+						v-bind="getInputProps(item, 'number')"
+						@input="validateField(item)"
+						@change="validateField(item)" />
 
 					<!-- 文本域 -->
-					<textarea v-else-if="item.component === 'Textarea'" v-model="model[item.field]"
-						:placeholder="handlePlaceholder(item)" :name="item.field" class="textarea"
-						:disabled="item.componentProps?.disabled || false"
-						:maxlength="item.componentProps?.maxlength || -1"
-						:auto-height="item.componentProps?.autoHeight || false"
-						@input="validateField(item)"></textarea>
+					<TInput v-else-if="item.component === 'Textarea'"
+						v-model="model[item.field]"
+						v-bind="getInputProps(item, 'textarea')"
+						@input="validateField(item)"
+						@change="validateField(item)" />
 
 					<!-- 下拉选择 -->
 					<TSelect v-else-if="item.component === 'Select'"
@@ -238,8 +294,11 @@
 						@change="validateField(item)" />
 
 					<!-- 日期选择 -->
-					<view v-else-if="item.component === 'Date'" class="picker" @click="openPicker(item.field)">
-						<text>{{ model[item.field] || $t('form.datePlaceholder') }}</text>
+					<view
+						v-else-if="item.component === 'Date'"
+						class="flex w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
+						@click="openPicker(item.field)">
+						<text :class="getPickerTextClass(item)">{{ model[item.field] || $t('form.datePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Date'"
@@ -252,8 +311,11 @@
 					/>
 
 					<!-- 时间选择 -->
-					<view v-else-if="item.component === 'Time'" class="picker" @click="openPicker(item.field)">
-						<text>{{ model[item.field] || $t('form.timePlaceholder') }}</text>
+					<view
+						v-else-if="item.component === 'Time'"
+						class="flex h-[80rpx] w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
+						@click="openPicker(item.field)">
+						<text :class="getPickerTextClass(item)">{{ model[item.field] || $t('form.timePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Time'"
@@ -291,182 +353,20 @@
 				</view>
 
 				<!-- 错误提示 -->
-				<view v-if="errors[item.field]" class="error-message">
-					<text class="error-text">{{ errors[item.field] }}</text>
+				<view v-if="errors[item.field]" class="mt-2">
+					<text class="text-sm text-red-500">{{ errors[item.field] }}</text>
 				</view>
 			</view>
 
 			<!-- 按钮区域 -->
-			<view v-if="!hideButtons" class="form-footer">
-				<button class="btn btn-submit" form-type="submit">{{ submitButtonText }}</button>
-				<button class="btn btn-reset" form-type="reset">{{ resetButtonText }}</button>
+			<view v-if="!hideButtons" class="mt-12 flex flex-row gap-6">
+				<button
+					class="h-[88rpx] flex-1 rounded-[8rpx] bg-[#007aff] text-center text-[32rpx] text-white transition-all duration-300 active:scale-[0.98] active:opacity-70"
+					form-type="submit">{{ submitButtonText }}</button>
+				<button
+					class="h-[88rpx] flex-1 rounded-[8rpx] border border-solid border-[#007aff] bg-white text-center text-[32rpx] text-[#007aff] transition-all duration-300 active:scale-[0.98] active:opacity-70"
+					form-type="reset">{{ resetButtonText }}</button>
 			</view>
 		</form>
 	</view>
 </template>
-
-<style lang="scss" scoped>
-	.t-form {
-		padding: 32rpx;
-	}
-
-	.form-item {
-		padding: 24rpx;
-		border-radius: 12rpx;
-		border: 2rpx solid transparent;
-		transition: all 0.3s ease;
-		overflow:visible;
-
-		&.form-item-error {
-			border-color: #ff4d4f;
-			background-color: #fff1f0;
-		}
-
-		&.form-item-shake {
-			animation: shake 0.5s ease-in-out;
-		}
-	}
-
-	@keyframes shake {
-		0%, 100% {
-			transform: translateX(0);
-		}
-		10%, 30%, 50%, 70%, 90% {
-			transform: translateX(-8rpx);
-		}
-		20%, 40%, 60%, 80% {
-			transform: translateX(8rpx);
-		}
-	}
-
-	.form-item-content {
-		overflow:visible;
-		&.form-item--horizontal {
-			display: flex;
-			flex-direction: row;
-			align-items: flex-start;
-		}
-
-		&.form-item--vertical {
-			display: flex;
-			flex-direction: column;
-		}
-	}
-
-	.form-label {
-		display: flex;
-		flex-direction: row;
-		gap: 2px;
-		text-align: right;
-		margin-bottom: 12rpx;
-		font-weight: 500;
-		font-size: 28rpx;
-		padding: 10rpx 0;
-		margin-right: 12rpx;
-
-		.form-item-content.form-item--vertical & {
-			text-align: left;
-			margin-right: 0;
-			margin-bottom: 16rpx;
-		}
-
-		.text {
-			display: flow;
-			text-align: justify;
-			text-justify: inter-ideograph;
-			text-align-last: justify;
-			width: 100%;
-			letter-spacing: 0.1em;
-			word-break: break-all;
-			white-space: normal;
-		}
-	}
-
-	.required {
-		color: #ff4d4f;
-		margin-left: 4rpx;
-	}
-
-	.form-control {
-		flex: 1;
-		width: 100%;
-    overflow: visible;
-
-		.form-item-content.form-item--horizontal & {
-			width: auto;
-		}
-	}
-
-	.input,
-	.textarea {
-		width: 100%;
-		height: 80rpx;
-		padding: 20rpx 24rpx;
-		font-size: 28rpx;
-		color: #333;
-		background-color: #f5f5f5;
-		border-radius: 8rpx;
-		border: 1rpx solid #e0e0e0;
-		transition: all 0.3s;
-	}
-
-	.input:focus,
-	.textarea:focus {
-		background-color: #fff;
-		border-color: #007aff;
-	}
-
-	.textarea {
-		min-height: 120rpx;
-	}
-
-	.picker {
-		width: 100%;
-		padding: 10rpx 24rpx;
-		font-size: 28rpx;
-		color: #c0c4cc;
-		background-color: #f5f5f5;
-		border-radius: 8rpx;
-		border: 1rpx solid #e0e0e0;
-		transition: all 0.3s;
-	}
-
-	.error-message {
-		margin-top: 8rpx;
-		font-size: 24rpx;
-		color: #ff4d4f;
-	}
-
-	.form-footer {
-		display: flex;
-		flex-direction: row;
-		gap: 24rpx;
-		margin-top: 48rpx;
-	}
-
-	.btn {
-		flex: 1;
-		height: 88rpx;
-		line-height: 88rpx;
-		text-align: center;
-		font-size: 32rpx;
-		border-radius: 8rpx;
-		transition: all 0.3s;
-	}
-
-	.btn-submit {
-		background-color: #007aff;
-		color: #fff;
-	}
-
-	.btn-reset {
-		background-color: #fff;
-		color: #007aff;
-		border: 1rpx solid #007aff;
-	}
-
-	.btn:active {
-		opacity: 0.7;
-		transform: scale(0.98);
-	}
-</style>

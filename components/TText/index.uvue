@@ -31,46 +31,94 @@ const props = withDefaults(defineProps<TTextProps>(), {
  * 计算文本类名
  */
 const textClasses = computed((): string => {
-  const classes: string[] = []
+  const classes: string[] = ['t-text inline m-0 p-0 break-words text-left leading-[1.5]']
 
-  // 类型样式
-  classes.push(`t-text--${props.type}`)
+  switch (props.type) {
+    case 'primary':
+      classes.push('text-[#409eff]')
+      break
+    case 'success':
+      classes.push('text-[#67c23a]')
+      break
+    case 'warning':
+      classes.push('text-[#e6a23c]')
+      break
+    case 'danger':
+      classes.push('text-[#f56c6c]')
+      break
+    case 'info':
+      classes.push('text-[#909399]')
+      break
+    default:
+      classes.push('text-[#606266]')
+      break
+  }
 
-  // 尺寸样式
-  classes.push(`t-text--${props.size}`)
+  switch (props.size) {
+    case 'large':
+      classes.push('text-lg')
+      break
+    case 'small':
+      classes.push('text-xs')
+      break
+    case 'mini':
+      classes.push('text-[10px]')
+      break
+    default:
+      classes.push('text-sm')
+      break
+  }
 
-  // 粗细样式
-  classes.push(`t-text--${props.weight}`)
+  switch (props.weight) {
+    case 'lighter':
+      classes.push('font-light')
+      break
+    case 'medium':
+      classes.push('font-medium')
+      break
+    case 'bold':
+      classes.push('font-bold')
+      break
+    default:
+      classes.push('font-normal')
+      break
+  }
 
-  // 对齐样式
-  classes.push(`t-text--${props.align}`)
+  switch (props.align) {
+    case 'center':
+      classes.push('text-center')
+      break
+    case 'right':
+      classes.push('text-right')
+      break
+    case 'justify':
+      classes.push('text-justify')
+      break
+    default:
+      classes.push('text-left')
+      break
+  }
 
-  // 加粗
   if (props.bold) {
-    classes.push('t-text--bold')
+    classes.push('font-bold')
   }
 
-  // 斜体
   if (props.italic) {
-    classes.push('t-text--italic')
+    classes.push('italic')
   }
 
-  // 下划线
   if (props.underline) {
-    classes.push('t-text--underline')
+    classes.push('underline')
   }
 
-  // 删除线
   if (props.strikethrough) {
-    classes.push('t-text--strikethrough')
+    classes.push('line-through')
   }
 
-  // 省略号
   if (props.ellipsis) {
-    classes.push('t-text--ellipsis')
+    classes.push('truncate')
   }
 
-  // 自定义类名
   if (props.customClass) {
     classes.push(props.customClass)
   }
@@ -119,120 +167,3 @@ const textStyles = computed((): string => {
     <slot>{{ text }}</slot>
   </text>
 </template>
-
-<style lang="scss" scoped>
-  // 重置 uni-text 的默认样式
-  .t-text {
-  text-align: left;
-  line-height: 1.5;
-  color: inherit;
-  font-size: 14px;
-  display: inline;
-  margin: 0;
-  padding: 0;
-  word-wrap: break-word;
-
-  // 类型样式
-  &--default {
-    color: #606266;
-  }
-
-  &--primary {
-    color: #409eff;
-  }
-
-  &--success {
-    color: #67c23a;
-  }
-
-  &--warning {
-    color: #e6a23c;
-  }
-
-  &--danger {
-    color: #f56c6c;
-  }
-
-  &--info {
-    color: #909399;
-  }
-
-  // 尺寸样式
-  &--large {
-    font-size: 18px;
-  }
-
-  &--medium {
-    font-size: 14px;
-  }
-
-  &--small {
-    font-size: 12px;
-  }
-
-  &--mini {
-    font-size: 10px;
-  }
-
-  // 粗细样式
-  &--lighter {
-    font-weight: 300;
-  }
-
-  &--normal {
-    font-weight: 400;
-  }
-
-  &--medium {
-    font-weight: 500;
-  }
-
-  &--bold {
-    font-weight: 700;
-  }
-
-  // 对齐样式
-  &--left {
-    text-align: left;
-  }
-
-  &--center {
-    text-align: center;
-  }
-
-  &--right {
-    text-align: right;
-  }
-
-  &--justify {
-    text-align: justify;
-  }
-
-  // 加粗
-  &--bold {
-    font-weight: bold;
-  }
-
-  // 斜体
-  &--italic {
-    font-style: italic;
-  }
-
-  // 下划线
-  &--underline {
-    text-decoration: underline;
-  }
-
-  // 删除线
-  &--strikethrough {
-    text-decoration: line-through;
-  }
-
-  // 省略号
-  &--ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-</style>

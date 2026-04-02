@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: '#1890ff',
   strokeWidth: 6,
   showText: true,
-  textColor: '#323233',
+  textColor: 'var(--tui-text-primary)',
   animated: true,
   customClass: '',
   customStyle: ''
@@ -43,9 +43,9 @@ const progressStyle = computed((): string => {
 })
 
 const progressClass = computed((): string => {
-  const classes: string[] = ['t-progress-line__bar']
+  const classes: string[] = ['t-progress-line__bar h-full rounded-[100px]']
   if (props.animated) {
-    classes.push('t-progress-line__bar--animated')
+    classes.push('transition-[width] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)]')
   }
   return classes.join(' ')
 })
@@ -56,48 +56,14 @@ const trackStyle = computed((): string => {
 </script>
 
 <template>
-  <view class="t-progress" :class="customClass" :style="customStyle">
-    <view v-if="type === 'line'" class="t-progress-line">
-      <view class="t-progress-line__track" :style="trackStyle">
+  <view class="t-progress w-full" :class="customClass" :style="customStyle">
+    <view v-if="type === 'line'" class="t-progress-line flex flex-row items-center">
+      <view class="t-progress-line__track flex-1 overflow-hidden rounded-[100px] bg-[#ebedf0]" :style="trackStyle">
         <view :class="progressClass" :style="progressStyle"></view>
       </view>
-      <text v-if="showText" class="t-progress-line__text" :style="`color: ${textColor}`">
+      <text v-if="showText" class="t-progress-line__text ml-3 whitespace-nowrap text-sm" :style="`color: ${textColor}`">
         {{ safePercentage }}%
       </text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-progress {
-  width: 100%;
-}
-
-.t-progress-line {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.t-progress-line__track {
-  flex: 1;
-  background-color: #ebedf0;
-  border-radius: 100px;
-  overflow: hidden;
-}
-
-.t-progress-line__bar {
-  height: 100%;
-  border-radius: 100px;
-
-  &--animated {
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
-
-.t-progress-line__text {
-  margin-left: 12px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-</style>

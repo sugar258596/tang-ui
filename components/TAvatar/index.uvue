@@ -13,8 +13,8 @@ const props = withDefaults(defineProps<TAvatarProps>(), {
   size: 'medium',
   shape: 'circle',
   alt: '',
-  bgColor: '#c0c4cc',
-  color: '#ffffff',
+  bgColor: 'var(--tui-border-strong)',
+  color: 'var(--tui-text-inverse)',
   fit: 'cover'
 })
 
@@ -48,9 +48,13 @@ const avatarSize = computed<number>(() => {
  * 计算头像样式类
  */
 const avatarClass = computed<string>(() => {
-  const classes: string[] = ['t-avatar']
+  const classes: string[] = ['t-avatar inline-flex items-center justify-center overflow-hidden relative cursor-pointer']
 
-  classes.push(`t-avatar--${props.shape}`)
+  if (props.shape === 'square') {
+    classes.push('rounded')
+  } else {
+    classes.push('rounded-full')
+  }
 
   return classes.join(' ')
 })
@@ -114,43 +118,14 @@ const displayText = computed<string>(() => {
   <view :class="avatarClass" :style="avatarStyle" @click="handleClick">
     <image
       v-if="src && !hasLoadError"
-      class="t-avatar__image"
+      class="t-avatar__image h-full w-full"
       :src="src"
       :mode="fit"
       @error="handleError"
     />
-    <text v-else-if="alt" class="t-avatar__text" :style="textStyle">
+    <text v-else-if="alt" class="t-avatar__text text-center font-medium" :style="textStyle">
       {{ displayText }}
     </text>
     <slot v-else></slot>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.t-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-
-  &--circle {
-    border-radius: 50%;
-  }
-
-  &--square {
-    border-radius: 4px;
-  }
-
-  &__image {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__text {
-    font-weight: 500;
-    text-align: center;
-  }
-}
-</style>

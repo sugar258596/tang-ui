@@ -1,5 +1,39 @@
 # 更新日志
 
+## [1.2.9] - 2026-04-02
+
+### 新增
+
+- **主题系统**: 新增全局暗黑模式切换能力
+  - 扩展 `composables/useTheme.uts`，补充完整的浅色/深色主题 token
+  - 应用启动时自动初始化主题，并同步根节点 `data-theme` 与 `t-dark/t-light` 标记
+  - 新增 `static/theme.scss`，统一接管页面、文本、边框、遮罩、阴影等暗黑模式覆盖
+  - `pages/index/index.uvue` 首页新增“浅色 / 暗黑”按钮切换风格
+
+### 优化
+
+- **TDialog**: 使用 Tailwind 重构样式层，保留原有打开/关闭逻辑
+  - 模板样式迁移为 Tailwind class
+  - 中心定位与缩放动画改为显式 `transform`，提升 `uvue` 下的兼容性
+
+- **TPopup**: 使用 Tailwind 重构样式层，保留原有弹出逻辑
+  - 标题栏、遮罩层、内容区域样式迁移为 Tailwind class
+  - 位移与居中动画改为显式 `transform/opacity`，避免 Tailwind transform 工具类在 `uvue` 中失效
+  - 修正顶部、左右弹出时与默认导航栏的遮挡问题
+
+- **主题接入**: 优化多组件默认中性色配置
+  - `TPopup`、`TSelect`、`TSearchBar`、`TSwitch`、`TSlider`、`TRate`、`TGrid`、`TGridItem`、`TIcon`、`TAvatar`、`TLoading` 等组件默认颜色改为读取主题变量
+
+### 修复
+
+- **TSelect**: 修复下拉选项列表打开后页面仍可滚动的问题
+  - 下拉打开时禁止页面滚动，关闭或组件卸载时自动恢复
+  - 遮罩层增加触摸拦截，避免滚动穿透到底层页面
+
+- **TLoading**: 修复普通容器内加载状态不显示的问题
+  - 非全屏模式下改为覆盖父容器显示
+  - 内容区改为 flex 居中，避免依赖失效的位移工具类
+
 ## [1.2.8] - 2026-03-02
 
 ### 修复
