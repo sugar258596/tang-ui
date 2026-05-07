@@ -11,11 +11,11 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const dialog1Visible = ref<boolean>(false)
-const dialog2Visible = ref<boolean>(false)
-const dialog3Visible = ref<boolean>(false)
-const dialog4Visible = ref<boolean>(false)
-const dialog5Visible = ref<boolean>(false)
+const dialog1Visible = ref(false)
+const dialog2Visible = ref(false)
+const dialog3Visible = ref(false)
+const dialog4Visible = ref(false)
+const dialog5Visible = ref(false)
 
 const handleConfirm = (): void => {
   console.log('确认按钮被点击')

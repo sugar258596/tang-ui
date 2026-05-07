@@ -18,9 +18,24 @@
 	const { $t } = useI18n()
 
 	// 优先使用用户传入的值，否则使用翻译
-	const displayTitle = computed(() => props.title || $t('empty.title'))
-	const displayDescription = computed(() => props.description || $t('empty.description'))
-	const displayActionText = computed(() => props.actionText || $t('empty.actionText'))
+	const displayTitle = computed<string>(() => {
+		if (props.title !== undefined && props.title !== '') {
+			return props.title
+		}
+		return $t('empty.title')
+	})
+	const displayDescription = computed<string>(() => {
+		if (props.description !== undefined && props.description !== '') {
+			return props.description
+		}
+		return $t('empty.description')
+	})
+	const displayActionText = computed<string>(() => {
+		if (props.actionText !== undefined && props.actionText !== '') {
+			return props.actionText
+		}
+		return $t('empty.actionText')
+	})
 
 	const handleActionClick = () => {
 		emits('actionClick');
@@ -49,7 +64,7 @@
 				{{ displayTitle }}
 			</text>
 
-			<text v-if="displayDescription" :class="[
+			<text v-if="displayDescription !== ''" :class="[
 					'mx-auto mt-2 block max-w-[80vw] text-center text-[#6b7280] leading-[1.5]',
 					compact ? 'text-xs' : 'text-sm',
 				]">
@@ -58,9 +73,9 @@
 		</view>
 
 		<view v-if="showAction" class="mt-6 w-full max-w-[200px]">
-			<TButton 
-				type="primary" 
-				size="medium" 
+			<TButton
+				type="primary"
+				size="medium"
 				@click="handleActionClick"
 			>
 				{{ displayActionText }}

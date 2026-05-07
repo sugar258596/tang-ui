@@ -10,19 +10,19 @@ import { useI18n } from '@/composables/useI18n.uts'
 const { $t } = useI18n()
 
 // 基础用法
-const currentIndex1 = ref<number>(0)
+const currentIndex1 = ref(0)
 
 // 自定义指示器
-const currentIndex2 = ref<number>(0)
+const currentIndex2 = ref(0)
 
 // 数字指示器
-const currentIndex3 = ref<number>(0)
+const currentIndex3 = ref(0)
 
 // 垂直轮播
-const currentIndex4 = ref<number>(0)
+const currentIndex4 = ref(0)
 
 // 禁用自动播放
-const currentIndex5 = ref<number>(0)
+const currentIndex5 = ref(0)
 
 // 轮播图数据
 const swiperList = ref<any[]>([

@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<TLoadingProps>(), {
 /**
  * 计算加载容器样式类
  */
-const loadingClass = computed<string>(() => {
+const loadingClass = computed(() => {
   const classes: string[] = ['t-loading inset-0 flex items-center justify-center']
 
   if (props.fullscreen) {
@@ -36,7 +36,7 @@ const loadingClass = computed<string>(() => {
 /**
  * 计算遮罩层样式
  */
-const maskStyle = computed<string>(() => {
+const maskStyle = computed(() => {
   const styles: string[] = []
 
   if (props.maskBgColor != '') {
@@ -49,7 +49,7 @@ const maskStyle = computed<string>(() => {
 /**
  * 计算加载图标样式类
  */
-const spinnerClass = computed<string>(() => {
+const spinnerClass = computed(() => {
   const classes: string[] = ['t-loading__spinner animate-spin rounded-full border-2 border-solid']
 
   switch (props.size) {
@@ -70,7 +70,7 @@ const spinnerClass = computed<string>(() => {
 /**
  * 计算加载图标样式
  */
-const spinnerStyle = computed<string>(() => {
+const spinnerStyle = computed(() => {
   const styles: string[] = []
 
   if (props.color != '') {

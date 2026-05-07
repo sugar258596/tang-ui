@@ -36,8 +36,8 @@ const emit = defineEmits<{
 }>()
 
 // 状态管理
-const loading = ref<boolean>(true)
-const loadError = ref<boolean>(false)
+const loading = ref(true)
+const loadError = ref(false)
 
 /**
  * 计算图片容器样式

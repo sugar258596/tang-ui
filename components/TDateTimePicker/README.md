@@ -18,8 +18,8 @@
 <script setup lang="uts">
 import { ref } from 'vue'
 
-const visible = ref<boolean>(false)
-const selectedValue = ref<number>(Date.now())
+const visible = ref(false)
+const selectedValue = ref(Date.now())
 
 const handleConfirm = (value: number, formatted: string): void => {
   console.log('选中时间戳:', value)
@@ -77,35 +77,35 @@ const handleConfirm = (value: number, formatted: string): void => {
 
 ## Props
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-|------|------|------|--------|--------|
-| v-model | 控制选择器显示 | boolean | - | false |
-| v-model:value | 选中的时间戳（毫秒） | number | - | 0 |
-| mode | 选择模式 | string | month / date / datetime | date |
-| title | 选择器标题 | string | - | 选择日期 |
-| minDate | 最小可选日期（时间戳） | number | - | 当前时间-100年 |
-| maxDate | 最大可选日期（时间戳） | number | - | 当前时间+100年 |
-| confirmText | 确认按钮文字 | string | - | 确定 |
-| cancelText | 取消按钮文字 | string | - | 取消 |
-| showToolbar | 是否显示工具栏 | boolean | - | true |
-| activeColor | 选中日期背景颜色 | string | - | #409eff |
-| activeTextColor | 选中日期文字颜色 | string | - | #ffffff |
-| todayColor | 今天日期文字颜色 | string | - | #409eff |
-| confirmColor | 确认/今天按钮颜色 | string | - | #409eff |
+| 参数            | 说明                   | 类型    | 可选值                  | 默认值         |
+| --------------- | ---------------------- | ------- | ----------------------- | -------------- |
+| v-model         | 控制选择器显示         | boolean | -                       | false          |
+| v-model:value   | 选中的时间戳（毫秒）   | number  | -                       | 0              |
+| mode            | 选择模式               | string  | month / date / datetime | date           |
+| title           | 选择器标题             | string  | -                       | 选择日期       |
+| minDate         | 最小可选日期（时间戳） | number  | -                       | 当前时间-100年 |
+| maxDate         | 最大可选日期（时间戳） | number  | -                       | 当前时间+100年 |
+| confirmText     | 确认按钮文字           | string  | -                       | 确定           |
+| cancelText      | 取消按钮文字           | string  | -                       | 取消           |
+| showToolbar     | 是否显示工具栏         | boolean | -                       | true           |
+| activeColor     | 选中日期背景颜色       | string  | -                       | #409eff        |
+| activeTextColor | 选中日期文字颜色       | string  | -                       | #ffffff        |
+| todayColor      | 今天日期文字颜色       | string  | -                       | #409eff        |
+| confirmColor    | 确认/今天按钮颜色      | string  | -                       | #409eff        |
 
 ## Events
 
-| 事件名 | 说明 | 回调参数 |
-|--------|------|----------|
+| 事件名  | 说明               | 回调参数                           |
+| ------- | ------------------ | ---------------------------------- |
 | confirm | 点击确认按钮时触发 | (value: number, formatted: string) |
-| cancel | 点击取消按钮时触发 | - |
-| change | 选项改变时触发 | (value: number) |
+| cancel  | 点击取消按钮时触发 | -                                  |
+| change  | 选项改变时触发     | (value: number)                    |
 
 ## Slots
 
-| 名称 | 说明 | 参数 |
-|------|------|------|
-| day | 自定义日期单元格内容 | { item: TDateTimePickerDayItem } |
+| 名称 | 说明                 | 参数                             |
+| ---- | -------------------- | -------------------------------- |
+| day  | 自定义日期单元格内容 | { item: TDateTimePickerDayItem } |
 
 ## 类型导出
 
@@ -113,14 +113,14 @@ const handleConfirm = (value: number, formatted: string): void => {
 import type {
   TDateTimePickerMode,
   TDateTimePickerDayItem,
-  TDateTimePickerProps
-} from 'tang-ui-x/components/TDateTimePicker/type.uts'
+  TDateTimePickerProps,
+} from "tang-ui-x/components/TDateTimePicker/type.uts";
 ```
 
 ## 跨端兼容性
 
-| 平台 | 支持 |
-|------|------|
-| H5 | ✅ |
-| 微信小程序 | ✅ |
-| App (iOS/Android) | ✅ |
+| 平台              | 支持 |
+| ----------------- | ---- |
+| H5                | ✅   |
+| 微信小程序        | ✅   |
+| App (iOS/Android) | ✅   |

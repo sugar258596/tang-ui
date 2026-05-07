@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<TCheckboxProps>(), {
   borderWidth: 2
 })
 
-const model = defineModel<boolean>({ default: false })
+const model = defineModel({ default: false })
 
 const emit = defineEmits<{
   change: [value: boolean]

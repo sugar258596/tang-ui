@@ -1,0 +1,56 @@
+#!/bin/sh
+
+echo "🔄 正在检查提交信息是否符合规范... 🔄"
+
+# 使用 commitlint 检查提交信息
+if ! npx --no -- commitlint --edit "$1"; then
+  # 提取并清理提交信息（移除注释行和首尾空格）
+  COMMIT_MSG=$(grep -v "^#" "$1" | head -n1 | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  
+  echo ""
+  echo "❌ 提交信息不符合规范！"
+  echo "----------------------------------------"
+
+  # 自动分析建议的提交类型
+  SUGGEST_TYPE="feat"  # 默认类型
+  SCOPE="<模块名>"     # 可替换为你的默认模块名
+  
+  # 根据关键词智能推荐类型
+  case "$COMMIT_MSG" in
+    *[Ff]ix*|*[Bb]ug*|*修复*|*错误*) SUGGEST_TYPE="fix" ;;
+    *[Dd]ocs*|*文档*|*README*)       SUGGEST_TYPE="docs" ;;
+    *[Ss]tyle*|*样式*|*CSS*)         SUGGEST_TYPE="style" ;;
+    *[Tt]est*|*测试*)                SUGGEST_TYPE="test" ;;
+    *[Rr]efactor*)                   SUGGEST_TYPE="refactor" ;;
+    *[Cc]hore*|*杂项*)               SUGGEST_TYPE="chore" ;;
+  esac
+
+  # 提取主题描述（移除可能已存在的类型前缀）
+  SUBJECT=$(echo "$COMMIT_MSG" | sed -E 's/^(feat|fix|docs|style|refactor|test|chore)[(:].*//i' | xargs)
+  [ -z "$SUBJECT" ] && SUBJECT="添加描述信息"  # 默认描述
+  
+  # 生成建议格式
+  SUGGESTION="${SUGGEST_TYPE}(${SCOPE}): ${SUBJECT}"
+  
+  # 输出详细帮助信息
+  echo "💡 规范要求:"
+  echo "  • 格式: <type>(<scope>): <subject>"
+  echo "  • 示例: ${SUGGESTION}"
+  echo ""
+  echo "📋 常用类型说明:"
+  echo "  feat     : 新功能"
+  echo "  fix      : bug修复"
+  echo "  docs     : 文档变更"
+  echo "  style    : 代码样式调整"
+  echo "  refactor : 重构代码"
+  echo "  test     : 测试相关"
+  echo "  chore    : 构建/工具变更"
+  echo ""
+  echo "📝 你的输入: \"${COMMIT_MSG}\""
+  echo "----------------------------------------"
+  exit 1
+fi
+
+echo "✅ 提交信息符合规范！"
+exit 0
+ 

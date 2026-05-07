@@ -19,11 +19,11 @@ const props = withDefaults(defineProps<TCollapseItemProps>(), {
 const collapseContext = inject<TCollapseContext>('TCollapse')
 
 // 内容高度
-const contentHeight = ref<number>(0)
+const contentHeight = ref(0)
 const contentRef = ref<any>(null)
 
 // 计算是否展开
-const isActive = computed<boolean>(() => {
+const isActive = computed(() => {
   if (collapseContext == null) {
     return false
   }
@@ -31,7 +31,7 @@ const isActive = computed<boolean>(() => {
 })
 
 // 计算内容样式
-const contentStyle = computed<string>(() => {
+const contentStyle = computed(() => {
   if (isActive.value) {
     return 'max-height: 2000px; opacity: 1; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);'
   }
@@ -54,7 +54,7 @@ const handleClick = (): void => {
 /**
  * 计算头部样式类
  */
-const headerClass = computed<string>(() => {
+const headerClass = computed(() => {
   const classes: string[] = [
     'flex',
     'flex-row',
@@ -79,7 +79,7 @@ const headerClass = computed<string>(() => {
 /**
  * 计算箭头样式类
  */
-const arrowClass = computed<string>(() => {
+const arrowClass = computed(() => {
   const classes: string[] = [
     'flex',
     'h-[24px]',

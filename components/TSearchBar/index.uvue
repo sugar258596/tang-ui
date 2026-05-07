@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel<string>({ default: '' })
+const modelValue = defineModel({ default: '' })
 
 // Emits 定义
 const emit = defineEmits<{

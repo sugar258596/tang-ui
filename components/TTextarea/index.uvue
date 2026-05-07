@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel<string>({ default: '' })
+const modelValue = defineModel({ default: '' })
 
 // Emits 定义
 const emit = defineEmits<{
@@ -36,7 +36,7 @@ const emit = defineEmits<{
 }>()
 
 // 状态管理
-const isFocused = ref<boolean>(false)
+const isFocused = ref(false)
 
 /**
  * 计算当前字符数

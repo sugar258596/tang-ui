@@ -133,13 +133,47 @@
 		}
 	}
 
-	const validateField = (item : FormSchema) => {
+	/**
+	 * 清空指定字段的错误信息
+	 * UTS 不支持 delete 操作符，因此使用空字符串表示无错误状态。
+	 * @param field 字段名
+	 */
+	const clearFieldError = (field : string) : void => {
+		errors[field] = ''
+	}
+
+	/**
+	 * 清空所有字段的错误信息
+	 * @description 保持响应式对象引用不变，确保模板状态可正常更新。
+	 */
+	const clearErrors = () : void => {
+		Object.keys(errors).forEach((field : string) => {
+			clearFieldError(field)
+		})
+	}
+
+	/**
+	 * 获取当前有效错误信息
+	 * @returns 当前存在错误文案的字段映射
+	 */
+	const getActiveErrors = () : Record<string, string> => {
+		const activeErrors : Record<string, string> = {}
+		Object.keys(errors).forEach((field : string) => {
+			const message = errors[field]
+			if (message !== '') {
+				activeErrors[field] = message
+			}
+		})
+		return activeErrors
+	}
+
+	const validateField = (item : FormSchema) : void => {
 		if (item.required && isFieldEmpty(model.value[item.field])) {
 			errors[item.field] = $t('form.requiredError', { label: item.label })
 			// 触发抖动动画
 			triggerShake(item.field)
 		} else {
-			delete errors[item.field]
+			clearFieldError(item.field)
 		}
 	}
 
@@ -177,7 +211,7 @@
 	}
 
 	const onFormSubmit = async (e : UniFormSubmitEvent) : Promise<{ valid : boolean, values : any }> => {
-		Object.keys(errors).forEach(k => delete errors[k])
+		clearErrors()
 
 		let hasError = false
 		for (const item of props.schemas) {
@@ -205,7 +239,7 @@
 		for (const item of props.schemas) {
 			model.value[item.field] = getDefaultFieldValue(item)
 		}
-		Object.keys(errors).forEach(k => delete errors[k])
+		clearErrors()
 		emit('reset')
 	}
 
@@ -217,7 +251,7 @@
 			onFormReset()
 		},
 		validate: () => {
-			Object.keys(errors).forEach(k => delete errors[k])
+			clearErrors()
 			let hasError = false
 			for (const item of props.schemas) {
 				validateField(item)
@@ -228,7 +262,7 @@
 			return !hasError
 		},
 		getFormData: () => ({ ...model.value }),
-		getErrors: () => ({ ...errors })
+		getErrors: () => getActiveErrors()
 	})
 </script>
 

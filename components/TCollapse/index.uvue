@@ -13,9 +13,11 @@ const props = withDefaults(defineProps<TCollapseProps>(), {
   border: true
 })
 
+type TActiveNames = string | string[]
+
 // 使用 defineModel 管理当前展开的面板名称
 // 手风琴模式下为字符串，多选模式下为字符串数组
-const activeNames = defineModel<string | string[]>({ default: [] })
+const activeNames = defineModel<TActiveNames>({ default: [] })
 
 /**
  * 计算当前展开的面板名称数组
@@ -64,7 +66,7 @@ provide('TCollapse', collapseContext)
 /**
  * 计算容器样式类
  */
-const collapseClass = computed<string>(() => {
+const collapseClass = computed(() => {
   const classes: string[] = ['bg-white']
 
   if (props.border) {

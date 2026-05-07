@@ -10,10 +10,10 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const switch1 = ref<boolean>(false)
-const switch2 = ref<boolean>(true)
-const switch3 = ref<boolean>(false)
-const switch4 = ref<boolean>(false)
+const switch1 = ref(false)
+const switch2 = ref(true)
+const switch3 = ref(false)
+const switch4 = ref(false)
 
 const handleChange = (value: boolean): void => {
   console.log(`开关状态改变: ${value}`)

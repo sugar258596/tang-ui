@@ -144,10 +144,10 @@ const { $t } = useI18n()
 const i18nManager = I18nManager.getInstance()
 
 // 当前语言
-const currentLang = ref<string>(i18nManager.getLocale())
+const currentLang = ref(i18nManager.getLocale())
 
 // 是否显示文件结构
-const showStructure = ref<boolean>(false)
+const showStructure = ref(false)
 
 // 内置语言列表（使用 ref 使其可变）
 const languages = ref([

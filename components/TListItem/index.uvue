@@ -26,7 +26,7 @@ const emit = defineEmits<{
 /**
  * 计算列表项样式类
  */
-const itemClass = computed<string>(() => {
+const itemClass = computed(() => {
   const classes: string[] = [
     't-list-item',
     "relative flex flex-row items-center gap-[24rpx] bg-white px-4 py-3 after:absolute after:bottom-0 after:left-4 after:right-0 after:h-px after:bg-[#ebeef5] after:content-[''] last:after:hidden",

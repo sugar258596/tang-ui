@@ -10,10 +10,10 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value1 = ref<number>(3)
-const value2 = ref<number>(2.5)
-const value3 = ref<number>(4)
-const value4 = ref<number>(0)
+const value1 = ref(3)
+const value2 = ref(2.5)
+const value3 = ref(4)
+const value4 = ref(0)
 
 const handleChange = (value: number): void => {
   console.log('评分值:', value)

@@ -11,11 +11,11 @@
 
 	const { $t } = useI18n()
 
-	const popup1 = ref<boolean>(false)
-	const popup2 = ref<boolean>(false)
-	const popup3 = ref<boolean>(false)
-	const popup4 = ref<boolean>(false)
-	const popup5 = ref<boolean>(false)
+	const popup1 = ref(false)
+	const popup2 = ref(false)
+	const popup3 = ref(false)
+	const popup4 = ref(false)
+	const popup5 = ref(false)
 </script>
 
 <template>

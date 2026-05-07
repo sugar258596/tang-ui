@@ -10,9 +10,9 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value1 = ref<string>('')
-const value2 = ref<string>('')
-const value3 = ref<string>('')
+const value1 = ref('')
+const value2 = ref('')
+const value3 = ref('')
 
 const handleSearch = (value: string): void => {
   console.log($t('examplePages.searchBar.messages.search'), value)

@@ -1,4 +1,4 @@
-<script  setup lang="uts" >
+<script setup lang="uts">
 	/**
 	 * Icon 图标组件
 	 * 支持 iconfont 字体图标
@@ -76,14 +76,16 @@
 </script>
 
 <template>
-	<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
+	<view class="flex justify-center items-center">
+		<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
+	</view>
 </template>
 
 
 <style lang="scss" scoped>
 	/* 导入字体图标 */
 	@import '@/static/font/iconfont.css';
-	
+
 	.t-icon {
 		display: inline-block;
 		line-height: 1;

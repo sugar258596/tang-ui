@@ -14,7 +14,7 @@ const { $t } = useI18n()
 const activeNames = ref<string[]>(['1'])
 
 // 手风琴模式
-const accordionActive = ref<string>('1')
+const accordionActive = ref('1')
 
 // 禁用状态
 const disabledActive = ref<string[]>([])

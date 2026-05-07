@@ -11,9 +11,9 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const loading1 = ref<boolean>(true)
-const loading2 = ref<boolean>(false)
-const fullscreenLoading = ref<boolean>(false)
+const loading1 = ref(true)
+const loading2 = ref(false)
+const fullscreenLoading = ref(false)
 
 const showFullscreen = (): void => {
   fullscreenLoading.value = true

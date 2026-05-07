@@ -1,151 +1,159 @@
-<script  setup lang="uts" >
-import { computed, ref, watch } from 'vue'
-import type { TSwitchProps } from './type.uts'
+<script setup lang="uts">
+	import { computed, ref, watch } from 'vue'
+	import type { TSwitchProps } from './type.uts'
 
-/**
- * TSwitch 开关组件
- * @description 用于两种状态之间的切换
- */
+	/**
+	 * TSwitch 开关组件
+	 * @description 用于两种状态之间的切换
+	 */
 
-// 定义 props
-const props = withDefaults(defineProps<TSwitchProps>(), {
-  disabled: false,
-  size: 'medium',
-  activeColor: '#409eff',
-  inactiveColor: 'var(--tui-border)',
-  activeText: '',
-  inactiveText: '',
-  showText: false
-})
+	// 定义 props
+	const props = withDefaults(defineProps<TSwitchProps>(), {
+		disabled: false,
+		size: 'medium',
+		activeColor: '#409eff',
+		inactiveColor: 'var(--tui-border)',
+		activeText: '',
+		inactiveText: '',
+		showText: false,
+		manual: false
+	})
 
-// 使用 defineModel
-const model = defineModel<boolean>({ default: false })
+	// 使用 defineModel
+	const model = defineModel({ default: false })
 
-// 定义 emits
-const emit = defineEmits<{
-  change: [value: boolean]
-}>()
+	// 定义 emits
+	const emit = defineEmits<{
+		change : [value: boolean]
+	}>()
 
-// 内部状态
-const checked = ref<boolean>(model.value)
+	// 内部状态
+	const checked = ref(model.value)
 
-// 监听外部值变化
-watch(() => model.value, (newVal: boolean) => {
-  checked.value = newVal
-})
+	// 监听外部值变化
+	watch(() => model.value, (newVal : boolean) => {
+		checked.value = newVal
+	})
 
-/**
- * 计算开关样式类
- */
-const switchClass = computed<string>(() => {
-  const classes: string[] = ['t-switch relative rounded-[100px] transition-colors duration-300']
+	/**
+	 * 计算开关样式类
+	 */
+	const switchClass = computed(() => {
+		const classes : string[] = ['t-switch relative rounded-[100px] transition-colors duration-300']
 
-  switch (props.size) {
-    case 'small':
-      classes.push('h-[18px] w-8')
-      break
-    case 'large':
-      classes.push('h-6 w-[50px]')
-      break
-    default:
-      classes.push('h-5 w-10')
-      break
-  }
+		switch (props.size) {
+			case 'small':
+				classes.push('h-[18px] w-8')
+				break
+			case 'large':
+				classes.push('h-6 w-[50px]')
+				break
+			default:
+				classes.push('h-5 w-10')
+				break
+		}
 
-  return classes.join(' ')
-})
+		return classes.join(' ')
+	})
 
-const wrapperClass = computed<string>(() => {
-  const classes: string[] = ['t-switch-wrapper inline-flex flex-row items-center']
+	const wrapperClass = computed(() => {
+		const classes : string[] = ['t-switch-wrapper inline-flex flex-row items-center']
 
-  if (props.disabled) {
-    classes.push('cursor-not-allowed opacity-60')
-  } else {
-    classes.push('cursor-pointer')
-  }
+		if (props.disabled) {
+			classes.push('cursor-not-allowed opacity-60')
+		} else {
+			classes.push('cursor-pointer')
+		}
 
-  return classes.join(' ')
-})
+		return classes.join(' ')
+	})
 
-const buttonClass = computed<string>(() => {
-  const classes: string[] = [
-    't-switch__button absolute left-0.5 top-0.5 rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)]',
-  ]
+	const buttonClass = computed(() => {
+		const classes : string[] = [
+			't-switch__button absolute left-0.5 top-0.5 rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)]',
+		]
 
-  switch (props.size) {
-    case 'small':
-      classes.push('h-[14px] w-[14px]')
-      break
-    case 'large':
-      classes.push('h-5 w-5')
-      break
-    default:
-      classes.push('h-4 w-4')
-      break
-  }
+		switch (props.size) {
+			case 'small':
+				classes.push('h-[14px] w-[14px]')
+				break
+			case 'large':
+				classes.push('h-5 w-5')
+				break
+			default:
+				classes.push('h-4 w-4')
+				break
+		}
 
-  return classes.join(' ')
-})
+		return classes.join(' ')
+	})
 
-const buttonStyle = computed<string>(() => {
-  let translateX = '0px'
+	const buttonStyle = computed(() => {
+		let translateX = '0px'
 
-  if (checked.value) {
-    switch (props.size) {
-      case 'small':
-        translateX = '14px'
-        break
-      case 'large':
-        translateX = '26px'
-        break
-      default:
-        translateX = '20px'
-        break
-    }
-  }
+		if (checked.value) {
+			switch (props.size) {
+				case 'small':
+					translateX = '14px'
+					break
+				case 'large':
+					translateX = '26px'
+					break
+				default:
+					translateX = '20px'
+					break
+			}
+		}
 
-  return `transform: translateX(${translateX}); transition: transform 0.3s;`
-})
+		return `transform: translateX(${translateX}); transition: transform 0.3s;`
+	})
 
-/**
- * 计算开关背景样式
- */
-const switchStyle = computed<string>(() => {
-  const styles: string[] = []
+	/**
+	 * 计算开关背景样式
+	 */
+	const switchStyle = computed(() => {
+		const styles : string[] = []
 
-  const bgColor = checked.value ? props.activeColor : props.inactiveColor
-  if (bgColor != '') {
-    styles.push(`background-color: ${bgColor}`)
-  }
+		const bgColor = checked.value ? props.activeColor : props.inactiveColor
+		if (bgColor != '') {
+			styles.push(`background-color: ${bgColor}`)
+		}
 
-  return styles.join('; ')
-})
+		return styles.join('; ')
+	})
 
-/**
- * 处理开关点击
- */
-const handleClick = (): void => {
-  if (props.disabled) {
-    return
-  }
+	/**
+	 * 处理开关点击
+	 */
+	const handleClick = () : void => {
+		if (props.disabled) {
+			return
+		}
 
-  const newValue = !checked.value
-  checked.value = newValue
-  model.value = newValue
-  emit('change', newValue)
-}
+		const newValue = !checked.value
+
+		if (props.manual) {
+			emit('change', newValue)
+			return
+		}
+
+		checked.value = newValue
+		model.value = newValue
+		emit('change', newValue)
+	}
 </script>
 
 <template>
-  <view :class="wrapperClass" @click="handleClick">
-    <text v-if="showText && inactiveText" class="t-switch__text t-switch__text--inactive mr-2 text-sm text-[#606266]">
-      {{ inactiveText }}
-    </text>
-    <view :class="switchClass" :style="switchStyle">
-      <view :class="buttonClass" :style="buttonStyle"></view>
-    </view>
-    <text v-if="showText && activeText" class="t-switch__text t-switch__text--active ml-2 text-sm text-[#606266]">
-      {{ activeText }}
-    </text>
-  </view>
+	<view :class="wrapperClass" @click="handleClick">
+		<text v-if="showText && inactiveText"
+			class="t-switch__text t-switch__text--inactive mr-2 text-sm text-[#606266]">
+			{{ inactiveText }}
+		</text>
+		<view :class="switchClass" :style="switchStyle">
+			<view :class="buttonClass" :style="buttonStyle"></view>
+		</view>
+		<text v-if="showText && activeText" class="t-switch__text t-switch__text--active ml-2 text-sm text-[#606266]">
+			{{ activeText }}
+		</text>
+	</view>
 </template>

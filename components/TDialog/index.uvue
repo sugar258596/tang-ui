@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const modelValue = defineModel<boolean>({ default: false })
+const modelValue = defineModel({ default: false })
 
 // 定义 emits
 const emit = defineEmits<{
@@ -51,7 +51,7 @@ const displayCancelText = computed(() => {
 /**
  * 计算对话框样式
  */
-const dialogStyle = computed<string>(() => {
+const dialogStyle = computed(() => {
   const styles: string[] = []
 
   if (props.width != '') {
@@ -64,7 +64,7 @@ const dialogStyle = computed<string>(() => {
 /**
  * 计算确认按钮样式类
  */
-const confirmBtnClass = computed<string>(() => {
+const confirmBtnClass = computed(() => {
   const classes: string[] = [
     'ml-3 rounded px-5 py-2 transition-all duration-300',
   ]

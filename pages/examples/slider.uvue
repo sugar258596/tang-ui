@@ -6,9 +6,9 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value1 = ref<number>(50)
-const value2 = ref<number>(30)
-const value3 = ref<number>(70)
+const value1 = ref(50)
+const value2 = ref(30)
+const value3 = ref(70)
 </script>
 
 <template>

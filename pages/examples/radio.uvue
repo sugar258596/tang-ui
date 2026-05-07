@@ -10,10 +10,10 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const radioValue1 = ref<string>('option1')
-const radioValue2 = ref<string>('')
-const radioValue3 = ref<string>('apple')
-const radioValue4 = ref<number>(1)
+const radioValue1 = ref('option1')
+const radioValue2 = ref('')
+const radioValue3 = ref('apple')
+const radioValue4 = ref(1)
 
 const handleChange = (value: string | number): void => {
   console.log('选中值:', value)

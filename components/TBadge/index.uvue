@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<TBadgeProps>(), {
 /**
  * 计算显示的内容
  */
-const displayValue = computed<string>(() => {
+const displayValue = computed(() => {
   if (props.isDot) {
     return ''
   }
@@ -38,7 +38,7 @@ const displayValue = computed<string>(() => {
 /**
  * 计算徽标样式类
  */
-const badgeClass = computed<string>(() => {
+const badgeClass = computed(() => {
   const classes: string[] = [
     't-badge__content absolute right-0 -top-3 z-[1] translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-[10px] px-1.5 py-0.5 text-xs leading-[1.2]',
   ]
@@ -71,7 +71,7 @@ const badgeClass = computed<string>(() => {
 /**
  * 计算徽标样式
  */
-const badgeStyle = computed<string>(() => {
+const badgeStyle = computed(() => {
   const styles: string[] = []
 
   if (props.bgColor != '') {
@@ -98,7 +98,7 @@ const badgeStyle = computed<string>(() => {
 /**
  * 是否显示徽标
  */
-const showBadge = computed<boolean>(() => {
+const showBadge = computed(() => {
   return !props.hidden && (props.isDot || props.value !== '' && props.value !== 0)
 })
 </script>

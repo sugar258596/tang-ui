@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<TListProps>(), {
 /**
  * 计算列表样式类
  */
-const listClass = computed<string>(() => {
+const listClass = computed(() => {
   const classes: string[] = ['t-list', 'bg-white']
 
   if (props.border) {

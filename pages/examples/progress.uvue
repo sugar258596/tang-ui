@@ -7,7 +7,7 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const percentage = ref<number>(50)
+const percentage = ref(50)
 let timer: number | null = null
 
 const startProgress = (): void => {

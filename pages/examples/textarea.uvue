@@ -11,10 +11,10 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value1 = ref<string>('')
-const value2 = ref<string>('默认内容')
-const value3 = ref<string>('')
-const value4 = ref<string>('')
+const value1 = ref('')
+const value2 = ref('默认内容')
+const value3 = ref('')
+const value4 = ref('')
 
 const handleInput = (value: string): void => {
   console.log('输入内容:', value)

@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const visible = defineModel<boolean>({ default: false })
+const visible = defineModel({ default: false })
 
 // 使用 defineModel 管理选中的值（使用命名模型）
 const selectedValue = defineModel<any>('selectedValue', { default: null })
@@ -60,7 +60,7 @@ const selectedIndex = ref<number[]>([0])
 /**
  * 计算是否为单列模式
  */
-const isSingleColumn = computed<boolean>(() => {
+const isSingleColumn = computed(() => {
   return props.options.length > 0 && props.columns.length === 0
 })
 
@@ -77,7 +77,7 @@ const columnsData = computed<TPickerOption[][]>(() => {
 /**
  * 计算 picker-view 的高度
  */
-const pickerHeight = computed<string>(() => {
+const pickerHeight = computed(() => {
   const height = parseInt(props.itemHeight) * props.visibleItemCount
   return `${height}px`
 })

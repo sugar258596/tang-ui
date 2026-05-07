@@ -125,7 +125,7 @@ const buttonClasses = computed((): string => {
   }
 
   // 自定义类名
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 
@@ -175,12 +175,12 @@ const handleClick = () => {
     </view>
 
     <!-- 自定义图标 -->
-    <view v-else-if="icon" class="t-button__icon mr-1 flex items-center">
+    <view v-else-if="icon !== ''" class="t-button__icon mr-1 flex items-center">
       <text class="t-button__icon-text text-base">{{ icon }}</text>
     </view>
 
     <!-- 按钮文本 -->
-    <view v-if="text || $slots.default" class="t-button__text flex items-center">
+    <view class="t-button__text flex items-center">
       <slot>{{ text }}</slot>
     </view>
   </button>

@@ -6,7 +6,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import type { TPopupProps } from './type.uts'
 
-const model = defineModel<boolean>({ default: false })
+const model = defineModel({ default: false })
 // 内部渲染状态，用于控制 DOM 显示
 const rendered = ref(false)
 // 是否显示遮罩层和内容

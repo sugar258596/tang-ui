@@ -10,8 +10,8 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const checked1 = ref<boolean>(false)
-const checked2 = ref<boolean>(true)
+const checked1 = ref(false)
+const checked2 = ref(true)
 const checkedList = ref<string[]>(['option1', 'option3'])
 const checkedFruits = ref<string[]>([])
 

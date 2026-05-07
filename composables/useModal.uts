@@ -23,9 +23,9 @@ export function useModal() {
   /**
    * 显示模态框
    * @param {ModalOptions} options - 模态框配置
-   * @returns {Promise<boolean>} 用户选择结果
+   * @returns {Promise} 用户选择结果
    */
-  const show = (options: ModalOptions): Promise<boolean> => {
+  const show = (options: ModalOptions): Promise => {
     return new Promise((resolve, reject) => {
       try {
         // 默认配置
@@ -60,9 +60,9 @@ export function useModal() {
    * 显示确认框
    * @param {string} content - 内容
    * @param {string} title - 标题
-   * @returns {Promise<boolean>} 用户选择结果
+   * @returns {Promise} 用户选择结果
    */
-  const confirm = (content: string, title: string = '提示'): Promise<boolean> => {
+  const confirm = (content: string, title: string = '提示'): Promise => {
     return show({
       title,
       content,
@@ -74,9 +74,9 @@ export function useModal() {
    * 显示提示框
    * @param {string} content - 内容
    * @param {string} title - 标题
-   * @returns {Promise<boolean>} 确认结果
+   * @returns {Promise} 确认结果
    */
-  const alert = (content: string, title: string = '提示'): Promise<boolean> => {
+  const alert = (content: string, title: string = '提示'): Promise => {
     return show({
       title,
       content,
@@ -147,9 +147,9 @@ export function useModal() {
    * 显示操作菜单
    * @param {string[]} items - 菜单项
    * @param {string} title - 标题
-   * @returns {Promise<number>} 选择的索引
+   * @returns {Promise} 选择的索引
    */
-  const actionSheet = (items: string[], title?: string): Promise<number> => {
+  const actionSheet = (items: string[], title?: string): Promise => {
     return new Promise((resolve) => {
       uni.showActionSheet({
         itemList: items,
@@ -268,14 +268,14 @@ export function getModalInstance() {
 /**
  * 快捷方法：显示确认框
  */
-export function showConfirm(content: string, title?: string): Promise<boolean> {
+export function showConfirm(content: string, title?: string): Promise {
   return getModalInstance().confirm(content, title)
 }
 
 /**
  * 快捷方法：显示提示框
  */
-export function showAlert(content: string, title?: string): Promise<boolean> {
+export function showAlert(content: string, title?: string): Promise {
   return getModalInstance().alert(content, title)
 }
 
@@ -289,6 +289,6 @@ export function showLoading(title?: string, mask?: boolean): () => void {
 /**
  * 快捷方法：显示操作菜单
  */
-export function showActionSheet(items: string[], title?: string): Promise<number> {
+export function showActionSheet(items: string[], title?: string): Promise {
   return getModalInstance().actionSheet(items, title)
 }

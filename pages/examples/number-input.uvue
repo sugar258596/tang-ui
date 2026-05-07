@@ -10,10 +10,10 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value1 = ref<number>(0)
-const value2 = ref<number>(5)
-const value3 = ref<number>(10)
-const value4 = ref<number>(1)
+const value1 = ref(0)
+const value2 = ref(5)
+const value3 = ref(10)
+const value4 = ref(1)
 
 const handleChange = (value: number): void => {
   console.log($t('examplePages.numberInput.labels.currentValue'), value)

@@ -11,24 +11,24 @@ import { useI18n } from '@/composables/useI18n.uts'
 const { $t } = useI18n()
 
 // 单列选择器
-const singleVisible = ref<boolean>(false)
+const singleVisible = ref(false)
 const singleValue = ref<any>(null)
-const singleText = ref<string>('请选择')
+const singleText = ref('请选择')
 
 // 多列选择器
-const multiVisible = ref<boolean>(false)
+const multiVisible = ref(false)
 const multiValue = ref<any>(null)
-const multiText = ref<string>('请选择')
+const multiText = ref('请选择')
 
 // 城市选择器
-const cityVisible = ref<boolean>(false)
+const cityVisible = ref(false)
 const cityValue = ref<any>(null)
-const cityText = ref<string>('请选择')
+const cityText = ref('请选择')
 
 // 日期选择器
-const dateVisible = ref<boolean>(false)
+const dateVisible = ref(false)
 const dateValue = ref<any>(null)
-const dateText = ref<string>('请选择')
+const dateText = ref('请选择')
 
 // 单列选项数据
 const fruitOptions = ref<TPickerOption[]>([

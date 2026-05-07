@@ -11,8 +11,8 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const value = ref<number>(5)
-const hidden = ref<boolean>(false)
+const value = ref(5)
+const hidden = ref(false)
 </script>
 
 <template>

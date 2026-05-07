@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<TColProps>(), {
 })
 
 // 注入父组件的 gutter
-const rowGutter = inject<number>('rowGutter', 0)
+const rowGutter = inject('rowGutter', 0)
 
 /**
  * 计算容器样式

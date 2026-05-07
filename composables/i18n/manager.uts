@@ -7,6 +7,7 @@ import { ref, computed } from 'vue'
 import type { Ref, ComputedRef } from 'vue'
 import type { ModularLocaleMessages, TranslateParams } from './types.uts'
 import { I18nError } from './error.uts'
+import { LocaleLoader } from '../../locales/loader.uts'
 
 /**
  * I18nManager 单例类
@@ -15,25 +16,25 @@ import { I18nError } from './error.uts'
 export class I18nManager {
   /** 单例实例 */
   private static instance: I18nManager | null = null
-  
+
   /** 当前语言代码（响应式） */
-  public currentLocale: Ref<string>
-  
+  public currentLocale: Ref
+
   /** 回退语言代码 */
   public fallbackLocale: string
-  
+
   /** 语言包存储 */
   private messages: Map<string, ModularLocaleMessages>
-  
+
   /**
    * 私有构造函数，确保单例模式
    */
   private constructor() {
-    this.currentLocale = ref<string>('zh-CN')
+    this.currentLocale = ref('zh-CN')
     this.fallbackLocale = 'zh-CN'
     this.messages = new Map<string, ModularLocaleMessages>()
   }
-  
+
   /**
    * 获取单例实例
    * @returns I18nManager 实例
@@ -44,7 +45,7 @@ export class I18nManager {
     }
     return I18nManager.instance
   }
-  
+
   /**
    * 翻译函数
    * 支持模块化键查询（moduleName.key）和参数插值
@@ -55,42 +56,42 @@ export class I18nManager {
   translate(key: string, params?: TranslateParams): string {
     // 1. 解析键：moduleName.key
     const parts = key.split('.')
-    
+
     if (parts.length < 2) {
       I18nError.warnInvalidKey(key)
       return key
     }
-    
+
     const moduleName = parts[0]
     const messageKey = parts.slice(1).join('.')
-    
+
     if (!moduleName || !messageKey) {
       I18nError.warnInvalidKey(key)
       return key
     }
-    
+
     // 2. 在当前语言中查找
     let message = this.getModuleMessage(this.currentLocale.value, moduleName, messageKey)
-    
+
     // 3. 如果未找到，尝试回退语言
     if (message === undefined) {
       message = this.getModuleMessage(this.fallbackLocale, moduleName, messageKey)
-      
+
       // 4. 如果仍未找到，返回键本身
       if (message === undefined) {
         I18nError.warnKeyNotFound(key, this.currentLocale.value)
         return key
       }
     }
-    
+
     // 5. 如果有参数，执行插值
     if (params && typeof message === 'string') {
       return this.interpolate(message, params)
     }
-    
+
     return message as string
   }
-  
+
   /**
    * 获取模块中的消息（支持深层嵌套）
    * @param locale 语言代码
@@ -103,16 +104,16 @@ export class I18nManager {
     if (!localeMessages) {
       return undefined
     }
-    
+
     const module = localeMessages[moduleName]
     if (!module) {
       return undefined
     }
-    
+
     // 支持嵌套路径查询（例如：components.TButton.name）
     const keys = key.split('.')
     let current: any = module
-    
+
     for (const k of keys) {
       if (current && typeof current === 'object' && k in current) {
         current = current[k]
@@ -120,11 +121,11 @@ export class I18nManager {
         return undefined
       }
     }
-    
+
     // 确保最终值是字符串
     return typeof current === 'string' ? current : undefined
   }
-  
+
   /**
    * 字符串插值
    * 支持 {key} 占位符格式
@@ -141,7 +142,7 @@ export class I18nManager {
       return match  // 保留未匹配的占位符
     })
   }
-  
+
   /**
    * 设置当前语言
    * @param locale 语言代码
@@ -152,12 +153,12 @@ export class I18nManager {
       I18nError.warnLocaleNotFound(locale)
       return false
     }
-    
+
     // 更新 ref 会自动触发所有依赖的重新计算
     this.currentLocale.value = locale
     return true
   }
-  
+
   /**
    * 检查语言包是否已注册
    * @param locale 语言代码
@@ -166,7 +167,7 @@ export class I18nManager {
   hasLocale(locale: string): boolean {
     return this.messages.has(locale)
   }
-  
+
   /**
    * 验证语言包结构（支持嵌套对象）
    * @param locale 语言代码
@@ -179,25 +180,25 @@ export class I18nManager {
       I18nError.errorMessagesNotObject(locale)
       return false
     }
-    
+
     // 2. 验证每个模块是否为对象
     for (const moduleName in messages) {
       const module = messages[moduleName]
-      
+
       if (!module || typeof module !== 'object' || Array.isArray(module)) {
         I18nError.errorModuleNotObject(locale, moduleName)
         return false
       }
-      
+
       // 3. 递归验证模块内容（支持嵌套对象）
       if (!this.validateModuleContent(locale, moduleName, module)) {
         return false
       }
     }
-    
+
     return true
   }
-  
+
   /**
    * 递归验证模块内容（支持嵌套对象）
    * @param locale 语言代码
@@ -208,7 +209,7 @@ export class I18nManager {
   private validateModuleContent(locale: string, moduleName: string, obj: any): boolean {
     for (const key in obj) {
       const value = obj[key]
-      
+
       if (typeof value === 'string') {
         // 字符串值，验证通过
         continue
@@ -223,10 +224,10 @@ export class I18nManager {
         return false
       }
     }
-    
+
     return true
   }
-  
+
   /**
    * 注册或更新语言包（默认使用合并模式）
    * @param locale 语言代码
@@ -240,7 +241,7 @@ export class I18nManager {
       this.registerMessagesWithMode(locale, messages, 'merge')
     }
   }
-  
+
   /**
    * 注册或更新语言包（异步版本）
    * @param locale 语言代码
@@ -254,86 +255,27 @@ export class I18nManager {
       this.registerMessagesWithMode(locale, messages, 'merge')
     }
   }
-  
+
   /**
    * 从路径加载语言包（异步版本）
    * @param locale 语言代码
    * @param basePath 语言包目录路径（例如：'locales/ja-JP'）
    */
   private async registerMessagesFromPathAsync(locale: string, basePath: string): Promise<void> {
-    // 定义核心模块列表（只加载常用的模块，减少 404 请求）
-    const coreModules = [
-      'common',
-      'form',
-      'input',
-      'dialog',
-      'empty',
-      'loading'
-    ]
-    
-    // 定义可选模块列表
-    const optionalModules = [
-      'actionSheet',
-      'errorState',
-      'examplePages',
-      'examples',
-      'list',
-      'navBar',
-      'noticeBar',
-      'picker',
-      'searchBar',
-      'textarea',
-      'toast'
-    ]
-    
-    const loadedMessages: ModularLocaleMessages = {}
-    
-    // 先加载核心模块
-    await Promise.all(
-      coreModules.map(async (moduleName) => {
-        try {
-          // 构建文件路径
-          const filePath = `${basePath}/${moduleName}.json`
-          
-          // 使用动态 import 加载 JSON 文件（支持 H5、App、小程序）
-          const module = await import(/* @vite-ignore */ filePath)
-          const moduleData = module.default || module
-          
-          if (moduleData && typeof moduleData === 'object') {
-            loadedMessages[moduleName] = moduleData
-          }
-        } catch (e) {
-          // 核心模块加载失败时输出警告
-          console.warn(`[I18n] Failed to load core module ${moduleName} for locale ${locale}`)
-        }
-      })
-    )
-    
-    // 尝试加载可选模块（静默失败）
-    await Promise.allSettled(
-      optionalModules.map(async (moduleName) => {
-        try {
-          const filePath = `${basePath}/${moduleName}.json`
-          const module = await import(/* @vite-ignore */ filePath)
-          const moduleData = module.default || module
-          
-          if (moduleData && typeof moduleData === 'object') {
-            loadedMessages[moduleName] = moduleData
-          }
-        } catch (e) {
-          // 可选模块加载失败时静默忽略
-        }
-      })
-    )
-    
-    // 如果成功加载了至少一个模块，则注册语言包
+    // UniApp X App 端的 uts 编译器不支持使用变量路径执行动态 import，
+    // 否则会出现 `Could not resolve "filePath"` 的构建错误。
+    // 这里改为复用 locales/loader.uts 中维护的静态 JSON 导入映射，
+    // 让所有语言包路径在编译阶段即可被 Vite / app-uts 正确解析。
+    const loadedMessages = LocaleLoader.loadLocale(locale)
+
     if (Object.keys(loadedMessages).length > 0) {
       this.registerMessagesWithMode(locale, loadedMessages, 'merge')
     } else {
+      console.warn(`[I18n] Failed to load locale ${locale} from path ${basePath}. UniApp X App builds require static locale imports.`)
       I18nError.warnLocaleNotFound(locale)
     }
   }
-  
+
   /**
    * 从路径加载语言包（同步版本，仅用于兼容）
    * @param locale 语言代码
@@ -346,7 +288,7 @@ export class I18nManager {
       I18nError.warnLocaleNotFound(locale)
     })
   }
-  
+
   /**
    * 注册语言包（指定模式）
    * @param locale 语言代码
@@ -363,14 +305,14 @@ export class I18nManager {
       // 验证失败，拒绝注册
       return
     }
-    
+
     if (mode === 'replace') {
       // 替换模式：完全替换现有语言包（直接设置，不再次验证）
       this.messages.set(locale, messages)
     } else {
       // 合并模式：合并现有语言包
       const existingMessages = this.messages.get(locale)
-      
+
       if (existingMessages) {
         // 合并现有语言包
         const merged = this.mergeModularMessages(existingMessages, messages)
@@ -381,7 +323,7 @@ export class I18nManager {
       }
     }
   }
-  
+
   /**
    * 替换语言包（完全替换）
    * @param locale 语言代码
@@ -393,10 +335,10 @@ export class I18nManager {
       // 验证失败，拒绝替换
       return
     }
-    
+
     this.messages.set(locale, messages)
   }
-  
+
   /**
    * 合并模块化语言包
    * @param target 目标语言包
@@ -408,12 +350,12 @@ export class I18nManager {
     source: ModularLocaleMessages
   ): ModularLocaleMessages {
     const result: ModularLocaleMessages = { ...target }
-    
+
     // 遍历源语言包的所有模块
     for (const moduleName in source) {
       const sourceModule = source[moduleName]
       const targetModule = result[moduleName]
-      
+
       if (targetModule) {
         // 如果目标中已有该模块，合并键值对
         result[moduleName] = {
@@ -425,10 +367,10 @@ export class I18nManager {
         result[moduleName] = sourceModule
       }
     }
-    
+
     return result
   }
-  
+
   /**
    * 获取可用语言列表（响应式）
    * @returns 可用语言代码数组
@@ -436,7 +378,7 @@ export class I18nManager {
   getAvailableLocales(): ComputedRef<string[]> {
     return computed(() => Array.from(this.messages.keys()))
   }
-  
+
   /**
    * 获取当前语言代码
    * @returns 当前语言代码
@@ -444,53 +386,53 @@ export class I18nManager {
   getCurrentLocale(): string {
     return this.currentLocale.value
   }
-  
+
   /**
    * 注册新语言（简化方法）
    * 支持传入语言包对象或语言包目录路径
    * @param locale 语言代码（例如：'ja-JP'）
    * @param messagesOrPath 语言包对象或语言包目录路径
-   * 
+   *
    * @example
    * // 方式一：传入语言包对象
    * i18nManager.registerLocale('ja-JP', {
    *   common: { confirm: '確認', cancel: 'キャンセル' },
    *   button: { submit: '送信' }
    * })
-   * 
+   *
    * // 方式二：传入语言包目录路径
    * i18nManager.registerLocale('ja-JP', '@/locales/ja-JP')
    */
   registerLocale(locale: string, messagesOrPath: ModularLocaleMessages | string): void {
     this.registerMessages(locale, messagesOrPath)
   }
-  
+
   /**
    * 注册新语言（异步方法）
    * 支持传入语言包对象或语言包目录路径
    * @param locale 语言代码（例如：'ja-JP'）
    * @param messagesOrPath 语言包对象或语言包目录路径
-   * 
+   *
    * @example
    * // 方式一：传入语言包对象
    * await i18nManager.registerLocaleAsync('ja-JP', {
    *   common: { confirm: '確認', cancel: 'キャンセル' },
    *   button: { submit: '送信' }
    * })
-   * 
+   *
    * // 方式二：传入语言包目录路径（推荐使用异步版本）
    * await i18nManager.registerLocaleAsync('ja-JP', '@/locales/ja-JP')
    */
   async registerLocaleAsync(locale: string, messagesOrPath: ModularLocaleMessages | string): Promise<void> {
     await this.registerMessagesAsync(locale, messagesOrPath)
   }
-  
+
   /**
    * 扩展现有语言包
    * 用于添加自定义翻译到已有语言
    * @param locale 语言代码
    * @param messages 要添加的语言包
-   * 
+   *
    * @example
    * i18nManager.extendLocale('zh-CN', {
    *   myApp: {
@@ -502,7 +444,7 @@ export class I18nManager {
   extendLocale(locale: string, messages: ModularLocaleMessages): void {
     this.registerMessagesWithMode(locale, messages, 'merge')
   }
-  
+
   /**
    * 获取语言代码（别名方法）
    * @returns 当前语言代码
@@ -510,7 +452,7 @@ export class I18nManager {
   getLocale(): string {
     return this.currentLocale.value
   }
-  
+
   /**
    * 翻译函数（别名方法）
    * @param key 翻译键
@@ -520,12 +462,12 @@ export class I18nManager {
    */
   t(key: string, params?: TranslateParams, defaultValue?: string): string {
     const result = this.translate(key, params)
-    
+
     // 如果翻译结果等于键本身，且提供了默认值，则返回默认值
     if (result === key && defaultValue !== undefined) {
       return defaultValue
     }
-    
+
     return result
   }
 }

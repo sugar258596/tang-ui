@@ -25,12 +25,12 @@ const emit = defineEmits<{
 }>()
 
 // 图片加载失败标记
-const hasLoadError = ref<boolean>(false)
+const hasLoadError = ref(false)
 
 /**
  * 计算头像大小
  */
-const avatarSize = computed<number>(() => {
+const avatarSize = computed(() => {
   if (typeof props.size === 'number') {
     return props.size
   }
@@ -47,7 +47,7 @@ const avatarSize = computed<number>(() => {
 /**
  * 计算头像样式类
  */
-const avatarClass = computed<string>(() => {
+const avatarClass = computed(() => {
   const classes: string[] = ['t-avatar inline-flex items-center justify-center overflow-hidden relative cursor-pointer']
 
   if (props.shape === 'square') {
@@ -62,7 +62,7 @@ const avatarClass = computed<string>(() => {
 /**
  * 计算头像样式
  */
-const avatarStyle = computed<string>(() => {
+const avatarStyle = computed(() => {
   const styles: string[] = []
 
   const size = avatarSize.value
@@ -79,7 +79,7 @@ const avatarStyle = computed<string>(() => {
 /**
  * 计算文字样式
  */
-const textStyle = computed<string>(() => {
+const textStyle = computed(() => {
   const styles: string[] = []
 
   styles.push(`color: ${props.color}`)
@@ -106,7 +106,7 @@ const handleError = (): void => {
 /**
  * 获取显示的文字（取首字符）
  */
-const displayText = computed<string>(() => {
+const displayText = computed(() => {
   if (props.alt) {
     return props.alt.charAt(0).toUpperCase()
   }

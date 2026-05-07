@@ -42,6 +42,12 @@ export type TSwitchProps = {
    * @default false
    */
   showText?: boolean
+  
+    /**
+     * 是否手动控制（开启后点击不会自动切换状态）
+     * @default false
+     */
+    manual?: boolean
 }
 
 export type TSwitchEmits = {

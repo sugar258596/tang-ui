@@ -8,9 +8,9 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
-const show1 = ref<boolean>(false)
-const show2 = ref<boolean>(false)
-const show3 = ref<boolean>(false)
+const show1 = ref(false)
+const show2 = ref(false)
+const show3 = ref(false)
 
 const actions: ActionSheetAction[] = [
   { name: $t('examplePages.actionSheet.actions.option1') },

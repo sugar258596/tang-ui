@@ -26,11 +26,11 @@ const emit = defineEmits<{
 }>()
 
 // 注入父组件配置
-const gridBorder = inject<boolean>('gridBorder', false)
-const gridBorderColor = inject<string>('gridBorderColor', '#e0e0e0')
-const gridSquare = inject<boolean>('gridSquare', false)
-const gridCenter = inject<boolean>('gridCenter', true)
-const gridClickable = inject<boolean>('gridClickable', false)
+const gridBorder = inject('gridBorder', false)
+const gridBorderColor = inject('gridBorderColor', '#e0e0e0')
+const gridSquare = inject('gridSquare', false)
+const gridCenter = inject('gridCenter', true)
+const gridClickable = inject('gridClickable', false)
 const gridIconSize = inject<string | number>('gridIconSize', '28px')
 
 /**

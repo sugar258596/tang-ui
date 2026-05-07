@@ -15,7 +15,7 @@ export interface UseI18nReturn {
   /** 翻译函数 */
   $t: (key: string, params?: TranslateParams) => string
   /** 当前语言（响应式） */
-  locale: ComputedRef<string>
+  locale: ComputedRef
   /** 可用语言列表（响应式） */
   availableLocales: ComputedRef<string[]>
   /** 设置语言 */
@@ -58,7 +58,7 @@ export function useI18n(): UseI18nReturn {
   }
   
   // 当前语言（响应式 computed）
-  const locale = computed<string>(() => manager.currentLocale.value)
+  const locale = computed(() => manager.currentLocale.value)
   
   // 可用语言列表（响应式 computed）
   const availableLocales = manager.getAvailableLocales()
