@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TCheckboxGroupProps, CheckboxOption } from './type.uts'
 
 /**
@@ -9,6 +10,11 @@ import type { TCheckboxGroupProps, CheckboxOption } from './type.uts'
 
 // Props 定义 (从 type.uts 导入，排除 modelValue)
 type Props = Omit<TCheckboxGroupProps, 'modelValue'>
+type CheckboxGroupModelValue = (string | number)[]
+type CheckboxSizeConfig = {
+  icon: number
+  fontSize: number
+}
 
 const props = withDefaults(defineProps<Props>(), {
   options: () => [] as CheckboxOption[],
@@ -23,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel<(string | number)[]>({ default: () => [] })
+const modelValue = defineModel({ default: () => [] }) as Ref<CheckboxGroupModelValue>
 
 const emit = defineEmits<{
   change: [value: (string | number)[]]
@@ -60,22 +66,28 @@ const isChecked = (option: CheckboxOption): boolean => {
   return modelValue.value.includes(option.value)
 }
 
-// 尺寸映射
-const sizeMap = {
-  small: { icon: 32, fontSize: 20 },
-  medium: { icon: 40, fontSize: 24 },
-  large: { icon: 48, fontSize: 28 }
+const getSizeConfig = (): CheckboxSizeConfig => {
+  switch (props.size) {
+    case 'small':
+      return { icon: 32, fontSize: 20 }
+    case 'large':
+      return { icon: 48, fontSize: 28 }
+    default:
+      return { icon: 40, fontSize: 24 }
+  }
 }
 
-const currentSize = computed(() => sizeMap[props.size])
+const cssVars = computed(() => {
+  const size = getSizeConfig()
 
-const cssVars = computed(() => ({
-  '--icon-size': `${currentSize.value.icon}rpx`,
-  '--checkmark-size': `${currentSize.value.fontSize}rpx`,
-  '--label-size': `${currentSize.value.fontSize}rpx`,
-  '--active-color': props.activeColor,
-  '--inactive-color': props.inactiveColor
-}))
+  return {
+    '--icon-size': `${size.icon}rpx`,
+    '--checkmark-size': `${size.fontSize}rpx`,
+    '--label-size': `${size.fontSize}rpx`,
+    '--active-color': props.activeColor,
+    '--inactive-color': props.inactiveColor
+  }
+})
 </script>
 
 <template>
@@ -96,7 +108,7 @@ const cssVars = computed(() => ({
     >
       <view
         class="t-checkbox-group__icon mr-4 flex items-center justify-center rounded-[8rpx] border-solid transition-all duration-300"
-        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? props.activeColor : props.inactiveColor}; ${isChecked(option) ? `background-color: ${props.activeColor};` : ''}`"
+        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? 'var(--active-color)' : 'var(--inactive-color)'}; ${isChecked(option) ? 'background-color: var(--active-color);' : ''}`"
       >
         <text v-if="isChecked(option)" class="t-checkbox-group__check font-bold text-white" :style="`font-size: var(--checkmark-size);`">✓</text>
       </view>

@@ -9,7 +9,7 @@ import type { TSliderProps } from './type.uts'
 // Props 定义 (从 type.uts 导入，排除 modelValue)
 type Props = Omit<TSliderProps, 'modelValue'>
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   min: 0,
   max: 100,
   step: 1,

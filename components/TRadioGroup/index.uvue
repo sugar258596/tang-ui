@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TRadioGroupProps, RadioOption } from './type.uts'
 
 /**
@@ -9,6 +10,12 @@ import type { TRadioGroupProps, RadioOption } from './type.uts'
 
 // Props 定义 (从 type.uts 导入，排除 modelValue)
 type Props = Omit<TRadioGroupProps, 'modelValue'>
+type RadioGroupModelValue = string | number
+type RadioSizeConfig = {
+  icon: number
+  dot: number
+  fontSize: number
+}
 
 const props = withDefaults(defineProps<Props>(), {
   options: () => [] as RadioOption[],
@@ -22,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel<string | number>({ default: '' })
+const modelValue = defineModel({ default: '' }) as Ref<RadioGroupModelValue>
 
 const emit = defineEmits<{
   change: [value: string | number]
@@ -39,22 +46,28 @@ const isChecked = (option: RadioOption): boolean => {
   return modelValue.value === option.value
 }
 
-// 尺寸映射
-const sizeMap = {
-  small: { icon: 28, dot: 14, fontSize: 24 },
-  medium: { icon: 36, dot: 20, fontSize: 28 },
-  large: { icon: 44, dot: 26, fontSize: 32 }
+const getSizeConfig = (): RadioSizeConfig => {
+  switch (props.size) {
+    case 'small':
+      return { icon: 28, dot: 14, fontSize: 24 }
+    case 'large':
+      return { icon: 44, dot: 26, fontSize: 32 }
+    default:
+      return { icon: 36, dot: 20, fontSize: 28 }
+  }
 }
 
-const currentSize = computed(() => sizeMap[props.size])
+const cssVars = computed(() => {
+  const size = getSizeConfig()
 
-const cssVars = computed(() => ({
-  '--icon-size': `${currentSize.value.icon}rpx`,
-  '--dot-size': `${currentSize.value.dot}rpx`,
-  '--font-size': `${currentSize.value.fontSize}rpx`,
-  '--active-color': props.activeColor,
-  '--inactive-color': props.inactiveColor
-}))
+  return {
+    '--icon-size': `${size.icon}rpx`,
+    '--dot-size': `${size.dot}rpx`,
+    '--font-size': `${size.fontSize}rpx`,
+    '--active-color': props.activeColor,
+    '--inactive-color': props.inactiveColor
+  }
+})
 </script>
 
 <template>
@@ -75,12 +88,12 @@ const cssVars = computed(() => ({
     >
       <view
         class="t-radio-group__icon mr-4 flex items-center justify-center rounded-full border-solid transition-all duration-300"
-        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? props.activeColor : props.inactiveColor}`"
+        :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? 'var(--active-color)' : 'var(--inactive-color)'}`"
       >
         <view
           v-if="isChecked(option)"
           class="t-radio-group__dot rounded-full"
-          :style="`width: var(--dot-size); height: var(--dot-size); background-color: ${props.activeColor}`"
+          :style="`width: var(--dot-size); height: var(--dot-size); background-color: var(--active-color)`"
         ></view>
       </view>
       <text class="t-radio-group__label" :style="`font-size: var(--font-size); color: #323233;`">{{ option.label }}</text>

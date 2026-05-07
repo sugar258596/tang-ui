@@ -85,6 +85,3 @@ export type TFormProps = {
   /** 重置按钮文本 */
   resetText?: string
 }
-
-// 导出所有类型
-export { FormOption, ComponentProps, FormSchema, TFormProps }

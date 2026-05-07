@@ -4,7 +4,15 @@
  * @description 支持单个按钮和选项组两种使用方式
  */
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TRadioButtonProps } from './type.uts'
+
+type RadioButtonModelValue = string | number
+type RadioButtonSizeClass = {
+  icon: string
+  dot: string
+  label: string
+}
 
 const props = withDefaults(defineProps<TRadioButtonProps>(), {
   options: () => [],
@@ -15,7 +23,7 @@ const props = withDefaults(defineProps<TRadioButtonProps>(), {
   checked: false
 })
 
-const model = defineModel<string | number>()
+const model = defineModel() as Ref<RadioButtonModelValue | null | undefined>
 
 const emit = defineEmits<{
   change: [value: string | number]
@@ -67,8 +75,7 @@ const handleClick = () => {
 /**
  * 尺寸样式类
  */
-const sizeClass = computed(() => {
-  const sizeMap = {
+const sizeMap: Record<string, RadioButtonSizeClass> = {
     small: {
       icon: 'h-[28rpx] w-[28rpx]',
       dot: 'h-[14rpx] w-[14rpx]',
@@ -84,13 +91,25 @@ const sizeClass = computed(() => {
       dot: 'h-[26rpx] w-[26rpx]',
       label: 'text-[32rpx]',
     },
+}
+
+const defaultSizeClass: RadioButtonSizeClass = sizeMap.medium
+
+const sizeClass = computed((): RadioButtonSizeClass => {
+  switch (props.size) {
+    case 'small':
+      return sizeMap.small
+    case 'large':
+      return sizeMap.large
+    default:
+      return sizeMap.medium
   }
-  return sizeMap[props.size] ?? sizeMap.medium
 })
 
 const labelClass = computed(() => {
   const classes: string[] = ['transition-colors duration-200 text-[#323233]']
-  classes.push(sizeClass.value.label)
+  const currentSizeClass = sizeClass.value ?? defaultSizeClass
+  classes.push(currentSizeClass.label)
   if (props.disabled) {
     classes.push('text-[#c0c4cc]')
   }
@@ -111,13 +130,13 @@ const labelClass = computed(() => {
       <view
         class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
         :class="sizeClass.icon"
-        :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : model.value === option.value ? props.activeColor : props.inactiveColor}`"
+        :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : model.value === option.value ? 'var(--radio-active-color)' : 'var(--radio-inactive-color)'}`"
       >
         <view
           v-if="model.value === option.value"
           class="rounded-full"
           :class="sizeClass.dot"
-          :style="`background-color: ${props.activeColor}`"
+          :style="`background-color: var(--radio-active-color)`"
         ></view>
       </view>
       <text
@@ -137,13 +156,13 @@ const labelClass = computed(() => {
     <view
       class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
       :class="sizeClass.icon"
-      :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : isChecked ? props.activeColor : props.inactiveColor}`"
+      :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : isChecked ? 'var(--radio-active-color)' : 'var(--radio-inactive-color)'}`"
     >
       <view
         v-if="isChecked"
         class="rounded-full"
         :class="sizeClass.dot"
-        :style="`background-color: ${props.activeColor}`"
+        :style="`background-color: var(--radio-active-color)`"
       ></view>
     </view>
     <slot>

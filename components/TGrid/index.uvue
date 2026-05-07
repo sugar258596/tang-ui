@@ -20,11 +20,6 @@ const props = withDefaults(defineProps<TGridProps>(), {
   customStyle: ''
 })
 
-// Emits 定义
-const emit = defineEmits<{
-  click: [index: number]
-}>()
-
 // 提供配置给子组件
 provide('gridColumns', props.columns)
 provide('gridBorder', props.border)

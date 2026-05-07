@@ -3,7 +3,7 @@
  * @module composables/useModal
  */
 
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import type { ModalOptions } from '../types/index.uts'
 
 /** 模态框队列 */

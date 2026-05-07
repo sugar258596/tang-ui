@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import type { TNoticeBarProps } from './type.uts'
 
-const props = withDefaults(defineProps<TNoticeBarProps>(), {
+withDefaults(defineProps<TNoticeBarProps>(), {
   text: '',
   mode: undefined,
   color: '#ed6a0c',

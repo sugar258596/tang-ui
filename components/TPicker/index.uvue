@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { computed, ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TPickerProps, TPickerOption } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 
@@ -10,6 +11,7 @@ import { useI18n } from '../../composables/useI18n.uts'
 
 // Props 定义 (从 type.uts 导入，排除 visible)
 type Props = Omit<TPickerProps, 'visible'>
+type PickerSelectedValue = string | number | (string | number)[] | null
 
 const props = withDefaults(defineProps<Props>(), {
   options: () => [] as TPickerOption[],
@@ -23,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 const visible = defineModel({ default: false })
 
 // 使用 defineModel 管理选中的值（使用命名模型）
-const selectedValue = defineModel<any>('selectedValue', { default: null })
+const selectedValue = defineModel('selectedValue', { default: null }) as Ref<PickerSelectedValue>
 
 // 定义 emits
 const emit = defineEmits<{

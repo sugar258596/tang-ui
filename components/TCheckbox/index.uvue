@@ -22,20 +22,24 @@ const emit = defineEmits<{
   click: [event: any]
 }>()
 
-// 计算尺寸
-const sizeMap = {
-  small: 32,
-  medium: 40,
-  large: 48
+const getCheckboxSize = (): number => {
+  switch (props.size) {
+    case 'small':
+      return 32
+    case 'large':
+      return 48
+    default:
+      return 40
+  }
 }
 
 const checkboxSize = computed(() => {
-  return sizeMap[props.size]
+  return getCheckboxSize()
 })
 
 // 计算图标大小
 const iconSize = computed(() => {
-  const baseSize = sizeMap[props.size]
+  const baseSize = getCheckboxSize()
   return Math.floor(baseSize * 0.6)
 })
 

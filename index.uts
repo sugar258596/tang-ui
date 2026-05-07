@@ -120,7 +120,7 @@ export const components: string[] = [
  * Tang UI 插件
  */
 const TangUI = {
-  install(app: any) {
+  install(_app: any) {
     // uni-app x 使用 easycom 自动导入组件，这里不需要注册组件
     console.log('Tang UI X installed, version:', version)
   },

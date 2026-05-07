@@ -11,6 +11,17 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
+type TFormExpose = {
+	validate: () => boolean
+	submit: () => Promise<{ valid: boolean, values: any }>
+	getFormData: () => Record<string, any>
+}
+
+type SlotFormData = {
+	nickname: string
+	avatar: string
+}
+
 // 基础表单
 const basicFormRef = ref(null)
 const basicFormData = ref({})
@@ -158,7 +169,7 @@ const fullSchemas = computed<FormSchema[]>(() => [
 ])
 
 // 自定义按钮表单
-const customBtnFormRef = ref(null)
+const customBtnFormRef = ref<TFormExpose | null>(null)
 const customBtnFormData = ref({})
 const customBtnSchemas = computed<FormSchema[]>(() => [
 	{
@@ -185,7 +196,10 @@ const customBtnSchemas = computed<FormSchema[]>(() => [
 ])
 
 // 自定义插槽表单
-const slotFormData = ref({})
+const slotFormData = ref<SlotFormData>({
+	nickname: '',
+	avatar: ''
+})
 const slotSchemas = computed<FormSchema[]>(() => [
 	{
 		field: 'nickname',
@@ -229,7 +243,10 @@ const handleReset = () => {
 }
 
 const handleValidate = () => {
-	const isValid = customBtnFormRef.value?.validate()
+	const formRef = customBtnFormRef.value
+	if (formRef == null) return
+
+	const isValid = formRef.validate()
 	if (isValid) {
 		uni.showToast({
 			title: $t('examplePages.form.messages.validateSuccess'),
@@ -244,7 +261,10 @@ const handleValidate = () => {
 }
 
 const handleCustomSubmit = async () => {
-	const result = await customBtnFormRef.value?.submit()
+	const formRef = customBtnFormRef.value
+	if (formRef == null) return
+
+	const result = await formRef.submit()
 	if (result.valid) {
 		console.log('提交成功:', result.values)
 		uni.showToast({
@@ -255,7 +275,10 @@ const handleCustomSubmit = async () => {
 }
 
 const handleGetData = () => {
-	const data = customBtnFormRef.value?.getFormData()
+	const formRef = customBtnFormRef.value
+	if (formRef == null) return
+
+	const data = formRef.getFormData()
 	console.log('表单数据:', data)
 	uni.showModal({
 		title: $t('examplePages.form.messages.formData'),
@@ -327,7 +350,7 @@ const handleUploadAvatar = () => {
 				:schemas="slotSchemas"
 				@submit="handleBasicSubmit">
 				<!-- 自定义头像上传 -->
-				<template #avatar="{ item, value, error }">
+				<template #avatar="{ value, error }">
 					<view class="custom-avatar">
 						<image 
 							:src="value || '/static/logo.png'" 

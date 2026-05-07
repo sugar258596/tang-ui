@@ -4,13 +4,22 @@
  */
 
 import { ref } from 'vue'
-import type { ToastOptions, ComponentType, PositionType } from '../types/index.uts'
+import type { ToastOptions } from '../types/index.uts'
+
+type NormalizedToastOptions = {
+  message: string
+  type: NonNullable<ToastOptions['type']>
+  duration: number
+  position: NonNullable<ToastOptions['position']>
+  mask: boolean
+  icon?: string
+}
 
 /** Toast 队列 */
-const toastQueue = ref<ToastOptions[]>([])
+const toastQueue = ref<NormalizedToastOptions[]>([])
 
 /** 当前显示的 Toast */
-const currentToast = ref<ToastOptions | null>(null)
+const currentToast = ref<NormalizedToastOptions | null>(null)
 
 /** 是否正在显示 */
 const isShowing = ref(false)
@@ -41,7 +50,14 @@ export function useToast() {
         : options
 
       // 合并默认配置
-      const config = { ...defaultOptions, ...toastOptions }
+      const config: NormalizedToastOptions = {
+        message: toastOptions.message,
+        type: toastOptions.type ?? defaultOptions.type ?? 'default',
+        duration: toastOptions.duration ?? defaultOptions.duration ?? 2000,
+        position: toastOptions.position ?? defaultOptions.position ?? 'center',
+        mask: toastOptions.mask ?? defaultOptions.mask ?? false,
+        icon: toastOptions.icon
+      }
 
       // 添加到队列
       toastQueue.value.push(config)

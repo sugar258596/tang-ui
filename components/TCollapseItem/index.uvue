@@ -1,5 +1,5 @@
 <script setup lang="uts">
-import { inject, computed, ref } from 'vue'
+import { inject, computed } from 'vue'
 import type { TCollapseItemProps } from './type.uts'
 import type { TCollapseContext } from '../TCollapse/type.uts'
 
@@ -17,10 +17,6 @@ const props = withDefaults(defineProps<TCollapseItemProps>(), {
 
 // 从父组件注入上下文
 const collapseContext = inject<TCollapseContext>('TCollapse')
-
-// 内容高度
-const contentHeight = ref(0)
-const contentRef = ref<any>(null)
 
 // 计算是否展开
 const isActive = computed(() => {

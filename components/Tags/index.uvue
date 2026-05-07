@@ -50,7 +50,6 @@ const activeIndex = computed(() => {
 })
 
 /** 获取当前激活项的 DOM 元素 */
-const activeItemRef = ref<UniElement | null>(null)
 const navListRef = ref<UniElement | null>(null)
 
 /** 将十六进制颜色转换为 RGB */
@@ -201,7 +200,7 @@ const getNavItemStyle = (item: TagItem): string => {
 }
 
 /** 点击切换 tab */
-const handleClick = (item: TagItem, index: number, e: UniPointerEvent) => {
+const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
   if (item.disabled) return
 
   model.value = item.key

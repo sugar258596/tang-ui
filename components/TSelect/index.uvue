@@ -1,11 +1,14 @@
 <script  setup lang="uts" >
 	import { computed, onBeforeUnmount, ref, watch } from 'vue'
+	import type { Ref } from 'vue'
 	import Icon from '../TIcon'
 	import { useI18n } from '../../composables/useI18n.uts'
 	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue, CascadeSelectValue } from './type.uts'
 
+	type TSelectModelValue = SingleSelectValue | MultipleSelectValue | CascadeSelectValue
+
 	// 双向绑定值 - 根据 multiple 属性动态类型
-	const model = defineModel<SingleSelectValue | MultipleSelectValue | CascadeSelectValue>({ default: null })
+	const model = defineModel({ default: null }) as Ref<TSelectModelValue>
 
 	const props = withDefaults(defineProps<SelectProps>(), {
 		options: (): SelectOption[] => [],
@@ -39,7 +42,6 @@
 
 	// ========== 状态管理 ==========
 	const showPopup = ref(false)
-	const isHover = ref(false)
 	const searchKeyword = ref('')
 
 	// ========== 级联状态管理 ==========
@@ -203,6 +205,9 @@
 		}
 		return items
 	})
+
+	const isMultiple = computed(() => props.multiple)
+	const isFilterable = computed(() => props.filterable)
 
 	// ========== 方法 ==========
 	const normalizeSearchKeyword = (keyword: string): string => {
@@ -508,7 +513,7 @@
 					'cursor-pointer active:scale-[0.99]': !disabled && !readonly,
 					'text-[#333333]': isCascade
 						? cascadeSelectedOptions.length > 0
-						: (props.multiple ? (model as MultipleSelectValue)?.length : model) != null
+						: (isMultiple ? (model as MultipleSelectValue)?.length : model) != null
 				}
 			]" :style="{
 				height: selectHeight,
@@ -550,7 +555,7 @@
 			:style="dropdownStyle"
 			@tap="handleDropdownClick">
 
-				<view v-if="props.filterable" class="border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[20rpx] py-[16rpx]">
+				<view v-if="isFilterable" class="border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[20rpx] py-[16rpx]">
 					<view class="flex flex-row items-center gap-4 rounded-[8rpx] border border-solid border-[#dcdfe6] bg-white px-[16rpx]">
 						<Icon name="icon-sousuo" :size="18" color="#999999" />
 						<input
@@ -620,7 +625,7 @@
 				<template v-else>
 					<scroll-view class="max-h-[400rpx]" scroll-y :scroll-top="0">
 						<!-- 多选模式下的全选/清空按钮 -->
-						<view v-if="props.multiple" class="flex flex-row justify-between border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[16rpx] py-[12rpx]">
+						<view v-if="isMultiple" class="flex flex-row justify-between border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[16rpx] py-[12rpx]">
 							<view class="cursor-pointer py-[8rpx] text-center transition-all duration-200 active:bg-[#f5f7fa]" @click.stop="selectAll">
 								<text class="text-[24rpx] font-medium" :style="{ color: activeColor }">{{ $t('form.selectAll') }}</text>
 							</view>
@@ -640,12 +645,12 @@
 							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[28rpx] text-[#606266]" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
 
 							<!-- 单选模式的选中标记 -->
-							<text v-if="!props.multiple && isOptionSelected(option)" class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
+							<text v-if="!isMultiple && isOptionSelected(option)" class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
 								✓
 							</text>
 
 							<!-- 多选模式的复选框 -->
-							<view v-if="props.multiple" class="ml-[16rpx] flex h-[32rpx] w-[32rpx] items-center justify-center rounded-[4rpx] border-[2rpx] border-solid border-[#dcdfe6] transition-all duration-200" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
+							<view v-if="isMultiple" class="ml-[16rpx] flex h-[32rpx] w-[32rpx] items-center justify-center rounded-[4rpx] border-[2rpx] border-solid border-[#dcdfe6] transition-all duration-200" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
 								<text v-if="isOptionSelected(option)" class="text-[20rpx] font-bold text-white">✓</text>
 							</view>
 						</view>

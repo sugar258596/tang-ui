@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { provide, computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TCollapseProps, TCollapseContext } from './type.uts'
 
 /**
@@ -17,7 +18,7 @@ type TActiveNames = string | string[]
 
 // 使用 defineModel 管理当前展开的面板名称
 // 手风琴模式下为字符串，多选模式下为字符串数组
-const activeNames = defineModel<TActiveNames>({ default: [] })
+const activeNames = defineModel({ default: [] }) as Ref<TActiveNames>
 
 /**
  * 计算当前展开的面板名称数组

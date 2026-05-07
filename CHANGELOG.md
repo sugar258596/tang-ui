@@ -1,5 +1,33 @@
 # 更新日志
 
+## [1.3.2] - 2026-05-07
+
+### 优化
+
+- **TDateTimePicker**: 优化上层面板关闭体验
+  - 年份/月份等上层面板关闭时，先回退到基础面板，再执行遮罩与底部弹层关闭动画
+  - 统一取消、确认、遮罩点击和外部关闭的关闭流程，减少状态切换卡顿
+
+### 修复
+
+- **UTS 兼容性**: 修复多处 `defineModel`、空值推断与实例暴露相关编译告警
+  - 调整 `TSelect`、`TPicker`、`TInput`、`TRadioGroup`、`TRadioButton`、`TCheckboxGroup`、`TCollapse`、`Tabs`、`TForm` 等组件的模型类型写法
+  - 修复 `TCheckboxGroup`、`TRadioGroup`、`TRadioButton`、`TCheckbox` 的尺寸配置空值告警
+  - 修复 `pages/examples/form.uvue` 中表单 `ref` 暴露方法与插槽数据的类型问题
+  - 修复 `composables/useToast.uts` 队列项类型过宽导致的重载匹配告警
+
+- **TForm**: 修复类型文件重复导出问题
+  - 移除 `components/TForm/type.uts` 中重复的二次导出声明
+
+- **TRate**: 修复震动 API 类型告警
+  - 兼容 `uni.vibrateShort` 在 UTS 类型系统下的可选调用
+
+- **发包链路**: 修复发布前校验与类型入口配置
+  - 补充 `prepare` / `prepublishOnly` 发布脚本
+  - 新增顶层 `types/index.d.ts` 入口
+  - 收窄 `files` 白名单，避免无关示例与校验资产进入 npm 包
+  - 将 ESLint 配置切换为 ES Module 写法
+
 ## [1.2.9] - 2026-04-02
 
 ### 新增

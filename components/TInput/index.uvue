@@ -1,7 +1,10 @@
 <script  setup lang="uts" >
 import { computed, ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TInputProps } from './type.uts'
 import TIcon from '../TIcon/index.uvue'
+
+type InputModelValue = string | number
 
 /**
  * TInput 输入框组件
@@ -32,7 +35,7 @@ const props = withDefaults(defineProps<TInputProps>(), {
 })
 
 // 使用 defineModel
-const model = defineModel<string | number>({ default: '' })
+const model = defineModel({ default: '' }) as Ref<InputModelValue>
 
 // Emits 定义
 const emit = defineEmits<{

@@ -1,8 +1,11 @@
 <script setup lang="uts">
+import type { Ref } from 'vue'
 import type { TabItem, TTabsProps } from './type.uts'
 
+type TabsModelValue = string | number | null
+
 // v-model 绑定当前激活 key
-const model = defineModel<string | number | null>({ default: null })
+const model = defineModel({ default: null }) as Ref<TabsModelValue>
 
 const props = withDefaults(defineProps<TTabsProps>(), {
   items: () => [],
@@ -61,7 +64,6 @@ const activeIndex = computed(() => {
 })
 
 /** 获取当前激活项的 DOM 元素 */
-const activeItemRef = ref<UniElement | null>(null)
 const navListRef = ref<UniElement | null>(null)
 
 /** 将十六进制颜色转换为 RGB */
@@ -212,7 +214,7 @@ const getNavItemStyle = (item: TabItem): string => {
 }
 
 /** 点击切换 tab */
-const handleClick = (item: TabItem, index: number, e: UniPointerEvent) => {
+const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
   if (item.disabled) return
 
   model.value = item.key

@@ -46,6 +46,11 @@ const baseStarStyle = computed(() => ({
   cursor: props.readonly || props.disabled ? 'default' : 'pointer'
 }))
 
+const activeColor = computed(() => props.activeColor)
+const inactiveColor = computed(() => props.inactiveColor)
+const showScore = computed(() => props.showScore)
+const starChar = computed(() => props.starChar)
+
 /** 更新评分 */
 const updateRating = (newRating: number) => {
   model.value = newRating
@@ -53,7 +58,7 @@ const updateRating = (newRating: number) => {
 
   if (props.vibrate) {
     try {
-      uni.vibrateShort()
+      ;(uni as { vibrateShort?: () => void }).vibrateShort?.()
     } catch {}
   }
 }
@@ -89,15 +94,15 @@ const handleStarClick = (index: number) => {
         <text
           class="inline-block font-semibold leading-none transition-colors duration-200"
           :style="{
-            color: star.percentage === 100 ? props.activeColor : props.inactiveColor
+            color: star.percentage === 100 ? activeColor : inactiveColor
           }"
         >
-          {{ props.starChar }}
+          {{ starChar }}
         </text>
       </view>
     </view>
 
-    <view v-if="props.showScore" class="ml-[16rpx]">
+    <view v-if="showScore" class="ml-[16rpx]">
       <text class="text-[28rpx] font-medium leading-[1.2] text-[#374151]">
         {{ formatScore }}
       </text>

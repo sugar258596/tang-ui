@@ -1,7 +1,7 @@
 <script setup lang="uts">
 import type { TNavBarProps } from './type.uts'
 
-const props = withDefaults(defineProps<TNavBarProps>(), {
+withDefaults(defineProps<TNavBarProps>(), {
   title: '',
   leftText: '',
   rightText: '',

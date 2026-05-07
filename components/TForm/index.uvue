@@ -1,5 +1,6 @@
 <script setup lang="uts">
 	import { computed } from 'vue'
+	import type { Ref } from 'vue'
 	import TInput from '../TInput/index.uvue'
 	import TRadioGroup from '../TRadioGroup/index.uvue'
 	import TCheckboxGroup from '../TCheckboxGroup/index.uvue'
@@ -11,6 +12,8 @@
 	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
+	type FormModelValue = Record<string, any>
+
 	const props = withDefaults(defineProps<TFormProps>(), {
 		labelWidth: '110rpx',
 		layout: 'vertical',
@@ -19,7 +22,7 @@
 
 	const emit = defineEmits(['submit', 'reset'])
 
-	const model = defineModel<Record<string, any>>({ default: () => ({}) })
+	const model = defineModel({ default: () => ({}) }) as Ref<FormModelValue>
 	const errors = reactive<Record<string, string>>({})
 
 	// 使用 i18n
@@ -106,12 +109,6 @@
 		pickerVisible[field] = false
 	}
 
-	const getPickerMode = (component : string) : string => {
-		if (component === 'Date') return 'date'
-		if (component === 'Time') return 'datetime'
-		return 'date'
-	}
-
 	const isFieldEmpty = (value : any) : boolean => {
 		if (Array.isArray(value)) {
 			return value.length === 0
@@ -187,14 +184,6 @@
 		}, 500)
 	}
 
-	const onRadioChange = (value : string | number) => {
-		// 值已通过 v-model 更新，只需验证
-	}
-
-	const onCheckboxChange = (values : (string | number)[]) => {
-		// 值已通过 v-model 更新，只需验证
-	}
-
 	const onSwitchChange = (value : boolean, item : FormSchema) => {
 		model.value[item.field] = value
 		validateField(item)
@@ -210,7 +199,7 @@
 		validateField(item)
 	}
 
-	const onFormSubmit = async (e : UniFormSubmitEvent) : Promise<{ valid : boolean, values : any }> => {
+	const onFormSubmit = async (_e : UniFormSubmitEvent) : Promise<{ valid : boolean, values : any }> => {
 		clearErrors()
 
 		let hasError = false
