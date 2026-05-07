@@ -461,7 +461,7 @@ class CrossPlatformVerification {
     let failedCount = 0
     
     for (const result of this.results) {
-      const status = result.passed ? '✓ 通过' : '✗ 失败'
+      // const status = result.passed ? '✓ 通过' : '✗ 失败'
       const icon = result.passed ? '✓' : '✗'
       
       console.log(`${icon} ${result.testName}`)

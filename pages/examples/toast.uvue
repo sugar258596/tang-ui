@@ -5,7 +5,7 @@ import TButton from '@/components/TButton'
 import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
-const { show, success, error, loading, hide } = useToast()
+const { show, success, error, loading } = useToast()
 
 const handleShowText = (): void => {
   show($t('examplePages.toast.messages.text'))

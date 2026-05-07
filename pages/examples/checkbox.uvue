@@ -13,7 +13,6 @@ const { $t } = useI18n()
 const checked1 = ref(false)
 const checked2 = ref(true)
 const checkedList = ref<string[]>(['option1', 'option3'])
-const checkedFruits = ref<string[]>([])
 
 const handleChange = (value: boolean): void => {
   console.log('复选框状态:', value)

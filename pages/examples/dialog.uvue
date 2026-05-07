@@ -25,9 +25,6 @@ const handleCancel = (): void => {
   console.log('取消按钮被点击')
 }
 
-const handleClose = (): void => {
-  console.log('对话框关闭')
-}
 </script>
 
 <template>

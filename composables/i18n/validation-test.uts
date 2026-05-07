@@ -31,7 +31,7 @@ console.log('测试 2: 无效的语言包（null）')
 try {
   manager.registerMessages('test-null', null as any)
   console.log('✗ 应该拒绝 null 语言包')
-} catch (e) {
+} catch (_e) {
   console.log('✓ 正确拒绝 null 语言包')
 }
 console.log('')

@@ -8,7 +8,6 @@ import {
   registerLocaleWithMode, 
   replaceLocale,
   setLanguage,
-  getCurrentLocale
 } from './index.uts'
 import { I18nManager } from './manager.uts'
 

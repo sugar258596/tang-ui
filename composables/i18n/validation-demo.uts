@@ -3,7 +3,7 @@
  * 展示 validateMessages 方法的工作原理
  */
 
-import { registerLocale, registerLocaleWithMode, replaceLocale } from './index.uts'
+import { registerLocale } from './index.uts'
 import type { ModularLocaleMessages } from './types.uts'
 
 console.log('=== JSON 结构验证演示 ===\n')

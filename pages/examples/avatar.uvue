@@ -1,5 +1,4 @@
 <script  setup lang="uts" >
-import { ref } from 'vue'
 import TAvatar from '@/components/TAvatar'
 import TCard from '@/components/TCard'
 import { useI18n } from '@/composables/useI18n.uts'

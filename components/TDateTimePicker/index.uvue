@@ -1,6 +1,6 @@
 <script setup lang="uts">
 import { computed, ref, watch, nextTick } from 'vue'
-import type { TDateTimePickerProps, TDateTimePickerMode, TDateTimePickerDayItem, TDateTimePickerRangeValue } from './type.uts'
+import type { TDateTimePickerProps, TDateTimePickerDayItem, TDateTimePickerRangeValue } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 
 /**
@@ -479,25 +479,6 @@ const handleDaySelect = (item: DayItem): void => {
     emitChange()
   }
 }
-
-// 范围选择显示文本
-const rangeDisplayText = computed<string>(() => {
-  if (!props.range) return ''
-
-  const startStr = rangeStart.value !== null
-    ? formatTimestamp(rangeStart.value)
-    : props.startText
-  const endStr = rangeEnd.value !== null
-    ? formatTimestamp(rangeEnd.value)
-    : props.endText
-
-  return `${startStr} ~ ${endStr}`
-})
-
-// 检查范围是否完整
-const isRangeComplete = computed<boolean>(() => {
-  return props.range && rangeStart.value !== null && rangeEnd.value !== null
-})
 
 // 小时列表
 const hourList = computed<number[]>(() => {

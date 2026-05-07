@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import TImage from '@/components/TImage'
 import TCard from '@/components/TCard'
 import TText from '@/components/TText'
-import TDivider from '@/components/TDivider'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**

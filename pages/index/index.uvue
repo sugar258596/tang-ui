@@ -11,7 +11,7 @@ import { useTheme } from '@/composables/useTheme.uts'
  */
 
 // 多语言支持
-const { $t, locale, setLocale, availableLocales } = useI18n()
+const { $t, locale, setLocale } = useI18n()
 const { isDarkMode, toggleDarkMode } = useTheme()
 
 // 组件列表
