@@ -11,7 +11,7 @@ import type { TranslateParams } from './i18n/types.uts'
 /**
  * useI18n 返回类型
  */
-export interface UseI18nReturn {
+export type UseI18nReturn = {
   /** 翻译函数 */
   $t: (key: string, params?: TranslateParams) => string
   /** 当前语言（响应式） */

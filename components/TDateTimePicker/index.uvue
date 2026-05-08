@@ -146,6 +146,13 @@ const getFirstDayOfMonth = (year: number, month: number): number => {
 
 // 使用导出的日期项类型
 type DayItem = TDateTimePickerDayItem
+type DayClassMap = {
+  't-datetime-picker__day--other': boolean
+  't-datetime-picker__day--disabled': boolean
+  't-datetime-picker__day--range-start': boolean
+  't-datetime-picker__day--range-end': boolean
+  't-datetime-picker__day--in-range': boolean
+}
 
 // 将日期转换为时间戳（用于范围比较）
 const dateToTimestamp = (year: number, month: number, day: number): number => {
@@ -208,7 +215,7 @@ const getDayStyle = (item: DayItem): string => {
 }
 
 // 获取日期单元格类名
-const getDayClass = (item: DayItem): Record<string, boolean> => {
+const getDayClass = (item: DayItem): DayClassMap => {
   return {
     't-datetime-picker__day--other': !item.isCurrentMonth,
     't-datetime-picker__day--disabled': item.isDisabled,
@@ -654,7 +661,7 @@ watch(visible, (newVal: boolean) => {
         setValueByTimestamp(Date.now())
       }
     } else {
-      setValueByTimestamp(selectedValue.value || Date.now())
+      setValueByTimestamp(selectedValue.value !== 0 ? selectedValue.value : Date.now())
     }
     // 根据模式设置初始面板
     if (props.mode === 'month') {

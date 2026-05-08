@@ -1,6 +1,10 @@
 <script  setup lang="uts" >
 import type { TRateProps } from './type.uts'
 
+type UniVibrateShortApi = {
+  vibrateShort: (() => void) | null
+}
+
 const props = withDefaults(defineProps<TRateProps>(), {
   max: 5,
   readonly: false,
@@ -58,7 +62,10 @@ const updateRating = (newRating: number) => {
 
   if (props.vibrate) {
     try {
-      ;(uni as { vibrateShort?: () => void }).vibrateShort?.()
+      const uniVibrateApi = uni as UniVibrateShortApi
+      if (uniVibrateApi.vibrateShort != null) {
+        uniVibrateApi.vibrateShort()
+      }
     } catch {}
   }
 }

@@ -50,6 +50,34 @@ const emit = defineEmits<{
 // 是否聚焦
 const isFocused = ref(false)
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasModelValue = computed((): boolean => {
+  return model.value !== undefined && model.value !== null && model.value.toString() !== ''
+})
+
+const hasPrefixText = computed((): boolean => {
+  return hasTextValue(props.prefix)
+})
+
+const hasPrefixIcon = computed((): boolean => {
+  return hasTextValue(props.prefixIcon)
+})
+
+const hasSuffixText = computed((): boolean => {
+  return hasTextValue(props.suffix)
+})
+
+const hasSuffixIcon = computed((): boolean => {
+  return hasTextValue(props.suffixIcon)
+})
+
+const canShowClearButton = computed((): boolean => {
+  return props.clearable && hasModelValue.value && !props.disabled && !props.readonly
+})
+
 /**
  * 计算输入框包装类名
  */
@@ -90,7 +118,7 @@ const inputWrapperClasses = computed((): string => {
   }
 
   // 自定义类名
-  if (props.customClass) {
+  if (hasTextValue(props.customClass)) {
     classes.push(props.customClass)
   }
 
@@ -125,11 +153,11 @@ const inputInnerClasses = computed((): string => {
       break
   }
 
-  if (props.prefix || props.prefixIcon) {
+  if (hasPrefixText.value || hasPrefixIcon.value) {
     classes.push('pl-0')
   }
 
-  if (props.suffix || props.suffixIcon || props.clearable) {
+  if (hasSuffixText.value || hasSuffixIcon.value || props.clearable) {
     classes.push('pr-0')
   }
 
@@ -160,7 +188,7 @@ const textareaClasses = computed((): string => {
  * 计算当前输入长度
  */
 const currentLength = computed((): number => {
-  const value = model.value?.toString() || ''
+  const value = model.value !== undefined && model.value !== null ? model.value.toString() : ''
   return value.length
 })
 
@@ -190,15 +218,15 @@ const focusStyle = computed((): string => {
   
   const styles: string[] = []
   
-  if (props.focusBorderColor) {
+  if (hasTextValue(props.focusBorderColor)) {
     styles.push(`border-color: ${props.focusBorderColor}`)
   }
   
-  if (props.focusBackgroundColor) {
+  if (hasTextValue(props.focusBackgroundColor)) {
     styles.push(`background-color: ${props.focusBackgroundColor}`)
   }
   
-  if (props.focusBoxShadow) {
+  if (hasTextValue(props.focusBoxShadow)) {
     styles.push(`box-shadow: ${props.focusBoxShadow}`)
   }
   
@@ -211,11 +239,11 @@ const focusStyle = computed((): string => {
 const computedStyle = computed((): string => {
   const styles: string[] = []
   
-  if (props.customStyle) {
+  if (hasTextValue(props.customStyle)) {
     styles.push(props.customStyle)
   }
   
-  if (focusStyle.value) {
+  if (focusStyle.value !== '') {
     styles.push(focusStyle.value)
   }
   
@@ -269,12 +297,12 @@ const handleConfirm = () => {
 <template>
   <view class="t-input" :class="inputWrapperClasses" :style="computedStyle">
     <!-- 前缀文本 -->
-    <view v-if="prefix" class="t-input__prefix" :class="affixClasses">
+    <view v-if="hasPrefixText" class="t-input__prefix" :class="affixClasses">
       <text class="t-input__prefix-text whitespace-nowrap text-sm text-[#606266]">{{ prefix }}</text>
     </view>
 
     <!-- 前缀图标 -->
-    <view v-else-if="prefixIcon" class="t-input__prefix" :class="affixClasses">
+    <view v-else-if="hasPrefixIcon" class="t-input__prefix" :class="affixClasses">
       <TIcon :name="prefixIcon" :size="iconSize" color="#909399" />
     </view>
 
@@ -315,7 +343,7 @@ const handleConfirm = () => {
 
     <!-- 清除按钮 -->
     <view
-      v-if="clearable && model && !disabled && !readonly"
+      v-if="canShowClearButton"
       class="t-input__suffix t-input__clear cursor-pointer transition-opacity duration-300 active:opacity-70"
       :class="affixClasses"
       @click="handleClear"
@@ -324,12 +352,12 @@ const handleConfirm = () => {
     </view>
 
     <!-- 后缀文本 -->
-    <view v-else-if="suffix" class="t-input__suffix" :class="affixClasses">
+    <view v-else-if="hasSuffixText" class="t-input__suffix" :class="affixClasses">
       <text class="t-input__suffix-text whitespace-nowrap text-sm text-[#606266]">{{ suffix }}</text>
     </view>
 
     <!-- 后缀图标 -->
-    <view v-else-if="suffixIcon" class="t-input__suffix" :class="affixClasses">
+    <view v-else-if="hasSuffixIcon" class="t-input__suffix" :class="affixClasses">
       <TIcon :name="suffixIcon" :size="iconSize" color="#909399" />
     </view>
 

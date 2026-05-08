@@ -272,13 +272,13 @@ export function useToast() {
 /**
  * 获取 Toast 实例（单例模式）
  */
-let toastInstance: ReturnType<typeof useToast> | null = null
+let toastInstance : any | null = null
 
 export function getToastInstance() {
-  if (!toastInstance) {
+  if (toastInstance == null) {
     toastInstance = useToast()
   }
-  return toastInstance
+  return toastInstance!
 }
 
 /**

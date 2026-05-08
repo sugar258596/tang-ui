@@ -12,7 +12,11 @@
 	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
-	type FormModelValue = Record<string, any>
+	type FormModelValue = any
+	type FormSubmitResult = {
+		valid : boolean
+		values : any
+	}
 
 	const props = withDefaults(defineProps<TFormProps>(), {
 		labelWidth: '110rpx',
@@ -23,7 +27,7 @@
 	const emit = defineEmits(['submit', 'reset'])
 
 	const model = defineModel({ default: () => ({}) }) as Ref<FormModelValue>
-	const errors = reactive<Record<string, string>>({})
+	const errors = reactive({}) as any
 
 	// 使用 i18n
 	const { $t } = useI18n()
@@ -41,30 +45,58 @@
 			: $t('form.resetButton')
 	})
 
+	const hasTextValue = (value : string | null | undefined) : boolean => {
+		return value !== undefined && value !== null && value !== ''
+	}
+
 	// 获取单个配置项的布局方向（单个配置优先）
 	const getItemLayout = (item : FormSchema) : string => {
-		return item.layout || props.layout
+		return hasTextValue(item.layout) ? item.layout as string : props.layout
 	}
 
 	// 获取单个配置项的标签宽度（单个配置优先）
 	const getItemLabelWidth = (item : FormSchema) : string => {
-		return item.labelWidth || props.labelWidth
+		return hasTextValue(item.labelWidth) ? item.labelWidth as string : props.labelWidth
 	}
 
 	const handlePlaceholder = (item : FormSchema) : string => {
-		if (item.componentProps?.placeholder) {
-			return item.componentProps.placeholder
+		const placeholder = item.componentProps?.placeholder
+		if (hasTextValue(placeholder)) {
+			return placeholder as string
 		}
 		return $t('form.inputPlaceholder', { label: item.label })
 	}
 
 	const getSelectOptions = (item : FormSchema) => {
 		const options = item.componentProps?.options as FormOption[] | undefined
-		return options?.map(o => ({ label: o.label, value: o.value })) || []
+		if (options != null) {
+			return options.map(o => ({ label: o.label, value: o.value }))
+		}
+		return []
 	}
 
 	const getPickerTextClass = (item : FormSchema) : string => {
-		return model.value[item.field] ? 'text-[#333333]' : 'text-[#c0c4cc]'
+		return isFieldEmpty(model.value[item.field]) ? 'text-[#c0c4cc]' : 'text-[#333333]'
+	}
+
+	const getInputType = (item : FormSchema) : string => {
+		const inputType = item.componentProps?.type
+		return hasTextValue(inputType) ? inputType as string : 'text'
+	}
+
+	const getSelectPlaceholder = (item : FormSchema) : string => {
+		const placeholder = item.componentProps?.placeholder
+		return hasTextValue(placeholder) ? placeholder as string : $t('form.selectPlaceholder')
+	}
+
+	const getPickerDisplayText = (item : FormSchema, placeholderKey : string) : string => {
+		const value = model.value[item.field]
+		return isFieldEmpty(value) ? $t(placeholderKey) : value as string
+	}
+
+	const getNumericFieldValue = (field : string) : number => {
+		const value = model.value[field]
+		return isFieldEmpty(value) ? 0 : value as number
 	}
 
 	// 安全获取组件属性，避免 v-bind="" 编译问题
@@ -75,9 +107,9 @@
 		return {} as ComponentProps
 	}
 
-	const getInputProps = (item : FormSchema, inputType : string) : Record<string, any> => {
+	const getInputProps = (item : FormSchema, inputType : string) : any => {
 		const componentProps = getComponentProps(item)
-		const mergedProps: Record<string, any> = {
+		const mergedProps: any = {
 			...componentProps,
 			type: inputType,
 			placeholder: handlePlaceholder(item)
@@ -91,8 +123,8 @@
 	}
 
 	// 日期时间选择器状态管理
-	const pickerVisible = reactive<Record<string, boolean>>({})
-	const pickerValues = reactive<Record<string, number>>({})
+	const pickerVisible = reactive({}) as any
+	const pickerValues = reactive({}) as any
 
 	const openPicker = (field : string) => {
 		pickerVisible[field] = true
@@ -153,8 +185,8 @@
 	 * 获取当前有效错误信息
 	 * @returns 当前存在错误文案的字段映射
 	 */
-	const getActiveErrors = () : Record<string, string> => {
-		const activeErrors : Record<string, string> = {}
+	const getActiveErrors = () : any => {
+		const activeErrors : any = {}
 		Object.keys(errors).forEach((field : string) => {
 			const message = errors[field]
 			if (message !== '') {
@@ -175,13 +207,21 @@
 	}
 
 	// 抖动动画状态
-	const shakeFields = reactive<Record<string, boolean>>({})
+	const shakeFields = reactive({}) as any
 
 	const triggerShake = (field : string) => {
 		shakeFields[field] = true
 		setTimeout(() => {
 			shakeFields[field] = false
 		}, 500)
+	}
+
+	const hasFieldError = (field : string) : boolean => {
+		return errors[field] !== undefined && errors[field] !== ''
+	}
+
+	const isFieldShaking = (field : string) : boolean => {
+		return shakeFields[field] === true
 	}
 
 	const onSwitchChange = (value : boolean, item : FormSchema) => {
@@ -199,7 +239,7 @@
 		validateField(item)
 	}
 
-	const onFormSubmit = async (_e : UniFormSubmitEvent) : Promise<{ valid : boolean, values : any }> => {
+	const onFormSubmit = async (_e : UniFormSubmitEvent) : Promise<FormSubmitResult> => {
 		clearErrors()
 
 		let hasError = false
@@ -262,8 +302,8 @@
 				v-for="(item, index) in schemas"
 				class="mb-4 overflow-visible rounded-[12rpx] border-[2rpx] border-transparent p-2 transition-all duration-300"
 				:class="[
-					errors[item.field] ? 'border-[#ff4d4f] bg-[#fff1f0]' : '',
-					shakeFields[item.field] ? 'animate-shake-soft' : ''
+					hasFieldError(item.field) ? 'border-[#ff4d4f] bg-[#fff1f0]' : '',
+					isFieldShaking(item.field) ? 'animate-shake-soft' : ''
 				]"
 				:key="index">
 				<view
@@ -290,7 +330,7 @@
 					<!-- 输入框 -->
 					<TInput v-if="item.component === 'Input'"
 						v-model="model[item.field]"
-						v-bind="getInputProps(item, item.componentProps?.type || 'text')"
+						v-bind="getInputProps(item, getInputType(item))"
 						@input="validateField(item)"
 						@change="validateField(item)" />
 
@@ -312,7 +352,7 @@
 					<TSelect v-else-if="item.component === 'Select'"
 						v-model="model[item.field]"
 						:options="getSelectOptions(item)"
-						:placeholder="item.componentProps?.placeholder || $t('form.selectPlaceholder')"
+						:placeholder="getSelectPlaceholder(item)"
 						v-bind="getComponentProps(item)"
 						@change="validateField(item)" />
 
@@ -321,7 +361,7 @@
 						v-else-if="item.component === 'Date'"
 						class="flex w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
 						@click="openPicker(item.field)">
-						<text :class="getPickerTextClass(item)">{{ model[item.field] || $t('form.datePlaceholder') }}</text>
+						<text :class="getPickerTextClass(item)">{{ getPickerDisplayText(item, 'form.datePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Date'"
@@ -338,7 +378,7 @@
 						v-else-if="item.component === 'Time'"
 						class="flex h-[80rpx] w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
 						@click="openPicker(item.field)">
-						<text :class="getPickerTextClass(item)">{{ model[item.field] || $t('form.timePlaceholder') }}</text>
+						<text :class="getPickerTextClass(item)">{{ getPickerDisplayText(item, 'form.timePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Time'"
@@ -365,18 +405,18 @@
 					v-bind="getComponentProps(item)" @change="onSwitchChange($event, item)" />
 
 					<!-- 评分 -->
-					<TRate v-else-if="item.component === 'Rate'" :value="model[item.field] || 0"
+					<TRate v-else-if="item.component === 'Rate'" :value="getNumericFieldValue(item.field)"
 						v-bind="getComponentProps(item)" @change="onRateChange($event, item)" />
 
 					<!-- 滑块 -->
-					<TSlider v-else-if="item.component === 'Slider'" :value="model[item.field] || 0"
+					<TSlider v-else-if="item.component === 'Slider'" :value="getNumericFieldValue(item.field)"
 						v-bind="getComponentProps(item)" @change="onSliderChange($event, item)" />
 						</slot>
 					</view>
 				</view>
 
 				<!-- 错误提示 -->
-				<view v-if="errors[item.field]" class="mt-2">
+				<view v-if="hasFieldError(item.field)" class="mt-2">
 					<text class="text-sm text-red-500">{{ errors[item.field] }}</text>
 				</view>
 			</view>

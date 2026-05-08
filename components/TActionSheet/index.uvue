@@ -34,6 +34,22 @@ const emit = defineEmits<{
 // 使用 i18n
 const { $t } = useI18n()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasTitle = computed(() => {
+  return hasTextValue(props.title)
+})
+
+const hasDescription = computed(() => {
+  return hasTextValue(props.description)
+})
+
+const showHeader = computed(() => {
+  return hasTitle.value || hasDescription.value
+})
+
 // 优先使用用户传入的值，否则使用翻译
 const displayCancelText = computed(() => {
   // 如果用户明确传入了 cancelText（即使是空字符串），使用用户的值
@@ -75,9 +91,9 @@ const handleClose = (): void => {
   >
     <view class="t-action-sheet bg-transparent p-0" :class="customClass" :style="customStyle">
       <!-- 头部：标题和描述 -->
-      <view v-if="title || description" class="t-action-sheet__header border-b border-[#ebedf0] p-4 text-center">
-        <text v-if="title" class="t-action-sheet__title mb-2 block text-base font-medium text-[#323233]">{{ title }}</text>
-        <text v-if="description" class="t-action-sheet__description block text-sm text-[#969799]">{{ description }}</text>
+      <view v-if="showHeader" class="t-action-sheet__header border-b border-[#ebedf0] p-4 text-center">
+        <text v-if="hasTitle" class="t-action-sheet__title mb-2 block text-base font-medium text-[#323233]">{{ title }}</text>
+        <text v-if="hasDescription" class="t-action-sheet__description block text-sm text-[#969799]">{{ description }}</text>
       </view>
 
       <!-- 操作列表 -->

@@ -14,6 +14,10 @@ const props = withDefaults(defineProps<TListProps>(), {
   spacing: 'medium'
 })
 
+const hasTitle = computed(() => {
+  return props.title !== ''
+})
+
 /**
  * 计算列表样式类
  */
@@ -44,7 +48,7 @@ const listClass = computed(() => {
 
 <template>
   <view class="t-list-wrapper w-full">
-    <view v-if="title" class="t-list__title px-4 pb-2 pt-3">
+    <view v-if="hasTitle" class="t-list__title px-4 pb-2 pt-3">
       <text class="t-list__title-text text-sm text-[#909399]">{{ title }}</text>
     </view>
     <view :class="listClass">

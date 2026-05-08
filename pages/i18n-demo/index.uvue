@@ -14,7 +14,7 @@ const { $t, locale, availableLocales, setLocale } = useI18n()
 
 // 语言列表（带安全检查）
 const localesList = computed(() => {
-  return availableLocales.value || []
+  return availableLocales.value != null ? availableLocales.value : []
 })
 
 // 语言数量
@@ -38,12 +38,16 @@ const handleLanguageChange = (lang: string) => {
  * 获取语言显示名称
  */
 const getLanguageName = (code: string): string => {
-  const names: Record<string, string> = {
-    'zh-CN': '简体中文',
-    'en-US': 'English',
-    'zh-TW': '繁體中文'
+  switch (code) {
+    case 'zh-CN':
+      return '简体中文'
+    case 'en-US':
+      return 'English'
+    case 'zh-TW':
+      return '繁體中文'
+    default:
+      return code
   }
-  return names[code] || code
 }
 
 /**

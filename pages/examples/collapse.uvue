@@ -21,6 +21,14 @@ const disabledActive = ref<string[]>([])
 
 // 自定义标题
 const customActive = ref<string[]>(['1'])
+
+const getJoinedText = (values: string[], emptyText: string): string => {
+  return values.length > 0 ? values.join(', ') : emptyText
+}
+
+const getDisplayText = (value: string, emptyText: string): string => {
+  return value !== '' ? value : emptyText
+}
 </script>
 
 <template>
@@ -182,11 +190,11 @@ const customActive = ref<string[]>(['1'])
         <view class="section-content">
           <view class="state-box">
             <text class="state-label">{{ $t('examplePages.collapse.labels.expandedItems') }}：</text>
-            <text class="state-value">{{ activeNames.join(', ') || $t('examplePages.collapse.labels.none') }}</text>
+            <text class="state-value">{{ getJoinedText(activeNames, $t('examplePages.collapse.labels.none')) }}</text>
           </view>
           <view class="state-box">
             <text class="state-label">{{ $t('examplePages.collapse.labels.accordionExpanded') }}：</text>
-            <text class="state-value">{{ accordionActive || $t('examplePages.collapse.labels.none') }}</text>
+            <text class="state-value">{{ getDisplayText(accordionActive, $t('examplePages.collapse.labels.none')) }}</text>
           </view>
         </view>
       </view>

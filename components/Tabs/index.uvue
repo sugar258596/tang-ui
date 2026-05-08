@@ -28,6 +28,18 @@ const emit = defineEmits<{
   tabClick: [key: string |number, item: TabItem]
 }>()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasItemIcon = (item: TabItem): boolean => {
+  return hasTextValue(item.icon)
+}
+
+const hasItemBadge = (item: TabItem): boolean => {
+  return item.badge !== undefined && item.badge !== null && item.badge !== ''
+}
+
 /** 获取默认激活项的 key */
 const getDefaultKey = (): string | number => {
   if (props.defaultActiveKey !== undefined && props.defaultActiveKey !== null) {
@@ -255,7 +267,7 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           :ref="'navItem' + index"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
@@ -265,7 +277,7 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           </text>
 
           <view
-            v-if="item.badge"
+            v-if="hasItemBadge(item)"
             class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
             style="height: 28rpx; transform: translateX(30%);"
           >
@@ -296,7 +308,7 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           :style="getNavItemStyle(item)"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
@@ -306,7 +318,7 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           </text>
 
           <view
-            v-if="item.badge"
+            v-if="hasItemBadge(item)"
             class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
             style="height: 28rpx; transform: translateX(30%);"
           >

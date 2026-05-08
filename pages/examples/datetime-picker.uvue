@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import TDateTimePicker from '@/components/TDateTimePicker'
 import type { TDateTimePickerRangeValue } from '@/components/TDateTimePicker/type.uts'
-import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TDateTimePicker 时间选择器示例页面

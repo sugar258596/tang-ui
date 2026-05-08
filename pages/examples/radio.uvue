@@ -15,6 +15,10 @@ const radioValue2 = ref('')
 const radioValue3 = ref('apple')
 const radioValue4 = ref(1)
 
+const getDisplayText = (value: string, emptyText: string): string => {
+  return value !== '' ? value : emptyText
+}
+
 const handleChange = (value: string | number): void => {
   console.log('选中值:', value)
 }
@@ -46,7 +50,7 @@ const handleChange = (value: string | number): void => {
         <TRadioButton v-model="radioValue2" name="radio2" value="D">{{ $t('examplePages.radio.labels.optionD') }}</TRadioButton>
       </view>
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.radio.status.selected') }}: {{ radioValue2 || $t('examplePages.radio.status.notSelected') }}
+        {{ $t('examplePages.radio.status.selected') }}: {{ getDisplayText(radioValue2, $t('examplePages.radio.status.notSelected')) }}
       </text>
     </TCard>
 

@@ -22,6 +22,10 @@ const emit = defineEmits<{
   click: [event: any]
 }>()
 
+const isChecked = computed(() => {
+  return model.value === true
+})
+
 const getCheckboxSize = (): number => {
   switch (props.size) {
     case 'small':
@@ -79,9 +83,9 @@ const checkboxStyle = computed(() => {
   styles.push(`height: var(--checkbox-size)`)
   styles.push(`border-width: var(--checkbox-border-width)`)
   styles.push('border-style: solid')
-  styles.push(`border-color: ${model.value ? props.activeColor : props.inactiveColor}`)
+  styles.push(`border-color: ${isChecked.value ? props.activeColor : props.inactiveColor}`)
 
-  if (model.value) {
+  if (isChecked.value) {
     styles.push(`background-color: ${props.activeColor}`)
   }
 
@@ -124,7 +128,7 @@ const handleTouchStart = () => {
   >
     <view :class="iconClass" :style="checkboxStyle">
       <!-- 选中状态的图标 -->
-      <view v-if="model" class="flex items-center justify-center" :style="`width: var(--checkbox-icon-size); height: var(--checkbox-icon-size);`">
+      <view v-if="isChecked" class="flex items-center justify-center" :style="`width: var(--checkbox-icon-size); height: var(--checkbox-icon-size);`">
         <text class="font-bold text-white" :style="checkmarkStyle">✓</text>
       </view>
 

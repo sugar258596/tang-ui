@@ -18,6 +18,10 @@ const props = withDefaults(defineProps<TLoadingProps>(), {
   maskBgColor: 'var(--tui-surface-overlay)'
 })
 
+const hasText = computed(() => {
+  return props.text !== ''
+})
+
 /**
  * 计算加载容器样式类
  */
@@ -87,7 +91,7 @@ const spinnerStyle = computed(() => {
     <view v-if="mask" class="t-loading__mask absolute inset-0" :style="maskStyle"></view>
     <view class="t-loading__content relative z-[1] flex flex-col items-center justify-center">
       <view :class="spinnerClass" :style="spinnerStyle"></view>
-      <text v-if="text" class="t-loading__text mt-3 text-sm text-[#606266]">{{ text }}</text>
+      <text v-if="hasText" class="t-loading__text mt-3 text-sm text-[#606266]">{{ text }}</text>
     </view>
   </view>
 </template>

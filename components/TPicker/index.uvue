@@ -59,6 +59,11 @@ const displayCancelText = computed(() => {
 // 当前选中的索引（单列为 number，多列为 number[]）
 const selectedIndex = ref<number[]>([0])
 
+const getPrimarySelectedIndex = (): number => {
+  const index = selectedIndex.value[0]
+  return index !== undefined ? index : 0
+}
+
 /**
  * 计算是否为单列模式
  */
@@ -107,7 +112,7 @@ const handleConfirm = (): void => {
 
   if (isSingleColumn.value) {
     // 单列模式
-    const index = selectedIndex.value[0] || 0
+    const index = getPrimarySelectedIndex()
     const option = columns[0][index]
 
     if (option != null) {
@@ -147,7 +152,7 @@ const handleChange = (e: any): void => {
     const columnIndex = 0 // 简化处理，实际可能需要判断哪一列改变了
 
     if (isSingleColumn.value) {
-      const index = selectedIndex.value[0] || 0
+      const index = getPrimarySelectedIndex()
       const option = columns[0][index]
       if (option != null) {
         emit('change', option.value, index, columnIndex)

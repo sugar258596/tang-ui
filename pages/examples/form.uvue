@@ -11,15 +11,24 @@ import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 
+type FormSubmitResult = {
+	valid: boolean
+	values: any
+}
+
 type TFormExpose = {
 	validate: () => boolean
-	submit: () => Promise<{ valid: boolean, values: any }>
-	getFormData: () => Record<string, any>
+	submit: () => Promise<FormSubmitResult>
+	getFormData: () => any
 }
 
 type SlotFormData = {
 	nickname: string
 	avatar: string
+}
+
+const getImageSrc = (value: string, fallback: string): string => {
+	return value !== '' ? value : fallback
 }
 
 // 基础表单
@@ -353,7 +362,7 @@ const handleUploadAvatar = () => {
 				<template #avatar="{ value, error }">
 					<view class="custom-avatar">
 						<image 
-							:src="value || '/static/logo.png'" 
+							:src="getImageSrc(value, '/static/logo.png')" 
 							class="avatar-preview"
 							mode="aspectFill" />
 						<button @click="handleUploadAvatar" class="upload-btn" size="mini">

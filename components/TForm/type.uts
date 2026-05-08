@@ -44,8 +44,8 @@ export type ComponentProps = {
   allowHalf?: boolean
   /** 是否显示值（用于 slider） */
   showValue?: boolean
-  /** 其他扩展属性 */
-  [key: string]: any
+  /** 方向（用于单选/多选组扩展透传） */
+  direction?: string
 }
 
 /**

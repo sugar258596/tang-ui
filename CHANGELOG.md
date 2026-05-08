@@ -1,5 +1,15 @@
 # 更新日志
 
+## [1.3.3] - 2026-05-08
+
+### 修复
+
+- **UTS 兼容性**: 修复 `ReturnType<typeof fn>` 类型查询导致 Android 编译失败的问题
+  - `composables/useTheme.uts`：移除不支持的 `ReturnType` 类型注解，改用 `any` 类型
+  - `composables/useToast.uts`：同上修复
+  - `composables/useModal.uts`：同上修复
+  - 统一单例实例的空值判断为 `== null`，避免 UTS 下 `!` 取反语义差异
+
 ## [1.3.2] - 2026-05-07
 
 ### 优化

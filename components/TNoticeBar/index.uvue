@@ -1,8 +1,8 @@
 <script setup lang="uts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { TNoticeBarProps } from './type.uts'
 
-withDefaults(defineProps<TNoticeBarProps>(), {
+const props = withDefaults(defineProps<TNoticeBarProps>(), {
   text: '',
   mode: undefined,
   color: '#ed6a0c',
@@ -19,6 +19,14 @@ const emit = defineEmits<{
 }>()
 
 const visible = ref(true)
+
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasLeftIcon = computed(() => {
+  return hasTextValue(props.leftIcon)
+})
 
 const handleClick = (): void => {
   emit('click')
@@ -38,7 +46,7 @@ const handleClose = (): void => {
     :style="`background: ${background}; color: ${color}; ${customStyle}`"
     @click="handleClick"
   >
-    <text v-if="leftIcon" class="t-notice-bar__icon mr-2">{{ leftIcon }}</text>
+    <text v-if="hasLeftIcon" class="t-notice-bar__icon mr-2">{{ leftIcon }}</text>
     <view class="t-notice-bar__content flex-1 overflow-hidden">
       <text
         class="t-notice-bar__text inline-block whitespace-nowrap"

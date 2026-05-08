@@ -26,10 +26,6 @@ const currentTheme = reactive<ThemeConfig>({ ...defaultTheme })
 /** 是否深色模式 */
 const isDarkMode = ref(false)
 
-type CssVarMap = {
-  [key: string]: string
-}
-
 /**
  * 主题管理组合式函数
  * @returns {Object} 主题管理对象
@@ -74,83 +70,68 @@ export function useTheme() {
       // 在 H5 平台应用 CSS 变量
       // #ifdef H5
       const root = document.documentElement
-      if (root) {
-        const cssVars: CssVarMap = isDarkMode.value
-          ? {
-              '--primary-color': currentTheme.primaryColor,
-              '--success-color': currentTheme.successColor,
-              '--warning-color': currentTheme.warningColor,
-              '--danger-color': currentTheme.dangerColor,
-              '--info-color': currentTheme.infoColor,
-              '--text-color': currentTheme.textColor,
-              '--border-color': currentTheme.borderColor,
-              '--bg-color': currentTheme.backgroundColor,
-              '--border-radius': currentTheme.borderRadius,
-              '--font-size': currentTheme.fontSize,
-              '--tui-page-bg': '#111827',
-              '--tui-page-bg-elevated': '#1f2937',
-              '--tui-surface': '#1f2937',
-              '--tui-surface-muted': '#243041',
-              '--tui-surface-soft': '#374151',
-              '--tui-surface-overlay': 'rgba(17, 24, 39, 0.82)',
-              '--tui-surface-primary-soft': 'rgba(64, 158, 255, 0.18)',
-              '--tui-surface-success-soft': 'rgba(103, 194, 58, 0.18)',
-              '--tui-surface-warning-soft': 'rgba(230, 162, 60, 0.18)',
-              '--tui-surface-danger-soft': 'rgba(245, 108, 108, 0.18)',
-              '--tui-text-primary': '#f3f4f6',
-              '--tui-text-secondary': '#d1d5db',
-              '--tui-text-tertiary': '#9ca3af',
-              '--tui-text-disabled': '#6b7280',
-              '--tui-text-inverse': '#111827',
-              '--tui-border': '#374151',
-              '--tui-border-soft': '#4b5563',
-              '--tui-border-strong': '#6b7280',
-              '--tui-shadow-color': 'rgba(0, 0, 0, 0.45)',
-              '--tui-mask': 'rgba(0, 0, 0, 0.65)',
-              '--tui-nav-bg': '#111827',
-              '--tui-nav-text': '#f9fafb',
-              '--tui-page-gradient-start': '#1f2937',
-              '--tui-page-gradient-end': '#111827',
-            }
-          : {
-              '--primary-color': currentTheme.primaryColor,
-              '--success-color': currentTheme.successColor,
-              '--warning-color': currentTheme.warningColor,
-              '--danger-color': currentTheme.dangerColor,
-              '--info-color': currentTheme.infoColor,
-              '--text-color': currentTheme.textColor,
-              '--border-color': currentTheme.borderColor,
-              '--bg-color': currentTheme.backgroundColor,
-              '--border-radius': currentTheme.borderRadius,
-              '--font-size': currentTheme.fontSize,
-              '--tui-page-bg': '#f5f7fa',
-              '--tui-page-bg-elevated': '#ffffff',
-              '--tui-surface': '#ffffff',
-              '--tui-surface-muted': '#f5f7fa',
-              '--tui-surface-soft': '#fafafa',
-              '--tui-surface-overlay': 'rgba(255, 255, 255, 0.92)',
-              '--tui-surface-primary-soft': '#ecf5ff',
-              '--tui-surface-success-soft': '#f0f9ff',
-              '--tui-surface-warning-soft': '#fdf6ec',
-              '--tui-surface-danger-soft': '#fef0f0',
-              '--tui-text-primary': '#303133',
-              '--tui-text-secondary': '#606266',
-              '--tui-text-tertiary': '#909399',
-              '--tui-text-disabled': '#c0c4cc',
-              '--tui-text-inverse': '#ffffff',
-              '--tui-border': '#dcdfe6',
-              '--tui-border-soft': '#ebeef5',
-              '--tui-border-strong': '#c8c9cc',
-              '--tui-shadow-color': 'rgba(0, 0, 0, 0.12)',
-              '--tui-mask': 'rgba(0, 0, 0, 0.5)',
-              '--tui-nav-bg': '#667eea',
-              '--tui-nav-text': '#ffffff',
-              '--tui-page-gradient-start': '#667eea',
-              '--tui-page-gradient-end': '#764ba2',
-            }
+      if (root != null) {
+        root.style.setProperty('--primary-color', currentTheme.primaryColor)
+        root.style.setProperty('--success-color', currentTheme.successColor)
+        root.style.setProperty('--warning-color', currentTheme.warningColor)
+        root.style.setProperty('--danger-color', currentTheme.dangerColor)
+        root.style.setProperty('--info-color', currentTheme.infoColor)
+        root.style.setProperty('--text-color', currentTheme.textColor)
+        root.style.setProperty('--border-color', currentTheme.borderColor)
+        root.style.setProperty('--bg-color', currentTheme.backgroundColor)
+        root.style.setProperty('--border-radius', currentTheme.borderRadius)
+        root.style.setProperty('--font-size', currentTheme.fontSize)
 
-        for (const key in cssVars) {
-          root.style.setProperty(key, cssVars[key])
+        if (isDarkMode.value) {
+          root.style.setProperty('--tui-page-bg', '#111827')
+          root.style.setProperty('--tui-page-bg-elevated', '#1f2937')
+          root.style.setProperty('--tui-surface', '#1f2937')
+          root.style.setProperty('--tui-surface-muted', '#243041')
+          root.style.setProperty('--tui-surface-soft', '#374151')
+          root.style.setProperty('--tui-surface-overlay', 'rgba(17, 24, 39, 0.82)')
+          root.style.setProperty('--tui-surface-primary-soft', 'rgba(64, 158, 255, 0.18)')
+          root.style.setProperty('--tui-surface-success-soft', 'rgba(103, 194, 58, 0.18)')
+          root.style.setProperty('--tui-surface-warning-soft', 'rgba(230, 162, 60, 0.18)')
+          root.style.setProperty('--tui-surface-danger-soft', 'rgba(245, 108, 108, 0.18)')
+          root.style.setProperty('--tui-text-primary', '#f3f4f6')
+          root.style.setProperty('--tui-text-secondary', '#d1d5db')
+          root.style.setProperty('--tui-text-tertiary', '#9ca3af')
+          root.style.setProperty('--tui-text-disabled', '#6b7280')
+          root.style.setProperty('--tui-text-inverse', '#111827')
+          root.style.setProperty('--tui-border', '#374151')
+          root.style.setProperty('--tui-border-soft', '#4b5563')
+          root.style.setProperty('--tui-border-strong', '#6b7280')
+          root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.45)')
+          root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.65)')
+          root.style.setProperty('--tui-nav-bg', '#111827')
+          root.style.setProperty('--tui-nav-text', '#f9fafb')
+          root.style.setProperty('--tui-page-gradient-start', '#1f2937')
+          root.style.setProperty('--tui-page-gradient-end', '#111827')
+        } else {
+          root.style.setProperty('--tui-page-bg', '#f5f7fa')
+          root.style.setProperty('--tui-page-bg-elevated', '#ffffff')
+          root.style.setProperty('--tui-surface', '#ffffff')
+          root.style.setProperty('--tui-surface-muted', '#f5f7fa')
+          root.style.setProperty('--tui-surface-soft', '#fafafa')
+          root.style.setProperty('--tui-surface-overlay', 'rgba(255, 255, 255, 0.92)')
+          root.style.setProperty('--tui-surface-primary-soft', '#ecf5ff')
+          root.style.setProperty('--tui-surface-success-soft', '#f0f9ff')
+          root.style.setProperty('--tui-surface-warning-soft', '#fdf6ec')
+          root.style.setProperty('--tui-surface-danger-soft', '#fef0f0')
+          root.style.setProperty('--tui-text-primary', '#303133')
+          root.style.setProperty('--tui-text-secondary', '#606266')
+          root.style.setProperty('--tui-text-tertiary', '#909399')
+          root.style.setProperty('--tui-text-disabled', '#c0c4cc')
+          root.style.setProperty('--tui-text-inverse', '#ffffff')
+          root.style.setProperty('--tui-border', '#dcdfe6')
+          root.style.setProperty('--tui-border-soft', '#ebeef5')
+          root.style.setProperty('--tui-border-strong', '#c8c9cc')
+          root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.12)')
+          root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.5)')
+          root.style.setProperty('--tui-nav-bg', '#667eea')
+          root.style.setProperty('--tui-nav-text', '#ffffff')
+          root.style.setProperty('--tui-page-gradient-start', '#667eea')
+          root.style.setProperty('--tui-page-gradient-end', '#764ba2')
         }
 
         root.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'light')
@@ -198,7 +179,7 @@ export function useTheme() {
   const loadTheme = () => {
     try {
       const savedTheme = uni.getStorageSync('theme-config')
-      if (savedTheme) {
+      if (savedTheme !== '') {
         const theme = JSON.parse(savedTheme)
         Object.assign(currentTheme, theme)
       }
@@ -257,7 +238,7 @@ export function useTheme() {
    */
   const watchSystemTheme = () => {
     // #ifdef H5
-    if (window.matchMedia) {
+    if (window.matchMedia != null) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       mediaQuery.addListener((e) => {
         if (e.matches) {
@@ -305,11 +286,11 @@ export function useTheme() {
 /**
  * 获取主题实例（单例模式）
  */
-let themeInstance: ReturnType<typeof useTheme> | null = null
+let themeInstance : any | null = null
 
 export function getThemeInstance() {
-  if (!themeInstance) {
+  if (themeInstance == null) {
     themeInstance = useTheme()
   }
-  return themeInstance
+  return themeInstance!
 }

@@ -25,9 +25,21 @@ const emit = defineEmits<{
   tagClick: [key: string | number, item: TagItem]
 }>()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasItemIcon = (item: TagItem): boolean => {
+  return hasTextValue(item.icon)
+}
+
+const hasItemBadge = (item: TagItem): boolean => {
+  return item.badge !== undefined && item.badge !== null && item.badge !== ''
+}
+
 /** 获取默认激活项的 key */
 const getDefaultKey = (): string => {
-  if (props.defaultActiveKey) {
+  if (props.defaultActiveKey !== undefined && props.defaultActiveKey !== null && props.defaultActiveKey !== '') {
     return props.defaultActiveKey
   }
   if (props.items.length > 0) {
@@ -39,7 +51,7 @@ const getDefaultKey = (): string => {
 
 /** 初始化默认激活项 */
 onMounted(() => {
-  if (!model.value) {
+  if (model.value === undefined || model.value === null || model.value === '') {
     model.value = getDefaultKey()
   }
 })
@@ -241,7 +253,7 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           :ref="'navItem' + index"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
@@ -251,7 +263,7 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           </text>
 
           <view
-            v-if="item.badge"
+            v-if="hasItemBadge(item)"
             class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
             style="height: 28rpx; transform: translateX(30%);"
           >
@@ -282,7 +294,7 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           :style="getNavItemStyle(item)"
           @click="handleClick(item, index, $event)"
         >
-          <image v-if="item.icon" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
@@ -292,7 +304,7 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           </text>
 
           <view
-            v-if="item.badge"
+            v-if="hasItemBadge(item)"
             class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
             style="height: 28rpx; transform: translateX(30%);"
           >

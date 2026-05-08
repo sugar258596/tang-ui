@@ -23,6 +23,26 @@ const emit = defineEmits<{
   click: []
 }>()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasIcon = computed(() => {
+  return hasTextValue(props.icon)
+})
+
+const hasTitle = computed(() => {
+  return hasTextValue(props.title)
+})
+
+const hasDescription = computed(() => {
+  return hasTextValue(props.description)
+})
+
+const hasExtra = computed(() => {
+  return hasTextValue(props.extra)
+})
+
 /**
  * 计算列表项样式类
  */
@@ -56,21 +76,21 @@ const handleClick = (): void => {
 <template>
   <view :class="itemClass" @click="handleClick">
     <!-- 左侧图标 -->
-    <view v-if="icon" class="t-list-item__icon flex items-center justify-center">
+    <view v-if="hasIcon" class="t-list-item__icon flex items-center justify-center">
       <text class="t-list-item__icon-text text-[20px] text-[#909399]">{{ icon }}</text>
     </view>
 
     <!-- 中间内容 -->
     <view class="t-list-item__content flex flex-1 flex-col">
       <slot>
-        <text v-if="title" class="t-list-item__title text-base leading-6 text-[#303133]">{{ title }}</text>
-        <text v-if="description" class="t-list-item__description mt-1 text-sm leading-5 text-[#909399]">{{ description }}</text>
+        <text v-if="hasTitle" class="t-list-item__title text-base leading-6 text-[#303133]">{{ title }}</text>
+        <text v-if="hasDescription" class="t-list-item__description mt-1 text-sm leading-5 text-[#909399]">{{ description }}</text>
       </slot>
     </view>
 
     <!-- 右侧内容 -->
     <view class="t-list-item__extra ml-3 flex items-center">
-      <text v-if="extra" class="t-list-item__extra-text text-sm text-[#909399]">{{ extra }}</text>
+      <text v-if="hasExtra" class="t-list-item__extra-text text-sm text-[#909399]">{{ extra }}</text>
       <text v-if="arrow" class="t-list-item__arrow ml-2 text-[20px] text-[#c0c4cc]">›</text>
     </view>
   </view>

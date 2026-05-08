@@ -35,6 +35,18 @@ const emit = defineEmits<{
 // 使用 i18n
 const { $t } = useI18n()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasTitle = computed(() => {
+  return hasTextValue(props.title)
+})
+
+const showHeader = computed(() => {
+  return hasTitle.value || props.showClose
+})
+
 // 优先使用用户传入的值，否则使用翻译
 const displayConfirmText = computed(() => {
   return props.confirmText !== undefined && props.confirmText !== '' 
@@ -153,7 +165,7 @@ const handleClose = (): void => {
         >
           <view class="min-w-[280px] max-w-[90%] overflow-hidden rounded-lg bg-white" :style="dialogStyle">
             <!-- 头部 -->
-            <view v-if="title || showClose" class="relative flex min-h-12 items-center justify-center border-b border-[#ebeef5] px-5 py-4">
+            <view v-if="showHeader" class="relative flex min-h-12 items-center justify-center border-b border-[#ebeef5] px-5 py-4">
               <!-- 关闭按钮（定位方式，不占用文档流） -->
               <view
                 v-if="showClose"
@@ -167,7 +179,7 @@ const handleClose = (): void => {
               <!-- 标题（居中，支持插槽） -->
               <view class="relative flex w-full items-center justify-center">
                 <slot name="title">
-                  <text v-if="title" class="text-lg font-semibold leading-[1.4] text-[#303133]">{{ title }}</text>
+                  <text v-if="hasTitle" class="text-lg font-semibold leading-[1.4] text-[#303133]">{{ title }}</text>
                 </slot>
               </view>
             </view>

@@ -1,7 +1,8 @@
 <script setup lang="uts">
+import { computed } from 'vue'
 import type { TNavBarProps } from './type.uts'
 
-withDefaults(defineProps<TNavBarProps>(), {
+const props = withDefaults(defineProps<TNavBarProps>(), {
   title: '',
   leftText: '',
   rightText: '',
@@ -19,6 +20,15 @@ const emit = defineEmits<{
   'click-left': []
   'click-right': []
 }>()
+
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasLeftIcon = computed(() => hasTextValue(props.leftIcon))
+const hasLeftText = computed(() => hasTextValue(props.leftText))
+const hasRightText = computed(() => hasTextValue(props.rightText))
+const hasRightIcon = computed(() => hasTextValue(props.rightIcon))
 </script>
 
 <template>
@@ -29,8 +39,8 @@ const emit = defineEmits<{
       :style="`z-index: ${zIndex}; ${customStyle}`"
     >
       <view class="t-navbar__left flex min-w-[60px] flex-row items-center cursor-pointer" @click="emit('click-left')">
-        <text v-if="leftIcon" class="t-navbar__icon text-lg text-[#323233]">{{ leftIcon }}</text>
-        <text v-if="leftText" class="t-navbar__text text-sm text-[#1890ff]">{{ leftText }}</text>
+        <text v-if="hasLeftIcon" class="t-navbar__icon text-lg text-[#323233]">{{ leftIcon }}</text>
+        <text v-if="hasLeftText" class="t-navbar__text text-sm text-[#1890ff]">{{ leftText }}</text>
         <slot name="left"></slot>
       </view>
       <view class="t-navbar__title flex flex-1 items-center text-center">
@@ -38,8 +48,8 @@ const emit = defineEmits<{
         <slot name="title"></slot>
       </view>
       <view class="t-navbar__right flex min-w-[60px] flex-row items-center justify-end cursor-pointer" @click="emit('click-right')">
-        <text v-if="rightText" class="t-navbar__text text-sm text-[#1890ff]">{{ rightText }}</text>
-        <text v-if="rightIcon" class="t-navbar__icon text-lg text-[#323233]">{{ rightIcon }}</text>
+        <text v-if="hasRightText" class="t-navbar__text text-sm text-[#1890ff]">{{ rightText }}</text>
+        <text v-if="hasRightIcon" class="t-navbar__icon text-lg text-[#323233]">{{ rightIcon }}</text>
         <slot name="right"></slot>
       </view>
     </view>

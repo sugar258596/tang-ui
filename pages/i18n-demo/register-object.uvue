@@ -228,14 +228,20 @@ const registerKorean = (): void => {
 
 // 获取语言名称
 const getLocaleName = (locale: string): string => {
-  const names: Record<string, string> = {
-    'zh-CN': '简体中文',
-    'zh-TW': '繁體中文',
-    'en-US': 'English',
-    'ja-JP': '日本語',
-    'ko-KR': '한국어'
+  switch (locale) {
+    case 'zh-CN':
+      return '简体中文'
+    case 'zh-TW':
+      return '繁體中文'
+    case 'en-US':
+      return 'English'
+    case 'ja-JP':
+      return '日本語'
+    case 'ko-KR':
+      return '한국어'
+    default:
+      return locale
   }
-  return names[locale] || locale
 }
 </script>
 

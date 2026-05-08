@@ -17,6 +17,14 @@ const value3 = ref(1)
 const multiValue = ref<string[]>([])
 const filterKeyword = ref('')
 
+const getJoinedText = (values: string[], emptyText: string): string => {
+  return values.length > 0 ? values.join(', ') : emptyText
+}
+
+const getDisplayText = (value: string, emptyText: string): string => {
+  return value !== '' ? value : emptyText
+}
+
 // 级联选择值
 const cascadeValue = ref<(string | number)[] | null>(null)
 const cascadeValue2 = ref<(string | number)[] | null>(null)
@@ -162,7 +170,7 @@ const handleFilterInput = (value: string): void => {
     <TCard :title="$t('examplePages.select.sections.basic')" class="example-section">
       <TSelect v-model="value1" :options="options" :placeholder="$t('examplePages.select.placeholder.default')" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.selected') }}: {{ value1 || $t('examplePages.select.messages.notSelected') }}
+        {{ $t('examplePages.select.messages.selected') }}: {{ getDisplayText(value1, $t('examplePages.select.messages.notSelected')) }}
       </text>
     </TCard>
 
@@ -222,7 +230,7 @@ const handleFilterInput = (value: string): void => {
         @input="handleFilterInput"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        搜索关键词: {{ filterKeyword || '未输入' }}
+        搜索关键词: {{ getDisplayText(filterKeyword, '未输入') }}
       </text>
     </TCard>
 
@@ -234,7 +242,7 @@ const handleFilterInput = (value: string): void => {
         :placeholder="$t('examplePages.select.placeholder.multiple')"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.selected') }}: {{ multiValue.join(', ') || $t('examplePages.select.messages.notSelected') }}
+        {{ $t('examplePages.select.messages.selected') }}: {{ getJoinedText(multiValue, $t('examplePages.select.messages.notSelected')) }}
       </text>
     </TCard>
 

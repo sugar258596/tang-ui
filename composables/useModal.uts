@@ -256,13 +256,13 @@ export function useModal() {
 /**
  * 获取模态框实例（单例模式）
  */
-let modalInstance: ReturnType<typeof useModal> | null = null
+let modalInstance : any | null = null
 
 export function getModalInstance() {
-  if (!modalInstance) {
+  if (modalInstance == null) {
     modalInstance = useModal()
   }
-  return modalInstance
+  return modalInstance!
 }
 
 /**

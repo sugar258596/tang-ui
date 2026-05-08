@@ -33,6 +33,30 @@ const gridCenter = inject('gridCenter', true)
 const gridClickable = inject('gridClickable', false)
 const gridIconSize = inject<string | number>('gridIconSize', '28px')
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
+const hasBadge = computed(() => {
+  return hasTextValue(props.badge)
+})
+
+const showBadge = computed(() => {
+  return hasBadge.value || props.dot
+})
+
+const hasImage = computed(() => {
+  return hasTextValue(props.image)
+})
+
+const hasIcon = computed(() => {
+  return hasTextValue(props.icon)
+})
+
+const hasText = computed(() => {
+  return hasTextValue(props.text)
+})
+
 /**
  * 计算容器样式
  */
@@ -51,7 +75,7 @@ const containerStyle = computed((): string => {
   }
 
   // 自定义样式
-  if (props.customStyle) {
+  if (hasTextValue(props.customStyle)) {
     styles.push(props.customStyle)
   }
 
@@ -78,7 +102,7 @@ const containerClasses = computed((): string => {
     classes.push('cursor-pointer', 'transition-colors', 'duration-200', 'active:bg-[#f5f5f5]')
   }
 
-  if (props.customClass) {
+  if (hasTextValue(props.customClass)) {
     classes.push(props.customClass)
   }
 
@@ -99,7 +123,7 @@ const iconStyle = computed((): string => {
   }
 
   // 图标颜色
-  if (props.iconColor) {
+  if (hasTextValue(props.iconColor)) {
     styles.push(`color: ${props.iconColor}`)
   }
 
@@ -112,7 +136,7 @@ const iconStyle = computed((): string => {
 const textStyle = computed((): string => {
   const styles: string[] = []
 
-  if (props.textColor) {
+  if (hasTextValue(props.textColor)) {
     styles.push(`color: ${props.textColor}`)
   }
 
@@ -134,20 +158,20 @@ const handleClick = (): void => {
       <view class="relative mb-[8px]">
         <!-- 徽标 -->
         <TBadge
-          v-if="badge || dot"
+          v-if="showBadge"
           :content="badge"
           :dot="dot"
           :offset="[0, 0]"
         >
           <!-- 图片 -->
           <image
-            v-if="image"
+            v-if="hasImage"
             :src="image"
             class="h-[28px] w-[28px]"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="icon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
+          <text v-else-if="hasIcon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -158,13 +182,13 @@ const handleClick = (): void => {
         <template v-else>
           <!-- 图片 -->
           <image
-            v-if="image"
+            v-if="hasImage"
             :src="image"
             class="h-[28px] w-[28px]"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="icon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
+          <text v-else-if="hasIcon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -173,7 +197,7 @@ const handleClick = (): void => {
       </view>
 
       <!-- 文字 -->
-      <text v-if="text" class="break-all text-center text-[12px] text-[#646566]" :style="textStyle">
+      <text v-if="hasText" class="break-all text-center text-[12px] text-[#646566]" :style="textStyle">
         {{ text }}
       </text>
 

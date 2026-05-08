@@ -13,6 +13,11 @@ type RadioButtonSizeClass = {
   dot: string
   label: string
 }
+type RadioButtonSizeMap = {
+  small: RadioButtonSizeClass
+  medium: RadioButtonSizeClass
+  large: RadioButtonSizeClass
+}
 
 const props = withDefaults(defineProps<TRadioButtonProps>(), {
   options: () => [],
@@ -29,6 +34,10 @@ const emit = defineEmits<{
   change: [value: string | number]
 }>()
 
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value !== undefined && value !== null && value !== ''
+}
+
 /**
  * 计算样式变量
  */
@@ -40,7 +49,7 @@ const cssVars = computed(() => ({
 /**
  * 是否为选项组模式
  */
-const isOptionsMode = computed(() => props.options && props.options.length > 0)
+const isOptionsMode = computed(() => props.options.length > 0)
 
 /**
  * 单个按钮模式：判断是否被选中
@@ -75,7 +84,7 @@ const handleClick = () => {
 /**
  * 尺寸样式类
  */
-const sizeMap: Record<string, RadioButtonSizeClass> = {
+const sizeMap: RadioButtonSizeMap = {
     small: {
       icon: 'h-[28rpx] w-[28rpx]',
       dot: 'h-[14rpx] w-[14rpx]',
@@ -114,6 +123,14 @@ const labelClass = computed(() => {
     classes.push('text-[#c0c4cc]')
   }
   return classes.join(' ')
+})
+
+const hasDisplayLabel = computed(() => {
+  return hasTextValue(props.label) || (props.value !== undefined && props.value !== null)
+})
+
+const displayLabel = computed(() => {
+  return hasTextValue(props.label) ? props.label : props.value
 })
 </script>
 
@@ -167,9 +184,9 @@ const labelClass = computed(() => {
     </view>
     <slot>
       <text
-        v-if="label || value !== undefined"
+        v-if="hasDisplayLabel"
         :class="labelClass"
-      >{{ label || value }}</text>
+      >{{ displayLabel }}</text>
     </slot>
   </view>
 </template>
