@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<TTextProps>(), {
   weight: 'normal',
   align: 'left',
   color: '',
-  lineHeight: 1.5,
+  lineHeight: '1.5',
   maxLines: 0,
   ellipsis: false,
   bold: false,
@@ -31,26 +31,26 @@ const props = withDefaults(defineProps<TTextProps>(), {
  * 计算文本类名
  */
 const textClasses = computed((): string => {
-  const classes: string[] = ['t-text inline m-0 p-0 break-words text-left leading-[1.5]']
+  const classes: string[] = ['t-text inline m-0 p-0 break-words text-left leading-normal']
 
   switch (props.type) {
     case 'primary':
-      classes.push('text-[#409eff]')
+      classes.push('text-type-primary')
       break
     case 'success':
-      classes.push('text-[#67c23a]')
+      classes.push('text-type-success')
       break
     case 'warning':
-      classes.push('text-[#e6a23c]')
+      classes.push('text-type-warning')
       break
     case 'danger':
-      classes.push('text-[#f56c6c]')
+      classes.push('text-type-danger')
       break
     case 'info':
-      classes.push('text-[#909399]')
+      classes.push('text-tertiary')
       break
     default:
-      classes.push('text-[#606266]')
+      classes.push('text-secondary')
       break
   }
 
@@ -62,7 +62,7 @@ const textClasses = computed((): string => {
       classes.push('text-xs')
       break
     case 'mini':
-      classes.push('text-[10px]')
+      classes.push('twx-text-10px')
       break
     default:
       classes.push('text-sm')
@@ -119,7 +119,7 @@ const textClasses = computed((): string => {
     classes.push('truncate')
   }
 
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 
@@ -130,19 +130,17 @@ const textClasses = computed((): string => {
  * 计算文本样式
  */
 const textStyles = computed((): string => {
+
   const styles: string[] = []
 
   // 自定义颜色
-  if (props.color) {
+  if (props.color !== '') {
     styles.push(`color: ${props.color}`)
   }
 
   // 行高
-  if (props.lineHeight) {
-    const lineHeight = typeof props.lineHeight === 'number'
-      ? props.lineHeight
-      : props.lineHeight
-    styles.push(`line-height: ${lineHeight}`)
+  if (props.lineHeight !== '') {
+    styles.push(`line-height: ${props.lineHeight}`)
   }
 
   // 最大行数
@@ -154,7 +152,7 @@ const textStyles = computed((): string => {
   }
 
   // 自定义样式
-  if (props.customStyle) {
+  if (props.customStyle !== '') {
     styles.push(props.customStyle)
   }
 
@@ -167,3 +165,21 @@ const textStyles = computed((): string => {
     <slot>{{ text }}</slot>
   </text>
 </template>
+
+<style scoped>
+.text-type-primary {
+  color: #409eff;
+}
+.text-type-success {
+  color: #67c23a;
+}
+.text-type-warning {
+  color: #e6a23c;
+}
+.text-type-danger {
+  color: #f56c6c;
+}
+.twx-text-10px {
+  font-size: 10px;
+}
+</style>

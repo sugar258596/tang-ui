@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from '../../composables/useI18n.uts'
 import TButton from '../../components/TButton/index.uvue'
-import TCard from '../../components/TCard/index.uvue'
+import TCard from '@/components/TCard'
 
 /**
  * 多语言演示页面
@@ -127,23 +127,23 @@ const goBack = () => {
         <view class="translation-demo">
           <view class="translation-item">
             <text class="translation-key">common.confirm</text>
-            <text class="translation-value">{{ $t('common.confirm') }}</text>
+            <text class="translation-value">{{ $t('common.confirm', null) }}</text>
           </view>
           <view class="translation-item">
             <text class="translation-key">common.cancel</text>
-            <text class="translation-value">{{ $t('common.cancel') }}</text>
+            <text class="translation-value">{{ $t('common.cancel', null) }}</text>
           </view>
           <view class="translation-item">
             <text class="translation-key">dialog.title</text>
-            <text class="translation-value">{{ $t('dialog.title') }}</text>
+            <text class="translation-value">{{ $t('dialog.title', null) }}</text>
           </view>
           <view class="translation-item">
             <text class="translation-key">empty.title</text>
-            <text class="translation-value">{{ $t('empty.title') }}</text>
+            <text class="translation-value">{{ $t('empty.title', null) }}</text>
           </view>
           <view class="translation-item">
             <text class="translation-key">loading.text</text>
-            <text class="translation-value">{{ $t('loading.text') }}</text>
+            <text class="translation-value">{{ $t('loading.text', null) }}</text>
           </view>
         </view>
       </TCard>

@@ -1,18 +1,43 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TButton from '@/components/TButton'
-import TCard from '@/components/TCard'
+import TButton from '@/components/TButton/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 按钮组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 const loading = ref(false)
 
+const pageTitle = t('examplePages.button.title')
+const pageDescription = t('examplePages.button.description')
+const basicTitle = t('examplePages.button.sections.basic')
+const plainTitle = t('examplePages.button.sections.plain')
+const sizeTitle = t('examplePages.button.sections.size')
+const disabledTitle = t('examplePages.button.sections.disabled')
+const loadingTitle = t('examplePages.button.sections.loading')
+const roundTitle = t('examplePages.button.sections.round')
+const blockTitle = t('examplePages.button.sections.block')
+const clickedMessage = t('examplePages.button.messages.clicked')
+const primaryText = t('examplePages.button.buttons.primary')
+const successText = t('examplePages.button.buttons.success')
+const warningText = t('examplePages.button.buttons.warning')
+const dangerText = t('examplePages.button.buttons.danger')
+const infoText = t('examplePages.button.buttons.info')
+const plainText = t('examplePages.button.buttons.plain')
+const largeText = t('examplePages.button.buttons.large')
+const mediumText = t('examplePages.button.buttons.medium')
+const smallText = t('examplePages.button.buttons.small')
+const disabledText = t('examplePages.button.buttons.disabled')
+const loadingText = t('examplePages.button.buttons.loading')
+const clickToLoadText = t('examplePages.button.buttons.clickToLoad')
+const roundText = t('examplePages.button.buttons.round')
+const blockText = t('examplePages.button.buttons.block')
+
 const handleClick = (): void => {
-  console.log($t('examplePages.button.messages.clicked'))
+  console.log(clickedMessage)
 }
 
 const handleLoadingClick = (): void => {
@@ -26,66 +51,64 @@ const handleLoadingClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.button.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.button.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.button.sections.basic')" class="example-section">
+    <TCard :title="basicTitle" class="example-section">
       <view class="button-row">
-        <TButton type="primary" @click="handleClick">{{ $t('examplePages.button.buttons.primary') }}</TButton>
-        <TButton type="success">{{ $t('examplePages.button.buttons.success') }}</TButton>
-        <TButton type="warning">{{ $t('examplePages.button.buttons.warning') }}</TButton>
-        <TButton type="danger">{{ $t('examplePages.button.buttons.danger') }}</TButton>
-        <TButton type="info">{{ $t('examplePages.button.buttons.info') }}</TButton>
+        <TButton :text="primaryText" type="primary" @click="handleClick" />
+        <TButton :text="successText" type="success" />
+        <TButton :text="warningText" type="warning" />
+        <TButton :text="dangerText" type="danger" />
+        <TButton :text="infoText" type="info" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.plain')" class="example-section">
+    <TCard :title="plainTitle" class="example-section">
       <view class="button-row">
-        <TButton type="primary" plain>{{ $t('examplePages.button.buttons.plain') }}</TButton>
-        <TButton type="success" plain>{{ $t('examplePages.button.buttons.success') }}</TButton>
-        <TButton type="warning" plain>{{ $t('examplePages.button.buttons.warning') }}</TButton>
-        <TButton type="danger" plain>{{ $t('examplePages.button.buttons.danger') }}</TButton>
+        <TButton :text="plainText" type="primary" plain />
+        <TButton :text="successText" type="success" plain />
+        <TButton :text="warningText" type="warning" plain />
+        <TButton :text="dangerText" type="danger" plain />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.size')" class="example-section">
+    <TCard :title="sizeTitle" class="example-section">
       <view class="button-row">
-        <TButton size="large">{{ $t('examplePages.button.buttons.large') }}</TButton>
-        <TButton size="medium">{{ $t('examplePages.button.buttons.medium') }}</TButton>
-        <TButton size="small">{{ $t('examplePages.button.buttons.small') }}</TButton>
+        <TButton :text="largeText" size="large" />
+        <TButton :text="mediumText" size="medium" />
+        <TButton :text="smallText" size="small" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.disabled')" class="example-section">
+    <TCard :title="disabledTitle" class="example-section">
       <view class="button-row">
-        <TButton disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
-        <TButton type="primary" disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
-        <TButton type="success" disabled>{{ $t('examplePages.button.buttons.disabled') }}</TButton>
+        <TButton :text="disabledText" disabled />
+        <TButton :text="disabledText" type="primary" disabled />
+        <TButton :text="disabledText" type="success" disabled />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.loading')" class="example-section">
+    <TCard :title="loadingTitle" class="example-section">
       <view class="button-row">
-        <TButton :loading="loading" @click="handleLoadingClick">
-          {{ loading ? $t('examplePages.button.buttons.loading') : $t('examplePages.button.buttons.clickToLoad') }}
-        </TButton>
-        <TButton type="primary" loading>{{ $t('examplePages.button.buttons.loading') }}</TButton>
+        <TButton :text="loading ? loadingText : clickToLoadText" :loading="loading" @click="handleLoadingClick" />
+        <TButton :text="loadingText" type="primary" loading />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.round')" class="example-section">
+    <TCard :title="roundTitle" class="example-section">
       <view class="button-row">
-        <TButton round>{{ $t('examplePages.button.buttons.round') }}</TButton>
-        <TButton type="primary" round>{{ $t('examplePages.button.buttons.primary') }}</TButton>
-        <TButton type="success" round>{{ $t('examplePages.button.buttons.success') }}</TButton>
+        <TButton :text="roundText" shape="round" />
+        <TButton :text="primaryText" type="primary" shape="round" />
+        <TButton :text="successText" type="success" shape="round" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.button.sections.block')" class="example-section">
-      <TButton type="primary" block>{{ $t('examplePages.button.buttons.block') }}</TButton>
-      <view style="margin-top: 10px;">
-        <TButton type="success" block>{{ $t('examplePages.button.buttons.block') }}</TButton>
+    <TCard :title="blockTitle" class="example-section">
+      <TButton :text="blockText" type="primary" block />
+      <view class="mt-2.5">
+        <TButton :text="blockText" type="success" block />
       </view>
     </TCard>
   </view>

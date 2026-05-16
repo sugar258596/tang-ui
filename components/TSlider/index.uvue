@@ -1,13 +1,29 @@
 <script setup lang="uts">
-import type { TSliderProps } from './type.uts'
 
 /**
  * TSlider 滑块组件
  * @description 用于在给定范围内选择数值的滑块组件
  */
 
-// Props 定义 (从 type.uts 导入，排除 modelValue)
-type Props = Omit<TSliderProps, 'modelValue'>
+// Props 定义 (手动排除 modelValue，避免 UTS 不支持 Omit 工具类型)
+type Props = {
+  min?: number
+  max?: number
+  step?: number
+  disabled?: boolean
+  showValue?: boolean
+  activeColor?: string
+  inactiveColor?: string
+  customClass?: string
+  customStyle?: string
+}
+
+type SliderChangeEventDetail = {
+  value: number
+}
+type SliderChangeEvent = {
+  detail: SliderChangeEventDetail
+}
 
 withDefaults(defineProps<Props>(), {
   min: 0,
@@ -28,8 +44,8 @@ const emit = defineEmits<{
   change: [value: number]
 }>()
 
-const handleChange = (event: any): void => {
-  const value = event.detail.value as number
+const handleChange = (event: SliderChangeEvent): void => {
+  const value = event.detail.value
   modelValue.value = value
   emit('change', value)
 }
@@ -49,6 +65,9 @@ const handleChange = (event: any): void => {
       :block-size="24"
       @change="handleChange"
     />
-    <text v-if="showValue" class="t-slider__value ml-3 min-w-10 text-right text-sm text-[#323233]">{{ modelValue }}</text>
+    <text v-if="showValue" class="t-slider__value ml-3 min-w-10 text-right text-sm text-primary">{{ modelValue }}</text>
   </view>
 </template>
+
+<style scoped>
+</style>

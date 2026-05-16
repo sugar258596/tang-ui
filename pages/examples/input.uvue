@@ -1,14 +1,14 @@
-<script  setup lang="uts" >
+<script setup lang="uts">
 import { ref } from 'vue'
-import TInput from '@/components/TInput'
-import TCard from '@/components/TCard'
+import TInput from '@/components/TInput/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 输入框组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const inputValue1 = ref('')
 const inputValue2 = ref('')
@@ -32,59 +32,59 @@ const handleBlur = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.input.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.input.description') }}</text>
+      <text class="example-title">{{ t('examplePages.input.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.input.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.input.sections.basic')" class="example-section">
-      <TInput v-model="inputValue1" :placeholder="$t('examplePages.input.placeholder')" />
+    <TCard :title="t('examplePages.input.sections.basic')" class="example-section">
+      <TInput v-model="inputValue1" :placeholder="t('examplePages.input.placeholder')" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.input.labels.inputValue') }}: {{ inputValue1 }}
+        {{ t('examplePages.input.labels.inputValue') }}: {{ inputValue1 }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.type')" class="example-section">
+    <TCard :title="t('examplePages.input.sections.type')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput type="text" :placeholder="$t('examplePages.input.labels.textInput')" />
-        <TInput type="password" :placeholder="$t('examplePages.input.labels.passwordInput')" />
-        <TInput type="number" :placeholder="$t('examplePages.input.labels.numberInput')" />
-        <TInput type="tel" :placeholder="$t('examplePages.input.labels.phoneInput')" />
-        <TInput type="email" :placeholder="$t('examplePages.input.labels.emailInput')" />
+        <TInput type="text" :placeholder="t('examplePages.input.labels.textInput')" />
+        <TInput type="password" :placeholder="t('examplePages.input.labels.passwordInput')" />
+        <TInput type="number" :placeholder="t('examplePages.input.labels.numberInput')" />
+        <TInput type="tel" :placeholder="t('examplePages.input.labels.phoneInput')" />
+        <TInput type="email" :placeholder="t('examplePages.input.labels.emailInput')" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.size')" class="example-section">
+    <TCard :title="t('examplePages.input.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput size="small" :placeholder="$t('examplePages.input.labels.smallSize')" />
-        <TInput size="medium" :placeholder="$t('examplePages.input.labels.mediumSize')" />
-        <TInput size="large" :placeholder="$t('examplePages.input.labels.largeSize')" />
+        <TInput size="small" :placeholder="t('examplePages.input.labels.smallSize')" />
+        <TInput size="medium" :placeholder="t('examplePages.input.labels.mediumSize')" />
+        <TInput size="large" :placeholder="t('examplePages.input.labels.largeSize')" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.disabled')" class="example-section">
-      <TInput :value="$t('examplePages.input.labels.disabled')" disabled />
+    <TCard :title="t('examplePages.input.sections.disabled')" class="example-section">
+      <TInput :value="t('examplePages.input.labels.disabled')" disabled />
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.readonly')" class="example-section">
-      <TInput :value="$t('examplePages.input.labels.readonly')" readonly />
+    <TCard :title="t('examplePages.input.sections.readonly')" class="example-section">
+      <TInput :value="t('examplePages.input.labels.readonly')" readonly />
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.clearable')" class="example-section">
-      <TInput v-model="inputValue2" clearable :placeholder="$t('examplePages.input.labels.clearable')" />
+    <TCard :title="t('examplePages.input.sections.clearable')" class="example-section">
+      <TInput v-model="inputValue2" clearable :placeholder="t('examplePages.input.labels.clearable')" />
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.affix')" class="example-section">
+    <TCard :title="t('examplePages.input.sections.affix')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TInput prefix="￥" :placeholder="$t('examplePages.input.labels.amount')" />
-        <TInput suffix=".com" :placeholder="$t('examplePages.input.labels.website')" />
-        <TInput prefix="https://" suffix=".com" :placeholder="$t('examplePages.input.labels.domain')" />
+        <TInput prefix="￥" :placeholder="t('examplePages.input.labels.amount')" />
+        <TInput suffix=".com" :placeholder="t('examplePages.input.labels.website')" />
+        <TInput prefix="https://" suffix=".com" :placeholder="t('examplePages.input.labels.domain')" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.input.sections.events')" class="example-section">
+    <TCard :title="t('examplePages.input.sections.events')" class="example-section">
       <TInput
         v-model="inputValue3"
-        :placeholder="$t('examplePages.input.labels.checkConsole')"
+        :placeholder="t('examplePages.input.labels.checkConsole')"
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"

@@ -44,5 +44,5 @@ export type TBadgeProps = {
   /**
    * 偏移量 [x, y]
    */
-  offset?: [number, number]
+  offset?: number[]
 }

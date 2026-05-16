@@ -29,7 +29,7 @@ export type ImageShape = 'square' | 'round' | 'circle'
 /**
  * TImage Props 接口
  */
-export interface TImageProps {
+export type TImageProps = {
   /**
    * 图片链接
    */
@@ -99,6 +99,11 @@ export interface TImageProps {
   errorText?: string
 
   /**
+   * 加载失败显示的图片
+   */
+  errorImage?: string
+
+  /**
    * 是否可预览
    * @default false
    */
@@ -133,12 +138,12 @@ export interface TImageEmits {
   /**
    * 图片加载完成事件
    */
-  load: (event: Event) => void
+  load: (event: object) => void
 
   /**
    * 图片加载失败事件
    */
-  error: (event: Event) => void
+  error: (event: object) => void
 
   /**
    * 点击图片事件

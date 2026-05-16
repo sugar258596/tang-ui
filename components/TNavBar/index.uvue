@@ -21,8 +21,8 @@ const emit = defineEmits<{
   'click-right': []
 }>()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasLeftIcon = computed(() => hasTextValue(props.leftIcon))
@@ -34,25 +34,37 @@ const hasRightIcon = computed(() => hasTextValue(props.rightIcon))
 <template>
   <view class="t-navbar-wrapper">
     <view
-      class="t-navbar flex h-11 flex-row items-center justify-between border-b border-[#ebedf0] bg-white px-4"
+      class="t-navbar flex h-11 flex-row items-center justify-between border-b twx-border-soft bg-white px-4"
       :class="[customClass, fixed ? 'fixed left-0 right-0 top-0' : '']"
       :style="`z-index: ${zIndex}; ${customStyle}`"
     >
-      <view class="t-navbar__left flex min-w-[60px] flex-row items-center cursor-pointer" @click="emit('click-left')">
-        <text v-if="hasLeftIcon" class="t-navbar__icon text-lg text-[#323233]">{{ leftIcon }}</text>
-        <text v-if="hasLeftText" class="t-navbar__text text-sm text-[#1890ff]">{{ leftText }}</text>
+      <view class="t-navbar__left flex twx-min-w-15 flex-row items-center cursor-pointer" @click="emit('click-left')">
+        <text v-if="hasLeftIcon" class="t-navbar__icon text-lg text-title">{{ leftIcon }}</text>
+        <text v-if="hasLeftText" class="t-navbar__text text-sm twx-text-link">{{ leftText }}</text>
         <slot name="left"></slot>
       </view>
       <view class="t-navbar__title flex flex-1 items-center text-center">
-        <text class="t-navbar__title-text text-base font-medium text-[#323233]">{{ title }}</text>
+        <text class="t-navbar__title-text text-base font-medium text-title">{{ title }}</text>
         <slot name="title"></slot>
       </view>
-      <view class="t-navbar__right flex min-w-[60px] flex-row items-center justify-end cursor-pointer" @click="emit('click-right')">
-        <text v-if="hasRightText" class="t-navbar__text text-sm text-[#1890ff]">{{ rightText }}</text>
-        <text v-if="hasRightIcon" class="t-navbar__icon text-lg text-[#323233]">{{ rightIcon }}</text>
+      <view class="t-navbar__right flex twx-min-w-15 flex-row items-center justify-end cursor-pointer" @click="emit('click-right')">
+        <text v-if="hasRightText" class="t-navbar__text text-sm twx-text-link">{{ rightText }}</text>
+        <text v-if="hasRightIcon" class="t-navbar__icon text-lg text-title">{{ rightIcon }}</text>
         <slot name="right"></slot>
       </view>
     </view>
     <view v-if="fixed && placeholder" class="t-navbar__placeholder h-11"></view>
   </view>
 </template>
+
+<style>
+.twx-text-link {
+  color: #1890ff;
+}
+.twx-border-soft {
+  border-color: #ebedf0;
+}
+.twx-min-w-15 {
+  min-width: 60px;
+}
+</style>

@@ -1,8 +1,11 @@
 <script  setup lang="uts" >
+import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TRateProps } from './type.uts'
 
-type UniVibrateShortApi = {
-  vibrateShort: (() => void) | null
+type RateStar = {
+  index: number
+  percentage: number
 }
 
 const props = withDefaults(defineProps<TRateProps>(), {
@@ -26,52 +29,45 @@ const emit = defineEmits<{
   hoverChange: [value: number]
 }>()
 
-const model = defineModel({ default: 0 })
+const model = defineModel({ default: 0 }) as Ref<number>
 
 /** 格式化评分显示 */
-const formatScore = computed(() => {
-  const value = model.value.toFixed(props.precision)
-  return `${value}/${props.max}`
+const formatScore = computed((): string => {
+  return `${model.value}/${props.max}`
 })
 
 /** 每颗星的填充比例（仅 0% 或 100%） */
-const stars = computed(() => {
-  return Array.from({ length: props.max }, (_, i) => {
+const stars = computed(() : Array<RateStar> => {
+  const result: Array<RateStar> = []
+  for (let i = 0; i < props.max; i++) {
     const index = i + 1
-    return { index, percentage: index <= model.value ? 100 : 0 }
-  })
+    result.push({
+      index,
+      percentage: index <= model.value ? 100 : 0
+    } as RateStar)
+  }
+  return result
 })
 
 /** 基础星样式 */
-const baseStarStyle = computed(() => ({
-  fontSize: `${props.size}rpx`,
-  marginRight: `${props.gap}rpx`,
-  color: props.inactiveColor,
-  cursor: props.readonly || props.disabled ? 'default' : 'pointer'
-}))
+const baseStarStyle = computed((): string => {
+  const cursor = props.readonly || props.disabled ? 'default' : 'pointer'
+  return `font-size: ${props.size}rpx; margin-right: ${props.gap}rpx; color: ${props.inactiveColor}; cursor: ${cursor}`
+})
 
-const activeColor = computed(() => props.activeColor)
-const inactiveColor = computed(() => props.inactiveColor)
-const showScore = computed(() => props.showScore)
-const starChar = computed(() => props.starChar)
+const activeColor = computed((): string => props.activeColor)
+const inactiveColor = computed((): string => props.inactiveColor)
+const showScore = computed((): boolean => props.showScore)
+const starChar = computed((): string => props.starChar)
 
 /** 更新评分 */
-const updateRating = (newRating: number) => {
+const updateRating = (newRating: number): void => {
   model.value = newRating
   emit('change', newRating)
-
-  if (props.vibrate) {
-    try {
-      const uniVibrateApi = uni as UniVibrateShortApi
-      if (uniVibrateApi.vibrateShort != null) {
-        uniVibrateApi.vibrateShort()
-      }
-    } catch {}
-  }
 }
 
 /** 点击事件（整星） */
-const handleStarClick = (index: number) => {
+const handleStarClick = (index: number): void => {
   if (props.readonly || props.disabled) return
 
   let newRating = index
@@ -88,7 +84,7 @@ const handleStarClick = (index: number) => {
 </script>
 
 <template>
-  <view class="select-none flex flex-row items-center gap-[4rpx]">
+  <view class="select-none flex flex-row items-center gap-1">
     <view class="flex flex-row items-center">
       <view
         v-for="star in stars"
@@ -96,7 +92,6 @@ const handleStarClick = (index: number) => {
         class="inline-block transition-transform duration-150 active:scale-90 last:mr-0"
         :style="baseStarStyle"
         @tap="handleStarClick(star.index)"
-        @click="handleStarClick(star.index)"
       >
         <text
           class="inline-block font-semibold leading-none transition-colors duration-200"
@@ -109,10 +104,19 @@ const handleStarClick = (index: number) => {
       </view>
     </view>
 
-    <view v-if="showScore" class="ml-[16rpx]">
-      <text class="text-[28rpx] font-medium leading-[1.2] text-[#374151]">
+    <view v-if="showScore" class="ml-1">
+      <text class="text-xs font-medium twx-leading-12 twx-text-374151">
         {{ formatScore }}
       </text>
     </view>
   </view>
 </template>
+
+<style>
+.twx-leading-12 {
+  line-height: 1.2;
+}
+.twx-text-374151 {
+  color: #374151;
+}
+</style>

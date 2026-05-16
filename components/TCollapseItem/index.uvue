@@ -52,21 +52,21 @@ const handleClick = (): void => {
  */
 const headerClass = computed(() => {
   const classes: string[] = [
+    'border-b',
+    'border-border-soft',
     'flex',
     'flex-row',
     'items-center',
     'justify-between',
     'bg-white',
-    'px-[20px]',
-    'py-[16px]',
-    'transition-colors',
-    'duration-300'
+    'px-lg',
+    'py-lg'
   ]
 
   if (props.disabled) {
     classes.push('cursor-not-allowed', 'opacity-60')
   } else {
-    classes.push('cursor-pointer', 'active:bg-[#f5f7fa]')
+    classes.push('cursor-pointer')
   }
 
   return classes.join(' ')
@@ -77,12 +77,12 @@ const headerClass = computed(() => {
  */
 const arrowClass = computed(() => {
   const classes: string[] = [
+    'h-icon',
+    'w-icon',
     'flex',
-    'h-[24px]',
-    'w-[24px]',
     'items-center',
     'justify-center',
-    'transition-transform',
+    'transition-all',
     'duration-300'
   ]
 
@@ -95,25 +95,25 @@ const arrowClass = computed(() => {
 </script>
 
 <template>
-  <view class="border-b border-[#ebeef5] last:border-b-0">
+  <view class="bg-white">
     <!-- 头部 -->
     <view :class="headerClass" @click="handleClick">
       <!-- 标题 -->
       <view class="flex-1">
         <slot name="title">
-          <text class="text-[15px] font-medium leading-[1.5] text-[#303133]">{{ title }}</text>
+          <text class="text-sm font-medium leading-6 text-primary">{{ title }}</text>
         </slot>
       </view>
 
       <!-- 箭头图标 -->
       <view :class="arrowClass">
-        <text class="text-[18px] font-bold leading-none text-[#909399]">›</text>
+        <text class="text-lg font-bold leading-none text-tertiary">›</text>
       </view>
     </view>
 
     <!-- 内容区域 -->
     <view class="overflow-hidden bg-white" :style="contentStyle">
-      <view class="px-[20px] py-[16px] text-[14px] leading-[1.6] text-[#606266]">
+      <view class="px-lg py-lg text-sm leading-6 text-secondary">
         <slot></slot>
       </view>
     </view>

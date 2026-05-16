@@ -10,7 +10,7 @@ export type CheckboxSize = 'small' | 'medium' | 'large'
 /**
  * TCheckbox Props 接口
  */
-export interface TCheckboxProps {
+export type TCheckboxProps = {
   /**
    * 是否禁用
    * @default false
@@ -60,5 +60,5 @@ export interface TCheckboxEmits {
   /**
    * 点击事件
    */
-  click: (event: any) => void
+  click: (event: object) => void
 }

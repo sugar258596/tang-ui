@@ -22,6 +22,10 @@ const props = withDefaults(defineProps<TDividerProps>(), {
   customStyle: ''
 })
 
+const hasContent = computed((): boolean => {
+  return props.content !== ''
+})
+
 /**
  * 计算容器样式
  */
@@ -44,7 +48,7 @@ const containerStyle = computed((): string => {
   }
 
   // 自定义样式
-  if (props.customStyle) {
+  if (props.customStyle !== '') {
     styles.push(props.customStyle)
   }
 
@@ -96,7 +100,7 @@ const textStyle = computed((): string => {
   }
 
   // 自定义文字样式
-  if (props.contentStyle) {
+  if (props.contentStyle !== '') {
     styles.push(props.contentStyle)
   }
 
@@ -107,7 +111,7 @@ const textStyle = computed((): string => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-divider relative flex items-center']
+  const classes: string[] = ['relative', 'flex', 'items-center']
 
   if (props.direction === 'vertical') {
     classes.push('inline-flex h-full flex-col')
@@ -115,7 +119,7 @@ const containerClasses = computed((): string => {
     classes.push('w-full flex-row')
   }
 
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 
@@ -124,18 +128,18 @@ const containerClasses = computed((): string => {
 
 const firstLineClasses = computed((): string => {
   if (props.direction === 'vertical') {
-    return 't-divider__line h-full w-0 border-0'
+    return 'h-full w-0 border-0'
   }
 
-  return 't-divider__line border-0'
+  return 'border-0'
 })
 
 const secondLineClasses = computed((): string => {
   if (props.direction === 'vertical') {
-    return 't-divider__line h-full w-0 border-0'
+    return 'h-full w-0 border-0'
   }
 
-  return 't-divider__line border-0'
+  return 'border-0'
 })
 
 const firstLineStyle = computed((): string => {
@@ -178,12 +182,12 @@ const secondLineStyle = computed((): string => {
     <!-- 水平分割线 -->
     <template v-if="direction === 'horizontal'">
       <!-- 无文字 -->
-      <view v-if="!content" class="t-divider__line w-full border-0" :style="lineStyle"></view>
+      <view v-if="!hasContent" class="w-full border-0" :style="lineStyle"></view>
 
       <!-- 有文字 -->
       <template v-else>
         <view :class="firstLineClasses" :style="firstLineStyle"></view>
-        <text class="t-divider__text whitespace-nowrap text-sm text-[#909399]" :style="textStyle">
+        <text class="whitespace-nowrap text-sm text-tertiary" :style="textStyle">
           <slot>{{ content }}</slot>
         </text>
         <view :class="secondLineClasses" :style="secondLineStyle"></view>

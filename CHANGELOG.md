@@ -1,5 +1,54 @@
 # 更新日志
 
+## [未发布] - 2026-05-16
+
+### 新增
+
+- **组件库覆盖**: 补齐并接入完整组件实现与类型定义
+  - 新增 `TActionSheet`、`TAvatar`、`TBadge`、`TButton`、`TCell`、`TCheckbox`、`TCheckboxGroup`、`TCol`、`TCollapse`、`TCollapseItem`、`TDateTimePicker`、`TDialog`、`TDivider`、`TEmpty`、`TErrorState`、`TForm`、`TGrid`、`TGridItem`、`TIcon`、`TImage`、`TInput`、`TLoading`、`TNavBar`、`TNoticeBar`、`TNumberInput`、`TPicker`、`TPopup`、`TProgress`、`TRadioButton`、`TRadioGroup`、`TRate`、`TRow`、`TSearchBar`、`TSelect`、`TSlider`、`TSwiper`、`TSwitch`、`TText`、`TTextarea`、`Tabs`、`Tags` 等组件入口与 `type.uts` 类型文件
+  - 新增 `TButton`、`TDateTimePicker`、`TForm`、`TInput`、`TRadioButton`、`TText`、`Tabs`、`Tags` 等组件 README 文档
+  - 新增 `types/index.d.ts` 与 `types/index.uts`，完善 npm 包类型入口
+
+- **示例页面**: 补齐组件示例与页面路由
+  - 新增 `pages/examples` 下 action-sheet、avatar、badge、button、card、cell、checkbox、collapse、datetime-picker、dialog、divider、empty、error、form、grid、icon、image、input、layout、list、loading、navbar、notice-bar、number-input、picker、popup、progress、radio、rate、search-bar、select、slider、swiper、switch、tabs、tags、text、textarea、toast 等示例页
+  - 更新 `pages.json` 与首页示例入口，便于按组件分类预览和回归测试
+  - 新增 `.hbuilderx/launch.json`，补充 HBuilderX 调试启动配置
+
+- **国际化示例**: 新增 i18n 演示与多语言资源
+  - 新增 `pages/i18n-demo` 示例，覆盖对象注册、路径注册与基础页面展示
+  - 新增日语 `ja-JP` 与韩语 `ko-KR` 示例语言包
+  - 更新 `locales/en-US`、`locales/zh-CN`、`locales/zh-TW` 示例页面文案
+
+### 优化
+
+- **主题与样式**: 优化主题 token、Tailwind 配置和生成样式
+  - 调整 `composables/useTheme.uts` 与 `static/theme.scss`，完善浅色/暗黑主题覆盖
+  - 更新 `tailwind.config.cjs`、`postcss.config.cjs` 与 `static/tailwind.css`，同步最新原子类输出
+  - 优化 `TCard`、`TList`、`TListItem` 等已有组件样式与交互表现
+
+- **组件体验**: 扩展多组件状态、尺寸、禁用态和示例覆盖
+  - 优化 `TAvatar`、`TBadge`、`TImage`、`TPopup`、`TSelect`、`Tabs` 等组件的展示逻辑与示例场景
+  - 调整表单、选择、弹层、标签页、文本输入等示例页结构，提升真机调试可读性
+
+### 修复
+
+- **UTS 兼容性**: 修复多处严格相等比较在 UTS 编译链路下的兼容性问题
+  - `TBadge`：将 offset、数值和空值判断统一为 UTS 友好的宽松比较
+  - `TImage`：修复 `radius` 对数字、字符串与空值混合输入的判断兼容性
+  - `Tabs`：修复默认激活项、禁用态、空 key、卡片类型、尺寸判断和 active key 比较逻辑
+
+- **国际化模块**: 修复 locales 与 composables 相关模块兼容性
+  - 调整 `composables/i18n/manager.uts`、`composables/i18n/types.uts`、`composables/useI18n.uts` 与 `locales/loader.uts`
+  - 修复语言资源加载、注册与示例页面配置的类型和运行时衔接问题
+
+- **弹层与反馈**: 修复 `useModal.uts`、`useToast.uts` 在队列、实例和回调处理上的 UTS 类型兼容问题
+
+### 工程化
+
+- **发布配置**: 更新 `package.json` 发布文件白名单、构建脚本和类型入口配置
+- **构建配置**: 更新 `manifest.json`、`vite.config.ts`、Tailwind 与 PostCSS 配置，保持 uni-app x 构建链路一致
+- **仓库清理**: 更新 `.gitignore`，移除误提交的 `.gitignore copy`
+
 ## [1.3.3] - 2026-05-08
 
 ### 修复

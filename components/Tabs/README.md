@@ -96,8 +96,8 @@ const tabItems: TabItem[] = [
 card 类型的激活标签会自动应用：
 
 - 透明背景色：`rgba(var(--active-color-rgb), 0.1)`
-- 轻微上移效果：`translateY(-2rpx)`
-- 动态阴影：`0 4rpx 12rpx rgba(var(--active-color-rgb), 0.2)`
+- 轻微上移效果：`translateY(-2px)`
+- 动态阴影：`0 4px 12px rgba(var(--active-color-rgb), 0.2)`
 
 ## 不同尺寸
 
@@ -221,12 +221,12 @@ const handleTabClick = (key: string, item: TabItem) => {
 
 <style lang="scss" scoped>
 .page {
-  padding: 32rpx;
+  padding: 32px;
 }
 
 .tab-content {
   background-color: #ffffff;
-  min-height: 400rpx;
+  min-height: 400px;
 }
 </style>
 ```

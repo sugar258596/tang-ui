@@ -77,74 +77,71 @@ import zhTWDatetimePicker from './zh-TW/datetimePicker.json'
 /**
  * 简体中文模块映射
  */
-const zhCNModules: ModularLocaleMessages = {
-  actionSheet: zhCNActionSheet,
-  common: zhCNCommon,
-  dialog: zhCNDialog,
-  empty: zhCNEmpty,
-  errorState: zhCNErrorState,
-  examples: zhCNExamples,
-  examplePages: zhCNExamplePages,
-  form: zhCNForm,
-  input: zhCNInput,
-  list: zhCNList,
-  loading: zhCNLoading,
-  navBar: zhCNNavBar,
-  noticeBar: zhCNNoticeBar,
-  picker: zhCNPicker,
-  searchBar: zhCNSearchBar,
-  textarea: zhCNTextarea,
-  toast: zhCNToast,
-  datetimePicker: zhCNDatetimePicker
-}
+const zhCNModules: ModularLocaleMessages = {}
+zhCNModules['actionSheet'] = zhCNActionSheet
+zhCNModules['common'] = zhCNCommon
+zhCNModules['dialog'] = zhCNDialog
+zhCNModules['empty'] = zhCNEmpty
+zhCNModules['errorState'] = zhCNErrorState
+zhCNModules['examples'] = zhCNExamples
+zhCNModules['examplePages'] = zhCNExamplePages
+zhCNModules['form'] = zhCNForm
+zhCNModules['input'] = zhCNInput
+zhCNModules['list'] = zhCNList
+zhCNModules['loading'] = zhCNLoading
+zhCNModules['navBar'] = zhCNNavBar
+zhCNModules['noticeBar'] = zhCNNoticeBar
+zhCNModules['picker'] = zhCNPicker
+zhCNModules['searchBar'] = zhCNSearchBar
+zhCNModules['textarea'] = zhCNTextarea
+zhCNModules['toast'] = zhCNToast
+zhCNModules['datetimePicker'] = zhCNDatetimePicker
 
 /**
  * 英语模块映射
  */
-const enUSModules: ModularLocaleMessages = {
-  actionSheet: enUSActionSheet,
-  common: enUSCommon,
-  dialog: enUSDialog,
-  empty: enUSEmpty,
-  errorState: enUSErrorState,
-  examples: enUSExamples,
-  examplePages: enUSExamplePages,
-  form: enUSForm,
-  input: enUSInput,
-  list: enUSList,
-  loading: enUSLoading,
-  navBar: enUSNavBar,
-  noticeBar: enUSNoticeBar,
-  picker: enUSPicker,
-  searchBar: enUSSearchBar,
-  textarea: enUSTextarea,
-  toast: enUSToast,
-  datetimePicker: enUSDatetimePicker
-}
+const enUSModules: ModularLocaleMessages = {}
+enUSModules['actionSheet'] = enUSActionSheet
+enUSModules['common'] = enUSCommon
+enUSModules['dialog'] = enUSDialog
+enUSModules['empty'] = enUSEmpty
+enUSModules['errorState'] = enUSErrorState
+enUSModules['examples'] = enUSExamples
+enUSModules['examplePages'] = enUSExamplePages
+enUSModules['form'] = enUSForm
+enUSModules['input'] = enUSInput
+enUSModules['list'] = enUSList
+enUSModules['loading'] = enUSLoading
+enUSModules['navBar'] = enUSNavBar
+enUSModules['noticeBar'] = enUSNoticeBar
+enUSModules['picker'] = enUSPicker
+enUSModules['searchBar'] = enUSSearchBar
+enUSModules['textarea'] = enUSTextarea
+enUSModules['toast'] = enUSToast
+enUSModules['datetimePicker'] = enUSDatetimePicker
 
 /**
  * 繁体中文模块映射
  */
-const zhTWModules: ModularLocaleMessages = {
-  actionSheet: zhTWActionSheet,
-  common: zhTWCommon,
-  dialog: zhTWDialog,
-  empty: zhTWEmpty,
-  errorState: zhTWErrorState,
-  examples: zhTWExamples,
-  examplePages: zhTWExamplePages,
-  form: zhTWForm,
-  input: zhTWInput,
-  list: zhTWList,
-  loading: zhTWLoading,
-  navBar: zhTWNavBar,
-  noticeBar: zhTWNoticeBar,
-  picker: zhTWPicker,
-  searchBar: zhTWSearchBar,
-  textarea: zhTWTextarea,
-  toast: zhTWToast,
-  datetimePicker: zhTWDatetimePicker
-}
+const zhTWModules: ModularLocaleMessages = {}
+zhTWModules['actionSheet'] = zhTWActionSheet
+zhTWModules['common'] = zhTWCommon
+zhTWModules['dialog'] = zhTWDialog
+zhTWModules['empty'] = zhTWEmpty
+zhTWModules['errorState'] = zhTWErrorState
+zhTWModules['examples'] = zhTWExamples
+zhTWModules['examplePages'] = zhTWExamplePages
+zhTWModules['form'] = zhTWForm
+zhTWModules['input'] = zhTWInput
+zhTWModules['list'] = zhTWList
+zhTWModules['loading'] = zhTWLoading
+zhTWModules['navBar'] = zhTWNavBar
+zhTWModules['noticeBar'] = zhTWNoticeBar
+zhTWModules['picker'] = zhTWPicker
+zhTWModules['searchBar'] = zhTWSearchBar
+zhTWModules['textarea'] = zhTWTextarea
+zhTWModules['toast'] = zhTWToast
+zhTWModules['datetimePicker'] = zhTWDatetimePicker
 
 // ============================================
 // LocaleLoader 类
@@ -158,7 +155,7 @@ export class LocaleLoader {
   /**
    * 模块列表（显式维护）
    */
-  private static readonly MODULES = [
+  private static readonly MODULES: string[] = [
     'actionSheet',
     'common',
     'dialog',
@@ -191,7 +188,7 @@ export class LocaleLoader {
     // 使用静态导入映射表
     const localeImports = this.getLocaleImports(locale)
     
-    if (!localeImports) {
+    if (localeImports == null) {
       console.warn(`[Tang UI I18n] Locale "${locale}" not found`)
       return modules
     }
@@ -199,7 +196,7 @@ export class LocaleLoader {
     for (const moduleName of this.MODULES) {
       try {
         const content = localeImports[moduleName]
-        if (content) {
+        if (content != null) {
           modules[moduleName] = content
         } else {
           console.warn(`[Tang UI I18n] Module ${moduleName} not found for locale ${locale}`)
@@ -241,7 +238,7 @@ export class LocaleLoader {
    * @returns 内置语言包的 Map
    */
   static preloadBuiltinLocales(): Map<string, ModularLocaleMessages> {
-    const builtinLocales = ['zh-CN', 'en-US', 'zh-TW']
+    const builtinLocales: string[] = ['zh-CN', 'en-US', 'zh-TW']
     const localesMap = new Map<string, ModularLocaleMessages>()
     
     for (const locale of builtinLocales) {

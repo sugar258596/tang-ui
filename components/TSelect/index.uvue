@@ -1,7 +1,7 @@
 <script  setup lang="uts" >
 	import { computed, onBeforeUnmount, ref, watch } from 'vue'
 	import type { Ref } from 'vue'
-	import Icon from '../TIcon'
+	import Icon from '../TIcon/index.uvue'
 	import { useI18n } from '../../composables/useI18n.uts'
 	import type { SelectOption, SelectProps, SingleSelectValue, MultipleSelectValue, CascadeSelectValue } from './type.uts'
 
@@ -11,7 +11,7 @@
 	const model = defineModel({ default: null }) as Ref<TSelectModelValue>
 
 	const props = withDefaults(defineProps<SelectProps>(), {
-		options: (): SelectOption[] => [],
+		options: (): Array<SelectOption> => [],
 		filterable: false,
 		searchPlaceholder: '',
 		placeholder: '',
@@ -38,10 +38,53 @@
 		clear : []
 	}>()
 
-	const { $t } = useI18n()
+	const { t } = useI18n()
 
-	const hasTextValue = (value: string | null | undefined): boolean => {
-		return value !== undefined && value !== null && value !== ''
+	type SelectSearchInputEventDetail = {
+		value?: string
+	}
+
+	type SelectSearchInputEvent = {
+		detail?: SelectSearchInputEventDetail | null
+	}
+
+	type StopPropagationEvent = {
+		stopPropagation: () => void
+	}
+
+	const hasTextValue = (value: string | null): boolean => {
+		return value !== null && value !== ''
+	}
+
+	const normalizeSearchKeyword = (keyword: string): string => {
+		return keyword.trim().toLowerCase()
+	}
+
+	const matchesSearchKeyword = (option: SelectOption, keyword: string): boolean => {
+		const label = option.label.toLowerCase()
+		const valueText = `${option.value}`.toLowerCase()
+		return label.includes(keyword) || valueText.includes(keyword)
+	}
+
+	const getOptionChildren = (option: SelectOption): Array<SelectOption> => {
+		const children = option.children
+		if (children != null) {
+			return children as Array<SelectOption>
+		}
+		return new Array<SelectOption>()
+	}
+
+	const hasOptionChildren = (option: SelectOption): boolean => {
+		return getOptionChildren(option).length > 0
+	}
+
+	const optionValueInValues = (values: Array<string | number>, value: string | number): boolean => {
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === value) {
+				return true
+			}
+		}
+		return false
 	}
 
 	// ========== 状态管理 ==========
@@ -50,51 +93,75 @@
 
 	// ========== 级联状态管理 ==========
 	/** 是否为级联模式：自动检测 options 中是否有 children */
-	const isCascade = computed(() => {
-		return props.options?.some(opt => opt.children != null && opt.children!.length > 0) ?? false
+	const isCascade = computed((): boolean => {
+		for (let i = 0; i < props.options.length; i++) {
+			if (hasOptionChildren(props.options[i])) {
+				return true
+			}
+		}
+		return false
 	})
 
 	/** 级联面板栈：每个元素是该层级的选项列表 */
-	const cascadePanels = ref<SelectOption[][]>([])
+	const cascadePanels = ref<Array<Array<SelectOption>>>(new Array<Array<SelectOption>>())
 
 	/** 级联各层级选中的选项 */
-	const cascadeSelectedOptions = ref<SelectOption[]>([])
+	const cascadeSelectedOptions = ref<Array<SelectOption>>(new Array<SelectOption>())
 
 	/** 当前显示的面板层级索引（从0开始） */
 	const currentCascadeLevel = ref(0)
 
 	// ========== 计算属性 ==========
-	const selectHeight = computed(() => {
+	const selectHeight = computed((): string => {
 		if (typeof props.height === 'number') return `${props.height}rpx`
-		return props.height
+		return props.height as string
 	})
 
 	// 获取选中的选项（单选）
-	const selectedOption = computed(() => {
+	const selectedOption = computed<SelectOption | null>(() => {
 		if (isCascade.value || props.multiple) return null
-		if (model.value == null) return null
-		return props.options?.find(opt => opt.value === model.value) ?? null
+		const currentValue = model.value
+		if (currentValue == null) return null
+		for (let i = 0; i < props.options.length; i++) {
+			const option = props.options[i]
+			if (option.value === currentValue) {
+				return option
+			}
+		}
+		return null
 	})
 
 	// 获取选中的选项（多选）
-	const selectedOptions = computed(() => {
-		if (isCascade.value || !props.multiple) return []
-		if (model.value == null) return []
+	const selectedOptions = computed<Array<SelectOption>>(() => {
+		const result: Array<SelectOption> = new Array<SelectOption>()
+		if (isCascade.value || !props.multiple) return result
+		if (model.value == null) return result
 		const values = model.value as MultipleSelectValue
-		return props.options?.filter(opt => values.includes(opt.value)) ?? []
+		for (let i = 0; i < props.options.length; i++) {
+			const option = props.options[i]
+			if (optionValueInValues(values, option.value)) {
+				result.push(option)
+			}
+		}
+		return result
 	})
 
 	// 显示的标签
-	const selectedLabels = computed(() => {
+	const selectedLabels = computed((): string => {
 		// 级联模式
 		if (isCascade.value) {
 			const options = cascadeSelectedOptions.value
 			if (options.length === 0) return ''
-			return options.map(opt => opt.label).join(props.separator)
+			const labels: Array<string> = new Array<string>()
+			for (let i = 0; i < options.length; i++) {
+				labels.push(options[i].label)
+			}
+			return labels.join(props.separator)
 		}
 
 		if (!props.multiple) {
-			return selectedOption.value?.label ?? ''
+			const option = selectedOption.value
+			return option !== null ? option.label : ''
 		}
 
 		const options = selectedOptions.value
@@ -102,24 +169,28 @@
 
 		const maxCount = props.maxDisplayCount
 		if (options.length <= maxCount) {
-			return options.map(opt => opt.label).join(', ')
+			const labels: Array<string> = new Array<string>()
+			for (let i = 0; i < options.length; i++) {
+				labels.push(options[i].label)
+			}
+			return labels.join(', ')
 		} else {
 			return `已选择 ${options.length} 项`
 		}
 	})
 
-	const selectPlaceholderText = computed(() => {
-		return hasTextValue(props.placeholder) ? props.placeholder : $t('form.selectPlaceholder')
+	const selectPlaceholderText = computed((): string => {
+		return hasTextValue(props.placeholder) ? props.placeholder as string : t('form.selectPlaceholder')
 	})
 
 	// 显示文本
-	const displayText = computed(() => {
+	const displayText = computed((): string => {
 		const label = selectedLabels.value
 		return hasTextValue(label) ? label : selectPlaceholderText.value
 	})
 
 	// 是否显示清空图标
-	const showClearIcon = computed(() => {
+	const showClearIcon = computed((): boolean => {
 		if (!props.showClear || props.disabled || props.readonly) return false
 
 		if (isCascade.value) {
@@ -133,36 +204,25 @@
 	})
 
 	// 下拉列表位置样式
-	const dropdownStyle = computed(() => {
+	const dropdownStyle = computed((): string => {
 		if (props.placement === 'top') {
-			return {
-				bottom: '100%',
-				top: 'auto',
-				marginBottom: '8rpx',
-				transformOrigin: 'bottom center'
-			}
-		} else {
-			return {
-				top: '100%',
-				bottom: 'auto',
-				marginTop: '8rpx',
-				transformOrigin: 'top center'
-			}
+			return 'bottom: 100%; top: auto; margin-bottom: 4px; transform-origin: bottom center'
 		}
+		return 'top: 100%; bottom: auto; margin-top: 4px; transform-origin: top center'
 	})
 
-	const sizeClass = computed(() => {
+	const sizeClass = computed((): string => {
 		switch (props.size) {
 			case 'small':
-				return 'h-[44rpx] text-[24rpx]'
+				return 'twx-h-22px text-xs'
 			case 'large':
-				return 'h-[66rpx] text-[32rpx]'
+				return 'twx-h-33px twx-text-16px'
 			default:
-				return 'h-[55rpx] text-[28rpx]'
+				return 'h-7 text-sm'
 		}
 	})
 
-	const alignClass = computed(() => {
+	const alignClass = computed((): string => {
 		switch (props.align) {
 			case 'center':
 				return 'text-center'
@@ -174,141 +234,178 @@
 	})
 
 	/** 当前级联面板显示的选项列表 */
-	const currentCascadeOptions = computed(() => {
-		if (cascadePanels.value.length === 0) return []
+	const currentCascadeOptions = computed<Array<SelectOption>>(() => {
+		if (cascadePanels.value.length === 0) return new Array<SelectOption>()
 		const level = currentCascadeLevel.value
 		if (level < cascadePanels.value.length) {
 			return cascadePanels.value[level]
 		}
-		return []
+		return new Array<SelectOption>()
 	})
 
-	const displaySearchPlaceholder = computed(() => {
-		return hasTextValue(props.searchPlaceholder) ? props.searchPlaceholder : $t('searchBar.placeholder')
+	const displaySearchPlaceholder = computed((): string => {
+		return hasTextValue(props.searchPlaceholder) ? props.searchPlaceholder as string : t('searchBar.placeholder')
 	})
 
-	const hasSearchKeyword = computed(() => {
+	const hasSearchKeyword = computed((): boolean => {
 		return searchKeyword.value !== ''
 	})
 
-	const isDisplayingPlaceholder = computed(() => {
+	const isDisplayingPlaceholder = computed((): boolean => {
 		return displayText.value === selectPlaceholderText.value
 	})
 
-	const filteredOptions = computed(() => {
+	const filteredOptions = computed<Array<SelectOption>>(() => {
 		const keyword = normalizeSearchKeyword(searchKeyword.value)
-		if (keyword === '') return props.options ?? []
-		return (props.options ?? []).filter(option => matchesSearchKeyword(option, keyword))
+		const result: Array<SelectOption> = new Array<SelectOption>()
+		for (let i = 0; i < props.options.length; i++) {
+			const option = props.options[i]
+			if (keyword === '' || matchesSearchKeyword(option, keyword)) {
+				result.push(option)
+			}
+		}
+		return result
 	})
 
-	const filteredCascadeOptions = computed(() => {
+	const filteredCascadeOptions = computed<Array<SelectOption>>(() => {
 		const keyword = normalizeSearchKeyword(searchKeyword.value)
 		const options = currentCascadeOptions.value
 		if (keyword === '') return options
-		return options.filter(option => matchesSearchKeyword(option, keyword))
+		const result: Array<SelectOption> = new Array<SelectOption>()
+		for (let i = 0; i < options.length; i++) {
+			const option = options[i]
+			if (matchesSearchKeyword(option, keyword)) {
+				result.push(option)
+			}
+		}
+		return result
 	})
 
 	/** 面包屑导航数据（作为 Tabs 使用） */
-	const breadcrumbItems = computed(() => {
-		const items: string[] = []
+	const breadcrumbItems = computed<Array<string>>(() => {
+		const items: Array<string> = new Array<string>()
 		// 面包屑的标签数对应面板的数量（最大为 cascadePanels.length）
 		for (let i = 0; i < cascadePanels.value.length; i++) {
 			if (i < cascadeSelectedOptions.value.length) {
 				items.push(cascadeSelectedOptions.value[i].label)
 			} else {
-				items.push($t('form.selectPlaceholder'))
+				items.push(t('form.selectPlaceholder'))
 			}
 		}
 		return items
 	})
 
-	const isMultiple = computed(() => props.multiple)
-	const isFilterable = computed(() => props.filterable)
+	const isMultiple = computed((): boolean => props.multiple)
+	const isFilterable = computed((): boolean => props.filterable)
 
-	// ========== 方法 ==========
-	const normalizeSearchKeyword = (keyword: string): string => {
-		return keyword.trim().toLowerCase()
-	}
-
-	const matchesSearchKeyword = (option: SelectOption, keyword: string): boolean => {
-		const label = option.label.toLowerCase()
-		const valueText = `${option.value}`.toLowerCase()
-		return label.includes(keyword) || valueText.includes(keyword)
-	}
-
-	const emitSearchKeyword = (keyword: string) => {
-		emit('input', keyword)
-		emit('search', keyword)
-	}
-
-	const resetSearchKeyword = () => {
-		searchKeyword.value = ''
-	}
-
-	const disableBodyScroll = () => {
-		// #ifdef H5
-		document.body.style.overflow = 'hidden'
-		document.body.style.touchAction = 'none'
-		// #endif
-	}
-
-	const enableBodyScroll = () => {
-		// #ifdef H5
-		document.body.style.overflow = ''
-		document.body.style.touchAction = ''
-		// #endif
-	}
-
-	const openPicker = () => {
-		if (props.disabled || props.readonly) return
-		showPopup.value = true
-
-		// 级联模式：初始化面板栈
-		if (isCascade.value) {
-			initCascadePanels()
+	const selectRootClass = computed((): string => {
+		const classes: Array<string> = [sizeClass.value, alignClass.value]
+		if (props.disabled) {
+			classes.push('cursor-not-allowed opacity-60')
 		}
+		if (props.readonly && !props.disabled) {
+			classes.push('cursor-default')
+		}
+		if (showPopup.value) {
+			classes.push('twx-shadow-focus')
+		}
+		if (!props.disabled && !props.readonly) {
+			classes.push('cursor-pointer active:scale-95')
+		}
+		if (!isDisplayingPlaceholder.value) {
+			classes.push('text-primary')
+		}
+		return classes.join(' ')
+	})
+
+	const selectRootStyle = computed((): string => {
+		const bgColor = props.disabled ? '#f5f5f5' : props.background
+		const border = showPopup.value ? props.activeColor : props.borderColor
+		return `height: ${selectHeight.value}; background-color: ${bgColor}; border-color: ${border}`
+	})
+
+	const getCascadeOptionClass = (option: SelectOption): string => {
+		const classes: Array<string> = [alignClass.value]
+		const level = currentCascadeLevel.value
+		const selected = level < cascadeSelectedOptions.value.length && cascadeSelectedOptions.value[level].value === option.value
+		if (selected) {
+			classes.push('twx-bg-active')
+		}
+		if (option.disabled === true || props.disabled) {
+			classes.push('cursor-not-allowed twx-bg-muted opacity-50')
+		}
+		return classes.join(' ')
 	}
 
-	const closePicker = () => {
-		showPopup.value = false
-		resetSearchKeyword()
+	const getOptionClass = (option: SelectOption): string => {
+		const classes: Array<string> = [alignClass.value]
+		let selected = false
+		if (props.multiple && model.value != null) {
+			selected = optionValueInValues(model.value as MultipleSelectValue, option.value)
+		} else {
+			selected = model.value === option.value
+		}
+		if (selected) {
+			classes.push('twx-bg-active')
+		}
+		if (option.disabled === true || props.disabled) {
+			classes.push('cursor-not-allowed twx-bg-muted opacity-50')
+		}
+		return classes.join(' ')
 	}
 
-	const handleSearchInput = (e: any) => {
-		const keyword = (e.detail?.value ?? '') as string
-		searchKeyword.value = keyword
-		emitSearchKeyword(keyword)
+	const getSelectedTextStyle = (selected: boolean): string => {
+		return selected ? `color: ${props.activeColor}; font-weight: 500` : ''
 	}
 
-	const handleSearchConfirm = () => {
-		emit('search', searchKeyword.value)
+	const getActiveColorStyle = (): string => {
+		return `color: ${props.activeColor}`
 	}
 
-	const clearSearchKeyword = () => {
-		if (searchKeyword.value === '') return
-		searchKeyword.value = ''
-		emitSearchKeyword('')
+	const getCheckboxStyle = (selected: boolean): string => {
+		return selected ? `background-color: ${props.activeColor}; border-color: ${props.activeColor}` : ''
 	}
 
-	/** 初始化级联面板：根据已选值恢复面板状态 */
-	const initCascadePanels = () => {
-		const panels: SelectOption[][] = [props.options ?? []]
+	const createEmptyOptions = (): Array<SelectOption> => {
+		return new Array<SelectOption>()
+	}
+
+	const createEmptyPanels = (): Array<Array<SelectOption>> => {
+		const panels: Array<Array<SelectOption>> = new Array<Array<SelectOption>>()
+		return panels
+	}
+
+	const createEmptyValues = (): MultipleSelectValue => {
+		const current = model.value
+		if (current != null && props.multiple) {
+			return new Array<string | number>()
+		}
+		return new Array<string | number>()
+	}
+
+	const restoreCascadePanels = (): void => {
+		const panels: Array<Array<SelectOption>> = [props.options]
 		const selectedOpts = cascadeSelectedOptions.value
 
-		// 如果有已选值，恢复各级面板
 		if (selectedOpts.length > 0) {
-			let currentOptions = props.options ?? []
+			let currentOptions = props.options
 			for (let i = 0; i < selectedOpts.length; i++) {
 				const selectedValue = selectedOpts[i].value
-				const found = currentOptions.find(opt => opt.value === selectedValue)
-				if (found != null && found!.children != null && found!.children!.length > 0) {
-					panels.push(found!.children!)
-					currentOptions = found!.children!
+				let found: SelectOption | null = null
+				for (let j = 0; j < currentOptions.length; j++) {
+					if (currentOptions[j].value === selectedValue) {
+						found = currentOptions[j]
+						break
+					}
+				}
+				if (found !== null && hasOptionChildren(found)) {
+					const children = getOptionChildren(found)
+					panels.push(children)
+					currentOptions = children
 				} else {
 					break
 				}
 			}
-			// 定位到最后一级面板
 			currentCascadeLevel.value = panels.length - 1
 		} else {
 			currentCascadeLevel.value = 0
@@ -317,11 +414,72 @@
 		cascadePanels.value = panels
 	}
 
+	const syncCascadeModel = (): void => {
+		const values: Array<string | number> = new Array<string | number>()
+		for (let i = 0; i < cascadeSelectedOptions.value.length; i++) {
+			values.push(cascadeSelectedOptions.value[i].value)
+		}
+		model.value = values
+	}
+
+	const emitSearchKeyword = (keyword: string): void => {
+		emit('input', keyword)
+		emit('search', keyword)
+	}
+
+	const resetSearchKeyword = (): void => {
+		searchKeyword.value = ''
+	}
+
+	const disableBodyScroll = (): void => {
+		return
+	}
+
+	const enableBodyScroll = (): void => {
+		return
+	}
+
+	const openPicker = (): void => {
+		if (props.disabled || props.readonly) return
+		showPopup.value = true
+
+		// 级联模式：初始化面板栈
+		if (isCascade.value) {
+			restoreCascadePanels()
+		}
+	}
+
+	const closePicker = (): void => {
+		showPopup.value = false
+		resetSearchKeyword()
+	}
+
+	const handleSearchInput = (e: SelectSearchInputEvent): void => {
+		let keyword = ''
+		const detail = e.detail
+		if (detail !== null && detail.value !== null) {
+			keyword = detail.value as string
+		}
+		searchKeyword.value = keyword
+		emitSearchKeyword(keyword)
+	}
+
+	const handleSearchConfirm = (): void => {
+		emit('search', searchKeyword.value)
+	}
+
+	const clearSearchKeyword = (): void => {
+		if (searchKeyword.value === '') return
+		searchKeyword.value = ''
+		emitSearchKeyword('')
+	}
+
+	/** 初始化级联面板：根据已选值恢复面板状态 */
 	// 检查选项是否被选中
 	const isOptionSelected = (option: SelectOption): boolean => {
 		if (props.multiple && model.value != null) {
 			const values = model.value as MultipleSelectValue
-			return values.includes(option.value)
+			return optionValueInValues(values, option.value)
 		}
 		return model.value === option.value
 	}
@@ -335,8 +493,8 @@
 	}
 
 	/** 级联选项点击处理 */
-	const handleCascadeSelect = (option: SelectOption, level: number) => {
-		if (option.disabled || props.disabled || props.readonly) {
+	const handleCascadeSelect = (option: SelectOption, level: number): void => {
+		if (option.disabled === true || props.disabled || props.readonly) {
 			uni.showToast({ title: '该选项不可选', icon: 'none' })
 			return
 		}
@@ -347,36 +505,31 @@
 		cascadeSelectedOptions.value = newSelectedOptions
 
 		// 判断是否有子级
-		const hasChildren = option.children != null && option.children!.length > 0
+		const hasChildren = hasOptionChildren(option)
 
 		if (hasChildren && level < 3) {
 			// 有子级且未到第四级（最多四级：0,1,2,3）：进入下一级
 			const newPanels = cascadePanels.value.slice(0, level + 1)
-			newPanels.push(option.children!)
+			newPanels.push(getOptionChildren(option))
 			cascadePanels.value = newPanels
 			currentCascadeLevel.value = level + 1
 
 			// 如果 changeOnSelect 为 true，选中中间层级也更新值
 			if (props.changeOnSelect) {
-				updateCascadeModel()
+				syncCascadeModel()
 				emit('change', newSelectedOptions[newSelectedOptions.length - 1])
 			}
 		} else {
 			// 叶子节点或已到第四级：完成选择
-			updateCascadeModel()
+			syncCascadeModel()
 			emit('change', option)
 			closePicker()
 		}
 	}
 
 	/** 更新级联模式的 v-model 值 */
-	const updateCascadeModel = () => {
-		const values = cascadeSelectedOptions.value.map(opt => opt.value)
-		model.value = values
-	}
-
 	/** 面包屑点击，返回指定层级 */
-	const goToCascadeLevel = (level: number) => {
+	const goToCascadeLevel = (level: number): void => {
 		if (level < 0) level = 0
 		currentCascadeLevel.value = level
 		// 截断面板栈和选中项到目标层级
@@ -385,16 +538,19 @@
 	}
 
 	// 选择选项
-	const selectOption = (option : SelectOption) => {
-		if (option.disabled || props.disabled || props.readonly) {
+	const selectOption = (option : SelectOption): void => {
+		if (option.disabled === true || props.disabled || props.readonly) {
 			uni.showToast({ title: '该选项不可选', icon: 'none' })
 			return
 		}
 
 		if (props.multiple) {
 			// 多选模式
-			const currentValues = model.value != null ? model.value as MultipleSelectValue : []
-			const newValues = [...currentValues]
+			const currentValues = model.value != null ? model.value as MultipleSelectValue : new Array<string | number>()
+			const newValues: MultipleSelectValue = new Array<string | number>()
+			for (let i = 0; i < currentValues.length; i++) {
+				newValues.push(currentValues[i])
+			}
 
 			const index = newValues.indexOf(option.value)
 			if (index > -1) {
@@ -416,80 +572,98 @@
 	}
 
 	// 清空值
-	const clearValue = () => {
+	const clearValue = (): void => {
 		if (props.disabled || props.readonly) return
 
 		if (isCascade.value) {
 			// 级联模式清空
-			cascadeSelectedOptions.value = []
-			cascadePanels.value = [props.options ?? []]
+			cascadeSelectedOptions.value = createEmptyOptions()
+			const panels: Array<Array<SelectOption>> = createEmptyPanels()
+			panels.push(props.options)
+			cascadePanels.value = panels
 			currentCascadeLevel.value = 0
-			model.value = null
+			model.value = null as TSelectModelValue
 			emit('clear')
 			emit('change', null)
 			return
 		}
 
 		if (props.multiple) {
-			model.value = []
+			model.value = createEmptyValues()
 			emit('clear')
-			emit('change', [])
+			emit('change', new Array<SelectOption>())
 		} else {
-			model.value = null
+			model.value = null as TSelectModelValue
 			emit('clear')
 			emit('change', null)
 		}
 	}
 
 	// 全选
-	const selectAll = () => {
+	const selectAll = (): void => {
 		if (props.disabled || props.readonly) return
 		const sourceOptions = props.filterable && !isCascade.value && normalizeSearchKeyword(searchKeyword.value) !== ''
 			? filteredOptions.value
 			: props.options
-		const allValues = sourceOptions
-			.filter(opt => !opt.disabled)
-			.map(opt => opt.value)
-		model.value = props.multiple ? allValues : (allValues.length > 0 ? allValues[0] : null)
+		const allValues: MultipleSelectValue = createEmptyValues()
+		for (let i = 0; i < sourceOptions.length; i++) {
+			const option = sourceOptions[i]
+			if (option.disabled !== true) {
+				allValues.push(option.value)
+			}
+		}
+		if (props.multiple) {
+			model.value = allValues
+		} else if (allValues.length > 0) {
+			model.value = allValues[0]
+		} else {
+			model.value = null as TSelectModelValue
+		}
 
 		if (props.multiple) {
 			emit('change', selectedOptions.value)
 		} else {
 			emit('change', selectedOption.value)
 		}
+		return
 	}
 
 	// 点击外部关闭下拉框
-	const handleMaskClick = (e : Event) => {
+	const handleMaskClick = (e : StopPropagationEvent): void => {
 		e.stopPropagation()
 		closePicker()
 	}
 
 	// 阻止下拉框内点击事件冒泡
-	const handleDropdownClick = (e : Event) => {
+	const handleDropdownClick = (e : StopPropagationEvent): void => {
 		e.stopPropagation()
 	}
 
-	// ========== 监听 v-model 外部变化，同步级联状态 ==========
-	watch(() => model.value, (newVal) => {
+	const handleModelValueChange = (newVal: TSelectModelValue): void => {
 		if (!isCascade.value) return
-		if (newVal == null || (Array.isArray(newVal) && (newVal as CascadeSelectValue).length === 0)) {
-			cascadeSelectedOptions.value = []
+		if (newVal == null) {
+			cascadeSelectedOptions.value = createEmptyOptions()
 			return
 		}
 
 		// 从 values 路径反查 options 树，恢复 cascadeSelectedOptions
-		if (Array.isArray(newVal)) {
-			const values = newVal as CascadeSelectValue
-			const selectedOpts: SelectOption[] = []
-			let currentOptions = props.options ?? []
+		const values = newVal as CascadeSelectValue
+		if (values.length > 0) {
+			const selectedOpts: Array<SelectOption> = new Array<SelectOption>()
+			let currentOptions = props.options
 
 			for (let i = 0; i < values.length; i++) {
-				const found = currentOptions.find(opt => opt.value === values[i])
-				if (found != null) {
-					selectedOpts.push(found!)
-					if (found!.children != null && found!.children!.length > 0) {
-						currentOptions = found!.children!
+				let found: SelectOption | null = null
+				for (let j = 0; j < currentOptions.length; j++) {
+					if (currentOptions[j].value === values[i]) {
+						found = currentOptions[j]
+						break
+					}
+				}
+				if (found !== null) {
+					selectedOpts.push(found)
+					if (hasOptionChildren(found)) {
+						currentOptions = getOptionChildren(found)
 					} else {
 						break
 					}
@@ -499,9 +673,13 @@
 			}
 			cascadeSelectedOptions.value = selectedOpts
 		}
-	}, { immediate: true })
+		return
+	}
 
-	watch(showPopup, (newVal) => {
+	// ========== 监听 v-model 外部变化，同步级联状态 ==========
+	watch(model, handleModelValueChange, { immediate: true })
+
+	watch(showPopup, (newVal: boolean) => {
 		if (newVal) {
 			disableBodyScroll()
 			return
@@ -509,6 +687,7 @@
 
 		resetSearchKeyword()
 		enableBodyScroll()
+		return
 	}, { immediate: true })
 
 	onBeforeUnmount(() => {
@@ -519,38 +698,22 @@
 <template>
 	<view class="select-root relative w-full overflow-visible">
 		<!-- 选择框 -->
-		<view class="select-root relative z-[2] flex w-full flex-row items-center justify-between rounded-[8rpx] border border-solid px-[24rpx] transition-all duration-200" :class="[
-				sizeClass,
-				alignClass,
-				{
-					'cursor-not-allowed opacity-60': disabled,
-					'cursor-default': readonly && !disabled,
-					'shadow-[0_0_0_2rpx_rgba(24,144,255,0.1)]': showPopup,
-					'cursor-pointer active:scale-[0.99]': !disabled && !readonly,
-					'text-[#333333]': isCascade
-						? cascadeSelectedOptions.length > 0
-						: (isMultiple ? (model as MultipleSelectValue)?.length : model) != null
-				}
-			]" :style="{
-				height: selectHeight,
-				backgroundColor: disabled ? '#f5f5f5' : background,
-				borderColor: showPopup ? activeColor : borderColor
-			}" @click="openPicker">
+		<view class="select-root relative z-[2] flex w-full flex-row items-center justify-between rounded border border-solid px-3 transition-all duration-200" :class="selectRootClass" :style="selectRootStyle" @click="openPicker">
 			<text
 				class="flex-1 overflow-hidden text-ellipsis text-center whitespace-nowrap"
-				:class="isDisplayingPlaceholder ? 'text-[#c0c4cc]' : 'font-normal text-[#333333]'">
+				:class="isDisplayingPlaceholder ? 'twx-text-placeholder' : 'font-normal text-primary'">
 				{{ displayText }}
 			</text>
 
 			<!-- 右侧图标容器 -->
-			<view class="ml-[16rpx] flex flex-row items-center gap-[8rpx]">
+			<view class="ml-2 flex flex-row items-center">
 				<!-- 清空按钮 -->
-				<view v-if="showClearIcon" class="flex h-[28rpx] w-[28rpx] items-center justify-center rounded-full transition-all duration-200 active:scale-90 active:bg-[#f5f5f5]" @click.stop="clearValue">
+				<view v-if="showClearIcon" class="flex h-3 w-3 items-center justify-center rounded-full transition-all duration-200 active:scale-90 active:twx-bg-disabled" @click.stop="clearValue">
 					<Icon name="icon-shanchu" color="#c0c4cc" />
 				</view>
 
 				<!-- 下拉箭头 -->
-				<view class="flex items-center justify-center transition-transform duration-200" :class="{ 'rotate-180': showPopup }">
+				<view class="ml-1 flex items-center justify-center transition-transform duration-200" :class="{ 'rotate-180': showPopup }">
 					<Icon name="icon-xiajiantou" :size="20" color="#999" />
 				</view>
 			</view>
@@ -566,23 +729,23 @@
 		<!-- 下拉选项列表 -->
 		<view
 			v-if="showPopup"
-			class="select-root absolute left-0 right-0 z-[100] overflow-hidden rounded-[8rpx] border border-solid border-[#ebeef5] bg-white shadow-[0_4rpx_20rpx_rgba(0,0,0,0.15)]"
-			:class="isCascade ? 'max-h-[500rpx]' : 'max-h-[400rpx]'"
+			class="select-root absolute left-0 right-0 z-[100] overflow-hidden rounded border border-solid twx-border-light bg-white twx-shadow-dropdown"
+			:class="isCascade ? 'twx-max-h-250px' : 'twx-max-h-200px'"
 			:style="dropdownStyle"
 			@tap="handleDropdownClick">
 
-				<view v-if="isFilterable" class="border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[20rpx] py-[16rpx]">
-					<view class="flex flex-row items-center gap-4 rounded-[8rpx] border border-solid border-[#dcdfe6] bg-white px-[16rpx]">
+				<view v-if="isFilterable" class="border-b border-solid twx-border-light twx-bg-light px-2.5 py-2">
+					<view class="flex flex-row items-center gap-4 rounded border border-solid twx-border-base bg-white px-2">
 						<Icon name="icon-sousuo" :size="18" color="#999999" />
 						<input
-							class="ml-[12rpx] h-[68rpx] flex-1 border-none bg-transparent text-[26rpx] text-[#303133]"
+							class="ml-1.5 twx-h-34px flex-1 border-none bg-transparent twx-text-13px text-primary"
 							type="text"
 							:value="searchKeyword"
 							:placeholder="displaySearchPlaceholder"
 							:disabled="disabled || readonly"
 							@input="handleSearchInput"
 							@confirm="handleSearchConfirm" />
-						<view v-if="hasSearchKeyword" class="ml-[12rpx] flex h-[28rpx] w-[28rpx] items-center justify-center rounded-full active:bg-[#f5f5f5]" @click.stop="clearSearchKeyword">
+						<view v-if="hasSearchKeyword" class="ml-1.5 flex h-3 w-3 items-center justify-center rounded-full active:twx-bg-disabled" @click.stop="clearSearchKeyword">
 							<Icon name="icon-shanchu" color="#c0c4cc" />
 						</view>
 					</view>
@@ -591,92 +754,163 @@
 				<!-- ====== 级联模式 ====== -->
 				<template v-if="isCascade">
 					<!-- 面包屑导航 -->
-					<view v-if="breadcrumbItems.length > 0" class="flex flex-row flex-wrap items-center border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[24rpx] py-[16rpx]">
+					<view v-if="breadcrumbItems.length > 0" class="flex flex-row flex-wrap items-center border-b border-solid twx-border-light twx-bg-light px-3 py-2">
 						<template v-for="(item, idx) in breadcrumbItems" :key="idx">
-							<text v-if="idx > 0" class="mx-[4rpx] text-[22rpx] text-[#c0c4cc]">/</text>
-							<view class="cursor-pointer rounded-[4rpx] px-[8rpx] py-[4rpx] transition-colors duration-200 active:bg-[#ecf5ff]" @click.stop="goToCascadeLevel(idx)">
-								<text class="text-[24rpx] text-[#606266]" :style="{ color: idx === currentCascadeLevel ? activeColor : '#606266' }">{{ item }}</text>
+							<text v-if="idx > 0" class="twx-mx-2px twx-text-11px twx-text-placeholder">/</text>
+							<view class="cursor-pointer twx-rounded-2px px-1 py-0.5 transition-colors duration-200 active:twx-bg-active" @click.stop="goToCascadeLevel(idx)">
+								<text class="text-xs text-secondary" :style="idx === currentCascadeLevel ? getActiveColorStyle() : 'color: #606266'">{{ item }}</text>
 							</view>
 						</template>
 					</view>
 
 					<!-- 级联面板 -->
-					<scroll-view class="max-h-[440rpx]" scroll-y :scroll-top="0">
+					<scroll-view class="twx-max-h-220px" scroll-y :scroll-top="0">
 						<view v-for="option in filteredCascadeOptions" :key="option.value"
-							class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0"
-							:class="[
-								alignClass,
-								{
-									'bg-[#ecf5ff]': isCascadeOptionSelected(option, currentCascadeLevel),
-									'cursor-not-allowed bg-[#f9fafb] opacity-50': option.disabled || disabled
-								}
-							]"
+							class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid twx-border-lighter px-3 py-3 transition-all duration-100 last:border-b-0"
+							:class="getCascadeOptionClass(option)"
 							@click="handleCascadeSelect(option, currentCascadeLevel)">
 
-							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[28rpx] text-[#606266]"
-								:style="isCascadeOptionSelected(option, currentCascadeLevel) ? { color: activeColor, fontWeight: '500' } : {}">
+							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-secondary"
+								:style="getSelectedTextStyle(isCascadeOptionSelected(option, currentCascadeLevel))">
 								{{ option.label }}
 							</text>
 
 							<!-- 有子级时显示右箭头 -->
-							<view v-if="option.children != null && option.children.length > 0" class="ml-[16rpx] flex -rotate-90 items-center justify-center">
+							<view v-if="hasOptionChildren(option)" class="ml-2 flex -rotate-90 items-center justify-center">
 								<Icon name="icon-xiajiantou" :size="12" color="#999" />
 							</view>
 
 							<!-- 叶子节点被选中时显示 ✓ -->
 							<text v-else-if="isCascadeOptionSelected(option, currentCascadeLevel)"
-								class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
+								class="ml-2 text-xs font-bold" :style="getActiveColorStyle()">
 								✓
 							</text>
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="filteredCascadeOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
-							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
+						<view v-if="filteredCascadeOptions.length === 0" class="px-3 twx-py-30px text-center" :class="alignClass">
+							<text class="twx-text-13px twx-text-placeholder">{{ t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>
 				</template>
 
 				<!-- ====== 普通模式（单选/多选） ====== -->
 				<template v-else>
-					<scroll-view class="max-h-[400rpx]" scroll-y :scroll-top="0">
+					<scroll-view class="twx-max-h-200px" scroll-y :scroll-top="0">
 						<!-- 多选模式下的全选/清空按钮 -->
-						<view v-if="isMultiple" class="flex flex-row justify-between border-b border-solid border-[#ebeef5] bg-[#fafafa] px-[16rpx] py-[12rpx]">
-							<view class="cursor-pointer py-[8rpx] text-center transition-all duration-200 active:bg-[#f5f7fa]" @click.stop="selectAll">
-								<text class="text-[24rpx] font-medium" :style="{ color: activeColor }">{{ $t('form.selectAll') }}</text>
+						<view v-if="isMultiple" class="flex flex-row justify-between border-b border-solid twx-border-light twx-bg-light px-2 py-1.5">
+							<view class="cursor-pointer py-0.5 text-center transition-all duration-200 active:twx-bg-hover" @click.stop="selectAll">
+								<text class="text-xs font-medium" :style="getActiveColorStyle()">{{ t('form.selectAll') }}</text>
 							</view>
-							<view class="cursor-pointer py-[8rpx] text-center transition-all duration-200 active:bg-[#f5f7fa]" @click.stop="clearValue">
-								<text class="text-[24rpx] font-medium" :style="{ color: activeColor }">{{ $t('form.clear') }}</text>
+							<view class="cursor-pointer py-0.5 text-center transition-all duration-200 active:twx-bg-hover" @click.stop="clearValue">
+								<text class="text-xs font-medium" :style="getActiveColorStyle()">{{ t('form.clear') }}</text>
 							</view>
 						</view>
 
 						<!-- 选项列表 -->
-						<view v-for="option in filteredOptions" :key="option.value" class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid border-[#f5f7fa] px-[24rpx] py-[24rpx] transition-all duration-100 last:border-b-0" :class="[
-								alignClass,
-								{
-									'bg-[#ecf5ff]': isOptionSelected(option),
-									'cursor-not-allowed bg-[#f9fafb] opacity-50': option.disabled || disabled
-								}
-							]" @click="selectOption(option)">
-							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[28rpx] text-[#606266]" :style="isOptionSelected(option) ? { color: activeColor, fontWeight: '500' } : {}">{{ option.label }}</text>
+						<view v-for="option in filteredOptions" :key="option.value" class="select-root flex cursor-pointer flex-row items-center justify-between border-b border-solid twx-border-lighter px-3 py-3 transition-all duration-100 last:border-b-0" :class="getOptionClass(option)" @click="selectOption(option)">
+							<text class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-secondary" :style="getSelectedTextStyle(isOptionSelected(option))">{{ option.label }}</text>
 
 							<!-- 单选模式的选中标记 -->
-							<text v-if="!isMultiple && isOptionSelected(option)" class="ml-[16rpx] text-[24rpx] font-bold" :style="{ color: activeColor }">
+							<text v-if="!isMultiple && isOptionSelected(option)" class="ml-2 text-xs font-bold" :style="getActiveColorStyle()">
 								✓
 							</text>
 
 							<!-- 多选模式的复选框 -->
-							<view v-if="isMultiple" class="ml-[16rpx] flex h-[32rpx] w-[32rpx] items-center justify-center rounded-[4rpx] border-[2rpx] border-solid border-[#dcdfe6] transition-all duration-200" :style="isOptionSelected(option) ? { backgroundColor: activeColor, borderColor: activeColor } : {}">
-								<text v-if="isOptionSelected(option)" class="text-[20rpx] font-bold text-white">✓</text>
+							<view v-if="isMultiple" class="ml-2 flex h-4 w-4 items-center justify-center twx-rounded-2px twx-border-1px border-solid twx-border-base transition-all duration-200" :style="getCheckboxStyle(isOptionSelected(option))">
+								<text v-if="isOptionSelected(option)" class="twx-text-10px font-bold text-white">✓</text>
 							</view>
 						</view>
 
 						<!-- 空状态 -->
-						<view v-if="filteredOptions.length === 0" class="px-[24rpx] py-[60rpx] text-center" :class="alignClass">
-							<text class="text-[26rpx] text-[#c0c4cc]">{{ $t('form.noOptions') }}</text>
+						<view v-if="filteredOptions.length === 0" class="px-3 twx-py-30px text-center" :class="alignClass">
+							<text class="twx-text-13px twx-text-placeholder">{{ t('form.noOptions') }}</text>
 						</view>
 					</scroll-view>
 				</template>
 			</view>
 	</view>
 </template>
+
+<style scoped>
+.twx-text-placeholder {
+  color: #c0c4cc;
+}
+.twx-text-16px {
+  font-size: 16px;
+}
+.twx-text-13px {
+  font-size: 13px;
+}
+.twx-text-11px {
+  font-size: 11px;
+}
+.twx-text-10px {
+  font-size: 10px;
+}
+.twx-h-33px {
+  height: 33px;
+}
+.twx-h-22px {
+  height: 22px;
+}
+.twx-rounded-2px {
+  border-radius: 2px;
+}
+.twx-ml-2px {
+  margin-left: 2px;
+}
+.twx-mx-2px {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.twx-max-h-250px {
+  max-height: 250px;
+}
+.twx-max-h-220px {
+  max-height: 220px;
+}
+.twx-max-h-200px {
+  max-height: 200px;
+}
+.twx-py-30px {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.twx-border-1px {
+  border-width: 1px;
+}
+.twx-shadow-dropdown {
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+}
+.twx-shadow-focus {
+  box-shadow: 0 0 0 2rpx rgba(24, 144, 255, 0.1);
+}
+.twx-border-light {
+  border-color: #ebeef5;
+}
+.twx-border-base {
+  border-color: #dcdfe6;
+}
+.twx-border-lighter {
+  border-color: #f5f7fa;
+}
+.twx-bg-light {
+  background-color: #fafafa;
+}
+.twx-bg-active {
+  background-color: #ecf5ff;
+}
+.twx-bg-muted {
+  background-color: #f9fafb;
+}
+.twx-bg-hover {
+  background-color: #f5f7fa;
+}
+.twx-bg-disabled {
+  background-color: #f5f5f5;
+}
+.twx-h-34px {
+  height: 34px;
+}
+</style>

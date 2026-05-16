@@ -1,8 +1,12 @@
 <script setup lang="uts">
+import { computed, nextTick, onMounted, ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TagItem, TTagsProps } from './type.uts'
 
+type TagsModelValue = string | number | null
+
 // v-model 绑定当前激活 key
-const model = defineModel()
+const model = defineModel({ default: null }) as Ref<TagsModelValue>
 
 const props = withDefaults(defineProps<TTagsProps>(), {
   items: () => [],
@@ -25,40 +29,55 @@ const emit = defineEmits<{
   tagClick: [key: string | number, item: TagItem]
 }>()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
-}
-
 const hasItemIcon = (item: TagItem): boolean => {
-  return hasTextValue(item.icon)
+  return item.icon != null && item.icon !== ''
 }
 
 const hasItemBadge = (item: TagItem): boolean => {
-  return item.badge !== undefined && item.badge !== null && item.badge !== ''
+  return item.badge != null && item.badge !== ''
 }
 
 /** 获取默认激活项的 key */
-const getDefaultKey = (): string => {
-  if (props.defaultActiveKey !== undefined && props.defaultActiveKey !== null && props.defaultActiveKey !== '') {
-    return props.defaultActiveKey
+const getDefaultKey = (): string | number => {
+  const defaultActiveKey = props.defaultActiveKey
+  if (defaultActiveKey != null && defaultActiveKey !== '') {
+    return defaultActiveKey
   }
   if (props.items.length > 0) {
-    const firstEnabled = props.items.find(item => !item.disabled)
-    return firstEnabled ? firstEnabled.key : props.items[0].key
+    const firstEnabled = props.items.find((item: TagItem): boolean => item.disabled !== true)
+    if (firstEnabled != null) {
+      return firstEnabled.key
+    }
+    return props.items[0].key
   }
   return ''
 }
 
 /** 初始化默认激活项 */
 onMounted(() => {
-  if (model.value === undefined || model.value === null || model.value === '') {
+  if (model.value === null || model.value === '') {
     model.value = getDefaultKey()
   }
 })
 
+const isItemActive = (item: TagItem): boolean => {
+  const currentKey = model.value
+  if (currentKey === null || currentKey === '') {
+    return false
+  }
+  if (item.key === null || item.key === '') {
+    return false
+  }
+  return item.key === currentKey
+}
+
 /** 计算当前激活项的索引 */
-const activeIndex = computed(() => {
-  return props.items.findIndex(item => item.key === model.value)
+const activeIndex = computed((): number => {
+  return props.items.findIndex(item => isItemActive(item))
+})
+
+const showNavLine = computed((): boolean => {
+  return props.type === 'line' && props.animated === true && activeIndex.value >= 0
 })
 
 /** 获取当前激活项的 DOM 元素 */
@@ -71,7 +90,10 @@ const hexToRgb = (hex: string): string => {
 
   // 处理缩写形式 (#fff)
   if (hex.length === 3) {
-    hex = hex.split('').map(char => char + char).join('')
+    const r = hex.substring(0, 1)
+    const g = hex.substring(1, 2)
+    const b = hex.substring(2, 3)
+    hex = r + r + g + g + b + b
   }
 
   // 转换为 RGB
@@ -87,7 +109,7 @@ const activeColorRgb = computed(() => {
   // 如果是 rgba 格式，直接提取 RGB 部分
   if (props.activeColor.startsWith('rgb')) {
     const match = props.activeColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
-    if (match) {
+    if (match != null) {
       return `${match[1]}, ${match[2]}, ${match[3]}`
     }
   }
@@ -111,9 +133,9 @@ const getNavListClass = (isBottom: boolean): string => {
   ]
 
   if (props.type === 'card') {
-    classes.push('rounded-t-[12rpx]', 'bg-[#f5f5f5]', 'px-[24rpx]', 'py-[16rpx]')
+    classes.push('rounded-t-xl', 'bg-action-divider', 'px-xl', 'py-lg')
   } else {
-    classes.push('py-[20rpx]')
+    classes.push('py-5')
   }
 
   if (props.centered) {
@@ -121,7 +143,7 @@ const getNavListClass = (isBottom: boolean): string => {
   }
 
   if (isBottom) {
-    classes.push('border-t', 'border-[#e8e8e8]')
+    classes.push('border-t', 'border-divider')
   }
 
   return classes.join(' ')
@@ -129,32 +151,32 @@ const getNavListClass = (isBottom: boolean): string => {
 
 const getItemPaddingClass = (): string => {
   if (props.size === 'small') {
-    return 'px-[20rpx] py-[12rpx]'
+    return 'px-5 py-md'
   }
 
   if (props.size === 'large') {
-    return 'px-[40rpx] py-[20rpx]'
+    return 'px-10 py-5'
   }
 
-  return props.type === 'card' ? 'px-[32rpx] py-[16rpx]' : 'px-[28rpx] py-[16rpx]'
+  return props.type === 'card' ? 'px-2xl py-lg' : 'px-7 py-lg'
 }
 
 const navLabelClass = computed((): string => {
   const classes: string[] = ['transition-all', 'duration-300']
 
   if (props.size === 'small') {
-    classes.push('text-[24rpx]')
+    classes.push('text-2xl')
   } else if (props.size === 'large') {
-    classes.push('text-[32rpx]')
+    classes.push('text-hero')
   } else {
-    classes.push('text-[28rpx]')
+    classes.push('text-7')
   }
 
   return classes.join(' ')
 })
 
 const navLineClass = computed((): string => {
-  const classes: string[] = ['absolute', 'h-[4rpx]', 'rounded-[2rpx]', 'transition-all', 'duration-300']
+  const classes: string[] = ['absolute', 'h-1', 'rounded-2', 'transition-all', 'duration-300']
 
   if (props.tabPosition === 'bottom') {
     classes.push('top-0')
@@ -182,14 +204,14 @@ const getNavItemClass = (item: TagItem): string => {
   ]
 
   if (props.type === 'card') {
-    classes.push('mx-[8rpx]', 'rounded-[8rpx]', 'border', 'border-[#e8e8e8]', 'bg-white')
+    classes.push('mx-sm', 'rounded-lg', 'border', 'border-border-soft', 'bg-white')
   }
 
-  if (item.key === model.value && props.type !== 'card') {
+  if (isItemActive(item) && props.type !== 'card') {
     classes.push('scale-105')
   }
 
-  if (item.disabled) {
+  if (item.disabled === true) {
     classes.push('cursor-not-allowed', 'opacity-50')
   } else {
     classes.push('cursor-pointer')
@@ -201,19 +223,19 @@ const getNavItemClass = (item: TagItem): string => {
 const getNavItemStyle = (item: TagItem): string => {
   const styles: string[] = []
 
-  if (props.type === 'card' && item.key === model.value) {
+  if (props.type === 'card' && isItemActive(item)) {
     styles.push(`background-color: rgba(${activeColorRgb.value}, 0.1)`)
     styles.push(`border-color: ${props.activeColor}`)
-    styles.push(`box-shadow: 0 4rpx 12rpx rgba(${activeColorRgb.value}, 0.2)`)
-    styles.push('transform: translateY(-2rpx)')
+    styles.push(`box-shadow: 0 4px 12px rgba(${activeColorRgb.value}, 0.2)`)
+    styles.push('transform: translateY(-2px)')
   }
 
   return styles.join('; ')
 }
 
 /** 点击切换 tab */
-const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
-  if (item.disabled) return
+const handleClick = (item: TagItem, _index: number) => {
+  if (item.disabled === true) return
 
   model.value = item.key
   emit('update:activeKey', item.key)
@@ -227,15 +249,23 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
   }
 }
 
+const getNavLabelStyle = (item: TagItem): string => {
+  return `color: ${isItemActive(item) ? props.activeColor : props.inactiveColor}`
+}
+
+const badgeClass = computed((): string => {
+  return 'absolute right-3 top-2 min-w-7 rounded-14 bg-danger px-2 text-center text-5 leading-7 text-white'
+})
+
+const badgeStyle = computed((): string => {
+  return 'height: 28px; transform: translateX(8px);'
+})
+
 </script>
 
 <template>
   <view
     :class="containerClass"
-    :style="{
-      '--active-color': activeColor,
-      '--active-color-rgb': activeColorRgb
-    }"
   >
     <scroll-view
       v-if="tabPosition === 'top'"
@@ -251,21 +281,21 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           :class="getNavItemClass(item)"
           :style="getNavItemStyle(item)"
           :ref="'navItem' + index"
-          @click="handleClick(item, index, $event)"
+          @click="handleClick(item, index)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
-            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+            :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
           </text>
 
           <view
             v-if="hasItemBadge(item)"
-            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
-            style="height: 28rpx; transform: translateX(30%);"
+            :class="badgeClass"
+            :style="badgeStyle"
           >
             {{ item.badge }}
           </view>
@@ -292,21 +322,21 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
           :key="item.key"
           :class="getNavItemClass(item)"
           :style="getNavItemStyle(item)"
-          @click="handleClick(item, index, $event)"
+          @click="handleClick(item, index)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
-            :style="{ color: item.key === model ? activeColor : inactiveColor }"
+            :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
           </text>
 
           <view
             v-if="hasItemBadge(item)"
-            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
-            style="height: 28rpx; transform: translateX(30%);"
+            :class="badgeClass"
+            :style="badgeStyle"
           >
             {{ item.badge }}
           </view>
@@ -314,7 +344,7 @@ const handleClick = (item: TagItem, _index: number, _e: UniPointerEvent) => {
 
         <!-- 滑动指示器 -->
         <view
-          v-if="type === 'line' && animated && activeIndex >= 0"
+          v-if="showNavLine"
           :class="navLineClass"
           :style="navLineStyle"
         ></view>

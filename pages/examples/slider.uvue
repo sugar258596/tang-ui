@@ -1,10 +1,10 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TSlider from '@/components/TSlider'
-import TCard from '@/components/TCard'
+import TSlider from '@/components/TSlider/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const value1 = ref(50)
 const value2 = ref(30)
@@ -13,23 +13,23 @@ const value3 = ref(70)
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.slider.sections.basic')" padding="medium">
+    <TCard :title="t('examplePages.slider.sections.basic')" padding="medium">
       <TSlider v-model="value1" />
     </TCard>
 
-    <TCard :title="$t('examplePages.slider.sections.showValue')" padding="medium">
+    <TCard :title="t('examplePages.slider.sections.showValue')" padding="medium">
       <TSlider v-model="value2" :show-value="true" />
     </TCard>
 
-    <TCard :title="$t('examplePages.slider.sections.customColor')" padding="medium">
+    <TCard :title="t('examplePages.slider.sections.customColor')" padding="medium">
       <TSlider v-model="value3" active-color="#52c41a" :show-value="true" />
     </TCard>
 
-    <TCard :title="$t('examplePages.slider.sections.step')" padding="medium">
+    <TCard :title="t('examplePages.slider.sections.step')" padding="medium">
       <TSlider v-model="value1" :step="10" :show-value="true" />
     </TCard>
 
-    <TCard :title="$t('examplePages.slider.sections.disabled')" padding="medium">
+    <TCard :title="t('examplePages.slider.sections.disabled')" padding="medium">
       <TSlider v-model="value1" :disabled="true" />
     </TCard>
   </view>

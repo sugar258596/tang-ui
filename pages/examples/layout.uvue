@@ -1,21 +1,21 @@
 <script setup lang="uts">
-import TRow from '@/components/TRow'
-import TCol from '@/components/TCol'
-import TCard from '@/components/TCard'
-import TText from '@/components/TText'
+import TRow from '@/components/TRow/index.uvue'
+import TCol from '@/components/TCol/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TText from '@/components/TText/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TRow/TCol 栅格布局示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 </script>
 
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard :title="$t('examplePages.layout.sections.basic')" padding="medium">
+    <TCard :title="t('examplePages.layout.sections.basic')" padding="medium">
       <view class="demo-section">
         <TRow>
           <TCol :span="24">
@@ -59,7 +59,7 @@ const { $t } = useI18n()
     </TCard>
 
     <!-- 列间距 -->
-    <TCard :title="$t('examplePages.layout.sections.gutter')" padding="medium">
+    <TCard :title="t('examplePages.layout.sections.gutter')" padding="medium">
       <view class="demo-section">
         <TRow :gutter="10">
           <TCol :span="8">
@@ -90,7 +90,7 @@ const { $t } = useI18n()
     </TCard>
 
     <!-- 列偏移 -->
-    <TCard :title="$t('examplePages.layout.sections.offset')" padding="medium">
+    <TCard :title="t('examplePages.layout.sections.offset')" padding="medium">
       <view class="demo-section">
         <TRow>
           <TCol :span="8">
@@ -117,9 +117,9 @@ const { $t } = useI18n()
     </TCard>
 
     <!-- 水平对齐 -->
-    <TCard :title="$t('examplePages.layout.sections.align')" padding="medium">
+    <TCard :title="t('examplePages.layout.sections.align')" padding="medium">
       <view class="demo-section">
-        <TText :text="$t('examplePages.layout.labels.leftAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TText :text="t('examplePages.layout.labels.leftAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
         <TRow justify="start">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -132,7 +132,7 @@ const { $t } = useI18n()
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.centerAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.centerAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="center">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -145,7 +145,7 @@ const { $t } = useI18n()
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.rightAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.rightAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="end">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -158,7 +158,7 @@ const { $t } = useI18n()
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.spaceBetween')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.spaceBetween')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="space-between">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -171,7 +171,7 @@ const { $t } = useI18n()
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.spaceAround')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.spaceAround')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow justify="space-around">
           <TCol :span="6">
             <view class="demo-col-content">span: 6</view>
@@ -187,44 +187,44 @@ const { $t } = useI18n()
     </TCard>
 
     <!-- 垂直对齐 -->
-    <TCard :title="$t('examplePages.layout.sections.verticalAlign')" padding="medium">
+    <TCard :title="t('examplePages.layout.sections.verticalAlign')" padding="medium">
       <view class="demo-section">
-        <TText :text="$t('examplePages.layout.labels.topAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TText :text="t('examplePages.layout.labels.topAlign')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
         <TRow align="top" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.middleAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.middleAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow align="middle" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
 
-        <TText :text="$t('examplePages.layout.labels.bottomAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TText :text="t('examplePages.layout.labels.bottomAlign')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
         <TRow align="bottom" custom-style="min-height: 80px">
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 40px">{{ $t('examplePages.layout.labels.height') }}: 40px</view>
+            <view class="demo-col-content" style="height: 40px">{{ t('examplePages.layout.labels.height') }}: 40px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ $t('examplePages.layout.labels.height') }}: 60px</view>
+            <view class="demo-col-content demo-col-content--light" style="height: 60px">{{ t('examplePages.layout.labels.height') }}: 60px</view>
           </TCol>
           <TCol :span="8">
-            <view class="demo-col-content" style="height: 50px">{{ $t('examplePages.layout.labels.height') }}: 50px</view>
+            <view class="demo-col-content" style="height: 50px">{{ t('examplePages.layout.labels.height') }}: 50px</view>
           </TCol>
         </TRow>
       </view>

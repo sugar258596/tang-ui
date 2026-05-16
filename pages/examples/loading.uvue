@@ -1,15 +1,15 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TLoading from '@/components/TLoading'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TLoading from '@/components/TLoading/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 加载组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const loading1 = ref(true)
 const loading2 = ref(false)
@@ -25,25 +25,29 @@ const showFullscreen = (): void => {
 const toggleLoading = (): void => {
   loading2.value = !loading2.value
 }
+
+const toggleBasicLoading = (): void => {
+  loading1.value = !loading1.value
+}
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.loading.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.loading.description') }}</text>
+      <text class="example-title">{{ t('examplePages.loading.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.loading.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.loading.sections.basic')" class="example-section">
+    <TCard :title="t('examplePages.loading.sections.basic')" class="example-section">
       <view style="position: relative; height: 100px;">
-        <TLoading :loading="loading1" :text="$t('examplePages.loading.text.loading')" />
+        <TLoading :loading="loading1" :text="t('examplePages.loading.text.loading')" />
       </view>
-      <TButton @click="() => loading1 = !loading1" style="margin-top: 10px;">
+      <TButton @click="toggleBasicLoading" style="margin-top: 10px;">
         {{ loading1 ? '关闭加载' : '显示加载' }}
       </TButton>
     </TCard>
 
-    <TCard :title="$t('examplePages.loading.sections.type')" class="example-section">
+    <TCard :title="t('examplePages.loading.sections.type')" class="example-section">
       <view style="display: flex; gap: 30px;">
         <view style="position: relative; width: 80px; height: 80px;">
           <TLoading loading size="small" />

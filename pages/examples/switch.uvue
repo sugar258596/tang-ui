@@ -1,14 +1,14 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TSwitch from '@/components/TSwitch'
-import TCard from '@/components/TCard'
+import TSwitch from '@/components/TSwitch/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 开关组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const switch1 = ref(false)
 const switch2 = ref(true)
@@ -23,69 +23,69 @@ const handleChange = (value: boolean): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.switch.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.switch.description') }}</text>
+      <text class="example-title">{{ t('examplePages.switch.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.switch.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.switch.sections.basic')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.basic')" class="example-section">
       <view class="switch-row">
         <TSwitch v-model="switch1" />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.status') }}: {{ switch1 ? $t('examplePages.switch.labels.on') : $t('examplePages.switch.labels.off') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.status') }}: {{ switch1 ? t('examplePages.switch.labels.on') : t('examplePages.switch.labels.off') }}</text>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.switch.sections.disabled')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.disabled')" class="example-section">
       <view class="switch-row">
         <TSwitch :model-value="false" disabled />
-        <text style="margin-left: 20px;">{{ $t('examplePages.switch.labels.disabledOff') }}</text>
+        <text style="margin-left: 20px;">{{ t('examplePages.switch.labels.disabledOff') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch :model-value="true" disabled />
-        <text style="margin-left: 20px;">{{ $t('examplePages.switch.labels.disabledOn') }}</text>
+        <text style="margin-left: 20px;">{{ t('examplePages.switch.labels.disabledOn') }}</text>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.switch.sections.size')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.size')" class="example-section">
       <view class="switch-row">
         <TSwitch v-model="switch2" size="small" />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.small') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.small') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch v-model="switch2" size="medium" />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.medium') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.medium') }}</text>
       </view>
       <view class="switch-row" style="margin-top: 10px;">
         <TSwitch v-model="switch2" size="large" />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.large') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.large') }}</text>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.switch.sections.customColor')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.customColor')" class="example-section">
       <view class="switch-row">
         <TSwitch
           v-model="switch3"
           activeColor="#67c23a"
           inactiveColor="#f56c6c"
         />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.customColor') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.customColor') }}</text>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.switch.sections.withText')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.withText')" class="example-section">
       <view class="switch-row">
         <TSwitch
           v-model="switch4"
-          :activeText="$t('examplePages.switch.text.active')"
-          :inactiveText="$t('examplePages.switch.text.inactive')"
+          :activeText="t('examplePages.switch.text.active')"
+          :inactiveText="t('examplePages.switch.text.inactive')"
           showText
         />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.switch.sections.events')" class="example-section">
+    <TCard :title="t('examplePages.switch.sections.events')" class="example-section">
       <view class="switch-row">
         <TSwitch @change="handleChange" />
-        <text style="margin-left: 10px;">{{ $t('examplePages.switch.labels.openConsole') }}</text>
+        <text style="margin-left: 10px;">{{ t('examplePages.switch.labels.openConsole') }}</text>
       </view>
     </TCard>
   </view>

@@ -1,11 +1,11 @@
 <script setup lang="uts">
 import { ref,  onUnmounted } from 'vue'
-import TProgress from '@/components/TProgress'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TProgress from '@/components/TProgress/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const percentage = ref(50)
 let timer: number | null = null
@@ -14,7 +14,10 @@ const startProgress = (): void => {
   percentage.value = 0
   timer = setInterval(() => {
     if (percentage.value >= 100) {
-      if (timer !== null) clearInterval(timer)
+      const timerId = timer
+      if (timerId !== null) {
+        clearInterval(timerId)
+      }
     } else {
       percentage.value += 10
     }
@@ -22,24 +25,27 @@ const startProgress = (): void => {
 }
 
 onUnmounted(() => {
-  if (timer !== null) clearInterval(timer)
+  const timerId = timer
+  if (timerId !== null) {
+    clearInterval(timerId)
+  }
 })
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.progress.sections.basic')" padding="medium">
+    <TCard :title="t('examplePages.progress.sections.basic')" padding="medium">
       <TProgress :percentage="50" />
     </TCard>
 
-    <TCard :title="$t('examplePages.progress.sections.type')" padding="medium">
+    <TCard :title="t('examplePages.progress.sections.type')" padding="medium">
       <TProgress :percentage="0" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="30" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="70" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="100" />
     </TCard>
 
-    <TCard :title="$t('examplePages.progress.sections.custom')" padding="medium">
+    <TCard :title="t('examplePages.progress.sections.custom')" padding="medium">
       <TProgress :percentage="30" color="#f5222d" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="50" color="#52c41a" custom-style="margin-bottom: 16px" />
       <TProgress :percentage="70" color="#faad14" />

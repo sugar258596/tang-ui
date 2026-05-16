@@ -1,70 +1,70 @@
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import TPopup from '@/components/TPopup'
-	import TCard from '@/components/TCard'
-	import TButton from '@/components/TButton'
+	import TPopup from '@/components/TPopup/index.uvue'
+	import TCard from '@/components/TCard/index.uvue'
+	import TButton from '@/components/TButton/index.uvue'
 	import { useI18n } from '@/composables/useI18n.uts'
 
 	/**
 	 * 弹出层组件示例页面
 	 */
 
-	const { $t } = useI18n()
+	const { t } = useI18n()
 
-	const popup1 = ref(false)
-	const popup2 = ref(false)
-	const popup3 = ref(false)
-	const popup4 = ref(false)
-	const popup5 = ref(false)
+	const popup1 = ref<boolean>(false)
+	const popup2 = ref<boolean>(false)
+	const popup3 = ref<boolean>(false)
+	const popup4 = ref<boolean>(false)
+	const popup5 = ref<boolean>(false)
 </script>
 
 <template>
 	<view class="example-page">
 		<view class="example-header">
-			<text class="example-title">{{ $t('examplePages.popup.title') }}</text>
-			<text class="example-desc">{{ $t('examplePages.popup.description') }}</text>
+			<text class="example-title">{{ t('examplePages.popup.title') }}</text>
+			<text class="example-desc">{{ t('examplePages.popup.description') }}</text>
 		</view>
 
-		<TCard :title="$t('examplePages.popup.sections.basic')" class="example-section">
-			<TButton type="primary" @click="popup1 = true">{{ $t('examplePages.popup.buttons.bottom') }}</TButton>
+		<TCard :title="t('examplePages.popup.sections.basic')" class="example-section">
+			<TButton type="primary" @click="popup1 = true">{{ t('examplePages.popup.buttons.bottom') }}</TButton>
 
 		</TCard>
 
-		<TCard :title="$t('examplePages.popup.sections.position')" class="example-section">
+		<TCard :title="t('examplePages.popup.sections.position')" class="example-section">
 			<view style="display: flex; flex-wrap: wrap; gap: 10px;">
-				<TButton @click="popup2 = true">{{ $t('examplePages.popup.buttons.top') }}</TButton>
-				<TButton @click="popup3 = true">{{ $t('examplePages.popup.buttons.left') }}</TButton>
-				<TButton @click="popup4 = true">{{ $t('examplePages.popup.buttons.right') }}</TButton>
-				<TButton @click="popup5 = true">{{ $t('examplePages.popup.buttons.center') }}</TButton>
+				<TButton @click="popup2 = true">{{ t('examplePages.popup.buttons.top') }}</TButton>
+				<TButton @click="popup3 = true">{{ t('examplePages.popup.buttons.left') }}</TButton>
+				<TButton @click="popup4 = true">{{ t('examplePages.popup.buttons.right') }}</TButton>
+				<TButton @click="popup5 = true">{{ t('examplePages.popup.buttons.center') }}</TButton>
 			</view>
 
 			<TPopup v-model="popup2" position="top">
 				<view style="padding: 20px; background: white; min-height: 150px;">
-					<text>{{ $t('examplePages.popup.content.top') }}</text>
+					<text>{{ t('examplePages.popup.content.top') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup3" position="left">
 				<view style="padding: 20px; background: white; width: 250px; height: 100vh;">
-					<text>{{ $t('examplePages.popup.content.left') }}</text>
+					<text>{{ t('examplePages.popup.content.left') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup4" position="right">
 				<view style="padding: 20px; background: white; width: 250px; height: 100vh;">
-					<text>{{ $t('examplePages.popup.content.right') }}</text>
+					<text>{{ t('examplePages.popup.content.right') }}</text>
 				</view>
 			</TPopup>
 
 			<TPopup v-model="popup5" position="center">
 				<view style="padding: 30px; background: white; border-radius: 8px; min-width: 280px;">
-					<text style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">{{ $t('examplePages.popup.content.center') }}</text>
-					<text>{{ $t('examplePages.popup.content.centerDesc') }}</text>
+					<text style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">{{ t('examplePages.popup.content.center') }}</text>
+					<text>{{ t('examplePages.popup.content.centerDesc') }}</text>
 				</view>
 			</TPopup>
 			<TPopup v-model="popup1" position="bottom">
 				<view style="padding: 20px; background: white; min-height: 200px;">
-					<text>{{ $t('examplePages.popup.content.bottom') }}</text>
+					<text>{{ t('examplePages.popup.content.bottom') }}</text>
 				</view>
 			</TPopup>
 		</TCard>

@@ -1,17 +1,21 @@
 <script  setup lang="uts" >
-import TIcon from '@/components/TIcon'
-import TCard from '@/components/TCard'
+import TIcon from '@/components/TIcon/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 import { ICON_LIST } from '@/components/TIcon/type.uts'
+import type { TIconItem } from '@/components/TIcon/type.uts'
 
 /**
  * 图标组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 // 使用 iconfont 图标库中的图标
-const icons = ICON_LIST.map(item => item.name)
+const icons: string[] = []
+ICON_LIST.forEach((item: TIconItem): void => {
+  icons.push(item.name)
+})
 
 const handleClick = (name: string): void => {
   uni.showToast({
@@ -24,8 +28,8 @@ const handleClick = (name: string): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.icon.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.icon.description') }}</text>
+      <text class="example-title">{{ t('examplePages.icon.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.icon.description') }}</text>
     </view>
 
     <TCard title="基础用法" class="example-section">
@@ -147,7 +151,7 @@ const handleClick = (name: string): void => {
 
 .tip-item {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: #606266;
   line-height: 1.8;
 }

@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TSearchBarProps } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 import TIcon from '../TIcon/index.uvue'
@@ -8,11 +9,7 @@ import TIcon from '../TIcon/index.uvue'
  * TSearchBar 搜索框组件
  * @description 用于搜索场景的输入框组件，支持防抖、清除、取消等功能
  */
-
-// Props 定义 (从 type.uts 导入，排除 modelValue)
-type Props = Omit<TSearchBarProps, 'modelValue'>
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TSearchBarProps>(), {
   shape: 'square',
   background: 'var(--tui-surface-muted)',
   maxlength: -1,
@@ -28,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel({ default: '' })
+const modelValue = defineModel({ default: '' }) as Ref<string>
 
 // Emits 定义
 const emit = defineEmits<{
@@ -36,24 +33,39 @@ const emit = defineEmits<{
   input: [value: string]
   cancel: []
   clear: []
-  focus: [event: Event]
-  blur: [event: Event]
+  focus: [event: object]
+  blur: [event: object]
 }>()
 
 // 使用 i18n
-const { $t } = useI18n()
+const { t } = useI18n()
+
+type SearchBarInputEventDetail = {
+  value: string
+}
+type SearchBarInputEvent = {
+  detail: SearchBarInputEventDetail
+}
 
 // 优先使用用户传入的值，否则使用翻译
-const displayPlaceholder = computed(() => {
-  return props.placeholder !== undefined && props.placeholder !== '' 
-    ? props.placeholder 
-    : $t('searchBar.placeholder')
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
+}
+
+const displayPlaceholder = computed((): string => {
+  const placeholder = props.placeholder
+  if (hasTextValue(placeholder)) {
+    return placeholder as string
+  }
+  return t('searchBar.placeholder')
 })
 
-const displayCancelText = computed(() => {
-  return props.cancelText !== undefined && props.cancelText !== '' 
-    ? props.cancelText 
-    : $t('searchBar.cancelText')
+const displayCancelText = computed((): string => {
+  const cancelText = props.cancelText
+  if (hasTextValue(cancelText)) {
+    return cancelText as string
+  }
+  return t('searchBar.cancelText')
 })
 
 let debounceTimer: number | null = null
@@ -72,7 +84,7 @@ const containerClasses = computed((): string => {
     classes.push('opacity-60')
   }
 
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 
@@ -87,7 +99,7 @@ const inputStyle = computed((): string => {
 
   styles.push(`background-color: ${props.background}`)
 
-  if (props.customStyle) {
+  if (props.customStyle !== '') {
     styles.push(props.customStyle)
   }
 
@@ -97,14 +109,15 @@ const inputStyle = computed((): string => {
 /**
  * 输入事件处理（带防抖）
  */
-const handleInput = (event: any): void => {
-  const value = event.detail.value as string
+const handleInput = (event: SearchBarInputEvent): void => {
+  const value = event.detail.value
   modelValue.value = value
   emit('input', value)
 
   // 防抖搜索
-  if (debounceTimer !== null) {
-    clearTimeout(debounceTimer)
+  const timerId = debounceTimer
+  if (timerId !== null) {
+    clearTimeout(timerId)
   }
   debounceTimer = setTimeout(() => {
     emit('search', value)
@@ -114,14 +127,14 @@ const handleInput = (event: any): void => {
 /**
  * 聚焦事件
  */
-const handleFocus = (event: Event): void => {
+const handleFocus = (event: object): void => {
   emit('focus', event)
 }
 
 /**
  * 失焦事件
  */
-const handleBlur = (event: Event): void => {
+const handleBlur = (event: object): void => {
   emit('blur', event)
 }
 
@@ -148,13 +161,17 @@ const handleCancel = (): void => {
   modelValue.value = ''
   emit('cancel')
 }
+
+const hasInputValue = computed((): boolean => {
+  return modelValue.value.length > 0
+})
 </script>
 
 <template>
   <view :class="containerClasses">
     <view
       class="t-search-bar__content relative flex flex-1 flex-row items-center px-3 py-2"
-      :class="shape === 'round' ? 'rounded-[18px]' : 'rounded'"
+      :class="shape === 'round' ? 'twx-rounded-18px' : 'rounded'"
       :style="inputStyle"
     >
       <!-- 左侧搜索图标 -->
@@ -164,7 +181,7 @@ const handleCancel = (): void => {
 
       <!-- 输入框 -->
       <input
-        class="t-search-bar__input flex-1 border-none bg-transparent text-sm text-[#323233] outline-none"
+        class="t-search-bar__input flex-1 border-none bg-transparent text-sm text-primary outline-none"
         type="text"
         :value="modelValue"
         :placeholder="displayPlaceholder"
@@ -179,8 +196,8 @@ const handleCancel = (): void => {
 
       <!-- 清除按钮 -->
       <view
-        v-show="clearable && modelValue.length > 0"
-        class="t-search-bar__clear ml-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#c8c9cc]"
+        v-show="clearable && hasInputValue"
+        class="t-search-bar__clear ml-2 flex twx-h-18px twx-w-18px items-center justify-center rounded-full twx-bg-gray-ccc"
         @click="handleClear"
       >
         <TIcon name="icon-shanchu" color="#ffffff" />
@@ -190,8 +207,23 @@ const handleCancel = (): void => {
     <!-- 取消按钮 -->
     <view v-if="showCancel" class="t-search-bar__cancel cursor-pointer px-3 active:opacity-70" @click="handleCancel">
       <slot name="cancel">
-        <text class="t-search-bar__cancel-text whitespace-nowrap text-sm text-[#323233]">{{ displayCancelText }}</text>
+        <text class="t-search-bar__cancel-text whitespace-nowrap text-sm text-primary">{{ displayCancelText }}</text>
       </slot>
     </view>
   </view>
 </template>
+
+<style scoped>
+.twx-rounded-18px {
+  border-radius: 18px;
+}
+.twx-h-18px {
+  height: 18px;
+}
+.twx-w-18px {
+  width: 18px;
+}
+.twx-bg-gray-ccc {
+  background-color: #c8c9cc;
+}
+</style>

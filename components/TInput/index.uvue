@@ -5,6 +5,12 @@ import type { TInputProps } from './type.uts'
 import TIcon from '../TIcon/index.uvue'
 
 type InputModelValue = string | number
+type InputChangeEventDetail = {
+  value: string | number
+}
+type InputChangeEvent = {
+  detail: InputChangeEventDetail
+}
 
 /**
  * TInput 输入框组件
@@ -50,12 +56,12 @@ const emit = defineEmits<{
 // 是否聚焦
 const isFocused = ref(false)
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasModelValue = computed((): boolean => {
-  return model.value !== undefined && model.value !== null && model.value.toString() !== ''
+  return model.value !== null && model.value.toString() !== ''
 })
 
 const hasPrefixText = computed((): boolean => {
@@ -83,7 +89,7 @@ const canShowClearButton = computed((): boolean => {
  */
 const inputWrapperClasses = computed((): string => {
   const classes: string[] = [
-    'relative flex w-full shrink-0 grow-0 basis-auto flex-row items-center box-border min-h-0 min-w-0 border border-solid border-[#dcdfe6] bg-white transition-colors duration-300',
+    'relative flex w-full shrink-0 grow-0 basis-auto flex-row items-center box-border min-h-0 min-w-0 border border-solid border-border bg-white transition-colors duration-300',
   ]
 
   switch (props.size) {
@@ -106,7 +112,7 @@ const inputWrapperClasses = computed((): string => {
   }
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed border-[#e4e7ed] bg-[#f5f7fa] text-[#c0c4cc]')
+    classes.push('cursor-not-allowed border-border-soft bg-page text-disabled')
   }
 
   if (props.readonly) {
@@ -114,7 +120,7 @@ const inputWrapperClasses = computed((): string => {
   }
 
   if (isFocused.value) {
-    classes.push('border-[#409eff]')
+    classes.push('twx-border-focus')
   }
 
   // 自定义类名
@@ -129,15 +135,15 @@ const affixClasses = computed((): string => {
   switch (props.size) {
     case 'small':
     case 'mini':
-      return 'flex items-center justify-center px-1.5 text-[#909399]'
+      return 'flex items-center justify-center px-1 text-tertiary'
     default:
-      return 'flex items-center justify-center px-2 text-[#909399]'
+      return 'flex items-center justify-center px-2 text-tertiary'
   }
 })
 
 const inputInnerClasses = computed((): string => {
   const classes: string[] = [
-    'w-full flex-1 border-none bg-transparent text-[#606266] outline-none box-border',
+    'w-full flex-1 border-none bg-transparent text-secondary outline-none box-border',
   ]
 
   switch (props.size) {
@@ -162,7 +168,7 @@ const inputInnerClasses = computed((): string => {
   }
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed text-[#c0c4cc]')
+    classes.push('cursor-not-allowed text-disabled')
   } else if (props.readonly) {
     classes.push('cursor-default')
   }
@@ -172,11 +178,11 @@ const inputInnerClasses = computed((): string => {
 
 const textareaClasses = computed((): string => {
   const classes: string[] = [
-    'min-h-[60px] w-full flex-1 resize-none border-none bg-transparent px-3 py-2 text-sm leading-[1.5] text-[#606266] outline-none box-border',
+    'min-h-15 w-full flex-1 resize-none border-none bg-transparent px-3 py-2 text-sm leading-normal text-secondary outline-none box-border',
   ]
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed text-[#c0c4cc]')
+    classes.push('cursor-not-allowed text-disabled')
   } else if (props.readonly) {
     classes.push('cursor-default')
   }
@@ -188,7 +194,7 @@ const textareaClasses = computed((): string => {
  * 计算当前输入长度
  */
 const currentLength = computed((): number => {
-  const value = model.value !== undefined && model.value !== null ? model.value.toString() : ''
+  const value = model.value !== null ? model.value.toString() : ''
   return value.length
 })
 
@@ -253,7 +259,7 @@ const computedStyle = computed((): string => {
 /**
  * 处理输入事件
  */
-const handleInput = (e: any) => {
+const handleInput = (e: InputChangeEvent): void => {
   const value = e.detail.value
   model.value = value
   emit('input', value)
@@ -298,7 +304,7 @@ const handleConfirm = () => {
   <view class="t-input" :class="inputWrapperClasses" :style="computedStyle">
     <!-- 前缀文本 -->
     <view v-if="hasPrefixText" class="t-input__prefix" :class="affixClasses">
-      <text class="t-input__prefix-text whitespace-nowrap text-sm text-[#606266]">{{ prefix }}</text>
+      <text class="t-input__prefix-text whitespace-nowrap text-sm text-secondary">{{ prefix }}</text>
     </view>
 
     <!-- 前缀图标 -->
@@ -353,7 +359,7 @@ const handleConfirm = () => {
 
     <!-- 后缀文本 -->
     <view v-else-if="hasSuffixText" class="t-input__suffix" :class="affixClasses">
-      <text class="t-input__suffix-text whitespace-nowrap text-sm text-[#606266]">{{ suffix }}</text>
+      <text class="t-input__suffix-text whitespace-nowrap text-sm text-secondary">{{ suffix }}</text>
     </view>
 
     <!-- 后缀图标 -->
@@ -363,7 +369,22 @@ const handleConfirm = () => {
 
     <!-- 字数统计 -->
     <view v-if="showCount && maxlength > 0" class="t-input__count absolute bottom-1 right-2">
-      <text class="t-input__count-text text-xs text-[#909399]">{{ currentLength }}/{{ maxlength }}</text>
+      <text class="t-input__count-text text-xs text-tertiary">{{ currentLength }}/{{ maxlength }}</text>
     </view>
   </view>
 </template>
+
+<style>
+.twx-text-link {
+  color: #1890ff;
+}
+.twx-border-soft {
+  border-color: #ebedf0;
+}
+.twx-min-w-15 {
+  min-width: 60px;
+}
+.twx-border-focus {
+  border-color: #409eff;
+}
+</style>

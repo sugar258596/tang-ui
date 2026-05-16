@@ -15,7 +15,7 @@ export type RowAlign = 'top' | 'middle' | 'bottom'
 /**
  * TRow Props 接口
  */
-export interface TRowProps {
+export type TRowProps = {
   /**
    * 列间距（单位 px）
    * @default 0

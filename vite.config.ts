@@ -16,7 +16,7 @@ function TailwindCliAutoRun() {
 
       try {
         console.log('[Tailwind] 初始化构建 static/tailwind.css...')
-        execSync('pnpm exec tailwindcss -i ./tailwind.css -o ./static/tailwind.css', {
+        execSync('pnpm run tailwind:build', {
           cwd: __dirname,
           stdio: 'inherit',
         })
@@ -28,7 +28,7 @@ function TailwindCliAutoRun() {
         console.log('[Tailwind] 启动后台 watch...')
         const tw = spawn(
           'pnpm',
-          ['exec', 'tailwindcss', '-i', './tailwind.css', '-o', './static/tailwind.css', '--watch'],
+          ['run', 'tailwind:watch'],
           {
             cwd: __dirname,
             shell: true,

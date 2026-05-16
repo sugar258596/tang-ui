@@ -1,6 +1,6 @@
 {
-	"name": "UI",
-	"appid": "__UNI__1B020D2",
+	"name": "dom",
+	"appid": "__UNI__679904D",
 	"description": "",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -9,7 +9,7 @@
 	"quickapp": {},
 	/* 小程序特有相关 */
 	"mp-weixin": {
-		"appid": "wx69dab00b0ff3f970",
+		"appid": "",
 		"setting": {
 			"urlCheck": false
 		},

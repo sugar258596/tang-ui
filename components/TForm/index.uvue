@@ -1,5 +1,5 @@
 <script setup lang="uts">
-	import { computed } from 'vue'
+	import { computed, reactive } from 'vue'
 	import type { Ref } from 'vue'
 	import TInput from '../TInput/index.uvue'
 	import TRadioGroup from '../TRadioGroup/index.uvue'
@@ -9,13 +9,13 @@
 	import TSlider from '../TSlider/index.uvue'
 	import TSelect from '../TSelect/index.uvue'
 	import TDateTimePicker from '../TDateTimePicker/index.uvue'
-	import type { FormOption, FormSchema, TFormProps, ComponentProps } from './type.uts'
+	import type { FormOption, FormSchema, TFormProps } from './type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
-	type FormModelValue = any
+	type FormModelValue = UTSJSONObject
 	type FormSubmitResult = {
 		valid : boolean
-		values : any
+		values : FormModelValue | null
 	}
 
 	const props = withDefaults(defineProps<TFormProps>(), {
@@ -24,39 +24,122 @@
 		hideButtons: false,
 	})
 
-	const emit = defineEmits(['submit', 'reset'])
+	const emit = defineEmits<{
+		submit: [values: FormModelValue]
+		reset: []
+	}>()
 
 	const model = defineModel({ default: () => ({}) }) as Ref<FormModelValue>
-	const errors = reactive({}) as any
+	const errors = reactive({}) as UTSJSONObject
+	const pickerVisible = reactive({}) as UTSJSONObject
+	const pickerValues = reactive({}) as UTSJSONObject
+	const shakeFields = reactive({}) as UTSJSONObject
 
 	// 使用 i18n
 	const { $t } = useI18n()
 
+	function getModelField(field : string) : any {
+		const value = model.value[field]
+		return value == null ? '' : value
+	}
+
+	function setModelField(field : string, value : any) : void {
+		model.value[field] = value
+	}
+
+	function getErrorField(field : string) : string {
+		const value = errors[field]
+		return value == null ? '' : value as string
+	}
+
+	function setErrorField(field : string, value : string) : void {
+		errors[field] = value
+	}
+
+	function isFieldEmpty(value : any) : boolean {
+		if (Array.isArray(value)) {
+			return value.length === 0
+		}
+		return value === ''
+	}
+
+	function clearFieldError(field : string) : void {
+		setErrorField(field, '')
+	}
+
+	function setShakeField(field : string, value : boolean) : void {
+		shakeFields[field] = value
+	}
+
+	function triggerShake(field : string) : void {
+		setShakeField(field, true)
+		setTimeout(() => {
+			setShakeField(field, false)
+		}, 500)
+	}
+
+	function validateField(item : FormSchema) : void {
+		if (item.required === true && isFieldEmpty(getModelField(item.field))) {
+			setErrorField(item.field, $t('form.requiredError', { label: item.label }))
+			triggerShake(item.field)
+		} else {
+			clearFieldError(item.field)
+		}
+	}
+
+	function setPickerVisible(field : string, value : boolean) : void {
+		pickerVisible[field] = value
+	}
+
+	const onFieldValueUpdate = (value : any, item : FormSchema) : void => {
+		setModelField(item.field, value)
+		validateField(item)
+	}
+
+	const onPickerVisibleUpdateAny = (value : any, item : FormSchema) : void => {
+		setPickerVisible(item.field, value === true)
+	}
+
 	// 按钮文本
 	const submitButtonText = computed(() => {
-		return props.submitText !== undefined && props.submitText !== ''
-			? props.submitText
-			: $t('form.submitButton')
+		const value = props.submitText
+		return value !== null && value !== ''
+			? value as string
+			: $t('form.submitButton', null)
 	})
 
 	const resetButtonText = computed(() => {
-		return props.resetText !== undefined && props.resetText !== ''
-			? props.resetText
-			: $t('form.resetButton')
+		const value = props.resetText
+		return value !== null && value !== ''
+			? value as string
+			: $t('form.resetButton', null)
 	})
 
-	const hasTextValue = (value : string | null | undefined) : boolean => {
-		return value !== undefined && value !== null && value !== ''
+	const hasTextValue = (value : string | null) : boolean => {
+		return value !== null && value !== ''
 	}
 
 	// 获取单个配置项的布局方向（单个配置优先）
 	const getItemLayout = (item : FormSchema) : string => {
-		return hasTextValue(item.layout) ? item.layout as string : props.layout
+		const value = item.layout
+		if (hasTextValue(value)) {
+			return value as string
+		}
+		return props.layout == null ? 'vertical' : props.layout as string
 	}
 
 	// 获取单个配置项的标签宽度（单个配置优先）
 	const getItemLabelWidth = (item : FormSchema) : string => {
-		return hasTextValue(item.labelWidth) ? item.labelWidth as string : props.labelWidth
+		const value = item.labelWidth
+		if (hasTextValue(value)) {
+			return value as string
+		}
+		return props.labelWidth == null ? '110rpx' : props.labelWidth as string
+	}
+
+	const getItemLabelStyle = (item : FormSchema) : string => {
+		const width = getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : (props.labelWidth == null ? '110rpx' : props.labelWidth as string)
+		return `width: ${width};`
 	}
 
 	const handlePlaceholder = (item : FormSchema) : string => {
@@ -67,16 +150,16 @@
 		return $t('form.inputPlaceholder', { label: item.label })
 	}
 
-	const getSelectOptions = (item : FormSchema) => {
-		const options = item.componentProps?.options as FormOption[] | undefined
+	const getSelectOptions = (item : FormSchema) : FormOption[] => {
+		const options = item.componentProps?.options as any
 		if (options != null) {
-			return options.map(o => ({ label: o.label, value: o.value }))
+			return options as FormOption[]
 		}
-		return []
+		return [] as FormOption[]
 	}
 
 	const getPickerTextClass = (item : FormSchema) : string => {
-		return isFieldEmpty(model.value[item.field]) ? 'text-[#c0c4cc]' : 'text-[#333333]'
+		return isFieldEmpty(getModelField(item.field)) ? 'text-disabled' : 'text-primary'
 	}
 
 	const getInputType = (item : FormSchema) : string => {
@@ -86,72 +169,115 @@
 
 	const getSelectPlaceholder = (item : FormSchema) : string => {
 		const placeholder = item.componentProps?.placeholder
-		return hasTextValue(placeholder) ? placeholder as string : $t('form.selectPlaceholder')
+		return hasTextValue(placeholder) ? placeholder as string : $t('form.selectPlaceholder', null)
 	}
 
 	const getPickerDisplayText = (item : FormSchema, placeholderKey : string) : string => {
-		const value = model.value[item.field]
-		return isFieldEmpty(value) ? $t(placeholderKey) : value as string
+		const value = getModelField(item.field)
+		return isFieldEmpty(value) ? $t(placeholderKey, null) : value as string
 	}
 
 	const getNumericFieldValue = (field : string) : number => {
-		const value = model.value[field]
+		const value = getModelField(field)
 		return isFieldEmpty(value) ? 0 : value as number
 	}
 
-	// 安全获取组件属性，避免 v-bind="" 编译问题
-	const getComponentProps = (item : FormSchema) : ComponentProps => {
-		if (item.componentProps != null) {
-			return item.componentProps
-		}
-		return {} as ComponentProps
+	const getBooleanFieldValue = (field : string) : boolean => {
+		const value = getModelField(field)
+		return value === true
 	}
 
-	const getInputProps = (item : FormSchema, inputType : string) : any => {
-		const componentProps = getComponentProps(item)
-		const mergedProps: any = {
-			...componentProps,
-			type: inputType,
-			placeholder: handlePlaceholder(item)
+	const getStringArrayFieldValue = (field : string) : Array<string | number> => {
+		const value = getModelField(field)
+		if (Array.isArray(value)) {
+			return value as Array<string | number>
 		}
-
-		if (componentProps.focus !== undefined) {
-			mergedProps.autoFocus = componentProps.focus
-		}
-
-		return mergedProps
+		return [] as Array<string | number>
 	}
 
-	// 日期时间选择器状态管理
-	const pickerVisible = reactive({}) as any
-	const pickerValues = reactive({}) as any
+	const getDisabled = (item : FormSchema) : boolean => {
+		return item.componentProps?.disabled === true
+	}
+
+	const getMaxLength = (item : FormSchema) : number => {
+		const value = item.componentProps?.maxlength
+		return value == null ? -1 : value
+	}
+
+	const getMin = (item : FormSchema) : number => {
+		const value = item.componentProps?.min
+		return value == null ? 0 : value
+	}
+
+	const getMax = (item : FormSchema, fallback : number) : number => {
+		const value = item.componentProps?.max
+		return value == null ? fallback : value
+	}
+
+	const getStep = (item : FormSchema) : number => {
+		const value = item.componentProps?.step
+		return value == null ? 1 : value
+	}
+
+	const getAutoHeight = (item : FormSchema) : boolean => {
+		return item.componentProps?.autoHeight === true
+	}
+
+	const getAutoFocus = (item : FormSchema) : boolean => {
+		return item.componentProps?.focus === true
+	}
+
+	const getPickerVisible = (field : string) : boolean => {
+		return pickerVisible[field] === true
+	}
+
+	const getPickerValue = (field : string) : number => {
+		const value = pickerValues[field]
+		return value == null ? 0 : value as number
+	}
+
+	const getInputModelValue = (field : string) : string | number => {
+		const value = getModelField(field)
+		return value == null ? '' : value as string | number
+	}
+
+	const getSelectModelValue = (field : string) : string | number | null => {
+		const value = getModelField(field)
+		return value === '' ? null : value as string | number
+	}
+
+	const getRadioModelValue = (field : string) : string | number => {
+		const value = getModelField(field)
+		return value == null ? '' : value as string | number
+	}
+
+	const getSlotValue = (field : string) : any => {
+		return getModelField(field)
+	}
+
+	const setPickerValue = (field : string, value : any) : void => {
+		pickerValues[field] = value
+	}
 
 	const openPicker = (field : string) => {
-		pickerVisible[field] = true
+		setPickerVisible(field, true)
 	}
 
 	const onDateTimeConfirm = (value : number, formatted : string, item : FormSchema) => {
-		model.value[item.field] = formatted
-		pickerValues[item.field] = value
-		pickerVisible[item.field] = false
+		setModelField(item.field, formatted)
+		setPickerValue(item.field, value)
+		setPickerVisible(item.field, false)
 		validateField(item)
 	}
 
 	const onDateTimeCancel = (field : string) => {
-		pickerVisible[field] = false
-	}
-
-	const isFieldEmpty = (value : any) : boolean => {
-		if (Array.isArray(value)) {
-			return value.length === 0
-		}
-		return value === undefined || value === null || value === ''
+		setPickerVisible(field, false)
 	}
 
 	const getDefaultFieldValue = (item : FormSchema) : any => {
 		switch (item.component) {
 			case 'Checkbox':
-				return []
+				return [] as Array<string>
 			case 'Switch':
 				return false
 			case 'Rate':
@@ -167,114 +293,119 @@
 	 * UTS 不支持 delete 操作符，因此使用空字符串表示无错误状态。
 	 * @param field 字段名
 	 */
-	const clearFieldError = (field : string) : void => {
-		errors[field] = ''
-	}
-
 	/**
 	 * 清空所有字段的错误信息
 	 * @description 保持响应式对象引用不变，确保模板状态可正常更新。
 	 */
 	const clearErrors = () : void => {
-		Object.keys(errors).forEach((field : string) => {
+		for (const field in errors) {
 			clearFieldError(field)
-		})
+		}
 	}
 
 	/**
 	 * 获取当前有效错误信息
 	 * @returns 当前存在错误文案的字段映射
 	 */
-	const getActiveErrors = () : any => {
-		const activeErrors : any = {}
-		Object.keys(errors).forEach((field : string) => {
-			const message = errors[field]
+	const getActiveErrors = () : UTSJSONObject => {
+		const activeErrors : UTSJSONObject = {}
+		for (const field in errors) {
+			const message = getErrorField(field)
 			if (message !== '') {
 				activeErrors[field] = message
 			}
-		})
+		}
 		return activeErrors
 	}
 
-	const validateField = (item : FormSchema) : void => {
-		if (item.required && isFieldEmpty(model.value[item.field])) {
-			errors[item.field] = $t('form.requiredError', { label: item.label })
-			// 触发抖动动画
-			triggerShake(item.field)
-		} else {
-			clearFieldError(item.field)
-		}
-	}
-
-	// 抖动动画状态
-	const shakeFields = reactive({}) as any
-
-	const triggerShake = (field : string) => {
-		shakeFields[field] = true
-		setTimeout(() => {
-			shakeFields[field] = false
-		}, 500)
-	}
-
 	const hasFieldError = (field : string) : boolean => {
-		return errors[field] !== undefined && errors[field] !== ''
+		return getErrorField(field) !== null && getErrorField(field) !== ''
 	}
 
 	const isFieldShaking = (field : string) : boolean => {
 		return shakeFields[field] === true
 	}
 
-	const onSwitchChange = (value : boolean, item : FormSchema) => {
-		model.value[item.field] = value
+	const getItemStateClass = (field : string) : string => {
+		const classes : Array<string> = []
+		if (hasFieldError(field)) {
+			classes.push('border-danger bg-danger-soft')
+		}
+		if (isFieldShaking(field)) {
+			classes.push('animate-shake-soft')
+		}
+		return classes.join(' ')
+	}
+
+	const getItemWrapperClass = (field : string) : string => {
+		const stateClass = getItemStateClass(field)
+		return stateClass === ''
+			? 'mb-4 overflow-visible rounded-md border border-transparent p-2 transition-all duration-300'
+			: `mb-4 overflow-visible rounded-md border border-transparent p-2 transition-all duration-300 ${stateClass}`
+	}
+
+	const getLayoutWrapperClass = (item : FormSchema) : string => {
+		const layoutClass = getItemLayout(item) === 'horizontal' ? 'flex flex-row items-start' : 'flex flex-col'
+		return `overflow-visible ${layoutClass}`
+	}
+
+	const getLabelWrapperClass = (item : FormSchema) : string => {
+		const layoutClass = getItemLayout(item) === 'horizontal' ? 'text-right' : 'mb-4 mr-0 text-left'
+		return `mb-3 mr-2 flex flex-row gap-1 text-base font-medium ${layoutClass}`
+	}
+
+	const getControlWrapperClass = (item : FormSchema) : string => {
+		return getItemLayout(item) === 'horizontal'
+			? 'w-full flex-1 overflow-visible min-w-0'
+			: 'w-full flex-1 overflow-visible'
+	}
+
+	const onSwitchChangeAny = (value : any, item : FormSchema) : void => {
+		setModelField(item.field, value === true)
 		validateField(item)
 	}
 
-	const onRateChange = (value : number, item : FormSchema) => {
-		model.value[item.field] = value
+	const onRateChangeAny = (value : any, item : FormSchema) : void => {
+		setModelField(item.field, value)
 		validateField(item)
 	}
 
-	const onSliderChange = (value : number, item : FormSchema) => {
-		model.value[item.field] = value
+	const onSliderChangeAny = (value : any, item : FormSchema) : void => {
+		setModelField(item.field, value)
 		validateField(item)
 	}
 
-	const onFormSubmit = async (_e : UniFormSubmitEvent) : Promise<FormSubmitResult> => {
+	const onFormSubmit = () : FormSubmitResult => {
 		clearErrors()
 
 		let hasError = false
 		for (const item of props.schemas) {
 			validateField(item)
-			if (item.required && isFieldEmpty(model.value[item.field])) {
+			if (item.required === true && isFieldEmpty(getModelField(item.field))) {
 				hasError = true
 			}
 		}
 
 		if (hasError) {
-			console.warn($t('form.validationFailed'))
+			console.warn($t('form.validationFailed', null))
 			return { valid: false, values: null }
 		}
 
-		try {
-			await emit('submit', model.value)
-			return { valid: true, values: model.value }
-		} catch (err) {
-			console.error($t('form.submitFailed'), err)
-			return { valid: false, values: null }
-		}
+		emit('submit', model.value)
+		return { valid: true, values: model.value }
 	}
 
 	const onFormReset = () => {
 		for (const item of props.schemas) {
-			model.value[item.field] = getDefaultFieldValue(item)
+			setModelField(item.field, getDefaultFieldValue(item))
 		}
 		clearErrors()
 		emit('reset')
 	}
 
 	defineExpose({
-		submit: async () => {
-			return await onFormSubmit({} as UniFormSubmitEvent)
+		submit: () => {
+			return onFormSubmit()
 		},
 		reset: () => {
 			onFormReset()
@@ -284,13 +415,13 @@
 			let hasError = false
 			for (const item of props.schemas) {
 				validateField(item)
-				if (item.required && isFieldEmpty(model.value[item.field])) {
+				if (item.required === true && isFieldEmpty(getModelField(item.field))) {
 					hasError = true
 				}
 			}
 			return !hasError
 		},
-		getFormData: () => ({ ...model.value }),
+		getFormData: () => model.value,
 		getErrors: () => getActiveErrors()
 	})
 </script>
@@ -300,75 +431,84 @@
 		<form @submit="onFormSubmit" @reset="onFormReset">
 			<view
 				v-for="(item, index) in schemas"
-				class="mb-4 overflow-visible rounded-[12rpx] border-[2rpx] border-transparent p-2 transition-all duration-300"
-				:class="[
-					hasFieldError(item.field) ? 'border-[#ff4d4f] bg-[#fff1f0]' : '',
-					isFieldShaking(item.field) ? 'animate-shake-soft' : ''
-				]"
+				:class="getItemWrapperClass(item.field)"
 				:key="index">
 				<view
-					class="overflow-visible"
-					:class="getItemLayout(item) === 'horizontal'
-						? 'flex flex-row items-start'
-						: 'flex flex-col'">
+					:class="getLayoutWrapperClass(item)">
 					<view
-						class="mb-3 mr-2 flex flex-row gap-1 text-base font-medium"
-						:class="getItemLayout(item) === 'horizontal' ? 'text-right' : 'mb-4 mr-0 text-left'">
+						:class="getLabelWrapperClass(item)">
 						<text
-							class="w-full break-all text-justify [text-align-last:justify] [text-justify:inter-ideograph] tracking-[0.1em]"
-							:style="{ width: getItemLayout(item) === 'horizontal' ? getItemLabelWidth(item) : labelWidth }">{{ item.label }}</text>
+							class="w-full break-all text-justify twx-text-align-last-justify twx-text-justify-ideograph twx-tracking-01em"
+							:style="getItemLabelStyle(item)">{{ item.label }}</text>
 							<view  class="w-2">
-								<text  v-show="item.required" class=" text-red-500">*</text>
+								<text v-if="item.required === true" class="text-red-500">*</text>
 							</view>
 					</view>
 
-					<view class="w-full flex-1 overflow-visible" :class="getItemLayout(item) === 'horizontal' ? 'min-w-0' : ''">
+					<view :class="getControlWrapperClass(item)">
 					<!-- 自定义插槽 -->
-					<slot :name="item.field" :item="item" :value="model[item.field]"
-						:error="errors[item.field]">
+					<slot :name="item.field" :item="item" :value="getSlotValue(item.field)"
+						:error="getErrorField(item.field)">
 
 					<!-- 输入框 -->
 					<TInput v-if="item.component === 'Input'"
-						v-model="model[item.field]"
-						v-bind="getInputProps(item, getInputType(item))"
+						:model-value="getInputModelValue(item.field)"
+						:type="getInputType(item)"
+						:placeholder="handlePlaceholder(item)"
+						:disabled="getDisabled(item)"
+						:maxlength="getMaxLength(item)"
+						:auto-focus="getAutoFocus(item)"
+						@update:modelValue="onFieldValueUpdate($event, item)"
 						@input="validateField(item)"
 						@change="validateField(item)" />
 
 					<!-- 数字输入 -->
 					<TInput v-else-if="item.component === 'InputNumber'"
-						v-model="model[item.field]"
-						v-bind="getInputProps(item, 'number')"
+						:model-value="getInputModelValue(item.field)"
+						type="number"
+						:placeholder="handlePlaceholder(item)"
+						:disabled="getDisabled(item)"
+						:maxlength="getMaxLength(item)"
+						:auto-focus="getAutoFocus(item)"
+						@update:modelValue="onFieldValueUpdate($event, item)"
 						@input="validateField(item)"
 						@change="validateField(item)" />
 
 					<!-- 文本域 -->
 					<TInput v-else-if="item.component === 'Textarea'"
-						v-model="model[item.field]"
-						v-bind="getInputProps(item, 'textarea')"
+						:model-value="getInputModelValue(item.field)"
+						type="textarea"
+						:placeholder="handlePlaceholder(item)"
+						:disabled="getDisabled(item)"
+						:maxlength="getMaxLength(item)"
+						:auto-height="getAutoHeight(item)"
+						:auto-focus="getAutoFocus(item)"
+						@update:modelValue="onFieldValueUpdate($event, item)"
 						@input="validateField(item)"
 						@change="validateField(item)" />
 
 					<!-- 下拉选择 -->
 					<TSelect v-else-if="item.component === 'Select'"
-						v-model="model[item.field]"
+						:model-value="getSelectModelValue(item.field)"
 						:options="getSelectOptions(item)"
 						:placeholder="getSelectPlaceholder(item)"
-						v-bind="getComponentProps(item)"
+						:disabled="getDisabled(item)"
+						@update:modelValue="onFieldValueUpdate($event, item)"
 						@change="validateField(item)" />
 
 					<!-- 日期选择 -->
 					<view
 						v-else-if="item.component === 'Date'"
-						class="flex w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
+						class="flex w-full items-center rounded-lg border border-solid border-form-field bg-action-divider px-3 text-sm transition-all duration-300 active:border-primary-color active:bg-white"
 						@click="openPicker(item.field)">
 						<text :class="getPickerTextClass(item)">{{ getPickerDisplayText(item, 'form.datePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Date'"
-						v-model="pickerVisible[item.field]"
-						:value="pickerValues[item.field]"
+						:model-value="getPickerVisible(item.field)"
+						:value="getPickerValue(item.field)"
 						mode="date"
-						v-bind="getComponentProps(item)"
+						@update:modelValue="onPickerVisibleUpdateAny($event, item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
 						@cancel="onDateTimeCancel(item.field)"
 					/>
@@ -376,60 +516,97 @@
 					<!-- 时间选择 -->
 					<view
 						v-else-if="item.component === 'Time'"
-						class="flex h-[80rpx] w-full items-center rounded-[8rpx] border border-solid border-[#e0e0e0] bg-[#f5f5f5] px-3 text-[28rpx] transition-all duration-300 active:border-[#007aff] active:bg-white"
+						class="flex h-10 w-full items-center rounded-lg border border-solid border-form-field bg-action-divider px-3 text-sm transition-all duration-300 active:border-primary-color active:bg-white"
 						@click="openPicker(item.field)">
 						<text :class="getPickerTextClass(item)">{{ getPickerDisplayText(item, 'form.timePlaceholder') }}</text>
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Time'"
-						v-model="pickerVisible[item.field]"
-						:value="pickerValues[item.field]"
+						:model-value="getPickerVisible(item.field)"
+						:value="getPickerValue(item.field)"
 						mode="datetime"
-						v-bind="getComponentProps(item)"
+						@update:modelValue="onPickerVisibleUpdateAny($event, item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
 						@cancel="onDateTimeCancel(item.field)"
 					/>
 
 					<!-- 单选 -->
-					<TRadioGroup v-else-if="item.component === 'Radio'" v-model="model[item.field]"
-						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
-						v-bind="getComponentProps(item)" @change="validateField(item)" />
+					<TRadioGroup v-else-if="item.component === 'Radio'" :model-value="getRadioModelValue(item.field)"
+						:options="getSelectOptions(item)"
+						@update:modelValue="onFieldValueUpdate($event, item)" @change="validateField(item)" />
 
 					<!-- 多选 -->
-					<TCheckboxGroup v-else-if="item.component === 'Checkbox'" v-model="model[item.field]"
-						:options="(item.componentProps?.options as FormOption[])" :name="item.field"
-						v-bind="getComponentProps(item)" @change="validateField(item)" />
+					<TCheckboxGroup v-else-if="item.component === 'Checkbox'" :model-value="getStringArrayFieldValue(item.field)"
+						:options="getSelectOptions(item)" :name="item.field"
+						@update:modelValue="onFieldValueUpdate($event, item)" @change="validateField(item)" />
 
 					<!-- 开关 -->
-					<TSwitch v-else-if="item.component === 'Switch'" :checked="model[item.field]"
-					v-bind="getComponentProps(item)" @change="onSwitchChange($event, item)" />
+					<TSwitch v-else-if="item.component === 'Switch'" :model-value="getBooleanFieldValue(item.field)"
+						@change="onSwitchChangeAny($event, item)" />
 
 					<!-- 评分 -->
-					<TRate v-else-if="item.component === 'Rate'" :value="getNumericFieldValue(item.field)"
-						v-bind="getComponentProps(item)" @change="onRateChange($event, item)" />
+					<TRate v-else-if="item.component === 'Rate'" :model-value="getNumericFieldValue(item.field)"
+						:max="getMax(item, 5)"
+						@change="onRateChangeAny($event, item)" />
 
 					<!-- 滑块 -->
-					<TSlider v-else-if="item.component === 'Slider'" :value="getNumericFieldValue(item.field)"
-						v-bind="getComponentProps(item)" @change="onSliderChange($event, item)" />
+					<TSlider v-else-if="item.component === 'Slider'" :model-value="getNumericFieldValue(item.field)"
+						:min="getMin(item)"
+						:max="getMax(item, 100)"
+						:step="getStep(item)"
+						@change="onSliderChangeAny($event, item)" />
 						</slot>
 					</view>
 				</view>
 
 				<!-- 错误提示 -->
 				<view v-if="hasFieldError(item.field)" class="mt-2">
-					<text class="text-sm text-red-500">{{ errors[item.field] }}</text>
+					<text class="text-sm text-red-500">{{ getErrorField(item.field) }}</text>
 				</view>
 			</view>
 
 			<!-- 按钮区域 -->
 			<view v-if="!hideButtons" class="mt-12 flex flex-row gap-6">
 				<button
-					class="h-[88rpx] flex-1 rounded-[8rpx] bg-[#007aff] text-center text-[32rpx] text-white transition-all duration-300 active:scale-[0.98] active:opacity-70"
+					class="h-11 flex-1 rounded-lg bg-primary-color text-center text-base text-white transition-all duration-300 active:scale-95 active:opacity-70"
 					form-type="submit">{{ submitButtonText }}</button>
 				<button
-					class="h-[88rpx] flex-1 rounded-[8rpx] border border-solid border-[#007aff] bg-white text-center text-[32rpx] text-[#007aff] transition-all duration-300 active:scale-[0.98] active:opacity-70"
+					class="h-11 flex-1 rounded-lg border border-solid border-primary-color bg-white text-center text-base text-primary-color transition-all duration-300 active:scale-95 active:opacity-70"
 					form-type="reset">{{ resetButtonText }}</button>
 			</view>
 		</form>
 	</view>
 </template>
+
+<style scoped>
+.twx-text-align-last-justify {
+	text-align-last: justify;
+}
+.twx-text-justify-ideograph {
+	text-justify: inter-ideograph;
+}
+.twx-tracking-01em {
+	letter-spacing: 0.1em;
+}
+.border-form-field {
+	border-color: #e0e0e0;
+}
+.border-danger {
+	border-color: #ff4d4f;
+}
+.bg-danger-soft {
+	background-color: #fff1f0;
+}
+.border-primary-color {
+	border-color: var(--primary-color);
+}
+.bg-primary-color {
+	background-color: var(--primary-color);
+}
+.text-primary-color {
+	color: var(--primary-color);
+}
+.active\:border-primary-color:active {
+	border-color: var(--primary-color);
+}
+</style>

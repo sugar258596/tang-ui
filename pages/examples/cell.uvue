@@ -1,13 +1,54 @@
 <script  setup lang="uts" >
-import TCell from '@/components/TCell'
-import TCard from '@/components/TCard'
+import TCell from '@/components/TCell/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 单元格组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const pageTitle = t('examplePages.cell.title')
+const pageDescription = t('examplePages.cell.description')
+const basicTitle = t('examplePages.cell.sections.basic')
+const withIconTitle = t('examplePages.cell.sections.withIcon')
+const showArrowTitle = t('examplePages.cell.groups.showArrow')
+const clickableCellTitle = t('examplePages.cell.groups.clickableCell')
+const customSizeTitle = t('examplePages.cell.groups.customSize')
+const customContentTitle = t('examplePages.cell.groups.customContent')
+const groupTitle = t('examplePages.cell.groups.group')
+const requiredTitle = t('examplePages.cell.groups.required')
+const cellText = t('examplePages.cell.labels.cell')
+const contentText = t('examplePages.cell.labels.content')
+const descriptionText = t('examplePages.cell.labels.description')
+const settingsText = t('examplePages.cell.labels.settings')
+const messageText = t('examplePages.cell.labels.message')
+const notificationText = t('examplePages.cell.labels.notification')
+const enabledText = t('examplePages.cell.labels.enabled')
+const personalInfoText = t('examplePages.cell.labels.personalInfo')
+const systemSettingsText = t('examplePages.cell.labels.systemSettings')
+const enterText = t('examplePages.cell.labels.enter')
+const aboutUsText = t('examplePages.cell.labels.aboutUs')
+const clickableText = t('examplePages.cell.labels.clickable')
+const notClickableText = t('examplePages.cell.labels.notClickable')
+const largeCellText = t('examplePages.cell.labels.largeCell')
+const defaultCellText = t('examplePages.cell.labels.defaultCell')
+const smallCellText = t('examplePages.cell.labels.smallCell')
+const customTitleText = t('examplePages.cell.labels.customTitle')
+const verifiedText = t('examplePages.cell.labels.verified')
+const basicSettingsText = t('examplePages.cell.labels.basicSettings')
+const accountManagementText = t('examplePages.cell.labels.accountManagement')
+const privacySettingsText = t('examplePages.cell.labels.privacySettings')
+const notificationSettingsText = t('examplePages.cell.labels.notificationSettings')
+const otherText = t('examplePages.cell.labels.other')
+const clearCacheText = t('examplePages.cell.labels.clearCache')
+const logoutText = t('examplePages.cell.labels.logout')
+const usernameText = t('examplePages.cell.labels.username')
+const phoneText = t('examplePages.cell.labels.phone')
+const pleaseEnterText = t('examplePages.cell.labels.pleaseEnter')
+const emailText = t('examplePages.cell.labels.email')
+const optionalText = t('examplePages.cell.labels.optional')
 
 const handleClick = (): void => {
   console.log('单元格被点击')
@@ -17,74 +58,74 @@ const handleClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.cell.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.cell.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.cell.sections.basic')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.cell')" :value="$t('examplePages.cell.labels.content')" />
-      <TCell :title="$t('examplePages.cell.labels.cell')" :value="$t('examplePages.cell.labels.content')" :description="$t('examplePages.cell.labels.description')" />
+    <TCard :title="basicTitle" class="example-section">
+      <TCell :title="cellText" :value="contentText" />
+      <TCell :title="cellText" :value="contentText" :description="descriptionText" />
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.sections.withIcon')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.settings')" icon="⚙️" />
-      <TCell :title="$t('examplePages.cell.labels.message')" icon="💬" value="3" />
-      <TCell :title="$t('examplePages.cell.labels.notification')" icon="🔔" :value="$t('examplePages.cell.labels.enabled')" />
+    <TCard :title="withIconTitle" class="example-section">
+      <TCell :title="settingsText" icon="⚙️" />
+      <TCell :title="messageText" icon="💬" value="3" />
+      <TCell :title="notificationText" icon="🔔" :value="enabledText" />
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.showArrow')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.personalInfo')" isLink />
-      <TCell :title="$t('examplePages.cell.labels.systemSettings')" isLink :value="$t('examplePages.cell.labels.enter')" />
-      <TCell :title="$t('examplePages.cell.labels.aboutUs')" isLink />
+    <TCard :title="showArrowTitle" class="example-section">
+      <TCell :title="personalInfoText" isLink />
+      <TCell :title="systemSettingsText" isLink :value="enterText" />
+      <TCell :title="aboutUsText" isLink />
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.clickableCell')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.clickable')" isLink clickable @click="handleClick" />
-      <TCell :title="$t('examplePages.cell.labels.notClickable')" />
+    <TCard :title="clickableCellTitle" class="example-section">
+      <TCell :title="clickableText" isLink clickable @click="handleClick" />
+      <TCell :title="notClickableText" />
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.customSize')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.largeCell')" size="large" isLink />
-      <TCell :title="$t('examplePages.cell.labels.defaultCell')" isLink />
-      <TCell :title="$t('examplePages.cell.labels.smallCell')" size="small" isLink />
+    <TCard :title="customSizeTitle" class="example-section">
+      <TCell :title="largeCellText" size="large" isLink />
+      <TCell :title="defaultCellText" isLink />
+      <TCell :title="smallCellText" size="small" isLink />
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.customContent')" class="example-section">
+    <TCard :title="customContentTitle" class="example-section">
       <TCell>
         <template #title>
-          <view style="display: flex; align-items: center;">
-            <text style="font-size: 20px; margin-right: 8px;">🏠</text>
-            <text>{{ $t('examplePages.cell.labels.customTitle') }}</text>
+          <view class="flex items-center">
+            <text class="text-xl mr-2">🏠</text>
+            <text>{{ customTitleText }}</text>
           </view>
         </template>
         <template #value>
-          <view style="display: flex; align-items: center;">
-            <text style="color: #67c23a;">{{ $t('examplePages.cell.labels.verified') }}</text>
-            <text style="margin-left: 8px;">✓</text>
+          <view class="flex items-center">
+            <text class="twx-text-success">{{ verifiedText }}</text>
+            <text class="ml-2">✓</text>
           </view>
         </template>
       </TCell>
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.group')" class="example-section">
+    <TCard :title="groupTitle" class="example-section">
       <view class="cell-group">
-        <text class="group-title">{{ $t('examplePages.cell.labels.basicSettings') }}</text>
-        <TCell :title="$t('examplePages.cell.labels.accountManagement')" isLink />
-        <TCell :title="$t('examplePages.cell.labels.privacySettings')" isLink />
-        <TCell :title="$t('examplePages.cell.labels.notificationSettings')" isLink :value="$t('examplePages.cell.labels.enabled')" />
+        <text class="group-title">{{ basicSettingsText }}</text>
+        <TCell :title="accountManagementText" isLink />
+        <TCell :title="privacySettingsText" isLink />
+        <TCell :title="notificationSettingsText" isLink :value="enabledText" />
       </view>
-      <view class="cell-group" style="margin-top: 20px;">
-        <text class="group-title">{{ $t('examplePages.cell.labels.other') }}</text>
-        <TCell :title="$t('examplePages.cell.labels.clearCache')" isLink value="12.3MB" />
-        <TCell :title="$t('examplePages.cell.labels.aboutUs')" isLink />
-        <TCell :title="$t('examplePages.cell.labels.logout')" isLink />
+      <view class="cell-group mt-5">
+        <text class="group-title">{{ otherText }}</text>
+        <TCell :title="clearCacheText" isLink value="12.3MB" />
+        <TCell :title="aboutUsText" isLink />
+        <TCell :title="logoutText" isLink />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.cell.groups.required')" class="example-section">
-      <TCell :title="$t('examplePages.cell.labels.username')" required />
-      <TCell :title="$t('examplePages.cell.labels.phone')" required :value="$t('examplePages.cell.labels.pleaseEnter')" />
-      <TCell :title="$t('examplePages.cell.labels.email')" :value="$t('examplePages.cell.labels.optional')" />
+    <TCard :title="requiredTitle" class="example-section">
+      <TCell :title="usernameText" required />
+      <TCell :title="phoneText" required :value="pleaseEnterText" />
+      <TCell :title="emailText" :value="optionalText" />
     </TCard>
   </view>
 </template>
@@ -129,5 +170,9 @@ const handleClick = (): void => {
   font-size: 14px;
   color: #909399;
   background-color: #f5f5f5;
+}
+
+.twx-text-success {
+  color: #67c23a;
 }
 </style>

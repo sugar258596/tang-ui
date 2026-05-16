@@ -1,50 +1,57 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TActionSheet from '@/components/TActionSheet'
+import TActionSheet from '@/components/TActionSheet/index.uvue'
 import type { ActionSheetAction } from '@/components/TActionSheet/type.uts'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const show1 = ref(false)
 const show2 = ref(false)
 const show3 = ref(false)
 
 const actions: ActionSheetAction[] = [
-  { name: $t('examplePages.actionSheet.actions.option1') },
-  { name: $t('examplePages.actionSheet.actions.option2') },
-  { name: $t('examplePages.actionSheet.actions.option3') }
+  { name: t('examplePages.actionSheet.actions.option1') },
+  { name: t('examplePages.actionSheet.actions.option2') },
+  { name: t('examplePages.actionSheet.actions.option3') }
 ]
 
 const actions2: ActionSheetAction[] = [
-  { name: $t('examplePages.actionSheet.actions.shareToFriend') },
-  { name: $t('examplePages.actionSheet.actions.shareToMoments') },
-  { name: $t('examplePages.actionSheet.actions.copyLink'), color: '#1890ff' },
-  { name: $t('examplePages.actionSheet.actions.delete'), color: '#f5222d' }
+  { name: t('examplePages.actionSheet.actions.shareToFriend') },
+  { name: t('examplePages.actionSheet.actions.shareToMoments') },
+  { name: t('examplePages.actionSheet.actions.copyLink'), color: '#1890ff' },
+  { name: t('examplePages.actionSheet.actions.delete'), color: '#f5222d' }
 ]
 
 const handleSelect = (action: ActionSheetAction, _index: number): void => {
   uni.showToast({
-    title: `${$t('examplePages.actionSheet.messages.selected')}：${action.name}`,
+    title: `${t('examplePages.actionSheet.messages.selected')}：${action.name}`,
     icon: 'none'
   })
 }
+
+const basicTitle = t('examplePages.actionSheet.sections.basic')
+const withTitleTitle = t('examplePages.actionSheet.sections.withTitle')
+const customColorTitle = t('examplePages.actionSheet.sections.customColor')
+const showButtonText = t('examplePages.actionSheet.buttons.show')
+const dialogTitle = t('examplePages.actionSheet.dialog.title')
+const dialogDescription = t('examplePages.actionSheet.dialog.description')
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.actionSheet.sections.basic')" padding="medium">
-      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show1 = true" />
+    <TCard :title="basicTitle" padding="medium">
+      <TButton :text="showButtonText" type="primary" block @click="show1 = true" />
     </TCard>
 
-    <TCard :title="$t('examplePages.actionSheet.sections.withTitle')" padding="medium">
-      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show2 = true" />
+    <TCard :title="withTitleTitle" padding="medium">
+      <TButton :text="showButtonText" type="primary" block @click="show2 = true" />
     </TCard>
 
-    <TCard :title="$t('examplePages.actionSheet.sections.customColor')" padding="medium">
-      <TButton :text="$t('examplePages.actionSheet.buttons.show')" type="primary" block @click="show3 = true" />
+    <TCard :title="customColorTitle" padding="medium">
+      <TButton :text="showButtonText" type="primary" block @click="show3 = true" />
     </TCard>
 
     <TActionSheet
@@ -56,8 +63,8 @@ const handleSelect = (action: ActionSheetAction, _index: number): void => {
     <TActionSheet
       v-model="show2"
       :actions="actions"
-      :title="$t('examplePages.actionSheet.dialog.title')"
-      :description="$t('examplePages.actionSheet.dialog.description')"
+      :title="dialogTitle"
+      :description="dialogDescription"
       @select="handleSelect"
     />
 

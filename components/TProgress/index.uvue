@@ -1,24 +1,12 @@
 <script setup lang="uts">
 import { computed } from 'vue'
-import type { ProgressType } from './type.uts'
+import type { TProgressProps } from './type.uts'
 
 /**
  * TProgress 进度条组件
  */
 
-interface Props {
-  percentage?: number
-  type?: ProgressType
-  color?: string
-  strokeWidth?: number
-  showText?: boolean
-  textColor?: string
-  animated?: boolean
-  customClass?: string
-  customStyle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TProgressProps>(), {
   percentage: 0,
   type: 'line',
   color: '#1890ff',
@@ -43,9 +31,9 @@ const progressStyle = computed((): string => {
 })
 
 const progressClass = computed((): string => {
-  const classes: string[] = ['t-progress-line__bar h-full rounded-[100px]']
+  const classes: string[] = ['t-progress-line__bar h-full rounded-full']
   if (props.animated) {
-    classes.push('transition-[width] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)]')
+    classes.push('twx-transition-width twx-duration-600 twx-ease-custom')
   }
   return classes.join(' ')
 })
@@ -58,7 +46,7 @@ const trackStyle = computed((): string => {
 <template>
   <view class="t-progress w-full" :class="customClass" :style="customStyle">
     <view v-if="type === 'line'" class="t-progress-line flex flex-row items-center">
-      <view class="t-progress-line__track flex-1 overflow-hidden rounded-[100px] bg-[#ebedf0]" :style="trackStyle">
+      <view class="t-progress-line__track flex-1 overflow-hidden rounded-full twx-bg-track" :style="trackStyle">
         <view :class="progressClass" :style="progressStyle"></view>
       </view>
       <text v-if="showText" class="t-progress-line__text ml-3 whitespace-nowrap text-sm" :style="`color: ${textColor}`">
@@ -67,3 +55,18 @@ const trackStyle = computed((): string => {
     </view>
   </view>
 </template>
+
+<style scoped>
+.twx-transition-width {
+  transition-property: width;
+}
+.twx-duration-600 {
+  transition-duration: 600ms;
+}
+.twx-ease-custom {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.twx-bg-track {
+  background-color: #ebedf0;
+}
+</style>

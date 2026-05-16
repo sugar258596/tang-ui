@@ -517,6 +517,7 @@
       "size": "不同尺寸",
       "shape": "不同形狀",
       "customColor": "自定義顏色",
+      "fallback": "加載失敗兜底圖",
       "fit": "圖片填充模式",
       "events": "帶事件",
       "customContent": "自定義內容"
@@ -597,6 +598,7 @@
     "sections": {
       "basic": "基礎用法",
       "card": "卡片風格",
+      "line": "橫線風格",
       "scrollable": "可滾動"
     }
   },

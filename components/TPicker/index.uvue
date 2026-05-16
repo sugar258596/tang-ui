@@ -11,57 +11,74 @@ import { useI18n } from '../../composables/useI18n.uts'
 
 // Props 定义 (从 type.uts 导入，排除 visible)
 type Props = Omit<TPickerProps, 'visible'>
-type PickerSelectedValue = string | number | (string | number)[] | null
+type PickerOptionValue = string | number
+type PickerSelectedValue = PickerOptionValue | Array<PickerOptionValue> | null
+type PickerChangeEventDetail = {
+  value: Array<number>
+}
+type PickerChangeEvent = {
+  detail: PickerChangeEventDetail | null
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  options: () => [] as TPickerOption[],
-  columns: () => [] as TPickerOption[][],
+  options: () => [] as Array<TPickerOption>,
+  columns: () => [] as Array<Array<TPickerOption>>,
   itemHeight: '44px',
   visibleItemCount: 5,
   showToolbar: true
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const visible = defineModel({ default: false })
+const visible = defineModel({ default: false }) as Ref<boolean>
 
 // 使用 defineModel 管理选中的值（使用命名模型）
 const selectedValue = defineModel('selectedValue', { default: null }) as Ref<PickerSelectedValue>
 
 // 定义 emits
 const emit = defineEmits<{
-  confirm: [value: any, index: number | number[], option: TPickerOption | TPickerOption[]]
+  confirm: [value: PickerSelectedValue, index: number | Array<number>, option: TPickerOption | Array<TPickerOption>]
   cancel: []
-  change: [value: any, index: number | number[], columnIndex: number]
+  change: [value: PickerSelectedValue, index: number | Array<number>, columnIndex: number]
 }>()
 
 // 使用 i18n
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
+}
 
 // 优先使用用户传入的值，否则使用翻译
-const displayTitle = computed(() => {
-  return props.title !== undefined && props.title !== '' 
-    ? props.title 
-    : $t('picker.title')
+const displayTitle = computed((): string => {
+  const title = props.title
+  if (hasTextValue(title)) {
+    return title as string
+  }
+  return t('picker.title')
 })
 
-const displayConfirmText = computed(() => {
-  return props.confirmText !== undefined && props.confirmText !== '' 
-    ? props.confirmText 
-    : $t('picker.confirmText')
+const displayConfirmText = computed((): string => {
+  const confirmText = props.confirmText
+  if (hasTextValue(confirmText)) {
+    return confirmText as string
+  }
+  return t('picker.confirmText')
 })
 
-const displayCancelText = computed(() => {
-  return props.cancelText !== undefined && props.cancelText !== '' 
-    ? props.cancelText 
-    : $t('picker.cancelText')
+const displayCancelText = computed((): string => {
+  const cancelText = props.cancelText
+  if (hasTextValue(cancelText)) {
+    return cancelText as string
+  }
+  return t('picker.cancelText')
 })
 
 // 当前选中的索引（单列为 number，多列为 number[]）
-const selectedIndex = ref<number[]>([0])
+const selectedIndex = ref<Array<number>>([0])
 
 const getPrimarySelectedIndex = (): number => {
   const index = selectedIndex.value[0]
-  return index !== undefined ? index : 0
+  return index !== null ? index : 0
 }
 
 /**
@@ -74,7 +91,7 @@ const isSingleColumn = computed(() => {
 /**
  * 计算列数据
  */
-const columnsData = computed<TPickerOption[][]>(() => {
+const columnsData = computed<Array<Array<TPickerOption>>>(() => {
   if (isSingleColumn.value) {
     return [props.options]
   }
@@ -90,18 +107,18 @@ const pickerHeight = computed(() => {
 })
 
 /**
- * 处理遮罩点击
- */
-const handleMaskClick = (): void => {
-  handleCancel()
-}
-
-/**
  * 处理取消
  */
 const handleCancel = (): void => {
   visible.value = false
   emit('cancel')
+}
+
+/**
+ * 处理遮罩点击
+ */
+const handleMaskClick = (): void => {
+  handleCancel()
 }
 
 /**
@@ -121,8 +138,8 @@ const handleConfirm = (): void => {
     }
   } else {
     // 多列模式
-    const values: any[] = []
-    const options: TPickerOption[] = []
+    const values: Array<PickerOptionValue> = []
+    const options: Array<TPickerOption> = []
 
     selectedIndex.value.forEach((idx: number, colIdx: number) => {
       const column = columns[colIdx]
@@ -142,10 +159,10 @@ const handleConfirm = (): void => {
 /**
  * 处理选择器改变
  */
-const handleChange = (e: any): void => {
+const handleChange = (e: PickerChangeEvent): void => {
   const detail = e.detail
   if (detail != null && detail.value != null) {
-    selectedIndex.value = detail.value as number[]
+    selectedIndex.value = detail.value as Array<number>
 
     // 触发 change 事件
     const columns = columnsData.value
@@ -158,7 +175,7 @@ const handleChange = (e: any): void => {
         emit('change', option.value, index, columnIndex)
       }
     } else {
-      const values: any[] = []
+      const values: Array<PickerOptionValue> = []
       selectedIndex.value.forEach((idx: number, colIdx: number) => {
         const column = columns[colIdx]
         if (column != null && column[idx] != null) {
@@ -172,22 +189,22 @@ const handleChange = (e: any): void => {
 </script>
 
 <template>
-  <view v-if="visible" class="t-picker fixed inset-0 z-[9999]">
+  <view v-if="visible" class="t-picker fixed inset-0 z-9999">
     <!-- 遮罩层 -->
     <view class="t-picker__mask absolute inset-0 bg-black/50" @click="handleMaskClick"></view>
 
     <!-- 选择器容器 -->
-    <view class="t-picker__container absolute bottom-0 left-0 right-0 z-[1] rounded-t-xl bg-white">
+    <view class="t-picker__container absolute bottom-0 left-0 right-0 rounded-t-xl bg-white">
       <!-- 工具栏 -->
-      <view v-if="showToolbar" class="t-picker__toolbar flex flex-row items-center justify-between border-b border-[#ebeef5] px-4 py-3">
+      <view v-if="showToolbar" class="t-picker__toolbar flex flex-row items-center justify-between border-b twx-border-picker px-4 py-3">
         <view class="t-picker__btn t-picker__btn--cancel cursor-pointer px-3 py-2" @click="handleCancel">
-          <text class="t-picker__btn-text text-base text-[#606266]">{{ displayCancelText }}</text>
+          <text class="t-picker__btn-text text-base text-secondary">{{ displayCancelText }}</text>
         </view>
         <view class="t-picker__title flex flex-1 items-center justify-center text-center">
-          <text class="t-picker__title-text text-base font-medium text-[#303133]">{{ displayTitle }}</text>
+          <text class="t-picker__title-text text-base font-medium text-primary">{{ displayTitle }}</text>
         </view>
         <view class="t-picker__btn t-picker__btn--confirm cursor-pointer px-3 py-2" @click="handleConfirm">
-          <text class="t-picker__btn-text t-picker__btn-text--primary text-base font-medium text-[#409eff]">{{ displayConfirmText }}</text>
+          <text class="t-picker__btn-text t-picker__btn-text--primary text-base font-medium twx-text-confirm">{{ displayConfirmText }}</text>
         </view>
       </view>
 
@@ -207,10 +224,22 @@ const handleChange = (e: any): void => {
             :class="{ 'opacity-40': item.disabled }"
             :style="`height: ${itemHeight}`"
           >
-            <text class="t-picker__item-text text-base text-[#303133]">{{ item.label }}</text>
+            <text class="t-picker__item-text text-base text-primary">{{ item.label }}</text>
           </view>
         </picker-view-column>
       </picker-view>
     </view>
   </view>
 </template>
+
+<style scoped>
+.z-9999 {
+  z-index: 9999;
+}
+.twx-border-picker {
+  border-color: #ebeef5;
+}
+.twx-text-confirm {
+  color: #409eff;
+}
+</style>

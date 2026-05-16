@@ -5,7 +5,7 @@
 /**
  * TNumberInput Props 接口
  */
-export interface TNumberInputProps {
+export type TNumberInputProps = {
   /**
    * 最小值
    * @default 0

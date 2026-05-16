@@ -20,14 +20,61 @@ const props = withDefaults(defineProps<TGridProps>(), {
   customStyle: ''
 })
 
+const emit = defineEmits<{
+  click: [index: number]
+}>()
+
+type GridContext = {
+  columns: number
+  border: boolean
+  borderColor: string
+  square: boolean
+  center: boolean
+  clickable: boolean
+  iconSize: string | number
+}
+
+const gridContext = computed((): GridContext => {
+  return {
+    columns: props.columns,
+    border: props.border,
+    borderColor: props.borderColor,
+    square: props.square,
+    center: props.center,
+    clickable: props.clickable,
+    iconSize: props.iconSize
+  }
+})
+
+let gridItemSeed: number = 0
+const gridItemIds: number[] = []
+
+const registerGridItem = (): number => {
+  const itemId = gridItemSeed
+  gridItemSeed += 1
+  gridItemIds.push(itemId)
+  return itemId
+}
+
+const unregisterGridItem = (itemId: number): void => {
+  const index = gridItemIds.indexOf(itemId)
+  if (index > -1) {
+    gridItemIds.splice(index, 1)
+  }
+}
+
+const handleGridItemClick = (itemId: number): void => {
+  const index = gridItemIds.indexOf(itemId)
+  if (index > -1) {
+    emit('click', index)
+  }
+}
+
 // 提供配置给子组件
-provide('gridColumns', props.columns)
-provide('gridBorder', props.border)
-provide('gridBorderColor', props.borderColor)
-provide('gridSquare', props.square)
-provide('gridCenter', props.center)
-provide('gridClickable', props.clickable)
-provide('gridIconSize', props.iconSize)
+provide('gridContext', gridContext)
+provide('gridRegisterItem', registerGridItem)
+provide('gridUnregisterItem', unregisterGridItem)
+provide('gridOnItemClick', handleGridItemClick)
 
 /**
  * 计算容器样式
@@ -41,7 +88,7 @@ const containerStyle = computed((): string => {
   // 间距
   if (typeof props.gap === 'number') {
     styles.push(`gap: ${props.gap}px`)
-  } else if (props.gap) {
+  } else if (props.gap !== '') {
     styles.push(`gap: ${props.gap}`)
   }
 
@@ -51,7 +98,7 @@ const containerStyle = computed((): string => {
   }
 
   // 自定义样式
-  if (props.customStyle) {
+  if (props.customStyle !== '') {
     styles.push(props.customStyle)
   }
 
@@ -68,7 +115,7 @@ const containerClasses = computed((): string => {
     classes.push('border-l', 'border-t')
   }
 
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 

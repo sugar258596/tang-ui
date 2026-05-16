@@ -5,7 +5,7 @@
 /**
  * TCell Props 接口
  */
-export interface TCellProps {
+export type TCellProps = {
   /**
    * 标题
    */

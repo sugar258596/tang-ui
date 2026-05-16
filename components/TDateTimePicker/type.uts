@@ -32,7 +32,25 @@ export type TDateTimePickerDayItem = {
 /**
  * 日期范围值类型
  */
-export type TDateTimePickerRangeValue = any
+export type TDateTimePickerRangeNumberObject = {
+  start: number
+  end: number
+}
+
+export type TDateTimePickerRangeStringObject = {
+  start: string
+  end: string
+}
+
+export type TDateTimePickerRangeNumberArray = Array<number>
+
+export type TDateTimePickerRangeStringArray = Array<string>
+
+export type TDateTimePickerRangeValue =
+  | TDateTimePickerRangeNumberObject
+  | TDateTimePickerRangeStringObject
+  | TDateTimePickerRangeNumberArray
+  | TDateTimePickerRangeStringArray
 
 /**
  * TDateTimePicker 时间选择器组件属性类型定义

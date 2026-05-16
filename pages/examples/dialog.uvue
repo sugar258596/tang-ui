@@ -1,21 +1,28 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TDialog from '@/components/TDialog'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TDialog from '@/components/TDialog/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 对话框组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const dialog1Visible = ref(false)
 const dialog2Visible = ref(false)
 const dialog3Visible = ref(false)
 const dialog4Visible = ref(false)
 const dialog5Visible = ref(false)
+
+const pageTitle = t('examplePages.dialog.title')
+const pageDescription = t('examplePages.dialog.description')
+const basicTitle = t('examplePages.dialog.sections.basic')
+const showButtonText = t('examplePages.dialog.buttons.show')
+const dialogTitle = t('examplePages.dialog.content.title')
+const dialogContent = t('examplePages.dialog.content.message')
 
 const handleConfirm = (): void => {
   console.log('确认按钮被点击')
@@ -30,18 +37,18 @@ const handleCancel = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.dialog.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.dialog.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.dialog.sections.basic')" class="example-section">
+    <TCard :title="basicTitle" class="example-section">
       <TButton type="primary" @click="dialog1Visible = true">
-        {{ $t('examplePages.dialog.buttons.show') }}
+        {{ showButtonText }}
       </TButton>
       <TDialog
         v-model="dialog1Visible"
-        :title="$t('examplePages.dialog.content.title')"
-        :content="$t('examplePages.dialog.content.message')"
+        :title="dialogTitle"
+        :content="dialogContent"
         @confirm="handleConfirm"
         @cancel="handleCancel"
       />
@@ -55,16 +62,16 @@ const handleCancel = (): void => {
         v-model="dialog2Visible"
         title="用户信息"
       >
-        <view style="padding: 10px 0;">
-          <text style="display: block; margin-bottom: 10px;">用户名：张三</text>
-          <text style="display: block; margin-bottom: 10px;">邮箱：zhangsan@example.com</text>
-          <text style="display: block;">电话：13800138000</text>
+        <view class="px-0 py-2.5">
+          <text class="block mb-2.5">用户名：张三</text>
+          <text class="block mb-2.5">邮箱：zhangsan@example.com</text>
+          <text class="block">电话：13800138000</text>
         </view>
       </TDialog>
     </TCard>
 
     <TCard title="不同按钮类型" class="example-section">
-      <view style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <view class="flex flex-wrap gap-2.5">
         <TButton type="success" @click="dialog3Visible = true">
           成功类型
         </TButton>

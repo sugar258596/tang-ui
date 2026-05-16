@@ -1,8 +1,8 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TTextarea from '@/components/TTextarea'
-import TCard from '@/components/TCard'
-import TText from '@/components/TText'
+import TTextarea from '@/components/TTextarea/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TText from '@/components/TText/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -31,7 +31,7 @@ const handleBlur = (): void => {
 const handleClear = (): void => {
   console.log('清空内容')
   uni.showToast({
-    title: $t('examplePages.textarea.messages.cleared'),
+    title: $t('examplePages.textarea.messages.cleared', null),
     icon: 'success'
   })
 }
@@ -40,69 +40,69 @@ const handleClear = (): void => {
 <template>
   <view class="demo-page">
     <!-- 基础用法 -->
-    <TCard :title="$t('examplePages.textarea.sections.basic')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.basic', null)" padding="medium">
       <TTextarea
         v-model="value1"
-        :placeholder="$t('examplePages.textarea.placeholder')"
+        :placeholder="$t('examplePages.textarea.placeholder', null)"
         @input="handleInput"
       />
     </TCard>
 
     <!-- 禁用状态 -->
-    <TCard :title="$t('examplePages.textarea.sections.disabled')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.disabled', null)" padding="medium">
       <TTextarea
         v-model="value2"
         :disabled="true"
-        :placeholder="$t('examplePages.textarea.labels.disabled')"
+        :placeholder="$t('examplePages.textarea.labels.disabled', null)"
       />
     </TCard>
 
     <!-- 字数统计 -->
-    <TCard :title="$t('examplePages.textarea.sections.maxlength')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.maxlength', null)" padding="medium">
       <TTextarea
         v-model="value3"
-        :placeholder="$t('examplePages.textarea.labels.limit100')"
+        :placeholder="$t('examplePages.textarea.labels.limit100', null)"
         :maxlength="100"
         :show-count="true"
       />
     </TCard>
 
     <!-- 自动高度 -->
-    <TCard :title="$t('examplePages.textarea.sections.autoHeight')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.autoHeight', null)" padding="medium">
       <TTextarea
         v-model="value4"
-        :placeholder="$t('examplePages.textarea.labels.autoGrow')"
+        :placeholder="$t('examplePages.textarea.labels.autoGrow', null)"
         :auto-height="true"
         :show-count="true"
       />
     </TCard>
 
     <!-- 显示清空按钮 -->
-    <TCard :title="$t('examplePages.textarea.sections.clearable')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.clearable', null)" padding="medium">
       <TTextarea
         v-model="value1"
-        :placeholder="$t('examplePages.textarea.labels.clearable')"
+        :placeholder="$t('examplePages.textarea.labels.clearable', null)"
         :clearable="true"
         @clear="handleClear"
       />
     </TCard>
 
     <!-- 自定义行数 -->
-    <TCard :title="$t('examplePages.textarea.sections.customRows')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.customRows', null)" padding="medium">
       <view class="demo-section">
-        <TText :text="$t('examplePages.textarea.labels.rows3')" size="small" color="secondary" custom-style="margin-bottom: 8px" />
-        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows3Height')" :rows="3" />
+        <TText :text="$t('examplePages.textarea.labels.rows3', null)" size="small" color="secondary" custom-style="margin-bottom: 8px" />
+        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows3Height', null)" :rows="3" />
 
-        <TText :text="$t('examplePages.textarea.labels.rows5')" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
-        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows5Height')" :rows="5" />
+        <TText :text="$t('examplePages.textarea.labels.rows5', null)" size="small" color="secondary" custom-style="margin: 16px 0 8px" />
+        <TTextarea :placeholder="$t('examplePages.textarea.labels.rows5Height', null)" :rows="5" />
       </view>
     </TCard>
 
     <!-- 完整示例 -->
-    <TCard :title="$t('examplePages.textarea.sections.complete')" padding="medium">
+    <TCard :title="$t('examplePages.textarea.sections.complete', null)" padding="medium">
       <TTextarea
         v-model="value3"
-        :placeholder="$t('examplePages.textarea.labels.feedback')"
+        :placeholder="$t('examplePages.textarea.labels.feedback', null)"
         :maxlength="200"
         :show-count="true"
         :clearable="true"

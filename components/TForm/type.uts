@@ -57,13 +57,13 @@ export type FormSchema = {
   /** 标签文本 */
   label: string
   /** 组件类型 */
-  component: 'Input' | 'Textarea' | 'Select' | 'Date' | 'Time' | 'Radio' | 'Checkbox' | 'Switch' | 'Rate' | 'Slider' | 'InputNumber'
+  component: string
   /** 是否必填 */
   required?: boolean
   /** 组件属性 */
   componentProps?: ComponentProps
   /** 单个配置项的布局方向（优先级高于整体 layout） */
-  layout?: 'horizontal' | 'vertical'
+  layout?: string
   /** 单个配置项的标签宽度（优先级高于整体 labelWidth） */
   labelWidth?: string
 }
@@ -77,7 +77,7 @@ export type TFormProps = {
   /** 标签宽度 */
   labelWidth?: string
   /** 表单项布局方向 */
-  layout?: 'horizontal' | 'vertical'
+  layout?: string
   /** 是否隐藏默认按钮 */
   hideButtons?: boolean
   /** 提交按钮文本 */

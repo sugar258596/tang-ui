@@ -2,6 +2,8 @@
  * 全局类型定义
  */
 
+import type { Ref } from 'vue'
+
 /**
  * 组件类型
  */
@@ -104,6 +106,17 @@ export type ThemeConfig = {
    * 字体大小
    */
   fontSize: string
+}
+
+export type UseThemeReturn = {
+  theme: ThemeConfig
+  isDarkMode: Ref<boolean>
+  setTheme: (theme: ThemeConfig) => void
+  resetTheme: () => void
+  toggleDarkMode: (dark?: boolean) => void
+  getColor: (type: string) => string
+  loadTheme: () => void
+  defaultTheme: ThemeConfig
 }
 
 /**

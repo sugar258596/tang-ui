@@ -4,6 +4,7 @@
  * 参考 RadioButton 和 CheckboxButton 组件设计
  */
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TCheckboxProps } from './type.uts'
 
 const props = withDefaults(defineProps<TCheckboxProps>(), {
@@ -15,16 +16,20 @@ const props = withDefaults(defineProps<TCheckboxProps>(), {
   borderWidth: 2
 })
 
-const model = defineModel({ default: false })
+const model = defineModel({ default: false }) as Ref<boolean>
 
 const emit = defineEmits<{
   change: [value: boolean]
-  click: [event: any]
+  click: [event: object]
 }>()
 
 const isChecked = computed(() => {
   return model.value === true
 })
+
+const isCheckedValue = (): boolean => {
+  return isChecked.value
+}
 
 const getCheckboxSize = (): number => {
   switch (props.size) {
@@ -58,10 +63,10 @@ const cssVars = computed(() => ({
 
 const checkboxClass = computed(() => {
   const classes: string[] = [
-    'relative flex flex-row items-center gap-[12rpx] transition-all duration-200',
+    't-checkbox relative flex flex-row items-center transition-all duration-200',
   ]
 
-  if (props.disabled) {
+  if (props.disabled == true) {
     classes.push('opacity-50')
   } else {
     classes.push('active:scale-95 cursor-pointer')
@@ -71,8 +76,8 @@ const checkboxClass = computed(() => {
 })
 
 const iconClass = computed(() => {
-  const classes: string[] = ['flex items-center justify-center bg-white transition-all duration-200']
-  classes.push(props.square ? 'rounded-[8rpx]' : 'rounded-full')
+  const classes: string[] = ['t-checkbox__icon flex items-center justify-center bg-white transition-all duration-200']
+  classes.push(props.square == true ? 't-checkbox__icon--square' : 't-checkbox__icon--round')
   return classes.join(' ')
 })
 
@@ -103,10 +108,10 @@ const checkmarkStyle = computed(() => {
 })
 
 // 处理点击事件
-const handleClick = (event: any) => {
-  if (props.disabled) return
+const handleClick = (event: object): void => {
+  if (props.disabled == true) return
 
-  const newValue = !model.value
+  const newValue = isChecked.value !== true
   model.value = newValue
   emit('change', newValue)
   emit('click', event)
@@ -114,7 +119,7 @@ const handleClick = (event: any) => {
 
 // 处理触摸事件
 const handleTouchStart = () => {
-  if (props.disabled) return
+  if (props.disabled == true) return
   // 可以添加触摸反馈效果
 }
 </script>
@@ -128,7 +133,7 @@ const handleTouchStart = () => {
   >
     <view :class="iconClass" :style="checkboxStyle">
       <!-- 选中状态的图标 -->
-      <view v-if="isChecked" class="flex items-center justify-center" :style="`width: var(--checkbox-icon-size); height: var(--checkbox-icon-size);`">
+      <view v-if="isCheckedValue()" class="flex items-center justify-center" :style="`width: var(--checkbox-icon-size); height: var(--checkbox-icon-size);`">
         <text class="font-bold text-white" :style="checkmarkStyle">✓</text>
       </view>
 
@@ -136,8 +141,22 @@ const handleTouchStart = () => {
       <slot v-else name="unchecked"></slot>
     </view>
 
-    <view v-if="$slots.default" class="min-w-0 flex-1">
+    <view class="t-checkbox__content min-w-0 flex-1">
       <slot></slot>
     </view>
   </view>
 </template>
+
+<style>
+.t-checkbox__icon--square {
+  border-radius: 8rpx;
+}
+
+.t-checkbox__icon--round {
+  border-radius: 9999rpx;
+}
+
+.t-checkbox__content {
+  margin-left: 12rpx;
+}
+</style>

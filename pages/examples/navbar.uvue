@@ -1,39 +1,39 @@
 <script setup lang="uts">
-import TNavBar from '@/components/TNavBar'
-import TCard from '@/components/TCard'
+import TNavBar from '@/components/TNavBar/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const handleClickLeft = (): void => {
-  uni.showToast({ title: $t('examplePages.navbar.messages.clickLeft'), icon: 'none' })
+  uni.showToast({ title: t('examplePages.navbar.messages.clickLeft'), icon: 'none' })
 }
 
 const handleClickRight = (): void => {
-  uni.showToast({ title: $t('examplePages.navbar.messages.clickRight'), icon: 'none' })
+  uni.showToast({ title: t('examplePages.navbar.messages.clickRight'), icon: 'none' })
 }
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.navbar.sections.basic')" padding="none">
-      <TNavBar :title="$t('examplePages.navbar.labels.title')" />
+    <TCard :title="t('examplePages.navbar.sections.basic')" padding="none">
+      <TNavBar :title="t('examplePages.navbar.labels.title')" />
     </TCard>
 
-    <TCard :title="$t('examplePages.navbar.sections.leftBack')" padding="none">
-      <TNavBar :title="$t('examplePages.navbar.labels.title')" left-icon="←" :left-text="$t('examplePages.navbar.labels.back')" @click-left="handleClickLeft" />
+    <TCard :title="t('examplePages.navbar.sections.leftBack')" padding="none">
+      <TNavBar :title="t('examplePages.navbar.labels.title')" left-icon="←" :left-text="t('examplePages.navbar.labels.back')" @click-left="handleClickLeft" />
     </TCard>
 
-    <TCard :title="$t('examplePages.navbar.sections.rightButton')" padding="none">
-      <TNavBar :title="$t('examplePages.navbar.labels.title')" :right-text="$t('examplePages.navbar.labels.button')" @click-right="handleClickRight" />
+    <TCard :title="t('examplePages.navbar.sections.rightButton')" padding="none">
+      <TNavBar :title="t('examplePages.navbar.labels.title')" :right-text="t('examplePages.navbar.labels.button')" @click-right="handleClickRight" />
     </TCard>
 
-    <TCard :title="$t('examplePages.navbar.sections.bothButtons')" padding="none">
+    <TCard :title="t('examplePages.navbar.sections.bothButtons')" padding="none">
       <TNavBar
-        :title="$t('examplePages.navbar.labels.title')"
+        :title="t('examplePages.navbar.labels.title')"
         left-icon="←"
-        :left-text="$t('examplePages.navbar.labels.back')"
-        :right-text="$t('examplePages.navbar.labels.more')"
+        :left-text="t('examplePages.navbar.labels.back')"
+        :right-text="t('examplePages.navbar.labels.more')"
         @click-left="handleClickLeft"
         @click-right="handleClickRight"
       />

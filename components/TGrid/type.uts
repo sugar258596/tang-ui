@@ -5,7 +5,7 @@
 /**
  * TGrid Props 接口
  */
-export interface TGridProps {
+export type TGridProps = {
   /**
    * 列数
    * @default 4

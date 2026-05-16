@@ -51,7 +51,7 @@ const buttonClasses = computed((): string => {
 
   switch (props.shape) {
     case 'round':
-      classes.push('rounded-[999px]')
+      classes.push('rounded-full')
       break
     case 'circle':
       classes.push('rounded-full p-0')
@@ -87,40 +87,40 @@ const buttonClasses = computed((): string => {
     case 'primary':
       classes.push(
         props.plain
-          ? 'border-[#b3d8ff] bg-[#ecf5ff] text-[#409eff]'
-          : 'border-[#409eff] bg-[#409eff] text-white'
+          ? 'border-blue-200 bg-blue-50 text-blue-500'
+          : 'border-blue-500 bg-blue-500 text-white'
       )
       break
     case 'success':
       classes.push(
         props.plain
-          ? 'border-[#c2e7b0] bg-[#f0f9ff] text-[#67c23a]'
-          : 'border-[#67c23a] bg-[#67c23a] text-white'
+          ? 'border-green-200 bg-green-50 text-green-500'
+          : 'border-green-500 bg-green-500 text-white'
       )
       break
     case 'warning':
       classes.push(
         props.plain
-          ? 'border-[#f5dab1] bg-[#fdf6ec] text-[#e6a23c]'
-          : 'border-[#e6a23c] bg-[#e6a23c] text-white'
+          ? 'border-orange-200 bg-orange-50 text-orange-400'
+          : 'border-orange-400 bg-orange-400 text-white'
       )
       break
     case 'danger':
       classes.push(
         props.plain
-          ? 'border-[#fbc4c4] bg-[#fef0f0] text-[#f56c6c]'
-          : 'border-[#f56c6c] bg-[#f56c6c] text-white'
+          ? 'border-red-200 bg-red-50 text-red-400'
+          : 'border-red-400 bg-red-400 text-white'
       )
       break
     case 'info':
       classes.push(
         props.plain
-          ? 'border-[#d3d4d6] bg-[#f4f4f5] text-[#909399]'
-          : 'border-[#909399] bg-[#909399] text-white'
+          ? 'border-zinc-300 bg-zinc-100 text-zinc-400'
+          : 'border-zinc-400 bg-zinc-400 text-white'
       )
       break
     default:
-      classes.push('border-[#dcdfe6] bg-white text-[#606266]')
+      classes.push('border-gray-300 bg-white text-gray-600')
       break
   }
 
@@ -185,3 +185,10 @@ const handleClick = () => {
     </view>
   </button>
 </template>
+
+<style>
+.transition-all {
+	transition-property: all;
+	transition-duration: 300ms;
+}
+</style>

@@ -10,7 +10,7 @@ export type ProgressType = 'line' | 'circle'
 /**
  * TProgress Props 接口
  */
-export interface TProgressProps {
+export type TProgressProps = {
   /**
    * 进度百分比
    * @default 0

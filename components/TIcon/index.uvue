@@ -40,7 +40,7 @@
 			styles.push('font-weight: bold')
 		}
 
-		if (props.customStyle) {
+		if (props.customStyle !== '') {
 			styles.push(props.customStyle)
 		}
 
@@ -51,16 +51,16 @@
 	const iconClass = computed(() : string => {
 		const classes : string[] = ['inline-block', 'leading-none', 'iconfont']
 
-		if (props.name) {
+		if (props.name.length > 0) {
 			// 支持传入 icon-xxx 或直接传入 xxx
-			if (props.name.startsWith('icon-')) {
+			if (props.name.indexOf('icon-') == 0) {
 				classes.push(props.name)
 			} else {
 				classes.push(`icon-${props.name}`)
 			}
 		}
 
-		if (props.customClass) {
+		if (props.customClass !== '') {
 			classes.push(props.customClass)
 		}
 

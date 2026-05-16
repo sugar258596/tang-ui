@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TTextareaProps } from './type.uts'
 
 /**
@@ -25,21 +26,28 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理双向绑定
-const modelValue = defineModel({ default: '' })
+const modelValue = defineModel({ default: '' }) as Ref<string>
 
 // Emits 定义
 const emit = defineEmits<{
   input: [value: string]
-  focus: [event: Event]
-  blur: [event: Event]
+  focus: [event: object]
+  blur: [event: object]
   clear: []
 }>()
+
+type TextareaInputEventDetail = {
+  value: string
+}
+type TextareaInputEvent = {
+  detail: TextareaInputEventDetail
+}
 
 // 状态管理
 const isFocused = ref(false)
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const showFooter = computed((): boolean => {
@@ -62,15 +70,15 @@ const currentLength = computed((): number => {
  */
 const containerClasses = computed((): string => {
   const classes: string[] = [
-    't-textarea relative rounded border border-[#dcdfe6] bg-white px-3 py-2 transition-colors duration-200',
+    't-textarea relative rounded border border-border bg-white px-3 py-2 transition-colors duration-200',
   ]
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed border-[#e4e7ed] bg-[#f5f7fa]')
+    classes.push('cursor-not-allowed border-border-soft bg-[#f5f7fa]')
   }
 
   if (isFocused.value) {
-    classes.push('border-[#1890ff]')
+    classes.push('border-brand')
   }
 
   if (hasTextValue(props.customClass)) {
@@ -111,7 +119,7 @@ const textareaStyle = computed((): string => {
 /**
  * 输入事件处理
  */
-const handleInput = (event: any): void => {
+const handleInput = (event: TextareaInputEvent): void => {
   const value = event.detail.value as string
   modelValue.value = value
   emit('input', value)
@@ -120,7 +128,7 @@ const handleInput = (event: any): void => {
 /**
  * 聚焦事件处理
  */
-const handleFocus = (event: Event): void => {
+const handleFocus = (event: object): void => {
   isFocused.value = true
   emit('focus', event)
 }
@@ -128,7 +136,7 @@ const handleFocus = (event: Event): void => {
 /**
  * 失焦事件处理
  */
-const handleBlur = (event: Event): void => {
+const handleBlur = (event: object): void => {
   isFocused.value = false
   emit('blur', event)
 }
@@ -146,8 +154,8 @@ const handleClear = (): void => {
   <view :class="containerClasses" :style="containerStyle">
     <!-- 文本域 -->
     <textarea
-      class="t-textarea__input w-full resize-none border-none bg-transparent text-sm leading-[1.5] text-[#303133] outline-none box-border"
-      :class="{ 'cursor-not-allowed text-[#c0c4cc]': disabled }"
+      class="t-textarea__input w-full resize-none border-none bg-transparent text-sm leading-[1.5] text-primary outline-none box-border"
+      :class="{ 'cursor-not-allowed text-disabled': disabled }"
       :style="textareaStyle"
       :value="modelValue"
       :placeholder="placeholder"
@@ -162,9 +170,9 @@ const handleClear = (): void => {
     />
 
     <!-- 底部操作栏 -->
-    <view v-if="showFooter" class="t-textarea__footer mt-2 flex items-center justify-between border-t border-[#f0f0f0] pt-2">
+    <view v-if="showFooter" class="t-textarea__footer mt-2 flex items-center justify-between border-t border-divider pt-2">
       <!-- 字数统计 -->
-      <text v-if="showCount" class="t-textarea__count text-xs text-[#909399]">
+      <text v-if="showCount" class="t-textarea__count text-xs text-tertiary">
         {{ currentLength }}{{ maxlength > 0 ? `/${maxlength}` : '' }}
       </text>
 

@@ -1,6 +1,6 @@
 <script  setup lang="uts" >
-import TText from '@/components/TText'
-import TCard from '@/components/TCard'
+import TText from '@/components/TText/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -13,68 +13,68 @@ const { $t } = useI18n()
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.text.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.text.description') }}</text>
+      <text class="example-title">{{ $t('examplePages.text.title', null) }}</text>
+      <text class="example-desc">{{ $t('examplePages.text.description', null) }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.text.sections.basic')" class="example-section">
-      <TText>{{ $t('examplePages.text.content.normal') }}</TText>
+    <TCard :title="$t('examplePages.text.sections.basic', null)" class="example-section">
+      <TText>{{ $t('examplePages.text.content.normal', null) }}</TText>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.type')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.type', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TText type="primary">{{ $t('examplePages.text.content.primary') }}</TText>
-        <TText type="success">{{ $t('examplePages.text.content.success') }}</TText>
-        <TText type="warning">{{ $t('examplePages.text.content.warning') }}</TText>
-        <TText type="danger">{{ $t('examplePages.text.content.danger') }}</TText>
-        <TText type="info">{{ $t('examplePages.text.content.info') }}</TText>
+        <TText type="primary">{{ $t('examplePages.text.content.primary', null) }}</TText>
+        <TText type="success">{{ $t('examplePages.text.content.success', null) }}</TText>
+        <TText type="warning">{{ $t('examplePages.text.content.warning', null) }}</TText>
+        <TText type="danger">{{ $t('examplePages.text.content.danger', null) }}</TText>
+        <TText type="info">{{ $t('examplePages.text.content.info', null) }}</TText>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.size')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.size', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TText size="xs">{{ $t('examplePages.text.content.extraSmall') }}</TText>
-        <TText size="sm">{{ $t('examplePages.text.content.small') }}</TText>
-        <TText size="md">{{ $t('examplePages.text.content.medium') }}</TText>
-        <TText size="lg">{{ $t('examplePages.text.content.large') }}</TText>
-        <TText size="xl">{{ $t('examplePages.text.content.extraLarge') }}</TText>
+        <TText size="xs">{{ $t('examplePages.text.content.extraSmall', null) }}</TText>
+        <TText size="sm">{{ $t('examplePages.text.content.small', null) }}</TText>
+        <TText size="md">{{ $t('examplePages.text.content.medium', null) }}</TText>
+        <TText size="lg">{{ $t('examplePages.text.content.large', null) }}</TText>
+        <TText size="xl">{{ $t('examplePages.text.content.extraLarge', null) }}</TText>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.weight')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.weight', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TText bold>{{ $t('examplePages.text.content.bold') }}</TText>
-        <TText italic>{{ $t('examplePages.text.content.italic') }}</TText>
-        <TText underline>{{ $t('examplePages.text.content.underline') }}</TText>
-        <TText lineThrough>{{ $t('examplePages.text.content.lineThrough') }}</TText>
-        <TText bold italic underline>{{ $t('examplePages.text.content.combined') }}</TText>
+        <TText bold>{{ $t('examplePages.text.content.bold', null) }}</TText>
+        <TText italic>{{ $t('examplePages.text.content.italic', null) }}</TText>
+        <TText underline>{{ $t('examplePages.text.content.underline', null) }}</TText>
+        <TText lineThrough>{{ $t('examplePages.text.content.lineThrough', null) }}</TText>
+        <TText bold italic underline>{{ $t('examplePages.text.content.combined', null) }}</TText>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.align')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.align', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TText align="left">{{ $t('examplePages.text.content.alignLeft') }}</TText>
-        <TText align="center">{{ $t('examplePages.text.content.alignCenter') }}</TText>
-        <TText align="right">{{ $t('examplePages.text.content.alignRight') }}</TText>
+        <TText align="left">{{ $t('examplePages.text.content.alignLeft', null) }}</TText>
+        <TText align="center">{{ $t('examplePages.text.content.alignCenter', null) }}</TText>
+        <TText align="right">{{ $t('examplePages.text.content.alignRight', null) }}</TText>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.ellipsis')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.ellipsis', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
         <TText ellipsis :lines="1">
-          {{ $t('examplePages.text.content.ellipsisOneLine') }}
+          {{ $t('examplePages.text.content.ellipsisOneLine', null) }}
         </TText>
         <TText ellipsis :lines="2">
-          {{ $t('examplePages.text.content.ellipsisTwoLines') }}
+          {{ $t('examplePages.text.content.ellipsisTwoLines', null) }}
         </TText>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.text.sections.customColor')" class="example-section">
+    <TCard :title="$t('examplePages.text.sections.customColor', null)" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 10px;">
-        <TText color="#f50">{{ $t('examplePages.text.content.customColor') }}</TText>
-        <TText color="#2db7f5">{{ $t('examplePages.text.content.customColor') }}</TText>
-        <TText color="#87d068">{{ $t('examplePages.text.content.customColor') }}</TText>
+        <TText color="#f50">{{ $t('examplePages.text.content.customColor', null) }}</TText>
+        <TText color="#2db7f5">{{ $t('examplePages.text.content.customColor', null) }}</TText>
+        <TText color="#87d068">{{ $t('examplePages.text.content.customColor', null) }}</TText>
       </view>
     </TCard>
   </view>

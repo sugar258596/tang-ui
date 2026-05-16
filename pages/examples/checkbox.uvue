@@ -1,18 +1,48 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TCheckbox from '@/components/TCheckbox'
-import TCard from '@/components/TCard'
+import TCheckbox from '@/components/TCheckbox/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 复选框组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const checked1 = ref(false)
 const checked2 = ref(true)
 const checkedList = ref<string[]>(['option1', 'option3'])
+const pageTitle = t('examplePages.checkbox.title')
+const pageDescription = t('examplePages.checkbox.description')
+const basicTitle = t('examplePages.checkbox.sections.basic')
+const defaultCheckedTitle = t('examplePages.checkbox.sections.defaultChecked')
+const groupTitle = t('examplePages.checkbox.sections.group')
+const disabledTitle = t('examplePages.checkbox.sections.disabled')
+const sizeTitle = t('examplePages.checkbox.sections.size')
+const customColorTitle = t('examplePages.checkbox.sections.customColor')
+const indeterminateTitle = t('examplePages.checkbox.sections.indeterminate')
+const eventsTitle = t('examplePages.checkbox.sections.events')
+const checkboxText = t('examplePages.checkbox.labels.checkbox')
+const defaultCheckedText = t('examplePages.checkbox.labels.defaultChecked')
+const option1Text = t('examplePages.checkbox.labels.option1')
+const option2Text = t('examplePages.checkbox.labels.option2')
+const option3Text = t('examplePages.checkbox.labels.option3')
+const disabledUncheckedText = t('examplePages.checkbox.labels.disabledUnchecked')
+const disabledCheckedText = t('examplePages.checkbox.labels.disabledChecked')
+const smallText = t('examplePages.checkbox.labels.small')
+const mediumText = t('examplePages.checkbox.labels.medium')
+const largeText = t('examplePages.checkbox.labels.large')
+const redText = t('examplePages.checkbox.labels.red')
+const greenText = t('examplePages.checkbox.labels.green')
+const orangeText = t('examplePages.checkbox.labels.orange')
+const indeterminateText = t('examplePages.checkbox.labels.indeterminate')
+const clickToConsoleText = t('examplePages.checkbox.labels.clickToConsole')
+const checkedText = t('examplePages.checkbox.status.checked')
+const selectedText = t('examplePages.checkbox.status.selected')
+const notSelectedText = t('examplePages.checkbox.status.notSelected')
+const indeterminateDescText = t('examplePages.checkbox.status.indeterminateDesc')
+const checkConsoleText = t('examplePages.checkbox.status.checkConsole')
 
 const getJoinedText = (values: string[], emptyText: string): string => {
   return values.length > 0 ? values.join(', ') : emptyText
@@ -26,30 +56,30 @@ const handleChange = (value: boolean): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.checkbox.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.checkbox.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.checkbox.sections.basic')" class="example-section">
-      <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="basicTitle" class="example-section">
+      <view class="flex flex-row items-center">
         <TCheckbox v-model="checked1" />
-        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.checkbox') }}</text>
+        <text class="ml-2">{{ checkboxText }}</text>
       </view>
-      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.checkbox.status.checked') }}: {{ checked1 }}
+      <text class="mt-2.5 text-sm text-tertiary">
+        {{ checkedText }}: {{ checked1 }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.defaultChecked')" class="example-section">
-      <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="defaultCheckedTitle" class="example-section">
+      <view class="flex flex-row items-center">
         <TCheckbox v-model="checked2" />
-        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.defaultChecked') }}</text>
+        <text class="ml-2">{{ defaultCheckedText }}</text>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.group')" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 10px;">
-        <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="groupTitle" class="example-section">
+      <view class="flex flex-col gap-2.5">
+        <view class="flex flex-row items-center">
           <TCheckbox
             :model-value="checkedList.includes('option1')"
             @change="(val: boolean) => {
@@ -57,9 +87,9 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option1')
             }"
           />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option1') }}</text>
+          <text class="ml-2">{{ option1Text }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox
             :model-value="checkedList.includes('option2')"
             @change="(val: boolean) => {
@@ -67,9 +97,9 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option2')
             }"
           />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option2') }}</text>
+          <text class="ml-2">{{ option2Text }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox
             :model-value="checkedList.includes('option3')"
             @change="(val: boolean) => {
@@ -77,78 +107,78 @@ const handleChange = (value: boolean): void => {
               else checkedList = checkedList.filter(item => item !== 'option3')
             }"
           />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.option3') }}</text>
+          <text class="ml-2">{{ option3Text }}</text>
         </view>
       </view>
-      <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.checkbox.status.selected') }}: {{ getJoinedText(checkedList, $t('examplePages.checkbox.status.notSelected')) }}
+      <text class="mt-2.5 text-sm text-tertiary">
+        {{ selectedText }}: {{ getJoinedText(checkedList, notSelectedText) }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.disabled')" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 10px;">
-        <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="disabledTitle" class="example-section">
+      <view class="flex flex-col gap-2.5">
+        <view class="flex flex-row items-center">
           <TCheckbox disabled />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.disabledUnchecked') }}</text>
+          <text class="ml-2">{{ disabledUncheckedText }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox :model-value="true" disabled />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.disabledChecked') }}</text>
+          <text class="ml-2">{{ disabledCheckedText }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.size')" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 10px;">
-        <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="sizeTitle" class="example-section">
+      <view class="flex flex-col gap-2.5">
+        <view class="flex flex-row items-center">
           <TCheckbox size="small" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.small') }}</text>
+          <text class="ml-2">{{ smallText }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox size="medium" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.medium') }}</text>
+          <text class="ml-2">{{ mediumText }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox size="large" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.large') }}</text>
+          <text class="ml-2">{{ largeText }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.customColor')" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 10px;">
-        <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="customColorTitle" class="example-section">
+      <view class="flex flex-col gap-2.5">
+        <view class="flex flex-row items-center">
           <TCheckbox activeColor="#f56c6c" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.red') }}</text>
+          <text class="ml-2">{{ redText }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox activeColor="#67c23a" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.green') }}</text>
+          <text class="ml-2">{{ greenText }}</text>
         </view>
-        <view style="display: flex; flex-direction: row; align-items: center;">
+        <view class="flex flex-row items-center">
           <TCheckbox activeColor="#e6a23c" />
-          <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.orange') }}</text>
+          <text class="ml-2">{{ orangeText }}</text>
         </view>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.indeterminate')" class="example-section">
-      <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="indeterminateTitle" class="example-section">
+      <view class="flex flex-row items-center">
         <TCheckbox />
-        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.indeterminate') }}</text>
+        <text class="ml-2">{{ indeterminateText }}</text>
       </view>
-      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        {{ $t('examplePages.checkbox.status.indeterminateDesc') }}
+      <text class="mt-2.5 text-xs text-tertiary">
+        {{ indeterminateDescText }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.checkbox.sections.events')" class="example-section">
-      <view style="display: flex; flex-direction: row; align-items: center;">
+    <TCard :title="eventsTitle" class="example-section">
+      <view class="flex flex-row items-center">
         <TCheckbox @change="handleChange" />
-        <text style="margin-left: 8px;">{{ $t('examplePages.checkbox.labels.clickToConsole') }}</text>
+        <text class="ml-2">{{ clickToConsoleText }}</text>
       </view>
-      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        {{ $t('examplePages.checkbox.status.checkConsole') }}
+      <text class="mt-2.5 text-xs text-tertiary">
+        {{ checkConsoleText }}
       </text>
     </TCard>
   </view>

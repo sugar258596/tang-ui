@@ -5,7 +5,7 @@
 /**
  * TErrorState Props 接口
  */
-export interface TErrorStateProps {
+export type TErrorStateProps = {
   /**
    * 是否为错误状态
    * @default false

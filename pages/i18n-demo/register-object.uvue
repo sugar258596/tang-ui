@@ -27,27 +27,27 @@
       <view class="translation-list">
         <view class="translation-item">
           <text class="key">common.confirm</text>
-          <text class="value">{{ $t('common.confirm') }}</text>
+          <text class="value">{{ $t('common.confirm', null) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.cancel</text>
-          <text class="value">{{ $t('common.cancel') }}</text>
+          <text class="value">{{ $t('common.cancel', null) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.save</text>
-          <text class="value">{{ $t('common.save') }}</text>
+          <text class="value">{{ $t('common.save', null) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">common.delete</text>
-          <text class="value">{{ $t('common.delete') }}</text>
+          <text class="value">{{ $t('common.delete', null) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.required</text>
-          <text class="value">{{ $t('form.required') }}</text>
+          <text class="value">{{ $t('form.required', null) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.invalid</text>
-          <text class="value">{{ $t('form.invalid') }}</text>
+          <text class="value">{{ $t('form.invalid', null) }}</text>
         </view>
       </view>
     </view>
@@ -58,11 +58,11 @@
       <view class="translation-list">
         <view class="translation-item">
           <text class="key">form.minLength (min: 6)</text>
-          <text class="value">{{ $t('form.minLength', { min: 6 }) }}</text>
+          <text class="value">{{ $t('form.minLength', minLengthParams) }}</text>
         </view>
         <view class="translation-item">
           <text class="key">form.maxLength (max: 20)</text>
-          <text class="value">{{ $t('form.maxLength', { max: 20 }) }}</text>
+          <text class="value">{{ $t('form.maxLength', maxLengthParams) }}</text>
         </view>
       </view>
     </view>
@@ -123,20 +123,46 @@ import { I18nManager } from '@/composables/i18n/manager.uts'
 const { $t } = useI18n()
 const i18nManager = I18nManager.getInstance()
 
+type LanguageOption = {
+  code: string
+  label: string
+}
+
 // 当前语言
 const currentLang = ref(i18nManager.getLocale())
 
 // 内置语言列表（使用 ref 使其可变）
-const languages = ref([
+const languages = ref<LanguageOption[]>([
   { code: 'zh-CN', label: '简体中文' },
   { code: 'zh-TW', label: '繁體中文' },
   { code: 'en-US', label: 'English' }
 ])
 
+const minLengthParams: UTSJSONObject = { min: 6 }
+const maxLengthParams: UTSJSONObject = { max: 20 }
+
 // 可用语言列表（响应式）
 const availableLocales = computed<string[]>(() => {
   return i18nManager.getAvailableLocales().value
 })
+
+// 获取语言名称
+const getLocaleName = (locale: string): string => {
+  switch (locale) {
+    case 'zh-CN':
+      return '简体中文'
+    case 'zh-TW':
+      return '繁體中文'
+    case 'en-US':
+      return 'English'
+    case 'ja-JP':
+      return '日本語'
+    case 'ko-KR':
+      return '한국어'
+    default:
+      return locale
+  }
+}
 
 // 切换语言
 const switchLanguage = (locale: string): void => {
@@ -181,7 +207,8 @@ const registerJapanese = (): void => {
   
   // 添加到语言列表
   if (!languages.value.some(lang => lang.code === 'ja-JP')) {
-    languages.value.push({ code: 'ja-JP', label: '日本語' })
+    const japaneseOption: LanguageOption = { code: 'ja-JP', label: '日本語' }
+    languages.value.push(japaneseOption)
   }
   
   uni.showToast({
@@ -217,7 +244,8 @@ const registerKorean = (): void => {
   
   // 添加到语言列表
   if (!languages.value.some(lang => lang.code === 'ko-KR')) {
-    languages.value.push({ code: 'ko-KR', label: '한국어' })
+    const koreanOption: LanguageOption = { code: 'ko-KR', label: '한국어' }
+    languages.value.push(koreanOption)
   }
   
   uni.showToast({
@@ -226,23 +254,6 @@ const registerKorean = (): void => {
   })
 }
 
-// 获取语言名称
-const getLocaleName = (locale: string): string => {
-  switch (locale) {
-    case 'zh-CN':
-      return '简体中文'
-    case 'zh-TW':
-      return '繁體中文'
-    case 'en-US':
-      return 'English'
-    case 'ja-JP':
-      return '日本語'
-    case 'ko-KR':
-      return '한국어'
-    default:
-      return locale
-  }
-}
 </script>
 
 <style lang="scss" scoped>

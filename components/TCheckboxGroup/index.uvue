@@ -40,7 +40,7 @@ const isMaxReached = computed((): boolean => {
 })
 
 const handleChange = (option: CheckboxOption): void => {
-  if (props.disabled || option.disabled) return
+  if (props.disabled || option.disabled == true) return
 
   const index = modelValue.value.indexOf(option.value)
 
@@ -64,6 +64,24 @@ const handleChange = (option: CheckboxOption): void => {
 
 const isChecked = (option: CheckboxOption): boolean => {
   return modelValue.value.includes(option.value)
+}
+
+const isDisabledOption = (option: CheckboxOption): boolean => {
+  return props.disabled == true || option.disabled == true
+}
+
+const getItemClass = (option: CheckboxOption): string => {
+  const classes: string[] = []
+
+  if (isDisabledOption(option)) {
+    classes.push('opacity-50 cursor-not-allowed')
+  }
+
+  if (props.direction === 'horizontal') {
+    classes.push('mr-6')
+  }
+
+  return classes.join(' ')
 }
 
 const getSizeConfig = (): CheckboxSizeConfig => {
@@ -100,19 +118,26 @@ const cssVars = computed(() => {
       v-for="(option, index) in options"
       :key="index"
       class="t-checkbox-group__item flex flex-row items-center py-3"
-      :class="{
-        'opacity-50 cursor-not-allowed': disabled || option.disabled,
-        'mr-6': direction === 'horizontal'
-      }"
+      :class="getItemClass(option)"
       @click="handleChange(option)"
     >
       <view
-        class="t-checkbox-group__icon mr-4 flex items-center justify-center rounded-[8rpx] border-solid transition-all duration-300"
+        class="t-checkbox-group__icon mr-4 flex items-center justify-center border-solid transition-all duration-300"
         :style="`width: var(--icon-size); height: var(--icon-size); border-width: 2rpx; border-color: ${isChecked(option) ? 'var(--active-color)' : 'var(--inactive-color)'}; ${isChecked(option) ? 'background-color: var(--active-color);' : ''}`"
       >
         <text v-if="isChecked(option)" class="t-checkbox-group__check font-bold text-white" :style="`font-size: var(--checkmark-size);`">✓</text>
       </view>
-      <text class="t-checkbox-group__label text-[#323233]" :style="`font-size: var(--label-size);`">{{ option.label }}</text>
+      <text class="t-checkbox-group__label" :style="`font-size: var(--label-size);`">{{ option.label }}</text>
     </view>
   </view>
 </template>
+
+<style>
+.t-checkbox-group__icon {
+  border-radius: 8rpx;
+}
+
+.t-checkbox-group__label {
+  color: #323233;
+}
+</style>

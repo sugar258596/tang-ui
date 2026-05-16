@@ -1,15 +1,44 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TBadge from '@/components/TBadge'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TBadge from '@/components/TBadge/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 徽标组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const pageTitle = t('examplePages.badge.title')
+const pageDescription = t('examplePages.badge.description')
+const basicTitle = t('examplePages.badge.sections.basic')
+const maxTitle = t('examplePages.badge.sections.max')
+const dotTitle = t('examplePages.badge.sections.dot')
+const typeTitle = t('examplePages.badge.sections.type')
+const customColorTitle = t('examplePages.badge.sections.customColor')
+const offsetTitle = t('examplePages.badge.sections.offset')
+const dynamicTitle = t('examplePages.badge.sections.dynamic')
+const commentLabel = t('examplePages.badge.labels.comment')
+const replyLabel = t('examplePages.badge.labels.reply')
+const messageLabel = t('examplePages.badge.labels.message')
+const warningLabel = t('examplePages.badge.labels.warning')
+const onlineLabel = t('examplePages.badge.labels.online')
+const offlineLabel = t('examplePages.badge.labels.offline')
+const primaryLabel = t('examplePages.badge.labels.primary')
+const dangerLabel = t('examplePages.badge.labels.danger')
+const successLabel = t('examplePages.badge.labels.success')
+const infoLabel = t('examplePages.badge.labels.info')
+const bgColorLabel = t('examplePages.badge.labels.bgColor')
+const blueLabel = t('examplePages.badge.labels.blue')
+const greenLabel = t('examplePages.badge.labels.green')
+const offsetLabel = t('examplePages.badge.labels.offset')
+const dynamicLabel = t('examplePages.badge.labels.dynamic')
+const increaseText = t('examplePages.badge.buttons.increase')
+const decreaseText = t('examplePages.badge.buttons.decrease')
+const showText = t('examplePages.badge.buttons.show')
+const hideText = t('examplePages.badge.buttons.hide')
 
 const value = ref(5)
 const hidden = ref(false)
@@ -18,107 +47,105 @@ const hidden = ref(false)
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.badge.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.badge.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.badge.sections.basic')" class="example-section">
+    <TCard :title="basicTitle" class="example-section">
       <view class="badge-row">
         <TBadge :value="12">
-          <TButton size="small">{{ $t('examplePages.badge.labels.comment') }}</TButton>
+          <TButton :text="commentLabel" size="small" />
         </TBadge>
         <TBadge :value="3">
-          <TButton size="small">{{ $t('examplePages.badge.labels.reply') }}</TButton>
+          <TButton :text="replyLabel" size="small" />
         </TBadge>
         <TBadge :value="1" type="primary">
-          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
+          <TButton :text="messageLabel" size="small" />
         </TBadge>
         <TBadge :value="2" type="warning">
-          <TButton size="small">{{ $t('examplePages.badge.labels.warning') }}</TButton>
+          <TButton :text="warningLabel" size="small" />
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.max')" class="example-section">
-      <view class="badge-row">
+    <TCard :title="maxTitle" class="example-section">
+      <view class="badge-row ">
         <TBadge :value="200" :max="99">
-          <TButton size="small">{{ $t('examplePages.badge.labels.comment') }}</TButton>
+          <TButton :text="commentLabel" size="small" />
         </TBadge>
         <TBadge :value="100" :max="10">
-          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
+          <TButton :text="messageLabel" size="small" />
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.dot')" class="example-section">
+    <TCard :title="dotTitle" class="example-section">
       <view class="badge-row">
         <TBadge isDot>
-          <TButton size="small">{{ $t('examplePages.badge.labels.message') }}</TButton>
+          <TButton :text="messageLabel" size="small" />
         </TBadge>
         <TBadge isDot type="success">
-          <text style="padding: 8px;">{{ $t('examplePages.badge.labels.online') }}</text>
+          <text class="p-2">{{ onlineLabel }}</text>
         </TBadge>
         <TBadge isDot type="danger">
-          <text style="padding: 8px;">{{ $t('examplePages.badge.labels.offline') }}</text>
+          <text class="p-2">{{ offlineLabel }}</text>
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.type')" class="example-section">
+    <TCard :title="typeTitle" class="example-section">
       <view class="badge-row">
         <TBadge value="NEW" type="primary">
-          <TButton size="small">{{ $t('examplePages.badge.labels.primary') }}</TButton>
+          <TButton :text="primaryLabel" size="small" />
         </TBadge>
         <TBadge value="HOT" type="danger">
-          <TButton size="small">{{ $t('examplePages.badge.labels.danger') }}</TButton>
+          <TButton :text="dangerLabel" size="small" />
         </TBadge>
         <TBadge value="5" type="success">
-          <TButton size="small">{{ $t('examplePages.badge.labels.success') }}</TButton>
+          <TButton :text="successLabel" size="small" />
         </TBadge>
         <TBadge value="10" type="warning">
-          <TButton size="small">{{ $t('examplePages.badge.labels.warning') }}</TButton>
+          <TButton :text="warningLabel" size="small" />
         </TBadge>
         <TBadge value="2" type="info">
-          <TButton size="small">{{ $t('examplePages.badge.labels.info') }}</TButton>
+          <TButton :text="infoLabel" size="small" />
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.customColor')" class="example-section">
+    <TCard :title="customColorTitle" class="example-section">
       <view class="badge-row">
         <TBadge value="自定义" bgColor="#f50">
-          <TButton size="small">{{ $t('examplePages.badge.labels.bgColor') }}</TButton>
+          <TButton :text="bgColorLabel" size="small" />
         </TBadge>
         <TBadge value="12" bgColor="#2db7f5">
-          <TButton size="small">{{ $t('examplePages.badge.labels.blue') }}</TButton>
+          <TButton :text="blueLabel" size="small" />
         </TBadge>
         <TBadge value="5" bgColor="#87d068">
-          <TButton size="small">{{ $t('examplePages.badge.labels.green') }}</TButton>
+          <TButton :text="greenLabel" size="small" />
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.offset')" class="example-section">
+    <TCard :title="offsetTitle" class="example-section">
       <view class="badge-row">
         <TBadge :value="5" :offset="[10, 10]">
-          <TButton size="small">{{ $t('examplePages.badge.labels.offset') }}</TButton>
+          <TButton :text="offsetLabel" size="small" />
         </TBadge>
         <TBadge :value="10" :offset="[-10, 10]">
-          <TButton size="small">{{ $t('examplePages.badge.labels.offset') }}</TButton>
+          <TButton :text="offsetLabel" size="small" />
         </TBadge>
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.badge.sections.dynamic')" class="example-section">
+    <TCard :title="dynamicTitle" class="example-section">
       <view class="badge-row">
         <TBadge :value="value" :hidden="hidden">
-          <TButton size="small">{{ $t('examplePages.badge.labels.dynamic') }}</TButton>
+          <TButton :text="dynamicLabel" size="small" />
         </TBadge>
-        <TButton size="small" @click="value++">{{ $t('examplePages.badge.buttons.increase') }}</TButton>
-        <TButton size="small" @click="value = Math.max(0, value - 1)">{{ $t('examplePages.badge.buttons.decrease') }}</TButton>
-        <TButton size="small" @click="hidden = !hidden">
-          {{ hidden ? $t('examplePages.badge.buttons.show') : $t('examplePages.badge.buttons.hide') }}
-        </TButton>
+        <TButton :text="increaseText" size="small" @click="value++" />
+        <TButton :text="decreaseText" size="small" @click="value = Math.max(0, value - 1)" />
+        <TButton :text="hidden ? showText : hideText" size="small" @click="hidden = !hidden" />
       </view>
     </TCard>
   </view>
@@ -157,6 +184,7 @@ const hidden = ref(false)
   gap: 20px;
   align-items: center;
   flex-wrap: wrap;
+  overflow: visible;;
 }
 
 </style>

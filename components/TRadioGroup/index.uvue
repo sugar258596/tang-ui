@@ -18,7 +18,7 @@ type RadioSizeConfig = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  options: () => [] as RadioOption[],
+  options: () => [] as Array<RadioOption>,
   direction: 'vertical',
   size: 'medium',
   activeColor: '#00bba7',
@@ -36,7 +36,7 @@ const emit = defineEmits<{
 }>()
 
 const handleChange = (option: RadioOption): void => {
-  if (props.disabled || option.disabled) return
+  if (props.disabled || option.disabled === true) return
 
   modelValue.value = option.value
   emit('change', option.value)
@@ -81,7 +81,7 @@ const cssVars = computed(() => {
       :key="index"
       class="t-radio-group__item flex flex-row items-center py-3"
       :class="{
-        'opacity-50 cursor-not-allowed': disabled || option.disabled,
+        'opacity-50 cursor-not-allowed': disabled || option.disabled === true,
         'mr-6': direction === 'horizontal'
       }"
       @click="handleChange(option)"
@@ -96,7 +96,13 @@ const cssVars = computed(() => {
           :style="`width: var(--dot-size); height: var(--dot-size); background-color: var(--active-color)`"
         ></view>
       </view>
-      <text class="t-radio-group__label" :style="`font-size: var(--font-size); color: #323233;`">{{ option.label }}</text>
+      <text class="t-radio-group__label twx-text-323233" :style="`font-size: var(--font-size);`">{{ option.label }}</text>
     </view>
   </view>
 </template>
+
+<style>
+.twx-text-323233 {
+  color: #323233;
+}
+</style>

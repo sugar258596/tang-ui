@@ -20,7 +20,7 @@ export type ButtonShape = 'square' | 'round' | 'circle'
 /**
  * 按钮 Props 接口
  */
-export interface TButtonProps {
+export type TButtonProps = {
   /**
    * 按钮类型
    * @default 'default'

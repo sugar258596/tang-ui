@@ -5,7 +5,7 @@
 /**
  * TRate Props 接口
  */
-export interface TRateProps {
+export type TRateProps = {
   /**
    * 最大评分
    * @default 5

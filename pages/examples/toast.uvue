@@ -1,41 +1,41 @@
 <script setup lang="uts">
 import { useToast } from '@/composables/useToast.uts'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 const { $t } = useI18n()
 const { show, success, error, loading } = useToast()
 
 const handleShowText = (): void => {
-  show($t('examplePages.toast.messages.text'))
+  show($t('examplePages.toast.messages.text', null))
 }
 
 const handleShowSuccess = (): void => {
-  success($t('examplePages.toast.messages.success'))
+  success($t('examplePages.toast.messages.success', null), null)
 }
 
 const handleShowFail = (): void => {
-  error($t('examplePages.toast.messages.fail'))
+  error($t('examplePages.toast.messages.fail', null), null)
 }
 
 const handleShowLoading = (): void => {
-  const hideLoading = loading($t('examplePages.toast.messages.loading'))
+  const hideLoading = loading($t('examplePages.toast.messages.loading', null))
   setTimeout(() => {
     hideLoading()
-    success($t('examplePages.toast.messages.loadComplete'))
+    success($t('examplePages.toast.messages.loadComplete', null), null)
   }, 2000)
 }
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.toast.title')" padding="medium">
+    <TCard :title="$t('examplePages.toast.title', null)" padding="medium">
       <view class="demo-buttons">
-        <TButton :text="$t('examplePages.toast.buttons.show')" type="default" block custom-style="margin-bottom: 12px" @click="handleShowText" />
-        <TButton :text="$t('examplePages.toast.buttons.success')" type="success" block custom-style="margin-bottom: 12px" @click="handleShowSuccess" />
-        <TButton :text="$t('examplePages.toast.buttons.error')" type="danger" block custom-style="margin-bottom: 12px" @click="handleShowFail" />
-        <TButton :text="$t('examplePages.toast.buttons.loading')" type="info" block @click="handleShowLoading" />
+        <TButton :text="$t('examplePages.toast.buttons.show', null)" type="default" block custom-style="margin-bottom: 12px" @click="handleShowText" />
+        <TButton :text="$t('examplePages.toast.buttons.success', null)" type="success" block custom-style="margin-bottom: 12px" @click="handleShowSuccess" />
+        <TButton :text="$t('examplePages.toast.buttons.error', null)" type="danger" block custom-style="margin-bottom: 12px" @click="handleShowFail" />
+        <TButton :text="$t('examplePages.toast.buttons.loading', null)" type="info" block @click="handleShowLoading" />
       </view>
     </TCard>
   </view>

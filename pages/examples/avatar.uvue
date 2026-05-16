@@ -1,31 +1,45 @@
 <script  setup lang="uts" >
-import TAvatar from '@/components/TAvatar'
-import TCard from '@/components/TCard'
+import TAvatar from '@/components/TAvatar/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 头像组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const pageTitle = t('examplePages.avatar.title')
+const pageDescription = t('examplePages.avatar.description')
+const basicTitle = t('examplePages.avatar.sections.basic')
+const sizeTitle = t('examplePages.avatar.sections.size')
+const shapeTitle = t('examplePages.avatar.sections.shape')
+const customColorTitle = t('examplePages.avatar.sections.customColor')
+const fitTitle = t('examplePages.avatar.sections.fit')
+const fallbackTitle = t('examplePages.avatar.sections.fallback')
+const eventsTitle = t('examplePages.avatar.sections.events')
+const customContentTitle = t('examplePages.avatar.sections.customContent')
+const clickedMessage = t('examplePages.avatar.messages.clicked')
+const errorMessage = t('examplePages.avatar.messages.error')
+const clickOrConsoleMessage = t('examplePages.avatar.messages.clickOrConsole')
 
 const handleClick = (): void => {
-  console.log($t('examplePages.avatar.messages.clicked'))
+  console.log(clickedMessage)
 }
 
 const handleError = (): void => {
-  console.log($t('examplePages.avatar.messages.error'))
+  console.log(errorMessage)
 }
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.avatar.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.avatar.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.avatar.sections.basic')" class="example-section">
+    <TCard :title="basicTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
         <TAvatar alt="User" />
@@ -33,7 +47,7 @@ const handleError = (): void => {
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.size')" class="example-section">
+    <TCard :title="sizeTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar size="small" alt="S" />
         <TAvatar size="medium" alt="M" />
@@ -42,7 +56,7 @@ const handleError = (): void => {
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.shape')" class="example-section">
+    <TCard :title="shapeTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar shape="circle" alt="Circle" />
         <TAvatar shape="square" alt="Square" />
@@ -51,7 +65,7 @@ const handleError = (): void => {
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.customColor')" class="example-section">
+    <TCard :title="customColorTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar alt="A" bgColor="#f56c6c" />
         <TAvatar alt="B" bgColor="#e6a23c" />
@@ -61,7 +75,23 @@ const handleError = (): void => {
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.fit')" class="example-section">
+    <TCard :title="fallbackTitle" class="example-section">
+      <view class="avatar-row">
+        <TAvatar
+          src="invalid-avatar.png"
+          errorImage="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          alt="Fallback"
+          :size="60"
+        />
+        <TAvatar
+          src="invalid-avatar.png"
+          alt="NoFallback"
+          :size="60"
+        />
+      </view>
+    </TCard>
+
+    <TCard :title="fitTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar
           src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
@@ -81,7 +111,7 @@ const handleError = (): void => {
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.events')" class="example-section">
+    <TCard :title="eventsTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar
           alt="Click"
@@ -94,21 +124,21 @@ const handleError = (): void => {
           @error="handleError"
         />
       </view>
-      <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        {{ $t('examplePages.avatar.messages.clickOrConsole') }}
+      <text class="mt-2.5 text-xs text-tertiary">
+        {{ clickOrConsoleMessage }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.avatar.sections.customContent')" class="example-section">
+    <TCard :title="customContentTitle" class="example-section">
       <view class="avatar-row">
         <TAvatar :size="50">
-          <text style="font-size: 20px;">👤</text>
+          <text class="text-xl">👤</text>
         </TAvatar>
         <TAvatar :size="50" shape="square">
-          <text style="font-size: 20px;">📧</text>
+          <text class="text-xl">📧</text>
         </TAvatar>
         <TAvatar :size="50">
-          <text style="font-size: 20px;">⚙️</text>
+          <text class="text-xl">⚙️</text>
         </TAvatar>
       </view>
     </TCard>

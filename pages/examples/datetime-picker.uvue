@@ -1,6 +1,6 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TDateTimePicker from '@/components/TDateTimePicker'
+import TDateTimePicker from '@/components/TDateTimePicker/index.uvue'
 import type { TDateTimePickerRangeValue } from '@/components/TDateTimePicker/type.uts'
 
 /**
@@ -161,7 +161,6 @@ const showEchoRangePicker = (): void => {
 }
 
 const handleEchoRangeConfirm = (value: TDateTimePickerRangeValue, formatted: string[]): void => {
-  echoRangeValue.value = value
   echoRangeText.value = `${formatted[0]} ~ ${formatted[1]}`
   console.log('数据回显范围确认:', formatted, value)
 }
@@ -175,7 +174,7 @@ const showEchoArrayRangePicker = (): void => {
   echoArrayRangeVisible.value = true
 }
 
-const handleEchoArrayRangeConfirm = (value: any, formatted: string[]): void => {
+const handleEchoArrayRangeConfirm = (value: TDateTimePickerRangeValue, formatted: string[]): void => {
   echoArrayRangeText.value = `${formatted[0]} ~ ${formatted[1]}`
   console.log('数据回显数组范围确认:', formatted, value)
 }
@@ -313,7 +312,7 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
             <text class="picker-trigger-arrow">›</text>
           </view>
           <view class="result-text">
-            <text class="result-label">开始：{{ echoRangeValue.start }}，结束：{{ echoRangeValue.end }}</text>
+            <text class="result-label">{{ echoRangeText }}</text>
           </view>
         </view>
       </view>

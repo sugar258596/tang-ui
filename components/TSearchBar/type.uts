@@ -10,12 +10,7 @@ export type SearchBarShape = 'square' | 'round'
 /**
  * TSearchBar Props 接口
  */
-export interface TSearchBarProps {
-  /**
-   * 搜索值
-   */
-  modelValue?: string
-
+export type TSearchBarProps = {
   /**
    * 占位符
    * @default '请输入搜索关键词'
@@ -77,10 +72,16 @@ export interface TSearchBarProps {
   autoFocus?: boolean
 
   /**
-   * 是否显示左侧搜索图标
+   * 是否显示左侧图标
    * @default true
    */
   showLeftIcon?: boolean
+
+  /**
+   * 左侧图标
+   * @default icon-sousuo
+   */
+  icon?:string
 
   /**
    * 防抖延迟（毫秒）
@@ -131,10 +132,10 @@ export interface TSearchBarEmits {
   /**
    * 聚焦事件
    */
-  focus: (event: Event) => void
+  focus: (event: object) => void
 
   /**
    * 失焦事件
    */
-  blur: (event: Event) => void
+  blur: (event: object) => void
 }

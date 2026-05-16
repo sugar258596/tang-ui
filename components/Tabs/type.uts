@@ -16,7 +16,7 @@ export type TabItem = {
 /**
  * 选项卡类型
  */
-export type TabType = 'line' | 'card'
+export type TabType = 'basic' | 'card' | 'line'
 
 /**
  * 选项卡位置
@@ -31,11 +31,11 @@ export type TabSize = 'small' | 'medium' | 'large'
 /**
  * Tabs Props 接口
  */
-export interface TTabsProps {
+export type TTabsProps = {
   /**
    * 选项卡数据
    */
-  items: TabItem[]
+  items: Array<TabItem>
 
   /**
    * 当前激活的 tab key
@@ -49,7 +49,7 @@ export interface TTabsProps {
 
   /**
    * 选项卡类型
-   * @default 'line'
+   * @default 'basic'
    */
   type?: TabType
 

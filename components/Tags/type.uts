@@ -31,7 +31,7 @@ export type TagSize = 'small' | 'medium' | 'large'
 /**
  * Tags Props 接口
  */
-export interface TTagsProps {
+export type TTagsProps = {
   /**
    * 选项卡数据
    */
@@ -40,12 +40,12 @@ export interface TTagsProps {
   /**
    * 当前激活的 tag key
    */
-  activeKey?: string
+  activeKey?: string | number
 
   /**
    * 默认激活的 tag key
    */
-  defaultActiveKey?: string
+  defaultActiveKey?: string | number
 
   /**
    * 选项卡类型

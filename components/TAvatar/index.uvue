@@ -10,6 +10,7 @@ import type { TAvatarProps } from './type.uts'
 // 定义 props
 const props = withDefaults(defineProps<TAvatarProps>(), {
   src: '',
+  errorImage: '',
   size: 'medium',
   shape: 'circle',
   alt: '',
@@ -26,45 +27,59 @@ const emit = defineEmits<{
 
 // 图片加载失败标记
 const hasLoadError = ref(false)
+const hasErrorImageLoadError = ref(false)
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasSrc = computed(() => {
   return hasTextValue(props.src)
 })
 
+const hasErrorImage = computed(() => {
+  return hasTextValue(props.errorImage)
+})
+
 const hasAlt = computed(() => {
   return hasTextValue(props.alt)
+})
+
+const displaySrc = computed((): string => {
+  if (hasSrc.value && !hasLoadError.value) {
+    return props.src
+  }
+  if (hasErrorImage.value && !hasErrorImageLoadError.value) {
+    return props.errorImage
+  }
+  return ''
+})
+
+const hasDisplaySrc = computed((): boolean => {
+  return hasTextValue(displaySrc.value)
 })
 
 /**
  * 计算头像大小
  */
-const avatarSize = computed(() => {
-  if (typeof props.size === 'number') {
-    return props.size
+const avatarSize = computed((): number => {
+  const size = props.size
+  if (typeof size === 'number') {
+    return size as number
   }
 
-  const sizeMap = {
-    small: 32,
-    medium: 40,
-    large: 56
-  }
-
-  if (props.size === 'small') return sizeMap.small
-  if (props.size === 'large') return sizeMap.large
-  return sizeMap.medium
+  if (size == 'small') return 32
+  if (size == 'large') return 56
+  return 40
 })
 
 /**
  * 计算头像样式类
  */
-const avatarClass = computed(() => {
-  const classes: string[] = ['t-avatar inline-flex items-center justify-center overflow-hidden relative cursor-pointer']
+const avatarClass = computed((): string => {
+  const classes: string[] = ['t-avatar flex items-center justify-center overflow-hidden relative']
 
-  if (props.shape === 'square') {
+  if (props.shape == 'square') {
     classes.push('rounded')
   } else {
     classes.push('rounded-full')
@@ -83,7 +98,7 @@ const avatarStyle = computed(() => {
   styles.push(`width: ${size}px`)
   styles.push(`height: ${size}px`)
 
-  if (!hasSrc.value || hasLoadError.value) {
+  if (!hasDisplaySrc.value) {
     styles.push(`background-color: ${props.bgColor}`)
   }
 
@@ -117,6 +132,18 @@ const handleError = (): void => {
   emit('error')
 }
 
+const handleErrorImageError = (): void => {
+  hasErrorImageLoadError.value = true
+}
+
+const handleImageError = (): void => {
+  if (hasLoadError.value) {
+    handleErrorImageError()
+  } else {
+    handleError()
+  }
+}
+
 /**
  * 获取显示的文字（取首字符）
  */
@@ -131,11 +158,11 @@ const displayText = computed(() => {
 <template>
   <view :class="avatarClass" :style="avatarStyle" @click="handleClick">
     <image
-      v-if="hasSrc && !hasLoadError"
+      v-if="hasDisplaySrc"
       class="t-avatar__image h-full w-full"
-      :src="src"
+      :src="displaySrc"
       :mode="fit"
-      @error="handleError"
+      @error="handleImageError"
     />
     <text v-else-if="hasAlt" class="t-avatar__text text-center font-medium" :style="textStyle">
       {{ displayText }}

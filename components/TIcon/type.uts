@@ -14,7 +14,7 @@ export type TIconName =
 /**
  * TIcon Props 接口
  */
-export interface TIconProps {
+export type TIconProps = {
   /**
    * 图标名称
    * 可以传入 'shanchu' 或 'icon-shanchu'
@@ -64,7 +64,13 @@ export interface TIconEmits {
 /**
  * 图标列表（用于文档和自动补全）
  */
-export const ICON_LIST = [
+export type TIconItem = {
+  name: string
+  label: string
+  unicode: string
+}
+
+export const ICON_LIST: Array<TIconItem> = [
   { name: 'shanchu', label: '删除', unicode: 'e61a' },
   { name: 'sousuo', label: '搜索', unicode: 'e602' }
-] as const
+]

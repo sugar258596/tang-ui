@@ -14,8 +14,10 @@ import type { TranslateParams } from './i18n/types.uts'
 export type UseI18nReturn = {
   /** 翻译函数 */
   $t: (key: string, params?: TranslateParams) => string
+  /** 无参数翻译函数 */
+  t: (key: string) => string
   /** 当前语言（响应式） */
-  locale: ComputedRef
+  locale: ComputedRef<string>
   /** 可用语言列表（响应式） */
   availableLocales: ComputedRef<string[]>
   /** 设置语言 */
@@ -56,9 +58,13 @@ export function useI18n(): UseI18nReturn {
   const $t = (key: string, params?: TranslateParams): string => {
     return manager.translate(key, params)
   }
+
+  const t = (key: string): string => {
+    return $t(key, null)
+  }
   
   // 当前语言（响应式 computed）
-  const locale = computed(() => manager.currentLocale.value)
+  const locale = computed<string>(() => manager.currentLocale.value)
   
   // 可用语言列表（响应式 computed）
   const availableLocales = manager.getAvailableLocales()
@@ -70,6 +76,7 @@ export function useI18n(): UseI18nReturn {
   
   return {
     $t,
+    t,
     locale,
     availableLocales,
     setLocale

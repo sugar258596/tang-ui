@@ -1,4 +1,5 @@
 <script setup lang="uts">
+import { computed, nextTick, onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import type { TabItem, TTabsProps } from './type.uts'
 
@@ -8,8 +9,8 @@ type TabsModelValue = string | number | null
 const model = defineModel({ default: null }) as Ref<TabsModelValue>
 
 const props = withDefaults(defineProps<TTabsProps>(), {
-  items: () => [],
-  type: 'line',
+  items: () => [] as Array<TabItem>,
+  type: 'basic',
   tabPosition: 'top',
   centered: false,
   scrollable: true,
@@ -28,8 +29,8 @@ const emit = defineEmits<{
   tabClick: [key: string |number, item: TabItem]
 }>()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasItemIcon = (item: TabItem): boolean => {
@@ -37,43 +38,44 @@ const hasItemIcon = (item: TabItem): boolean => {
 }
 
 const hasItemBadge = (item: TabItem): boolean => {
-  return item.badge !== undefined && item.badge !== null && item.badge !== ''
+  return item.badge !== null && item.badge !== ''
 }
 
 /** 获取默认激活项的 key */
 const getDefaultKey = (): string | number => {
-  if (props.defaultActiveKey !== undefined && props.defaultActiveKey !== null) {
-    return props.defaultActiveKey
+  const defaultActiveKey = props.defaultActiveKey
+  if (defaultActiveKey !== null) {
+    return defaultActiveKey
   }
   if (props.items.length > 0) {
-    const firstEnabled = props.items.find(item => !item.disabled)
-    return firstEnabled ? firstEnabled.key : props.items[0].key
+    for (let i = 0; i < props.items.length; i++) {
+      const item = props.items[i]
+      if (item.disabled != true) {
+        return item.key
+      }
+    }
+    return props.items[0].key
   }
   return ''
 }
 
 /** 初始化默认激活项 */
 onMounted(() => {
-  if (model.value === undefined || model.value === null || model.value === '') {
+  if (model.value == null || model.value == '') {
     model.value = getDefaultKey()
   }
 })
 
 const isItemActive = (item: TabItem): boolean => {
   const currentKey = model.value
-  if (currentKey === undefined || currentKey === null || currentKey === '') {
+  if (currentKey == null || currentKey == '') {
     return false
   }
-  if (item.key === undefined || item.key === null || item.key === '') {
+  if (item.key == null || item.key == '') {
     return false
   }
-  return item.key === currentKey
+  return item.key == currentKey
 }
-
-/** 计算当前激活项的索引 */
-const activeIndex = computed(() => {
-  return props.items.findIndex(item => isItemActive(item))
-})
 
 /** 获取当前激活项的 DOM 元素 */
 const navListRef = ref<UniElement | null>(null)
@@ -84,7 +86,7 @@ const hexToRgb = (hex: string): string => {
   hex = hex.replace('#', '')
 
   // 处理缩写形式 (#fff)
-  if (hex.length === 3) {
+  if (hex.length == 3) {
     hex = hex.split('').map(char => char + char).join('')
   }
 
@@ -98,15 +100,10 @@ const hexToRgb = (hex: string): string => {
 
 /** 计算激活颜色的 RGB 值 */
 const activeColorRgb = computed(() => {
-  // 如果是 rgba 格式，直接提取 RGB 部分
-  if (props.activeColor.startsWith('rgb')) {
-    const match = props.activeColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
-    if (match) {
-      return `${match[1]}, ${match[2]}, ${match[3]}`
-    }
+  if (props.activeColor.startsWith('#')) {
+    return hexToRgb(props.activeColor)
   }
-  // 如果是十六进制颜色，转换为 RGB
-  return hexToRgb(props.activeColor)
+  return '0, 187, 167'
 })
 
 const containerClass = computed((): string => {
@@ -124,10 +121,10 @@ const getNavListClass = (isBottom: boolean): string => {
     'whitespace-nowrap'
   ]
 
-  if (props.type === 'card') {
-    classes.push('rounded-t-[12rpx]', 'bg-[#f5f5f5]', 'px-[24rpx]', 'py-[16rpx]')
+  if (props.type == 'card') {
+    classes.push('rounded-lg', 'bg-action-divider', 'px-2', 'py-2')
   } else {
-    classes.push('py-[20rpx]')
+    classes.push('py-2')
   }
 
   if (props.centered) {
@@ -135,52 +132,14 @@ const getNavListClass = (isBottom: boolean): string => {
   }
 
   if (isBottom) {
-    classes.push('border-t', 'border-[#e8e8e8]')
+    classes.push('border-t', 'border-divider')
   }
 
   return classes.join(' ')
-}
-
-const getItemPaddingClass = (): string => {
-  if (props.size === 'small') {
-    return 'px-[20rpx] py-[12rpx]'
-  }
-
-  if (props.size === 'large') {
-    return 'px-[40rpx] py-[20rpx]'
-  }
-
-  return props.type === 'card' ? 'px-[32rpx] py-[16rpx]' : 'px-[28rpx] py-[16rpx]'
 }
 
 const navLabelClass = computed((): string => {
-  const classes: string[] = ['transition-all', 'duration-300']
-
-  if (props.size === 'small') {
-    classes.push('text-[24rpx]')
-  } else if (props.size === 'large') {
-    classes.push('text-[32rpx]')
-  } else {
-    classes.push('text-[28rpx]')
-  }
-
-  return classes.join(' ')
-})
-
-const navLineClass = computed((): string => {
-  const classes: string[] = ['absolute', 'h-[4rpx]', 'rounded-[2rpx]', 'transition-all', 'duration-300']
-
-  if (props.tabPosition === 'bottom') {
-    classes.push('top-0')
-  } else {
-    classes.push('bottom-0')
-  }
-
-  return classes.join(' ')
-})
-
-const navLineStyle = computed((): string => {
-  return `background-color: ${props.activeColor}; opacity: ${props.animated ? 1 : 0};`
+  return 'transition-all duration-300'
 })
 
 const getNavItemClass = (item: TabItem): string => {
@@ -191,19 +150,18 @@ const getNavItemClass = (item: TabItem): string => {
     'justify-center',
     'origin-center',
     'transition-all',
-    'duration-300',
-    getItemPaddingClass()
+    'duration-300'
   ]
 
   if (props.type === 'card') {
-    classes.push('mx-[8rpx]', 'rounded-[8rpx]', 'border', 'border-[#e8e8e8]', 'bg-white')
+    classes.push('mx-1', 'rounded', 'border', 'border-solid', 'border-border-soft', 'bg-white')
   }
 
-  if (isItemActive(item) && props.type !== 'card') {
+  if (isItemActive(item) && props.type == 'basic') {
     classes.push('scale-105')
   }
 
-  if (item.disabled) {
+  if (item.disabled == true) {
     classes.push('cursor-not-allowed', 'opacity-50')
   } else {
     classes.push('cursor-pointer')
@@ -214,12 +172,27 @@ const getNavItemClass = (item: TabItem): string => {
 
 const getNavItemStyle = (item: TabItem): string => {
   const styles: string[] = []
+  const active = isItemActive(item)
 
-  if (props.type === 'card' && isItemActive(item)) {
+  if (props.size == 'small') {
+    styles.push('min-height: 64rpx')
+    styles.push(props.type == 'card' ? 'padding: 10rpx 20rpx' : 'padding: 12rpx 22rpx')
+  } else if (props.size == 'large') {
+    styles.push('min-height: 88rpx')
+    styles.push(props.type == 'card' ? 'padding: 18rpx 32rpx' : 'padding: 20rpx 36rpx')
+  } else {
+    styles.push('min-height: 76rpx')
+    styles.push(props.type == 'card' ? 'padding: 14rpx 28rpx' : 'padding: 16rpx 30rpx')
+  }
+
+  if (props.type == 'card') {
+    styles.push('border-width: 1px')
+    styles.push('border-style: solid')
+    styles.push(active ? `border-color: ${props.activeColor}` : 'border-color: #ebeef5')
+  }
+
+  if (props.type == 'card' && active) {
     styles.push(`background-color: rgba(${activeColorRgb.value}, 0.1)`)
-    styles.push(`border-color: ${props.activeColor}`)
-    styles.push(`box-shadow: 0 4rpx 12rpx rgba(${activeColorRgb.value}, 0.2)`)
-    styles.push('transform: translateY(-2rpx)')
   }
 
   return styles.join('; ')
@@ -227,7 +200,7 @@ const getNavItemStyle = (item: TabItem): string => {
 
 /** 点击切换 tab */
 const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
-  if (item.disabled) return
+  if (item.disabled == true) return
 
   model.value = item.key
   emit('update:activeKey', item.key)
@@ -241,15 +214,63 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
   }
 }
 
+const getNavLabelStyle = (item: TabItem): string => {
+  const styles: string[] = []
+  const active = isItemActive(item)
+  styles.push(`color: ${active ? props.activeColor : props.inactiveColor}`)
+  styles.push(active ? 'font-weight: 600' : 'font-weight: 400')
+
+  if (props.size === 'small') {
+    styles.push('font-size: 24rpx')
+    styles.push('line-height: 32rpx')
+  } else if (props.size === 'large') {
+    styles.push('font-size: 32rpx')
+    styles.push('line-height: 44rpx')
+  } else {
+    styles.push('font-size: 28rpx')
+    styles.push('line-height: 38rpx')
+  }
+
+  return styles.join('; ')
+}
+
+const getActiveLineStyle = (item: TabItem): string => {
+  const opacity = isItemActive(item) ? '1' : '0'
+  return `position: absolute; left: 24rpx; right: 24rpx; bottom: 0; height: 4rpx; border-radius: 999rpx; background-color: ${props.activeColor}; opacity: ${opacity}`
+}
+
+const badgeClass = computed((): string => {
+  return 'absolute flex flex-row items-center justify-center rounded-pill bg-danger px-1 text-center text-white'
+})
+
+const badgeStyle = computed((): string => {
+  const styles: string[] = [
+    'right: 8rpx',
+    'min-width: 28rpx',
+    'height: 28rpx',
+    'border-radius: 14rpx',
+    'font-size: 18rpx',
+    'line-height: 28rpx',
+    'padding-left: 6rpx',
+    'padding-right: 6rpx'
+  ]
+
+  if (props.size === 'small') {
+    styles.push('top: 4rpx')
+  } else if (props.size === 'large') {
+    styles.push('top: 8rpx')
+  } else {
+    styles.push('top: 6rpx')
+  }
+
+  return styles.join('; ')
+})
+
 </script>
 
 <template>
   <view
     :class="containerClass"
-    :style="{
-      '--active-color': activeColor,
-      '--active-color-rgb': activeColorRgb
-    }"
   >
     <scroll-view
       v-if="tabPosition === 'top'"
@@ -265,24 +286,29 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           :class="getNavItemClass(item)"
           :style="getNavItemStyle(item)"
           :ref="'navItem' + index"
-          @click="handleClick(item, index, $event)"
+          @click="handleClick(item, index, $event as UniPointerEvent)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
-            :style="{ color: isItemActive(item) ? activeColor : inactiveColor }"
+            :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
           </text>
 
           <view
             v-if="hasItemBadge(item)"
-            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
-            style="height: 28rpx; transform: translateX(30%);"
+            :class="badgeClass"
+            :style="badgeStyle"
           >
             {{ item.badge }}
           </view>
+
+          <view
+            v-if="type === 'line'"
+            :style="getActiveLineStyle(item)"
+          ></view>
         </view>
       </view>
     </scroll-view>
@@ -306,32 +332,30 @@ const handleClick = (item: TabItem, _index: number, _e: UniPointerEvent) => {
           :key="item.key"
           :class="getNavItemClass(item)"
           :style="getNavItemStyle(item)"
-          @click="handleClick(item, index, $event)"
+          @click="handleClick(item, index, $event as UniPointerEvent)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-[8rpx] h-[36rpx] w-[36rpx] transition-all duration-300" :src="item.icon" mode="aspectFit" />
+          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
 
           <text
             :class="navLabelClass"
-            :style="{ color: isItemActive(item) ? activeColor : inactiveColor }"
+            :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
           </text>
 
           <view
             v-if="hasItemBadge(item)"
-            class="absolute right-[12rpx] top-[6rpx] min-w-[28rpx] rounded-[14rpx] bg-[#f56c6c] px-[6rpx] text-center text-[20rpx] leading-[28rpx] text-white"
-            style="height: 28rpx; transform: translateX(30%);"
+            :class="badgeClass"
+            :style="badgeStyle"
           >
             {{ item.badge }}
           </view>
-        </view>
 
-        <!-- 滑动指示器 -->
-        <view
-          v-if="type === 'line' && animated && activeIndex >= 0"
-          :class="navLineClass"
-          :style="navLineStyle"
-        ></view>
+          <view
+            v-if="type === 'line'"
+            :style="getActiveLineStyle(item)"
+          ></view>
+        </view>
       </view>
     </scroll-view>
   </view>

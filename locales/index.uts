@@ -27,19 +27,18 @@ export function initI18n(): void {
   try {
     console.log('[Tang UI I18n] Initializing i18n system...')
     
-    // 1. 预加载内置语言包（同步方法）
-    const localesMap = LocaleLoader.preloadBuiltinLocales()
-    
-    // 2. 获取 I18nManager 单例实例
+    // 1. 获取 I18nManager 单例实例
     const manager = I18nManager.getInstance()
+
+    // 2. 将内置语言包注册到 I18nManager
+    manager.registerMessages('zh-CN', LocaleLoader.loadLocale('zh-CN'))
+    console.log('[Tang UI I18n] Registered locale: zh-CN')
+    manager.registerMessages('en-US', LocaleLoader.loadLocale('en-US'))
+    console.log('[Tang UI I18n] Registered locale: en-US')
+    manager.registerMessages('zh-TW', LocaleLoader.loadLocale('zh-TW'))
+    console.log('[Tang UI I18n] Registered locale: zh-TW')
     
-    // 3. 将内置语言包注册到 I18nManager
-    for (const [locale, messages] of localesMap) {
-      manager.registerMessages(locale, messages)
-      console.log(`[Tang UI I18n] Registered locale: ${locale}`)
-    }
-    
-    // 4. 设置默认语言为简体中文
+    // 3. 设置默认语言为简体中文
     const success = manager.setLocale('zh-CN')
     if (success) {
       console.log('[Tang UI I18n] Default locale set to zh-CN')
@@ -47,7 +46,7 @@ export function initI18n(): void {
       console.warn('[Tang UI I18n] Failed to set default locale to zh-CN')
     }
     
-    // 5. 标记为已初始化
+    // 4. 标记为已初始化
     initialized = true
     
     console.log('[Tang UI I18n] Initialization complete')

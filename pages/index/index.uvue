@@ -15,100 +15,125 @@ const { $t, locale, setLocale } = useI18n()
 const { isDarkMode, toggleDarkMode } = useTheme()
 
 // 组件列表
-interface ComponentGroup {
+type ComponentGroup = {
   title: string
   components: ComponentItem[]
 }
 
-interface ComponentItem {
+type ComponentItem = {
   name: string
   title: string
   description: string
   path: string
 }
 
+type ComponentPath = {
+  name: string
+  path: string
+}
+
+type ComponentGroupConfig = {
+  key: string
+  names: string[]
+}
+
+type LanguageOption = {
+  label: string
+  value: string
+}
+
 // 组件路径映射（组件名 -> 路径）
-const componentPaths: Map<string, string> = new Map([
-  ['TButton', '/pages/examples/button'],
-  ['TIcon', '/pages/examples/icon'],
-  ['TText', '/pages/examples/text'],
-  ['TImage', '/pages/examples/image'],
-  ['TDivider', '/pages/examples/divider'],
-  ['TCard', '/pages/examples/card'],
-  ['TList', '/pages/examples/list'],
-  ['TCell', '/pages/examples/cell'],
-  ['TGrid', '/pages/examples/grid'],
-  ['TRow/TCol', '/pages/examples/layout'],
-  ['TInput', '/pages/examples/input'],
-  ['TTextarea', '/pages/examples/textarea'],
-  ['TSearchBar', '/pages/examples/search-bar'],
-  ['TNumberInput', '/pages/examples/number-input'],
-  ['TSwitch', '/pages/examples/switch'],
-  ['TCheckbox', '/pages/examples/checkbox'],
-  ['TCheckboxGroup', '/pages/examples/checkbox-group'],
-  ['TRadioButton', '/pages/examples/radio'],
-  ['TRadioGroup', '/pages/examples/radio-group'],
-  ['TSelect', '/pages/examples/select'],
-  ['TPicker', '/pages/examples/picker'],
-  ['TDateTimePicker', '/pages/examples/datetime-picker'],
-  ['TSlider', '/pages/examples/slider'],
-  ['TRate', '/pages/examples/rate'],
-  ['TForm', '/pages/examples/form'],
-  ['Tags', '/pages/examples/tags'],
-  ['TBadge', '/pages/examples/badge'],
-  ['TAvatar', '/pages/examples/avatar'],
-  ['TProgress', '/pages/examples/progress'],
-  ['TNoticeBar', '/pages/examples/notice-bar'],
-  ['TCollapse', '/pages/examples/collapse'],
-  ['TSwiper', '/pages/examples/swiper'],
-  ['TEmpty', '/pages/examples/empty'],
-  ['TErrorState', '/pages/examples/error'],
-  ['TLoading', '/pages/examples/loading'],
-  ['TToast', '/pages/examples/toast'],
-  ['TDialog', '/pages/examples/dialog'],
-  ['TPopup', '/pages/examples/popup'],
-  ['TActionSheet', '/pages/examples/action-sheet'],
-  ['Tabs', '/pages/examples/tabs'],
-  ['TNavBar', '/pages/examples/navbar'],
-  ['I18nDemo', '/pages/i18n-demo/index']
-])
+const componentPaths: ComponentPath[] = [
+  { name: 'TButton', path: '/pages/examples/button' },
+  { name: 'TIcon', path: '/pages/examples/icon' },
+  { name: 'TText', path: '/pages/examples/text' },
+  { name: 'TImage', path: '/pages/examples/image' },
+  { name: 'TDivider', path: '/pages/examples/divider' },
+  { name: 'TCard', path: '/pages/examples/card' },
+  { name: 'TList', path: '/pages/examples/list' },
+  { name: 'TCell', path: '/pages/examples/cell' },
+  { name: 'TGrid', path: '/pages/examples/grid' },
+  { name: 'TRow/TCol', path: '/pages/examples/layout' },
+  { name: 'TInput', path: '/pages/examples/input' },
+  { name: 'TTextarea', path: '/pages/examples/textarea' },
+  { name: 'TSearchBar', path: '/pages/examples/search-bar' },
+  { name: 'TNumberInput', path: '/pages/examples/number-input' },
+  { name: 'TSwitch', path: '/pages/examples/switch' },
+  { name: 'TCheckbox', path: '/pages/examples/checkbox' },
+  { name: 'TCheckboxGroup', path: '/pages/examples/checkbox-group' },
+  { name: 'TRadioButton', path: '/pages/examples/radio' },
+  { name: 'TRadioGroup', path: '/pages/examples/radio-group' },
+  { name: 'TSelect', path: '/pages/examples/select' },
+  { name: 'TPicker', path: '/pages/examples/picker' },
+  { name: 'TDateTimePicker', path: '/pages/examples/datetime-picker' },
+  { name: 'TSlider', path: '/pages/examples/slider' },
+  { name: 'TRate', path: '/pages/examples/rate' },
+  { name: 'TForm', path: '/pages/examples/form' },
+  { name: 'TBadge', path: '/pages/examples/badge' },
+  { name: 'TAvatar', path: '/pages/examples/avatar' },
+  { name: 'TProgress', path: '/pages/examples/progress' },
+  { name: 'TNoticeBar', path: '/pages/examples/notice-bar' },
+  { name: 'TCollapse', path: '/pages/examples/collapse' },
+  { name: 'TSwiper', path: '/pages/examples/swiper' },
+  { name: 'TEmpty', path: '/pages/examples/empty' },
+  { name: 'TErrorState', path: '/pages/examples/error' },
+  { name: 'TLoading', path: '/pages/examples/loading' },
+  { name: 'TToast', path: '/pages/examples/toast' },
+  { name: 'TDialog', path: '/pages/examples/dialog' },
+  { name: 'TPopup', path: '/pages/examples/popup' },
+  { name: 'TActionSheet', path: '/pages/examples/action-sheet' },
+  { name: 'Tabs', path: '/pages/examples/tabs' },
+  { name: 'TNavBar', path: '/pages/examples/navbar' },
+  { name: 'I18nDemo', path: '/pages/i18n-demo/index' }
+]
 
 // 组件分组配置（分组key -> 组件名列表）
-const groupConfig: Map<string, string[]> = new Map([
-  ['basic', ['TButton', 'TIcon', 'TText', 'TImage', 'TDivider']],
-  ['layout', ['TCard', 'TList', 'TCell', 'TGrid', 'TRow/TCol']],
-  ['form', ['TInput', 'TTextarea', 'TSearchBar', 'TNumberInput', 'TSwitch', 'TCheckbox', 'TCheckboxGroup', 'TRadioButton', 'TRadioGroup', 'TSelect', 'TPicker', 'TDateTimePicker', 'TSlider', 'TRate', 'TForm']],
-  ['display', ['Tags', 'TBadge', 'TAvatar', 'TProgress', 'TNoticeBar', 'TCollapse', 'TSwiper', 'TEmpty', 'TErrorState']],
-  ['feedback', ['TLoading', 'TToast', 'TDialog', 'TPopup', 'TActionSheet']],
-  ['navigation', ['Tabs', 'TNavBar']],
-  ['tools', ['I18nDemo']]
-])
+const groupConfig: ComponentGroupConfig[] = [
+  { key: 'basic', names: ['TButton', 'TIcon', 'TText', 'TImage', 'TDivider'] },
+  { key: 'layout', names: ['TCard', 'TList', 'TCell', 'TGrid', 'TRow/TCol'] },
+  { key: 'form', names: ['TInput', 'TTextarea', 'TSearchBar', 'TNumberInput', 'TSwitch', 'TCheckbox', 'TCheckboxGroup', 'TRadioButton', 'TRadioGroup', 'TSelect', 'TPicker', 'TDateTimePicker', 'TSlider', 'TRate', 'TForm'] },
+  { key: 'display', names: ['TBadge', 'TAvatar', 'TProgress', 'TNoticeBar', 'TCollapse', 'TSwiper', 'TEmpty', 'TErrorState'] },
+  { key: 'feedback', names: ['TLoading', 'TToast', 'TDialog', 'TPopup', 'TActionSheet'] },
+  { key: 'navigation', names: ['Tabs', 'TNavBar'] },
+  { key: 'tools', names: ['I18nDemo'] }
+]
+
+const getComponentPath = (componentName: string): string => {
+  for (const item of componentPaths) {
+    if (item.name === componentName) {
+      return item.path
+    }
+  }
+  return ''
+}
 
 // 根据当前语言动态生成组件列表
 const componentGroups = computed<ComponentGroup[]>(() => {
   const groups: ComponentGroup[] = []
   
-  for (const [groupKey, componentNames] of groupConfig) {
+  for (const groupConfigItem of groupConfig) {
     const components: ComponentItem[] = []
     
-    for (const componentName of componentNames) {
-      const name = $t(`examples.components.${componentName}.name`)
-      const enName = $t(`examples.components.${componentName}.enName`)
-      const description = $t(`examples.components.${componentName}.description`)
-      const path = componentPaths.get(componentName) ?? ''
+    for (const componentName of groupConfigItem.names) {
+      const name = $t(`examples.components.${componentName}.name`, null)
+      const enName = $t(`examples.components.${componentName}.enName`, null)
+      const description = $t(`examples.components.${componentName}.description`, null)
+      const path = getComponentPath(componentName)
       
-      components.push({
+      const componentItem: ComponentItem = {
         name: componentName,
         title: `${name} ${enName}`,
         description: description,
         path: path
-      })
+      }
+      components.push(componentItem)
     }
-    
-    groups.push({
-      title: $t(`examples.groups.${groupKey}`),
+
+    const componentGroup: ComponentGroup = {
+      title: $t(`examples.groups.${groupConfigItem.key}`, null),
       components: components
-    })
+    }
+    groups.push(componentGroup)
   }
   
   return groups
@@ -122,7 +147,7 @@ const navigateToComponent = (path: string): void => {
 }
 
 // 语言选项
-const languageOptions = ref([
+const languageOptions = ref<LanguageOption[]>([
   { label: '简体中文', value: 'zh-CN' },
   { label: 'English', value: 'en-US' },
   { label: '繁體中文', value: 'zh-TW' }
@@ -132,7 +157,7 @@ const languageOptions = ref([
 const handleLanguageChange = (lang: string): void => {
   setLocale(lang)
   uni.showToast({
-    title: $t('common.languageSwitch'),
+    title: $t('common.languageSwitch', null),
     icon: 'success',
     duration: 1500
   })
@@ -141,11 +166,7 @@ const handleLanguageChange = (lang: string): void => {
 const applyNavigationBarTheme = () => {
   uni.setNavigationBarColor({
     frontColor: '#ffffff',
-    backgroundColor: isDarkMode.value ? '#111827' : '#667eea',
-    animation: {
-      duration: 200,
-      timingFunc: 'easeIn'
-    }
+    backgroundColor: isDarkMode.value ? '#111827' : '#667eea'
   })
 }
 
@@ -156,50 +177,78 @@ const setThemeMode = (dark: boolean): void => {
 watch(isDarkMode, () => {
   applyNavigationBarTheme()
 }, { immediate: true })
+
+const isThemeActive = (dark: boolean): boolean => {
+  return isDarkMode.value == dark
+}
+
+const themeClass = computed<string>(() => {
+  return isDarkMode.value ? 't-dark' : 't-light'
+})
+
+const getThemeButtonClass = (dark: boolean): string => {
+  return isThemeActive(dark) ? 'bg-white-92 border-white-92' : ''
+}
+
+const getThemeButtonTextClass = (dark: boolean): string => {
+  return isThemeActive(dark) ? 'text-indigo font-bold' : ''
+}
+
+const isLocaleActive = (value: string): boolean => {
+  return locale.value === value
+}
+
+const getLanguageOptionClass = (value: string): string => {
+  return isLocaleActive(value) ? 'bg-white-90 border-white-90' : ''
+}
+
+const getLanguageTextClass = (value: string): string => {
+  return isLocaleActive(value) ? 'text-brand font-semibold' : ''
+}
 </script>
 
 <template>
-  <view class="index-page">
+  <view class="index-page min-h-page bg-page" :class="themeClass">
     <!-- 头部 -->
-    <view class="header">
-      <view class="header-bg"></view>
-      <view class="header-content">
-        <text class="title">UniApp X UI</text>
-        <text class="subtitle">基于 UniApp X 的组件库</text>
-        <text class="version">v1.0.0</text>
+    <view class="header relative px-5 pb-8 pt-10 bg-page-gradient">
+      <view class="header-bg absolute bottom-0 left-0 right-0 top-0 opacity-10 bg-header-overlay"></view>
+      <view class="header-content relative z-1 flex flex-col">
+        <text class="title mb-2 text-hero font-bold text-inverse">UniApp X UI</text>
+        <text class="subtitle mb-3 text-md text-white-90">基于 UniApp X 的组件库</text>
+        <text class="version flex w-version justify-center rounded-pill bg-white-20 px-3 py-xs text-sm text-white-80">v1.0.0</text>
 
-        <view class="theme-switcher">
-          <text class="theme-label">主题模式</text>
-          <view class="theme-actions">
+        <view class="theme-switcher mt-5 flex flex-row items-center justify-between">
+          <text class="theme-label text-sm text-white-92">主题模式</text>
+          <view class="theme-actions flex flex-row">
             <view
-              class="theme-button"
-              :class="{ 'theme-button--active': !isDarkMode }"
+              class="theme-button ml-md min-w-theme rounded-pill border border-white-24 bg-white-12 px-lg py-sm transition-bg duration-300"
+              :class="getThemeButtonClass(false)"
               @click="() => setThemeMode(false)"
             >
-              <text class="theme-button-text">浅色</text>
+              <text class="theme-button-text text-center text-xs font-semibold text-white-95" :class="getThemeButtonTextClass(false)">浅色</text>
             </view>
             <view
-              class="theme-button"
-              :class="{ 'theme-button--active': isDarkMode }"
+              class="theme-button ml-md min-w-theme rounded-pill border border-white-24 bg-white-12 px-lg py-sm transition-bg duration-300"
+              :class="getThemeButtonClass(true)"
               @click="() => setThemeMode(true)"
             >
-              <text class="theme-button-text">暗黑</text>
+              <text class="theme-button-text text-center text-xs font-semibold text-white-95" :class="getThemeButtonTextClass(true)">暗黑</text>
             </view>
           </view>
         </view>
         
         <!-- 语言切换 -->
-        <view class="language-switcher">
-          <text class="language-label">{{ $t('common.language') }}:</text>
-          <view class="language-options">
+        <view class="language-switcher mt-5 border-t border-white-20 pt-4">
+          <text class="language-label mb-3 text-sm text-white-90">{{ $t('common.language', null) }}:</text>
+          <view class="language-options flex flex-row">
             <view
               v-for="(option, index) in languageOptions"
               :key="index"
-              class="language-option"
-              :class="{ active: locale === option.value }"
+              class="language-option mr-md rounded-pill border border-white-30 bg-white-20 px-lg py-xs transition-bg duration-300"
+              :class="getLanguageOptionClass(option.value)"
               @click="() => handleLanguageChange(option.value)"
             >
-              <text class="language-text">{{ option.label }}</text>
+              <text class="language-text text-sm text-white-95" :class="getLanguageTextClass(option.value)">{{ option.label }}</text>
             </view>
           </view>
         </view>
@@ -207,9 +256,9 @@ watch(isDarkMode, () => {
     </view>
 
     <!-- 组件列表 -->
-    <view class="component-list">
-      <view v-for="(group, index) in componentGroups" :key="index" class="component-group">
-        <text class="group-title">{{ group.title }}</text>
+    <view class="component-list p-5">
+      <view v-for="(group, index) in componentGroups" :key="index" class="component-group mb-xl">
+        <text class="group-title mb-3 pl-xs text-lg font-semibold text-primary">{{ group.title }}</text>
         <TCard class="group-card" :shadow="true" padding="small">
           <TList :border="false" spacing="none">
             <TListItem
@@ -227,189 +276,9 @@ watch(isDarkMode, () => {
     </view>
 
     <!-- 底部信息 -->
-    <view class="footer">
-      <text class="footer-text">UniApp X UI Component Library</text>
-      <text class="footer-text">Powered by UniApp X</text>
+    <view class="footer flex flex-col px-5 py-8 text-center">
+      <text class="footer-text text-xs leading-6 text-tertiary">UniApp X UI Component Library</text>
+      <text class="footer-text text-xs leading-6 text-tertiary">Powered by UniApp X</text>
     </view>
   </view>
 </template>
-
-<style lang="scss" scoped>
-.index-page {
-  min-height: 100vh;
-  background-color: var(--tui-page-bg);
-}
-
-.header {
-  position: relative;
-  padding: 40px 20px 30px;
-  background: linear-gradient(135deg, var(--tui-page-gradient-start) 0%, var(--tui-page-gradient-end) 100%);
-
-  &-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.1;
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 10px,
-      rgba(255, 255, 255, 0.1) 10px,
-      rgba(255, 255, 255, 0.1) 20px
-    );
-  }
-
-  &-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .title {
-    font-size: 32px;
-    font-weight: bold;
-    color: var(--tui-text-inverse);
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  .subtitle {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    display: block;
-    margin-bottom: 12px;
-  }
-
-  .version {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    background-color: rgba(255, 255, 255, 0.2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    display: inline-block;
-  }
-}
-
-.theme-switcher {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-
-  .theme-label {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.92);
-  }
-
-  .theme-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-  }
-
-  .theme-button {
-    min-width: 74px;
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    background-color: rgba(255, 255, 255, 0.12);
-    transition: all 0.25s ease;
-
-    &--active {
-      background-color: rgba(255, 255, 255, 0.92);
-      border-color: rgba(255, 255, 255, 0.92);
-
-      .theme-button-text {
-        color: #4f46e5;
-        font-weight: 700;
-      }
-    }
-  }
-
-  .theme-button-text {
-    display: block;
-    text-align: center;
-    font-size: 12px;
-    color: #ffffff;
-    font-weight: 600;
-  }
-}
-
-.language-switcher {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-
-  .language-label {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.9);
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  .language-options {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-  }
-
-  .language-option {
-    padding: 6px 16px;
-    border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s;
-
-    &.active {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-color: rgba(255, 255, 255, 0.9);
-
-      .language-text {
-        color: #667eea;
-        font-weight: 600;
-      }
-    }
-
-    .language-text {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.95);
-    }
-  }
-}
-
-.component-list {
-  padding: 20px;
-}
-
-.component-group {
-  margin-bottom: 24px;
-
-  .group-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--tui-text-primary);
-    margin-bottom: 12px;
-    display: block;
-    padding-left: 4px;
-  }
-
-  .group-card {
-    margin-bottom: 16px;
-  }
-}
-
-.footer {
-  padding: 30px 20px;
-  text-align: center;
-
-  &-text {
-    display: block;
-    font-size: 12px;
-    color: var(--tui-text-tertiary);
-    line-height: 1.8;
-  }
-}
-</style>

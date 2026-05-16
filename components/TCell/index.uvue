@@ -33,3 +33,13 @@
 		<slot name="footer"></slot>
 	</view>
 </template>
+
+<style>
+.text-zice-900 {
+	color: #18181b;
+}
+
+.text-zice-600 {
+	color: #52525b;
+}
+</style>

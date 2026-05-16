@@ -1,8 +1,8 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import Tags from '@/components/Tags'
-import TCard from '@/components/TCard'
-import type { TagItem } from '@/components/Tags/type'
+import Tags from '@/components/Tags/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import type { TagItem } from '@/components/Tags/type.uts'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
@@ -14,58 +14,58 @@ const { $t } = useI18n()
 
 // 基础用法
 const basicTabs: TagItem[] = [
-  { key: 'home', label: $t('examplePages.tags.labels.home') },
-  { key: 'product', label: $t('examplePages.tags.labels.product') },
-  { key: 'service', label: $t('examplePages.tags.labels.service') },
-  { key: 'about', label: $t('examplePages.tags.labels.about') }
+  { key: 'home', label: $t('examplePages.tags.labels.home', null) },
+  { key: 'product', label: $t('examplePages.tags.labels.product', null) },
+  { key: 'service', label: $t('examplePages.tags.labels.service', null) },
+  { key: 'about', label: $t('examplePages.tags.labels.about', null) }
 ]
 const activeTab1 = ref<string | number>('home')
 
 // 卡片类型
 const cardTabs: TagItem[] = [
-  { key: 'all', label: $t('examplePages.tags.labels.all') },
-  { key: 'ongoing', label: $t('examplePages.tags.labels.ongoing') },
-  { key: 'finished', label: $t('examplePages.tags.labels.finished') }
+  { key: 'all', label: $t('examplePages.tags.labels.all', null) },
+  { key: 'ongoing', label: $t('examplePages.tags.labels.ongoing', null) },
+  { key: 'finished', label: $t('examplePages.tags.labels.finished', null) }
 ]
 const activeTab2 = ref<string | number>('all')
 
 // 不同尺寸
 const sizeTabs: TagItem[] = [
-  { key: 'tab1', label: $t('examplePages.tags.labels.tab1') },
-  { key: 'tab2', label: $t('examplePages.tags.labels.tab2') },
-  { key: 'tab3', label: $t('examplePages.tags.labels.tab3') }
+  { key: 'tab1', label: $t('examplePages.tags.labels.tab1', null) },
+  { key: 'tab2', label: $t('examplePages.tags.labels.tab2', null) },
+  { key: 'tab3', label: $t('examplePages.tags.labels.tab3', null) }
 ]
 const activeTab3 = ref<string | number>('tab1')
 
 // 带徽章
 const badgeTabs: TagItem[] = [
-  { key: 'message', label: $t('examplePages.tags.labels.message'), badge: 5 },
-  { key: 'notification', label: $t('examplePages.tags.labels.notification'), badge: 99 },
-  { key: 'todo', label: $t('examplePages.tags.labels.todo'), badge: '新' }
+  { key: 'message', label: $t('examplePages.tags.labels.message', null), badge: 5 },
+  { key: 'notification', label: $t('examplePages.tags.labels.notification', null), badge: 99 },
+  { key: 'todo', label: $t('examplePages.tags.labels.todo', null), badge: '新' }
 ]
 const activeTab4 = ref<string | number>('message')
 
 // 禁用状态
 const disabledTabs: TagItem[] = [
-  { key: 'enabled1', label: $t('examplePages.tags.labels.enabled1') },
-  { key: 'disabled', label: $t('examplePages.tags.labels.disabled'), disabled: true },
-  { key: 'enabled2', label: $t('examplePages.tags.labels.enabled2') }
+  { key: 'enabled1', label: $t('examplePages.tags.labels.enabled1', null) },
+  { key: 'disabled', label: $t('examplePages.tags.labels.disabled', null), disabled: true },
+  { key: 'enabled2', label: $t('examplePages.tags.labels.enabled2', null) }
 ]
 const activeTab5 = ref<string | number>('enabled1')
 
 // 底部标签栏
 const bottomTabs: TagItem[] = [
-  { key: 'home', label: $t('examplePages.tags.labels.home') },
-  { key: 'discover', label: $t('examplePages.tags.labels.discover') },
-  { key: 'profile', label: $t('examplePages.tags.labels.profile') }
+  { key: 'home', label: $t('examplePages.tags.labels.home', null) },
+  { key: 'discover', label: $t('examplePages.tags.labels.discover', null) },
+  { key: 'profile', label: $t('examplePages.tags.labels.profile', null) }
 ]
 const activeTab6 = ref<string | number>('home')
 
 // 自定义颜色
 const colorTabs: TagItem[] = [
-  { key: 'tab1', label: $t('examplePages.tags.labels.redTheme') },
-  { key: 'tab2', label: $t('examplePages.tags.labels.greenTheme') },
-  { key: 'tab3', label: $t('examplePages.tags.labels.blueTheme') }
+  { key: 'tab1', label: $t('examplePages.tags.labels.redTheme', null) },
+  { key: 'tab2', label: $t('examplePages.tags.labels.greenTheme', null) },
+  { key: 'tab3', label: $t('examplePages.tags.labels.blueTheme', null) }
 ]
 const activeTab7 = ref<string | number>('tab1')
 
@@ -93,13 +93,13 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
   <scroll-view class="example-page" scroll-y>
     <!-- 页面头部 -->
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.tags.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.tags.description') }}</text>
+      <text class="example-title">{{ $t('examplePages.tags.title', null) }}</text>
+      <text class="example-desc">{{ $t('examplePages.tags.description', null) }}</text>
     </view>
 
     <!-- 基础用法 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.basic')" :description="$t('examplePages.tags.sections.basic')">
+      <TCard :title="$t('examplePages.tags.sections.basic', null)" :description="$t('examplePages.tags.sections.basic', null)">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -107,30 +107,30 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">{{ $t('examplePages.tags.content.currentKey') }}: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.currentKey', null) }}: {{ activeKey }}</text>
               <view v-if="activeKey === 'home'" class="content-body">
-                <text class="content-desc">{{ $t('examplePages.tags.content.home') }}</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.home', null) }}</text>
               </view>
               <view v-if="activeKey === 'product'" class="content-body">
-                <text class="content-desc">{{ $t('examplePages.tags.content.product') }}</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.product', null) }}</text>
               </view>
               <view v-if="activeKey === 'service'" class="content-body">
-                <text class="content-desc">{{ $t('examplePages.tags.content.service') }}</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.service', null) }}</text>
               </view>
               <view v-if="activeKey === 'about'" class="content-body">
-                <text class="content-desc">{{ $t('examplePages.tags.content.about') }}</text>
+                <text class="content-desc">{{ $t('examplePages.tags.content.about', null) }}</text>
               </view>
             </view>
           </template>
         </Tags>
 
-        <text class="current-value">{{ $t('examplePages.tags.content.currentSelected') }}: {{ activeTab1 }}</text>
+        <text class="current-value">{{ $t('examplePages.tags.content.currentSelected', null) }}: {{ activeTab1 }}</text>
       </TCard>
     </view>
 
     <!-- 卡片类型 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.card')" description="type='card'">
+      <TCard :title="$t('examplePages.tags.sections.card', null)" description="type='card'">
         <Tags
           :items="cardTabs"
           v-model="activeTab2"
@@ -140,16 +140,16 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content card-content">
               <view v-if="activeKey === 'all'">
-                <text class="content-title">{{ $t('examplePages.tags.content.allTasks') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.allTasksDesc') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.allTasks', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.allTasksDesc', null) }}</text>
               </view>
               <view v-if="activeKey === 'ongoing'">
-                <text class="content-title">{{ $t('examplePages.tags.content.ongoing') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.ongoingDesc') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.ongoing', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.ongoingDesc', null) }}</text>
               </view>
               <view v-if="activeKey === 'finished'">
-                <text class="content-title">{{ $t('examplePages.tags.content.finished') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.finishedDesc') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.finished', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.finishedDesc', null) }}</text>
               </view>
             </view>
           </template>
@@ -159,13 +159,13 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 不同尺寸 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.size')" description="small、medium、large">
+      <TCard :title="$t('examplePages.tags.sections.size', null)" description="small、medium、large">
         <view class="size-demo">
           <text class="size-label">Small:</text>
           <Tags :items="sizeTabs" v-model="activeTab3" size="small" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current', null) }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
@@ -176,7 +176,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <Tags :items="sizeTabs" v-model="activeTab3" size="medium" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current', null) }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
@@ -187,7 +187,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <Tags :items="sizeTabs" v-model="activeTab3" size="large" type="card">
             <template #default="{ activeKey }">
               <view class="tab-content-mini">
-                <text>{{ $t('examplePages.tags.content.current') }}: {{ activeKey }}</text>
+                <text>{{ $t('examplePages.tags.content.current', null) }}: {{ activeKey }}</text>
               </view>
             </template>
           </Tags>
@@ -197,7 +197,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 带徽章 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.badge')" :description="$t('examplePages.tags.sections.badge')">
+      <TCard :title="$t('examplePages.tags.sections.badge', null)" :description="$t('examplePages.tags.sections.badge', null)">
         <Tags
           :items="badgeTabs"
           v-model="activeTab4"
@@ -207,16 +207,16 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content">
               <view v-if="activeKey === 'message'">
-                <text class="content-title">{{ $t('examplePages.tags.content.messageCenter') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.unreadMessages') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.messageCenter', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.unreadMessages', null) }}</text>
               </view>
               <view v-if="activeKey === 'notification'">
-                <text class="content-title">{{ $t('examplePages.tags.content.notifications') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.notificationCount') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.notifications', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.notificationCount', null) }}</text>
               </view>
               <view v-if="activeKey === 'todo'">
-                <text class="content-title">{{ $t('examplePages.tags.content.todoList') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.newTodo') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.todoList', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.newTodo', null) }}</text>
               </view>
             </view>
           </template>
@@ -226,7 +226,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 禁用状态 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.disabled')" :description="$t('examplePages.tags.sections.disabled')">
+      <TCard :title="$t('examplePages.tags.sections.disabled', null)" :description="$t('examplePages.tags.sections.disabled', null)">
         <Tags
           :items="disabledTabs"
           v-model="activeTab5"
@@ -234,8 +234,8 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">{{ $t('examplePages.tags.content.currentSelected') }}: {{ activeKey }}</text>
-              <text class="content-desc">{{ $t('examplePages.tags.content.disabledDesc') }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.currentSelected', null) }}: {{ activeKey }}</text>
+              <text class="content-desc">{{ $t('examplePages.tags.content.disabledDesc', null) }}</text>
             </view>
           </template>
         </Tags>
@@ -244,7 +244,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 底部标签栏 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.bottom')" description="tabPosition='bottom'">
+      <TCard :title="$t('examplePages.tags.sections.bottom', null)" description="tabPosition='bottom'">
         <Tags
           :items="bottomTabs"
           v-model="activeTab6"
@@ -254,16 +254,16 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content-bottom">
               <view v-if="activeKey === 'home'">
-                <text class="content-title">{{ $t('examplePages.tags.content.homeContent') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.bottomNavDesc') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.content.homeContent', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.bottomNavDesc', null) }}</text>
               </view>
               <view v-if="activeKey === 'discover'">
-                <text class="content-title">{{ $t('examplePages.tags.labels.discover') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.discoverContent') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.labels.discover', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.discoverContent', null) }}</text>
               </view>
               <view v-if="activeKey === 'profile'">
-                <text class="content-title">{{ $t('examplePages.tags.labels.profile') }}</text>
-                <text class="content-text">{{ $t('examplePages.tags.content.profileContent') }}</text>
+                <text class="content-title">{{ $t('examplePages.tags.labels.profile', null) }}</text>
+                <text class="content-text">{{ $t('examplePages.tags.content.profileContent', null) }}</text>
               </view>
             </view>
           </template>
@@ -273,7 +273,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 自定义颜色 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.customColor')" :description="$t('examplePages.tags.sections.customColor')">
+      <TCard :title="$t('examplePages.tags.sections.customColor', null)" :description="$t('examplePages.tags.sections.customColor', null)">
         <Tags
           :items="colorTabs"
           v-model="activeTab7"
@@ -284,9 +284,9 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
           <template #default="{ activeKey }">
             <view class="tab-content">
               <text class="content-text" style="color: #e74c3c;">
-                {{ $t('examplePages.tags.content.customColorTheme') }}: {{ activeKey }}
+                {{ $t('examplePages.tags.content.customColorTheme', null) }}: {{ activeKey }}
               </text>
-              <text class="content-desc">{{ $t('examplePages.tags.content.redTheme') }}</text>
+              <text class="content-desc">{{ $t('examplePages.tags.content.redTheme', null) }}</text>
             </view>
           </template>
         </Tags>
@@ -295,7 +295,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 居中显示 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.centered')" description="centered">
+      <TCard :title="$t('examplePages.tags.sections.centered', null)" description="centered">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -304,7 +304,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">{{ $t('examplePages.tags.content.centered') }}: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.centered', null) }}: {{ activeKey }}</text>
             </view>
           </template>
         </Tags>
@@ -313,7 +313,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 无动画 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.noAnimation')" description="animated=false">
+      <TCard :title="$t('examplePages.tags.sections.noAnimation', null)" description="animated=false">
         <Tags
           :items="basicTabs"
           v-model="activeTab1"
@@ -321,7 +321,7 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
         >
           <template #default="{ activeKey }">
             <view class="tab-content">
-              <text class="content-text">{{ $t('examplePages.tags.content.noAnimation') }}: {{ activeKey }}</text>
+              <text class="content-text">{{ $t('examplePages.tags.content.noAnimation', null) }}: {{ activeKey }}</text>
             </view>
           </template>
         </Tags>
@@ -330,33 +330,33 @@ const handleTabClick = (key: string | number, item: TagItem): void => {
 
     <!-- 使用说明 -->
     <view class="example-section">
-      <TCard :title="$t('examplePages.tags.sections.usage')">
+      <TCard :title="$t('examplePages.tags.sections.usage', null)">
         <view class="usage-info">
-          <text class="info-title">{{ $t('examplePages.tags.usage.props') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.vModel') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.items') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.type') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.size') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.tabPosition') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.scrollable') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.centered') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.activeColor') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.inactiveColor') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.animated') }}</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.props', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.vModel', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.items', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.type', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.size', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.tabPosition', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.scrollable', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.centered', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.activeColor', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.inactiveColor', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.animated', null) }}</text>
 
-          <text class="info-title">{{ $t('examplePages.tags.usage.events') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.change') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.tabClick') }}</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.events', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.change', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.tabClick', null) }}</text>
 
-          <text class="info-title">{{ $t('examplePages.tags.usage.slots') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.default') }}</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.slots', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.default', null) }}</text>
 
-          <text class="info-title">{{ $t('examplePages.tags.usage.tabItem') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.key') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.label') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.disabled') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.badge') }}</text>
-          <text class="info-item">{{ $t('examplePages.tags.usage.icon') }}</text>
+          <text class="info-title">{{ $t('examplePages.tags.usage.tabItem', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.key', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.label', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.disabled', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.badge', null) }}</text>
+          <text class="info-item">{{ $t('examplePages.tags.usage.icon', null) }}</text>
         </view>
       </TCard>
     </view>

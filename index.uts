@@ -93,7 +93,6 @@ export const components: string[] = [
   'TForm',
 
   // 数据展示
-  'Tags',
   'TBadge',
   'TAvatar',
   'TProgress',

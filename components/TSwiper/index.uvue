@@ -1,5 +1,6 @@
 <script setup lang="uts">
 import { computed, ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TSwiperProps } from './type.uts'
 
 /**
@@ -22,7 +23,7 @@ const props = withDefaults(defineProps<TSwiperProps>(), {
 })
 
 // 使用 defineModel 管理当前索引
-const currentIndex = defineModel({ default: 0 })
+const currentIndex = defineModel({ default: 0 }) as Ref<number>
 
 // 定义 emits
 const emit = defineEmits<{
@@ -36,7 +37,7 @@ const swiperItemCount = ref(0)
 /**
  * 计算容器样式
  */
-const swiperStyle = computed(() => {
+const swiperStyle = computed((): string => {
   const styles: string[] = []
 
   if (props.height != '') {
@@ -49,24 +50,24 @@ const swiperStyle = computed(() => {
 /**
  * 计算指示器容器样式类
  */
-const indicatorClass = computed(() => {
+const indicatorClass = computed((): string => {
   const classes: string[] = ['absolute', 'z-10', 'flex', 'items-center']
 
   if (props.direction === 'vertical') {
     classes.push('top-1/2', '-translate-y-1/2', 'flex-col')
 
     if (props.indicatorPosition === 'left') {
-      classes.push('left-[12px]')
+      classes.push('left-3')
     } else {
-      classes.push('right-[12px]')
+      classes.push('right-3')
     }
   } else {
     classes.push('left-1/2', '-translate-x-1/2', 'flex-row')
 
     if (props.indicatorPosition === 'top') {
-      classes.push('top-[12px]')
+      classes.push('top-3')
     } else {
-      classes.push('bottom-[12px]')
+      classes.push('bottom-3')
     }
   }
 
@@ -75,17 +76,17 @@ const indicatorClass = computed(() => {
 
 const getDotClass = (index: number): string => {
   const classes: string[] = [
-    'mx-[4px]',
+    'mx-1',
     'my-0',
-    'h-[8px]',
-    'w-[8px]',
-    'rounded-[4px]',
+    'h-2',
+    'w-2',
+    'rounded',
     'transition-all',
     'duration-300'
   ]
 
   if (index === currentIndex.value) {
-    classes.push('w-[16px]')
+    classes.push('w-4')
   }
 
   return classes.join(' ')
@@ -104,11 +105,11 @@ const getDotStyle = (index: number): string => {
 /**
  * 处理轮播改变事件
  */
-const handleChange = (e: any): void => {
+const handleChange = (e: UniSwiperChangeEvent): void => {
   const detail = e.detail
   if (detail != null && detail.current != null) {
-    currentIndex.value = detail.current as number
-    emit('change', detail.current as number)
+    currentIndex.value = detail.current
+    emit('change', detail.current)
   }
 }
 
@@ -122,8 +123,12 @@ const handleClick = (): void => {
 /**
  * 计算是否显示指示器
  */
-const showIndicator = computed(() => {
+const showIndicator = computed((): boolean => {
   return props.indicatorType !== 'none'
+})
+
+const indicatorText = computed((): string => {
+  return `${currentIndex.value + 1}/${swiperItemCount.value}`
 })
 
 /**
@@ -171,8 +176,8 @@ defineExpose({
 
       <!-- 数字指示器 -->
       <template v-if="indicatorType === 'number'">
-        <view class="rounded-[12px] bg-[rgba(0,0,0,0.5)] px-[12px] py-[4px]">
-          <text class="text-[12px] leading-none text-white">{{ currentIndex + 1 }}/{{ swiperItemCount }}</text>
+        <view class="rounded-xl bg-black/50 px-3 py-1">
+          <text class="text-xs leading-none text-white">{{ indicatorText }}</text>
         </view>
       </template>
     </view>

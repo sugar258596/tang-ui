@@ -20,7 +20,7 @@ export type DividerContentPosition = 'left' | 'center' | 'right'
 /**
  * TDivider Props 接口
  */
-export interface TDividerProps {
+export type TDividerProps = {
   /**
    * 分割线方向
    * @default 'horizontal'

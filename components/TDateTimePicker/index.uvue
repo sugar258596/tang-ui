@@ -1,6 +1,15 @@
 <script setup lang="uts">
 import { computed, ref, watch, nextTick } from 'vue'
-import type { TDateTimePickerProps, TDateTimePickerDayItem, TDateTimePickerRangeValue } from './type.uts'
+import type { Ref } from 'vue'
+import type {
+  TDateTimePickerProps,
+  TDateTimePickerDayItem,
+  TDateTimePickerRangeValue,
+  TDateTimePickerRangeNumberObject,
+  TDateTimePickerRangeStringObject,
+  TDateTimePickerRangeNumberArray,
+  TDateTimePickerRangeStringArray
+} from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 
 /**
@@ -12,7 +21,7 @@ import { useI18n } from '../../composables/useI18n.uts'
  */
 
 // Props 定义
-type Props = Omit<TDateTimePickerProps, 'visible'>
+type Props = TDateTimePickerProps
 
 const props = withDefaults(defineProps<Props>(), {
   mode: 'date',
@@ -30,13 +39,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const visible = defineModel({ default: false })
+const visible = defineModel({ default: false }) as Ref<boolean>
 
 // 使用 defineModel 管理选中的值（时间戳）
-const selectedValue = defineModel('value', { default: 0 })
+const selectedValue = defineModel('value', { default: 0 }) as Ref<number>
 
 // 使用 defineModel 管理范围选中的值（时间戳对象或数组）
-const selectedRangeValue = defineModel('rangeValue', { default: null })
+const selectedRangeValue = defineModel('rangeValue', { default: null }) as Ref<TDateTimePickerRangeValue | null>
 
 // 内部渲染状态，用于控制 DOM 显示
 const rendered = ref(false)
@@ -52,7 +61,11 @@ const emit = defineEmits<{
 }>()
 
 // 使用 i18n
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
+}
 
 // 获取默认日期范围（当前时间前后100年）
 const getDefaultMinDate = (): number => {
@@ -71,24 +84,27 @@ const maxDate = computed<number>(() => props.maxDate ?? getDefaultMaxDate())
 
 // 优先使用用户传入的值，否则使用翻译
 const displayTitle = computed<string>(() => {
-  if (props.title !== undefined && props.title !== '') {
-    return props.title
+  const title = props.title
+  if (hasTextValue(title)) {
+    return title as string
   }
-  return $t('datetimePicker.title')
+  return t('datetimePicker.title')
 })
 
 const displayConfirmText = computed<string>(() => {
-  if (props.confirmText !== undefined && props.confirmText !== '') {
-    return props.confirmText
+  const confirmText = props.confirmText
+  if (hasTextValue(confirmText)) {
+    return confirmText as string
   }
-  return $t('datetimePicker.confirmText')
+  return t('datetimePicker.confirmText')
 })
 
 const displayCancelText = computed<string>(() => {
-  if (props.cancelText !== undefined && props.cancelText !== '') {
-    return props.cancelText
+  const cancelText = props.cancelText
+  if (hasTextValue(cancelText)) {
+    return cancelText as string
   }
-  return $t('datetimePicker.cancelText')
+  return t('datetimePicker.cancelText')
 })
 
 // 当前视图的年月
@@ -108,7 +124,7 @@ const panelMode = ref<string>('date')
 // 范围选择状态
 const rangeStart = ref<number | null>(null)
 const rangeEnd = ref<number | null>(null)
-const selectingRange = ref<'start' | 'end'>('start')
+const selectingRange = ref<string>('start')
 
 // 星期标题
 const weekDays = computed<string[]>(() => {
@@ -146,12 +162,112 @@ const getFirstDayOfMonth = (year: number, month: number): number => {
 
 // 使用导出的日期项类型
 type DayItem = TDateTimePickerDayItem
-type DayClassMap = {
-  't-datetime-picker__day--other': boolean
-  't-datetime-picker__day--disabled': boolean
-  't-datetime-picker__day--range-start': boolean
-  't-datetime-picker__day--range-end': boolean
-  't-datetime-picker__day--in-range': boolean
+
+type RangeParseResult = {
+  start: number
+  end: number
+}
+
+const isNumberRangeArray = (value: TDateTimePickerRangeValue | null): boolean => {
+  if (!Array.isArray(value)) {
+    return false
+  }
+  const arr = value as TDateTimePickerRangeNumberArray
+  if (arr.length < 2) {
+    return false
+  }
+  return typeof arr[0] === 'number' && typeof arr[1] === 'number'
+}
+
+const isStringRangeArray = (value: TDateTimePickerRangeValue | null): boolean => {
+  if (!Array.isArray(value)) {
+    return false
+  }
+  const arr = value as TDateTimePickerRangeStringArray
+  if (arr.length < 2) {
+    return false
+  }
+  return typeof arr[0] === 'string' && typeof arr[1] === 'string'
+}
+
+const isNumberRangeObject = (value: TDateTimePickerRangeValue | null): boolean => {
+  if (value == null || Array.isArray(value) || typeof value !== 'object') {
+    return false
+  }
+  const rangeValue = value as TDateTimePickerRangeNumberObject
+  return typeof rangeValue.start === 'number' && typeof rangeValue.end === 'number'
+}
+
+const isStringRangeObject = (value: TDateTimePickerRangeValue | null): boolean => {
+  if (value == null || Array.isArray(value) || typeof value !== 'object') {
+    return false
+  }
+  const rangeValue = value as TDateTimePickerRangeStringObject
+  return typeof rangeValue.start === 'string' && typeof rangeValue.end === 'string'
+}
+
+const normalizeRangeTimestamp = (value: string | number): number => {
+  if (typeof value === 'number') {
+    return value
+  }
+  if (typeof value === 'string' && value !== '') {
+    return new Date(value).getTime()
+  }
+  return 0
+}
+
+const parseRangeValue = (value: TDateTimePickerRangeValue | null): RangeParseResult | null => {
+  if (isNumberRangeArray(value)) {
+    const arr = value as TDateTimePickerRangeNumberArray
+    const startValue = normalizeRangeTimestamp(arr[0])
+    const endValue = normalizeRangeTimestamp(arr[1])
+    if (startValue > 0 && endValue > 0) {
+      return {
+        start: startValue,
+        end: endValue
+      }
+    }
+    return null
+  }
+
+  if (isStringRangeArray(value)) {
+    const arr = value as TDateTimePickerRangeStringArray
+    const startValue = normalizeRangeTimestamp(arr[0])
+    const endValue = normalizeRangeTimestamp(arr[1])
+    if (startValue > 0 && endValue > 0) {
+      return {
+        start: startValue,
+        end: endValue
+      }
+    }
+    return null
+  }
+
+  if (isNumberRangeObject(value)) {
+    const rangeValue = value as TDateTimePickerRangeNumberObject
+    const startValue = normalizeRangeTimestamp(rangeValue.start)
+    const endValue = normalizeRangeTimestamp(rangeValue.end)
+    if (startValue > 0 && endValue > 0) {
+      return {
+        start: startValue,
+        end: endValue
+      }
+    }
+  }
+
+  if (isStringRangeObject(value)) {
+    const rangeValue = value as TDateTimePickerRangeStringObject
+    const startValue = normalizeRangeTimestamp(rangeValue.start)
+    const endValue = normalizeRangeTimestamp(rangeValue.end)
+    if (startValue > 0 && endValue > 0) {
+      return {
+        start: startValue,
+        end: endValue
+      }
+    }
+  }
+
+  return null
 }
 
 // 将日期转换为时间戳（用于范围比较）
@@ -196,10 +312,10 @@ const isInRangeDate = (year: number, month: number, day: number): boolean => {
 const getDayStyle = (item: DayItem): string => {
   if (props.range) {
     // 范围模式样式
-    if (item.isRangeStart || item.isRangeEnd) {
+    if (item.isRangeStart === true || item.isRangeEnd === true) {
       return `background-color: ${props.activeColor}; color: ${props.activeTextColor};`
     }
-    if (item.isInRange) {
+    if (item.isInRange === true) {
       return `background-color: ${props.rangeColor}; color: ${props.activeColor};`
     }
   } else {
@@ -215,14 +331,26 @@ const getDayStyle = (item: DayItem): string => {
 }
 
 // 获取日期单元格类名
-const getDayClass = (item: DayItem): DayClassMap => {
-  return {
-    't-datetime-picker__day--other': !item.isCurrentMonth,
-    't-datetime-picker__day--disabled': item.isDisabled,
-    't-datetime-picker__day--range-start': item.isRangeStart === true,
-    't-datetime-picker__day--range-end': item.isRangeEnd === true,
-    't-datetime-picker__day--in-range': item.isInRange === true
+const getDayClass = (item: DayItem): string => {
+  const classes: string[] = []
+
+  if (!item.isCurrentMonth) {
+    classes.push('t-datetime-picker__day--other')
   }
+  if (item.isDisabled) {
+    classes.push('t-datetime-picker__day--disabled')
+  }
+  if (item.isRangeStart === true) {
+    classes.push('t-datetime-picker__day--range-start')
+  }
+  if (item.isRangeEnd === true) {
+    classes.push('t-datetime-picker__day--range-end')
+  }
+  if (item.isInRange === true) {
+    classes.push('t-datetime-picker__day--in-range')
+  }
+
+  return classes.join(' ')
 }
 
 // 获取年份/月份选中样式
@@ -244,6 +372,55 @@ const getTimeItemStyle = (isSelected: boolean): string => {
     return `background-color: ${props.activeColor};`
   }
   return ''
+}
+
+const getMaskClass = (): string => {
+  return !showOverlay.value ? 't-datetime-picker__mask--hidden' : ''
+}
+
+const getContainerClass = (): string => {
+  return !showOverlay.value ? 't-datetime-picker__container--hidden' : ''
+}
+
+const getRangeItemClass = (type: string): string => {
+  if (selectingRange.value === type) {
+    return 't-datetime-picker__range-item--active'
+  }
+  return ''
+}
+
+const getTimeItemClass = (isSelected: boolean): string => {
+  return isSelected ? 't-datetime-picker__time-item--selected' : ''
+}
+
+function isDateDisabled(year: number, month: number, day: number): boolean {
+  const date = new Date(year, month - 1, day).getTime()
+  return date < minDate.value || date > maxDate.value
+}
+
+function doClose(): void {
+  showOverlay.value = false
+  // 等待关闭动画完成后再卸载 DOM
+  setTimeout(() => {
+    rendered.value = false
+  }, 350)
+}
+
+function handleCancel(): void {
+  // 触发关闭动画
+  showOverlay.value = false
+  // 等待动画完成后更新状态
+  setTimeout(() => {
+    rendered.value = false
+    visible.value = false
+    emit('cancel')
+  }, 350)
+}
+
+function resetRange(): void {
+  rangeStart.value = null
+  rangeEnd.value = null
+  selectingRange.value = 'start'
 }
 
 // 生成日历天数数组
@@ -321,14 +498,8 @@ const calendarDays = computed<DayItem[]>(() => {
   return days
 })
 
-// 检查日期是否禁用
-const isDateDisabled = (year: number, month: number, day: number): boolean => {
-  const date = new Date(year, month - 1, day).getTime()
-  return date < minDate.value || date > maxDate.value
-}
-
 // 检查月份是否禁用
-const isMonthDisabled = (month: number): boolean => {
+function isMonthDisabled(month: number): boolean {
   const year = viewYear.value
   const minD = new Date(minDate.value)
   const maxD = new Date(maxDate.value)
@@ -346,8 +517,30 @@ const isMonthDisabled = (month: number): boolean => {
 }
 
 // 检查年份是否禁用
-const isYearDisabled = (year: number): boolean => {
+function isYearDisabled(year: number): boolean {
   return year < minYear.value || year > maxYear.value
+}
+
+function getYearItemClass(year: number): string {
+  const classes: string[] = []
+  if (year === selectedYear.value) {
+    classes.push('t-datetime-picker__year-item--selected')
+  }
+  if (isYearDisabled(year)) {
+    classes.push('t-datetime-picker__year-item--disabled')
+  }
+  return classes.join(' ')
+}
+
+function getMonthItemClass(month: number): string {
+  const classes: string[] = []
+  if (month === selectedMonth.value && viewYear.value === selectedYear.value) {
+    classes.push('t-datetime-picker__month-item--selected')
+  }
+  if (isMonthDisabled(month)) {
+    classes.push('t-datetime-picker__month-item--disabled')
+  }
+  return classes.join(' ')
 }
 
 // 格式化数字为两位数
@@ -363,6 +556,22 @@ const headerTitle = computed<string>(() => {
   }
   return `${viewYear.value}年${padZero(viewMonth.value)}月`
 })
+
+// 获取当前选中的时间戳
+function getCurrentTimestamp(): number {
+  const year = selectedYear.value
+  const month = selectedMonth.value
+  const day = props.mode === 'month' ? 1 : selectedDay.value
+  const hour = props.mode === 'datetime' ? selectedHour.value : 0
+  const minute = props.mode === 'datetime' ? selectedMinute.value : 0
+
+  return new Date(year, month - 1, day, hour, minute).getTime()
+}
+
+function emitChange(): void {
+  const timestamp = getCurrentTimestamp()
+  emit('change', timestamp)
+}
 
 // 切换到上一个
 const handlePrev = (): void => {
@@ -420,11 +629,7 @@ const handleYearSelect = (year: number): void => {
   viewYear.value = year
   selectedYear.value = year
 
-  if (props.mode === 'month') {
-    panelMode.value = 'month'
-  } else {
-    panelMode.value = 'month'
-  }
+  panelMode.value = 'month'
 }
 
 // 选择月份
@@ -559,17 +764,6 @@ const handleMinuteSelect = (minute: number): void => {
   }
 }
 
-// 获取当前选中的时间戳
-const getCurrentTimestamp = (): number => {
-  const year = selectedYear.value
-  const month = selectedMonth.value
-  const day = props.mode === 'month' ? 1 : selectedDay.value
-  const hour = props.mode === 'datetime' ? selectedHour.value : 0
-  const minute = props.mode === 'datetime' ? selectedMinute.value : 0
-
-  return new Date(year, month - 1, day, hour, minute).getTime()
-}
-
 // 格式化时间戳
 const formatTimestamp = (timestamp: number): string => {
   const date = new Date(timestamp)
@@ -586,12 +780,6 @@ const formatTimestamp = (timestamp: number): string => {
   } else {
     return `${year}-${month}-${day} ${hour}:${minute}`
   }
-}
-
-// 触发 change 事件
-const emitChange = (): void => {
-  const timestamp = getCurrentTimestamp()
-  emit('change', timestamp)
 }
 
 // 根据时间戳设置选中值
@@ -621,29 +809,11 @@ watch(visible, (newVal: boolean) => {
 
     // 重置范围选择状态或进行数据回显
     if (props.range) {
-      let startValue: number = 0
-      let endValue: number = 0
-      const rVal = selectedRangeValue.value
+      const parsedRange = parseRangeValue(selectedRangeValue.value)
 
-      if (rVal != null) {
-        if (Array.isArray(rVal) && (rVal as Array<any>).length >= 2) {
-          const arr = rVal as Array<any>
-          const s = arr[0]
-          const e = arr[1]
-          startValue = typeof s === 'string' ? new Date(s as string).getTime() : (typeof s === 'number' ? (s as number) : 0)
-          endValue = typeof e === 'string' ? new Date(e as string).getTime() : (typeof e === 'number' ? (e as number) : 0)
-        } else if (typeof rVal === 'object') {
-          const obj = rVal as any
-          const s = obj['start']
-          const e = obj['end']
-          startValue = typeof s === 'string' ? new Date(s as string).getTime() : (typeof s === 'number' ? (s as number) : 0)
-          endValue = typeof e === 'string' ? new Date(e as string).getTime() : (typeof e === 'number' ? (e as number) : 0)
-        }
-      }
-
-      if (startValue > 0 && endValue > 0) {
-        rangeStart.value = startValue
-        rangeEnd.value = endValue
+      if (parsedRange != null) {
+        rangeStart.value = parsedRange.start
+        rangeEnd.value = parsedRange.end
         selectingRange.value = 'start' // 回显后默认下一步选择开始时间
         // 设置年月视图到开始时间
         const startDate = new Date(rangeStart.value as number)
@@ -688,30 +858,9 @@ watch(visible, (newVal: boolean) => {
   }
 })
 
-// 执行关闭动画
-const doClose = (): void => {
-  showOverlay.value = false
-  // 等待关闭动画完成后再卸载 DOM
-  setTimeout(() => {
-    rendered.value = false
-  }, 350)
-}
-
 // 处理遮罩点击
 const handleMaskClick = (): void => {
   handleCancel()
-}
-
-// 处理取消
-const handleCancel = (): void => {
-  // 触发关闭动画
-  showOverlay.value = false
-  // 等待动画完成后更新状态
-  setTimeout(() => {
-    rendered.value = false
-    visible.value = false
-    emit('cancel')
-  }, 350)
 }
 
 // 处理确认
@@ -724,12 +873,12 @@ const handleConfirm = (): void => {
         formatTimestamp(rangeEnd.value as number)
       ]
 
-      let emitValue: any = null
-      if (Array.isArray(selectedRangeValue.value)) {
+      let emitValue: TDateTimePickerRangeValue | null = null
+      if (isNumberRangeArray(selectedRangeValue.value) || isStringRangeArray(selectedRangeValue.value)) {
         emitValue = formatted
         selectedRangeValue.value = formatted // 回显字符串数组
       } else {
-        const rangeValue = {
+        const rangeValue: TDateTimePickerRangeNumberObject = {
           start: rangeStart.value,
           end: rangeEnd.value
         }
@@ -743,7 +892,7 @@ const handleConfirm = (): void => {
       setTimeout(() => {
         rendered.value = false
         visible.value = false
-        emit('confirmRange', emitValue, formatted)
+        emit('confirmRange', emitValue as TDateTimePickerRangeValue, formatted)
       }, 350)
     }
   } else {
@@ -785,12 +934,6 @@ const handleToday = (): void => {
   viewMonth.value = now.getMonth() + 1
 }
 
-// 重置范围选择
-const resetRange = (): void => {
-  rangeStart.value = null
-  rangeEnd.value = null
-  selectingRange.value = 'start'
-}
 </script>
 
 <template>
@@ -798,7 +941,7 @@ const resetRange = (): void => {
     <!-- 遮罩层 -->
     <view
       class="t-datetime-picker__mask"
-      :class="{ 't-datetime-picker__mask--hidden': !showOverlay }"
+      :class="getMaskClass()"
       @click="handleMaskClick"
       @touchmove.stop.prevent="() => {}"
     ></view>
@@ -806,7 +949,7 @@ const resetRange = (): void => {
     <!-- 选择器容器 -->
     <view
       class="t-datetime-picker__container"
-      :class="{ 't-datetime-picker__container--hidden': !showOverlay }"
+      :class="getContainerClass()"
       @touchmove.stop="() => {}"
     >
       <!-- 工具栏 -->
@@ -837,12 +980,12 @@ const resetRange = (): void => {
 
       <!-- 范围选择提示 -->
       <view v-if="range" class="t-datetime-picker__range-info">
-        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'start' }">
+        <view class="t-datetime-picker__range-item" :class="getRangeItemClass('start')">
           <text class="t-datetime-picker__range-label">{{ startText }}</text>
           <text class="t-datetime-picker__range-value">{{ rangeStart !== null ? formatTimestamp(rangeStart) : '请选择' }}</text>
         </view>
         <text class="t-datetime-picker__range-separator">~</text>
-        <view class="t-datetime-picker__range-item" :class="{ 't-datetime-picker__range-item--active': selectingRange === 'end' }">
+        <view class="t-datetime-picker__range-item" :class="getRangeItemClass('end')">
           <text class="t-datetime-picker__range-label">{{ endText }}</text>
           <text class="t-datetime-picker__range-value">{{ rangeEnd !== null ? formatTimestamp(rangeEnd) : '请选择' }}</text>
         </view>
@@ -855,10 +998,7 @@ const resetRange = (): void => {
             v-for="(year, index) in yearList"
             :key="index"
             class="t-datetime-picker__year-item"
-            :class="{
-              't-datetime-picker__year-item--selected': year === selectedYear,
-              't-datetime-picker__year-item--disabled': isYearDisabled(year)
-            }"
+            :class="getYearItemClass(year)"
             @click="handleYearSelect(year)"
           >
             <text
@@ -876,10 +1016,7 @@ const resetRange = (): void => {
             v-for="(name, index) in monthNames"
             :key="index"
             class="t-datetime-picker__month-item"
-            :class="{
-              't-datetime-picker__month-item--selected': (index + 1) === selectedMonth && viewYear === selectedYear,
-              't-datetime-picker__month-item--disabled': isMonthDisabled(index + 1)
-            }"
+            :class="getMonthItemClass(index + 1)"
             @click="handleMonthSelect(index + 1)"
           >
             <text
@@ -937,7 +1074,7 @@ const resetRange = (): void => {
               :key="hour"
               :id="`hour-${hour}`"
               class="t-datetime-picker__time-item"
-              :class="{ 't-datetime-picker__time-item--selected': hour === selectedHour }"
+              :class="getTimeItemClass(hour === selectedHour)"
               :style="getTimeItemStyle(hour === selectedHour)"
               @click="handleHourSelect(hour)"
             >
@@ -957,7 +1094,7 @@ const resetRange = (): void => {
               :key="minute"
               :id="`minute-${minute}`"
               class="t-datetime-picker__time-item"
-              :class="{ 't-datetime-picker__time-item--selected': minute === selectedMinute }"
+              :class="getTimeItemClass(minute === selectedMinute)"
               :style="getTimeItemStyle(minute === selectedMinute)"
               @click="handleMinuteSelect(minute)"
             >

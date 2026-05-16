@@ -4,9 +4,9 @@
 
 export type NoticeBarMode = 'closeable' | 'link'
 
-export interface TNoticeBarProps {
+export type TNoticeBarProps = {
   text?: string
-  mode?: NoticeBarMode
+  mode?: NoticeBarMode | null
   color?: string
   background?: string
   leftIcon?: string

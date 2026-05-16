@@ -4,7 +4,23 @@
  */
 
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import type { ModalOptions } from '../types/index.uts'
+
+type UseModalReturn = {
+  isVisible: Ref<boolean>
+  currentModal: Ref<ModalOptions | null>
+  modalQueue: Ref<ModalOptions[]>
+  show: (options: ModalOptions) => Promise
+  confirm: (content: string, title?: string) => Promise
+  alert: (content: string, title?: string) => Promise
+  prompt: (title: string, placeholder?: string, defaultValue?: string) => Promise<string | null>
+  loading: (title?: string, mask?: boolean) => () => void
+  actionSheet: (items: string[], title?: string) => Promise
+  close: () => void
+  clear: () => void
+  getQueueLength: () => number
+}
 
 /** 模态框队列 */
 const modalQueue = ref<ModalOptions[]>([])
@@ -19,7 +35,7 @@ const isVisible = ref(false)
  * 模态框管理组合式函数
  * @returns {Object} 模态框管理对象
  */
-export function useModal() {
+export function useModal(): UseModalReturn {
   /**
    * 显示模态框
    * @param {ModalOptions} options - 模态框配置
@@ -256,9 +272,9 @@ export function useModal() {
 /**
  * 获取模态框实例（单例模式）
  */
-let modalInstance : any | null = null
+let modalInstance : UseModalReturn | null = null
 
-export function getModalInstance() {
+export function getModalInstance(): UseModalReturn {
   if (modalInstance == null) {
     modalInstance = useModal()
   }

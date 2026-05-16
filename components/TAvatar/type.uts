@@ -8,6 +8,12 @@ export type TAvatarProps = {
   src?: string
 
   /**
+   * 图片加载失败时显示的兜底图片地址
+   * @default ""
+   */
+  errorImage?: string
+
+  /**
    * 头像大小
    * @default "medium"
    */

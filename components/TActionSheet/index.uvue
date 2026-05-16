@@ -1,7 +1,8 @@
 <script setup lang="uts">
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import TPopup from '../TPopup/index.uvue'
-import type { ActionSheetAction, TActionSheetProps } from './type.uts'
+import type { ActionSheetAction } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
 
 /**
@@ -9,10 +10,18 @@ import { useI18n } from '../../composables/useI18n.uts'
  * @description 底部弹出的动作菜单，基于 TPopup 组件实现
  */
 
-// Props 定义 (从 type.uts 导入，排除 show)
-type Props = Omit<TActionSheetProps, 'show'>
+type ActionSheetViewProps = {
+  actions?: ActionSheetAction[]
+  title?: string
+  description?: string
+  cancelText?: string
+  closeOnClickAction?: boolean
+  closeOnClickOverlay?: boolean
+  customClass?: string
+  customStyle?: string
+}
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ActionSheetViewProps>(), {
   actions: () => [] as ActionSheetAction[],
   title: '',
   description: '',
@@ -23,7 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用 defineModel 管理显示状态 (v-model)
-const visible = defineModel({ default: false })
+const visible = defineModel({ default: false }) as Ref<boolean>
 
 const emit = defineEmits<{
   select: [action: ActionSheetAction, index: number]
@@ -34,36 +43,55 @@ const emit = defineEmits<{
 // 使用 i18n
 const { $t } = useI18n()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
-const hasTitle = computed(() => {
+const hasTitle = computed((): boolean => {
   return hasTextValue(props.title)
 })
 
-const hasDescription = computed(() => {
+const hasDescription = computed((): boolean => {
   return hasTextValue(props.description)
 })
 
-const showHeader = computed(() => {
+const showHeader = computed((): boolean => {
   return hasTitle.value || hasDescription.value
 })
 
 // 优先使用用户传入的值，否则使用翻译
-const displayCancelText = computed(() => {
+const displayCancelText = computed((): string => {
   // 如果用户明确传入了 cancelText（即使是空字符串），使用用户的值
   // 否则使用翻译
-  return props.cancelText !== undefined && props.cancelText !== '' 
-    ? props.cancelText 
-    : $t('actionSheet.cancelText')
+  return props.cancelText !== null && props.cancelText !== '' 
+    ? props.cancelText as string
+    : $t('actionSheet.cancelText', {})
 })
 
+const canCloseOnClickAction = computed((): boolean => {
+  return props.closeOnClickAction == true
+})
+
+const getActionClass = (action: ActionSheetAction): string => {
+  let className = 't-action-sheet__action flex items-center justify-center border-b border-border-soft p-4 text-center'
+  if (action.disabled == true || action.loading == true) {
+    className = className + ' opacity-50'
+  }
+  return className
+}
+
+const getActionTextStyle = (action: ActionSheetAction): string => {
+  if (action.color !== null && action.color !== '') {
+    return `color: ${action.color}`
+  }
+  return ''
+}
+
 const handleSelect = (action: ActionSheetAction, index: number): void => {
-  if (action.disabled || action.loading) return
+  if (action.disabled == true || action.loading == true) return
 
   emit('select', action, index)
-  if (props.closeOnClickAction) {
+  if (canCloseOnClickAction.value) {
     visible.value = false
   }
 }
@@ -91,26 +119,22 @@ const handleClose = (): void => {
   >
     <view class="t-action-sheet bg-transparent p-0" :class="customClass" :style="customStyle">
       <!-- 头部：标题和描述 -->
-      <view v-if="showHeader" class="t-action-sheet__header border-b border-[#ebedf0] p-4 text-center">
-        <text v-if="hasTitle" class="t-action-sheet__title mb-2 block text-base font-medium text-[#323233]">{{ title }}</text>
-        <text v-if="hasDescription" class="t-action-sheet__description block text-sm text-[#969799]">{{ description }}</text>
+      <view v-if="showHeader" class="t-action-sheet__header border-b border-border-soft p-4 text-center">
+        <text v-if="hasTitle" class="t-action-sheet__title mb-2 text-base font-medium text-title">{{ title }}</text>
+        <text v-if="hasDescription" class="t-action-sheet__description text-sm text-desc">{{ description }}</text>
       </view>
 
       <!-- 操作列表 -->
-      <view class="t-action-sheet__actions max-h-[400px] overflow-y-auto">
+      <view class="t-action-sheet__actions max-h-actions overflow-y-auto">
         <view
           v-for="(action, index) in actions"
           :key="index"
-          class="t-action-sheet__action flex items-center justify-center border-b border-[#ebedf0] p-4 text-center active:bg-[#f5f5f5]"
-          :class="{
-            'opacity-50 cursor-not-allowed': action.disabled,
-            'opacity-50': action.loading
-          }"
-          @click="() => handleSelect(action, index)"
+          :class="getActionClass(action)"
+          @click="handleSelect(action, index)"
         >
           <text
-            class="t-action-sheet__action-text text-base text-[#323233]"
-            :style="action.color ? `color: ${action.color}` : ''"
+            class="t-action-sheet__action-text text-base text-title"
+            :style="getActionTextStyle(action)"
           >
             {{ action.name }}
           </text>
@@ -118,8 +142,8 @@ const handleClose = (): void => {
       </view>
 
       <!-- 取消按钮 -->
-      <view class="t-action-sheet__cancel flex items-center justify-center border-t-[8px] border-[#f5f5f5] p-4 text-center active:bg-[#f5f5f5]" @click="handleCancel">
-        <text class="t-action-sheet__cancel-text text-base text-[#323233]">{{ displayCancelText }}</text>
+      <view class="t-action-sheet__cancel flex items-center justify-center border-t-8 border-action-divider p-4 text-center" @click="handleCancel">
+        <text class="t-action-sheet__cancel-text text-base text-title">{{ displayCancelText }}</text>
       </view>
     </view>
   </TPopup>

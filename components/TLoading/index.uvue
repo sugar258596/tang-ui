@@ -29,9 +29,9 @@ const loadingClass = computed(() => {
   const classes: string[] = ['t-loading inset-0 flex items-center justify-center']
 
   if (props.fullscreen) {
-    classes.push('fixed z-[9999]')
+    classes.push('fixed z-999')
   } else {
-    classes.push('absolute z-[1]')
+    classes.push('absolute z-1')
   }
 
   return classes.join(' ')
@@ -64,7 +64,7 @@ const spinnerClass = computed(() => {
       classes.push('h-10 w-10')
       break
     default:
-      classes.push('h-[30px] w-[30px]')
+      classes.push('h-8 w-8')
       break
   }
 
@@ -89,9 +89,12 @@ const spinnerStyle = computed(() => {
 <template>
   <view v-if="loading" :class="loadingClass">
     <view v-if="mask" class="t-loading__mask absolute inset-0" :style="maskStyle"></view>
-    <view class="t-loading__content relative z-[1] flex flex-col items-center justify-center">
+    <view class="t-loading__content relative z-1 flex flex-col items-center justify-center">
       <view :class="spinnerClass" :style="spinnerStyle"></view>
-      <text v-if="hasText" class="t-loading__text mt-3 text-sm text-[#606266]">{{ text }}</text>
+      <text v-if="hasText" class="t-loading__text mt-3 text-sm text-secondary">{{ text }}</text>
     </view>
   </view>
 </template>
+
+<style>
+</style>

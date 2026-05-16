@@ -5,13 +5,13 @@
 export type CheckboxDirection = 'horizontal' | 'vertical'
 export type CheckboxSize = 'small' | 'medium' | 'large'
 
-export interface CheckboxOption {
+export type CheckboxOption = {
   label: string
   value: string | number
   disabled?: boolean
 }
 
-export interface TCheckboxGroupProps {
+export type TCheckboxGroupProps = {
   modelValue?: (string | number)[]
   options?: CheckboxOption[]
   direction?: CheckboxDirection

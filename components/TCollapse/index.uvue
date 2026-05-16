@@ -18,7 +18,7 @@ type TActiveNames = string | string[]
 
 // 使用 defineModel 管理当前展开的面板名称
 // 手风琴模式下为字符串，多选模式下为字符串数组
-const activeNames = defineModel({ default: [] }) as Ref<TActiveNames>
+const activeNames = defineModel({ default: () => [] }) as Ref<TActiveNames>
 
 /**
  * 计算当前展开的面板名称数组
@@ -71,7 +71,7 @@ const collapseClass = computed(() => {
   const classes: string[] = ['bg-white']
 
   if (props.border) {
-    classes.push('border-t', 'border-b', 'border-[#ebeef5]')
+    classes.push('border-y', 'border-border-soft')
   }
 
   return classes.join(' ')

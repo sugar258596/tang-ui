@@ -22,10 +22,10 @@ const hasTitle = computed(() => {
  * 计算列表样式类
  */
 const listClass = computed(() => {
-  const classes: string[] = ['t-list', 'bg-white']
+  const classes: string[] = ['t-list', 'bg-surface']
 
   if (props.border) {
-    classes.push('border-y border-[#ebeef5]')
+    classes.push('border-y border-border-soft')
   }
 
   switch (props.spacing) {
@@ -49,7 +49,7 @@ const listClass = computed(() => {
 <template>
   <view class="t-list-wrapper w-full">
     <view v-if="hasTitle" class="t-list__title px-4 pb-2 pt-3">
-      <text class="t-list__title-text text-sm text-[#909399]">{{ title }}</text>
+      <text class="t-list__title-text text-sm text-tertiary">{{ title }}</text>
     </view>
     <view :class="listClass">
       <slot></slot>

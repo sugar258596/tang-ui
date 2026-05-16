@@ -82,7 +82,7 @@
 
 ```vue
 <template>
-  <TText :line-height="2" text="行高为2的文本" />
+  <TText line-height="2" text="行高为2的文本" />
   <TText line-height="30px" text="行高为30px的文本" />
 </template>
 ```
@@ -107,7 +107,7 @@
 | weight | 文本粗细 | string | lighter / normal / medium / bold | normal |
 | align | 文本对齐 | string | left / center / right / justify | left |
 | color | 自定义颜色 | string | - | - |
-| lineHeight | 行高 | number / string | - | 1.5 |
+| lineHeight | 行高 | string | - | 1.5 |
 | maxLines | 最大行数 | number | - | 0 |
 | ellipsis | 是否显示省略号 | boolean | - | false |
 | bold | 是否加粗 | boolean | - | false |

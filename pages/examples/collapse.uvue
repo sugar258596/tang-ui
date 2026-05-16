@@ -1,14 +1,14 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TCollapse from '@/components/TCollapse'
-import TCollapseItem from '@/components/TCollapseItem'
+import TCollapse from '@/components/TCollapse/index.uvue'
+import TCollapseItem from '@/components/TCollapseItem/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TCollapse 折叠面板示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 // 基础用法 - 多选模式
 const activeNames = ref<string[]>(['1'])
@@ -22,6 +22,44 @@ const disabledActive = ref<string[]>([])
 // 自定义标题
 const customActive = ref<string[]>(['1'])
 
+const pageTitle = t('examplePages.collapse.title')
+const pageDescription = t('examplePages.collapse.description')
+const basicTitle = t('examplePages.collapse.sections.basic')
+const accordionTitle = t('examplePages.collapse.sections.accordion')
+const disabledTitle = t('examplePages.collapse.sections.disabled')
+const customTitle = t('examplePages.collapse.sections.customTitle')
+const noBorderTitle = t('examplePages.collapse.sections.noBorder')
+const currentStateTitle = t('examplePages.collapse.sections.currentState')
+const consistencyTitle = t('examplePages.collapse.titles.consistency')
+const feedbackTitle = t('examplePages.collapse.titles.feedback')
+const efficiencyTitle = t('examplePages.collapse.titles.efficiency')
+const designPrinciplesTitle = t('examplePages.collapse.titles.designPrinciples')
+const navigationTitle = t('examplePages.collapse.titles.navigation')
+const feedbackItemTitle = t('examplePages.collapse.titles.feedbackTitle')
+const normalItemTitle = t('examplePages.collapse.titles.normalItem')
+const disabledItemTitle = t('examplePages.collapse.titles.disabledItem')
+const mobileComponentsTitle = t('examplePages.collapse.titles.mobileComponents')
+const richComponentsTitle = t('examplePages.collapse.titles.richComponents')
+const highPerformanceTitle = t('examplePages.collapse.titles.highPerformance')
+const item1Title = t('examplePages.collapse.titles.item1')
+const item2Title = t('examplePages.collapse.titles.item2')
+const consistencyContent = t('examplePages.collapse.content.consistency')
+const feedbackContent = t('examplePages.collapse.content.feedback')
+const efficiencyContent = t('examplePages.collapse.content.efficiency')
+const designPrinciplesContent = t('examplePages.collapse.content.designPrinciples')
+const navigationContent = t('examplePages.collapse.content.navigation')
+const feedbackDetailContent = t('examplePages.collapse.content.feedbackContent')
+const normalItemContent = t('examplePages.collapse.content.normalItem')
+const disabledItemContent = t('examplePages.collapse.content.disabledItem')
+const mobileComponentsContent = t('examplePages.collapse.content.mobileComponents')
+const richComponentsContent = t('examplePages.collapse.content.richComponents')
+const highPerformanceContent = t('examplePages.collapse.content.highPerformance')
+const item1Content = t('examplePages.collapse.content.item1Content')
+const item2Content = t('examplePages.collapse.content.item2Content')
+const expandedItemsText = t('examplePages.collapse.labels.expandedItems')
+const accordionExpandedText = t('examplePages.collapse.labels.accordionExpanded')
+const noneText = t('examplePages.collapse.labels.none')
+
 const getJoinedText = (values: string[], emptyText: string): string => {
   return values.length > 0 ? values.join(', ') : emptyText
 }
@@ -34,31 +72,31 @@ const getDisplayText = (value: string, emptyText: string): string => {
 <template>
   <view class="page">
     <view class="page-header">
-      <text class="page-title">{{ $t('examplePages.collapse.title') }}</text>
-      <text class="page-desc">{{ $t('examplePages.collapse.description') }}</text>
+      <text class="page-title">{{ pageTitle }}</text>
+      <text class="page-desc">{{ pageDescription }}</text>
     </view>
 
     <view class="page-content">
       <!-- 基础用法 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.basic') }}</text>
+          <text class="section-title-text">{{ basicTitle }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="activeNames">
-            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.consistency')">
+            <TCollapseItem name="1" :title="consistencyTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.consistency') }}
+                {{ consistencyContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.feedback')">
+            <TCollapseItem name="2" :title="feedbackTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.feedback') }}
+                {{ feedbackContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.efficiency')">
+            <TCollapseItem name="3" :title="efficiencyTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.efficiency') }}
+                {{ efficiencyContent }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -68,23 +106,23 @@ const getDisplayText = (value: string, emptyText: string): string => {
       <!-- 手风琴模式 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.accordion') }}</text>
+          <text class="section-title-text">{{ accordionTitle }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="accordionActive" :accordion="true">
-            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.designPrinciples')">
+            <TCollapseItem name="1" :title="designPrinciplesTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.designPrinciples') }}
+                {{ designPrinciplesContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.navigation')">
+            <TCollapseItem name="2" :title="navigationTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.navigation') }}
+                {{ navigationContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.feedbackTitle')">
+            <TCollapseItem name="3" :title="feedbackItemTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.feedbackContent') }}
+                {{ feedbackDetailContent }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -94,23 +132,23 @@ const getDisplayText = (value: string, emptyText: string): string => {
       <!-- 禁用状态 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.disabled') }}</text>
+          <text class="section-title-text">{{ disabledTitle }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="disabledActive">
-            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.normalItem')">
+            <TCollapseItem name="1" :title="normalItemTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.normalItem') }}
+                {{ normalItemContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.disabledItem')" :disabled="true">
+            <TCollapseItem name="2" :title="disabledItemTitle" :disabled="true">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.disabledItem') }}
+                {{ disabledItemContent }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="3" :title="$t('examplePages.collapse.titles.normalItem')">
+            <TCollapseItem name="3" :title="normalItemTitle">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.normalItem') }}
+                {{ normalItemContent }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -120,7 +158,7 @@ const getDisplayText = (value: string, emptyText: string): string => {
       <!-- 自定义标题 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.customTitle') }}</text>
+          <text class="section-title-text">{{ customTitle }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="customActive">
@@ -128,33 +166,33 @@ const getDisplayText = (value: string, emptyText: string): string => {
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">📱</text>
-                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.mobileComponents') }}</text>
+                  <text class="custom-title-text">{{ mobileComponentsTitle }}</text>
                 </view>
               </template>
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.mobileComponents') }}
+                {{ mobileComponentsContent }}
               </text>
             </TCollapseItem>
             <TCollapseItem name="2">
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">🎨</text>
-                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.richComponents') }}</text>
+                  <text class="custom-title-text">{{ richComponentsTitle }}</text>
                 </view>
               </template>
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.richComponents') }}
+                {{ richComponentsContent }}
               </text>
             </TCollapseItem>
             <TCollapseItem name="3">
               <template #title>
                 <view class="custom-title">
                   <text class="custom-title-icon">⚡</text>
-                  <text class="custom-title-text">{{ $t('examplePages.collapse.titles.highPerformance') }}</text>
+                  <text class="custom-title-text">{{ highPerformanceTitle }}</text>
                 </view>
               </template>
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.highPerformance') }}
+                {{ highPerformanceContent }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -164,18 +202,18 @@ const getDisplayText = (value: string, emptyText: string): string => {
       <!-- 无边框 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.noBorder') }}</text>
+          <text class="section-title-text">{{ noBorderTitle }}</text>
         </view>
         <view class="section-content">
           <TCollapse v-model="activeNames" :border="false">
-            <TCollapseItem name="1" :title="$t('examplePages.collapse.titles.item1')">
+            <TCollapseItem name="1" :title="item1Title">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.item1Content') }}
+                {{ item1Content }}
               </text>
             </TCollapseItem>
-            <TCollapseItem name="2" :title="$t('examplePages.collapse.titles.item2')">
+            <TCollapseItem name="2" :title="item2Title">
               <text class="item-content">
-                {{ $t('examplePages.collapse.content.item2Content') }}
+                {{ item2Content }}
               </text>
             </TCollapseItem>
           </TCollapse>
@@ -185,16 +223,16 @@ const getDisplayText = (value: string, emptyText: string): string => {
       <!-- 数据状态 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.collapse.sections.currentState') }}</text>
+          <text class="section-title-text">{{ currentStateTitle }}</text>
         </view>
         <view class="section-content">
           <view class="state-box">
-            <text class="state-label">{{ $t('examplePages.collapse.labels.expandedItems') }}：</text>
-            <text class="state-value">{{ getJoinedText(activeNames, $t('examplePages.collapse.labels.none')) }}</text>
+            <text class="state-label">{{ expandedItemsText }}：</text>
+            <text class="state-value">{{ getJoinedText(activeNames, noneText) }}</text>
           </view>
           <view class="state-box">
-            <text class="state-label">{{ $t('examplePages.collapse.labels.accordionExpanded') }}：</text>
-            <text class="state-value">{{ getDisplayText(accordionActive, $t('examplePages.collapse.labels.none')) }}</text>
+            <text class="state-label">{{ accordionExpandedText }}：</text>
+            <text class="state-value">{{ getDisplayText(accordionActive, noneText) }}</text>
           </view>
         </view>
       </view>

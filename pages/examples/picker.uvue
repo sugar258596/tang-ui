@@ -1,37 +1,39 @@
 <script setup lang="uts">
 import { ref } from 'vue'
-import TPicker from '@/components/TPicker'
-import type { TPickerOption } from '@/components/TPicker/type.uts'
+import TPicker from '@/components/TPicker/index.uvue'
+import type { TPickerOption, TPickerSelectedValue, TPickerValue } from '@/components/TPicker/type.uts'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * TPicker 选择器示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+type MultiPickerValue = Array<TPickerValue>
 
 // 单列选择器
-const singleVisible = ref(false)
-const singleValue = ref<any>(null)
-const singleText = ref('请选择')
+const singleVisible = ref<boolean>(false)
+const singleValue = ref<TPickerValue | null>(null)
+const singleText = ref<string>('请选择')
 
 // 多列选择器
-const multiVisible = ref(false)
-const multiValue = ref<any>(null)
-const multiText = ref('请选择')
+const multiVisible = ref<boolean>(false)
+const multiValue = ref<MultiPickerValue>([] as Array<TPickerValue>)
+const multiText = ref<string>('请选择')
 
 // 城市选择器
-const cityVisible = ref(false)
-const cityValue = ref<any>(null)
-const cityText = ref('请选择')
+const cityVisible = ref<boolean>(false)
+const cityValue = ref<MultiPickerValue>([] as Array<TPickerValue>)
+const cityText = ref<string>('请选择')
 
 // 日期选择器
-const dateVisible = ref(false)
-const dateValue = ref<any>(null)
-const dateText = ref('请选择')
+const dateVisible = ref<boolean>(false)
+const dateValue = ref<MultiPickerValue>([] as Array<TPickerValue>)
+const dateText = ref<string>('请选择')
 
 // 单列选项数据
-const fruitOptions = ref<TPickerOption[]>([
+const fruitOptions = ref<Array<TPickerOption>>([
   { label: '苹果', value: 'apple' },
   { label: '香蕉', value: 'banana' },
   { label: '橙子', value: 'orange' },
@@ -43,7 +45,7 @@ const fruitOptions = ref<TPickerOption[]>([
 ])
 
 // 多列选项数据
-const sizeColumns = ref<TPickerOption[][]>([
+const sizeColumns = ref<Array<Array<TPickerOption>>>([
   [
     { label: '特小', value: 'xs' },
     { label: '小', value: 's' },
@@ -62,7 +64,7 @@ const sizeColumns = ref<TPickerOption[][]>([
 ])
 
 // 城市数据
-const cityColumns = ref<TPickerOption[][]>([
+const cityColumns = ref<Array<Array<TPickerOption>>>([
   [
     { label: '北京市', value: 'beijing' },
     { label: '上海市', value: 'shanghai' },
@@ -80,9 +82,9 @@ const cityColumns = ref<TPickerOption[][]>([
 ])
 
 // 生成年月日数据
-const years: TPickerOption[] = []
-const months: TPickerOption[] = []
-const days: TPickerOption[] = []
+const years : Array<TPickerOption> = [] as Array<TPickerOption>
+const months : Array<TPickerOption> = [] as Array<TPickerOption>
+const days : Array<TPickerOption> = [] as Array<TPickerOption>
 
 for (let i = 2020; i <= 2030; i++) {
   years.push({ label: `${i}年`, value: i })
@@ -96,7 +98,7 @@ for (let i = 1; i <= 31; i++) {
   days.push({ label: `${i}日`, value: i })
 }
 
-const dateColumns = ref<TPickerOption[][]>([years, months, days])
+const dateColumns = ref<Array<Array<TPickerOption>>>([years, months, days])
 
 /**
  * 显示单列选择器
@@ -108,10 +110,12 @@ const showSinglePicker = (): void => {
 /**
  * 单列选择器确认
  */
-const handleSingleConfirm = (value: any, index: number, option: TPickerOption): void => {
-  singleValue.value = value
-  singleText.value = option.label
-  console.log('单列选择:', value, index, option)
+const handleSingleConfirm = (value: TPickerSelectedValue, index: number | Array<number>, option: TPickerOption | Array<TPickerOption>): void => {
+  const selectedValue = value as TPickerValue
+  const selectedOption = option as TPickerOption
+  singleValue.value = selectedValue
+  singleText.value = selectedOption.label
+  console.log('单列选择:', selectedValue, index, selectedOption)
 }
 
 /**
@@ -124,10 +128,12 @@ const showMultiPicker = (): void => {
 /**
  * 多列选择器确认
  */
-const handleMultiConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
-  multiValue.value = value
-  multiText.value = options.map((opt: TPickerOption) => opt.label).join(' - ')
-  console.log('多列选择:', value, index, options)
+const handleMultiConfirm = (value: TPickerSelectedValue, index: number | Array<number>, options: TPickerOption | Array<TPickerOption>): void => {
+  const selectedValue = value as Array<TPickerValue>
+  const selectedOptions = options as Array<TPickerOption>
+  multiValue.value = selectedValue
+  multiText.value = selectedOptions.map((opt: TPickerOption) => opt.label).join(' - ')
+  console.log('多列选择:', selectedValue, index, selectedOptions)
 }
 
 /**
@@ -140,10 +146,12 @@ const showCityPicker = (): void => {
 /**
  * 城市选择器确认
  */
-const handleCityConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
-  cityValue.value = value
-  cityText.value = options.map((opt: TPickerOption) => opt.label).join(' - ')
-  console.log('城市选择:', value, index, options)
+const handleCityConfirm = (value: TPickerSelectedValue, index: number | Array<number>, options: TPickerOption | Array<TPickerOption>): void => {
+  const selectedValue = value as Array<TPickerValue>
+  const selectedOptions = options as Array<TPickerOption>
+  cityValue.value = selectedValue
+  cityText.value = selectedOptions.map((opt: TPickerOption) => opt.label).join(' - ')
+  console.log('城市选择:', selectedValue, index, selectedOptions)
 }
 
 /**
@@ -156,25 +164,27 @@ const showDatePicker = (): void => {
 /**
  * 日期选择器确认
  */
-const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]): void => {
-  dateValue.value = value
-  dateText.value = options.map((opt: TPickerOption) => opt.label).join('')
-  console.log('日期选择:', value, index, options)
+const handleDateConfirm = (value: TPickerSelectedValue, index: number | Array<number>, options: TPickerOption | Array<TPickerOption>): void => {
+  const selectedValue = value as Array<TPickerValue>
+  const selectedOptions = options as Array<TPickerOption>
+  dateValue.value = selectedValue
+  dateText.value = selectedOptions.map((opt: TPickerOption) => opt.label).join('')
+  console.log('日期选择:', selectedValue, index, selectedOptions)
 }
 </script>
 
 <template>
   <view class="page">
     <view class="page-header">
-      <text class="page-title">{{ $t('examplePages.picker.title') }}</text>
-      <text class="page-desc">{{ $t('examplePages.picker.description') }}</text>
+      <text class="page-title">{{ t('examplePages.picker.title') }}</text>
+      <text class="page-desc">{{ t('examplePages.picker.description') }}</text>
     </view>
 
     <view class="page-content">
       <!-- 单列选择器 -->
       <view class="section">
         <view class="section-title">
-          <text class="section-title-text">{{ $t('examplePages.picker.sections.basic') }}</text>
+          <text class="section-title-text">{{ t('examplePages.picker.sections.basic') }}</text>
         </view>
         <view class="section-content">
           <view class="picker-trigger" @click="showSinglePicker">
@@ -264,7 +274,6 @@ const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]
     <!-- 多列选择器组件 -->
     <TPicker
       v-model="multiVisible"
-      v-model:selectedValue="multiValue"
       title="选择尺码和颜色"
       :columns="sizeColumns"
       @confirm="handleMultiConfirm"
@@ -273,7 +282,6 @@ const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]
     <!-- 城市选择器组件 -->
     <TPicker
       v-model="cityVisible"
-      v-model:selectedValue="cityValue"
       title="选择省市"
       :columns="cityColumns"
       @confirm="handleCityConfirm"
@@ -282,7 +290,6 @@ const handleDateConfirm = (value: any, index: number[], options: TPickerOption[]
     <!-- 日期选择器组件 -->
     <TPicker
       v-model="dateVisible"
-      v-model:selectedValue="dateValue"
       title="选择日期"
       :columns="dateColumns"
       @confirm="handleDateConfirm"

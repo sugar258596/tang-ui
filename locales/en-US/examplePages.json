@@ -836,6 +836,7 @@
     "sections": {
       "basic": "Basic Usage",
       "card": "Card Type",
+      "line": "Line Type",
       "size": "Different Sizes",
       "badge": "With Badge",
       "disabled": "Disabled State",
@@ -967,6 +968,7 @@
       "size": "Different Sizes",
       "shape": "Different Shapes",
       "customColor": "Custom Color",
+      "fallback": "Fallback Image",
       "fit": "Image Fit Mode",
       "events": "With Events",
       "customContent": "Custom Content"
@@ -1102,6 +1104,7 @@
     "sections": {
       "basic": "Basic Usage",
       "card": "Card Type",
+      "line": "Line Type",
       "size": "Different Sizes",
       "badge": "With Badge",
       "disabled": "Disabled State",

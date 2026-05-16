@@ -15,7 +15,7 @@ export type InputSize = 'large' | 'medium' | 'small' | 'mini'
 /**
  * 输入框 Props 接口
  */
-export interface TInputProps {
+export type TInputProps = {
   /**
    * 输入框类型
    * @default 'text'

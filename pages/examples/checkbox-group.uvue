@@ -1,48 +1,58 @@
 <script setup lang="uts">
-import { ref, computed } from 'vue'
-import TCheckboxGroup from '@/components/TCheckboxGroup'
+import { ref } from 'vue'
+import TCheckboxGroup from '@/components/TCheckboxGroup/index.uvue'
 import type { CheckboxOption } from '@/components/TCheckboxGroup/type.uts'
-import TCard from '@/components/TCard'
+import TCard from '@/components/TCard/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const basicTitle = t('examplePages.checkboxGroup.sections.basic')
+const horizontalTitle = t('examplePages.checkboxGroup.sections.horizontal')
+const disabledTitle = t('examplePages.checkboxGroup.sections.disabled')
+const maxTitle = t('examplePages.checkboxGroup.sections.max')
+const disabledAllTitle = t('examplePages.checkboxGroup.sections.disabledAll')
+const option1Text = t('examplePages.checkboxGroup.labels.option1')
+const option2Text = t('examplePages.checkboxGroup.labels.option2')
+const option2DisabledText = t('examplePages.checkboxGroup.labels.option2Disabled')
+const option3Text = t('examplePages.checkboxGroup.labels.option3')
 
 const value1 = ref<(string | number)[]>(['1'])
 const value2 = ref<(string | number)[]>(['1', '2'])
 const value3 = ref<(string | number)[]>([])
 
-const options = computed<CheckboxOption[]>(() => [
-  { label: $t('examplePages.checkboxGroup.labels.option1'), value: '1' },
-  { label: $t('examplePages.checkboxGroup.labels.option2'), value: '2' },
-  { label: $t('examplePages.checkboxGroup.labels.option3'), value: '3' }
-])
+const options: CheckboxOption[] = [
+  { label: option1Text, value: '1' },
+  { label: option2Text, value: '2' },
+  { label: option3Text, value: '3' }
+]
 
-const options2 = computed<CheckboxOption[]>(() => [
-  { label: $t('examplePages.checkboxGroup.labels.option1'), value: '1' },
-  { label: $t('examplePages.checkboxGroup.labels.option2Disabled'), value: '2', disabled: true },
-  { label: $t('examplePages.checkboxGroup.labels.option3'), value: '3' }
-])
+const options2: CheckboxOption[] = [
+  { label: option1Text, value: '1' },
+  { label: option2DisabledText, value: '2', disabled: true },
+  { label: option3Text, value: '3' }
+]
 </script>
 
 <template>
   <view class="demo-page">
-    <TCard :title="$t('examplePages.checkboxGroup.sections.basic')" padding="medium">
+    <TCard :title="basicTitle" padding="medium">
       <TCheckboxGroup v-model="value1" :options="options" />
     </TCard>
 
-    <TCard :title="$t('examplePages.checkboxGroup.sections.horizontal')" padding="medium">
+    <TCard :title="horizontalTitle" padding="medium">
       <TCheckboxGroup v-model="value2" :options="options" direction="horizontal" />
     </TCard>
 
-    <TCard :title="$t('examplePages.checkboxGroup.sections.disabled')" padding="medium">
+    <TCard :title="disabledTitle" padding="medium">
       <TCheckboxGroup v-model="value1" :options="options2" />
     </TCard>
 
-    <TCard :title="$t('examplePages.checkboxGroup.sections.max')" padding="medium">
+    <TCard :title="maxTitle" padding="medium">
       <TCheckboxGroup v-model="value3" :options="options" :max="2" />
     </TCard>
 
-    <TCard :title="$t('examplePages.checkboxGroup.sections.disabledAll')" padding="medium">
+    <TCard :title="disabledAllTitle" padding="medium">
       <TCheckboxGroup v-model="value1" :options="options" :disabled="true" />
     </TCard>
   </view>

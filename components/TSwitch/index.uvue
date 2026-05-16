@@ -1,5 +1,6 @@
 <script setup lang="uts">
 	import { computed, ref, watch } from 'vue'
+	import type { Ref } from 'vue'
 	import type { TSwitchProps } from './type.uts'
 
 	/**
@@ -20,7 +21,7 @@
 	})
 
 	// 使用 defineModel
-	const model = defineModel({ default: false })
+	const model = defineModel({ default: false }) as Ref<boolean>
 
 	// 定义 emits
 	const emit = defineEmits<{
@@ -28,25 +29,27 @@
 	}>()
 
 	// 内部状态
-	const checked = ref(model.value)
+	const checked = ref<boolean>(model.value)
 
 	// 监听外部值变化
-	watch(() => model.value, (newVal : boolean) => {
-		checked.value = newVal
+	watch(model, (newVal : boolean) => {
+		const value = newVal
+		checked.value = value
+		return
 	})
 
 	/**
 	 * 计算开关样式类
 	 */
-	const switchClass = computed(() => {
-		const classes : string[] = ['t-switch relative rounded-[100px] transition-colors duration-300']
+	const switchClass = computed((): string => {
+		const classes : string[] = ['t-switch relative twx-rounded-100px transition-colors duration-300']
 
 		switch (props.size) {
 			case 'small':
-				classes.push('h-[18px] w-8')
+				classes.push('twx-h-18px w-8')
 				break
 			case 'large':
-				classes.push('h-6 w-[50px]')
+				classes.push('h-6 twx-w-50px')
 				break
 			default:
 				classes.push('h-5 w-10')
@@ -56,7 +59,7 @@
 		return classes.join(' ')
 	})
 
-	const wrapperClass = computed(() => {
+	const wrapperClass = computed((): string => {
 		const classes : string[] = ['t-switch-wrapper inline-flex flex-row items-center']
 
 		if (props.disabled) {
@@ -68,14 +71,14 @@
 		return classes.join(' ')
 	})
 
-	const buttonClass = computed(() => {
+	const buttonClass = computed((): string => {
 		const classes : string[] = [
-			't-switch__button absolute left-0.5 top-0.5 rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)]',
+			't-switch__button absolute left-0.5 top-0.5 rounded-full bg-white twx-shadow-sm',
 		]
 
 		switch (props.size) {
 			case 'small':
-				classes.push('h-[14px] w-[14px]')
+				classes.push('twx-h-14px twx-w-14px')
 				break
 			case 'large':
 				classes.push('h-5 w-5')
@@ -88,7 +91,7 @@
 		return classes.join(' ')
 	})
 
-	const buttonStyle = computed(() => {
+	const buttonStyle = computed((): string => {
 		let translateX = '0px'
 
 		if (checked.value) {
@@ -111,7 +114,7 @@
 	/**
 	 * 计算开关背景样式
 	 */
-	const switchStyle = computed(() => {
+	const switchStyle = computed((): string => {
 		const styles : string[] = []
 
 		const bgColor = checked.value ? props.activeColor : props.inactiveColor
@@ -130,7 +133,7 @@
 			return
 		}
 
-		const newValue = !checked.value
+		const newValue = checked.value !== true
 
 		if (props.manual) {
 			emit('change', newValue)
@@ -145,15 +148,36 @@
 
 <template>
 	<view :class="wrapperClass" @click="handleClick">
-		<text v-if="showText && inactiveText"
-			class="t-switch__text t-switch__text--inactive mr-2 text-sm text-[#606266]">
+		<text v-if="showText && inactiveText !== ''"
+			class="t-switch__text t-switch__text--inactive mr-2 text-sm text-secondary">
 			{{ inactiveText }}
 		</text>
 		<view :class="switchClass" :style="switchStyle">
 			<view :class="buttonClass" :style="buttonStyle"></view>
 		</view>
-		<text v-if="showText && activeText" class="t-switch__text t-switch__text--active ml-2 text-sm text-[#606266]">
+		<text v-if="showText && activeText !== ''" class="t-switch__text t-switch__text--active ml-2 text-sm text-secondary">
 			{{ activeText }}
 		</text>
 	</view>
 </template>
+
+<style scoped>
+.twx-rounded-100px {
+  border-radius: 100px;
+}
+.twx-h-18px {
+  height: 18px;
+}
+.twx-w-50px {
+  width: 50px;
+}
+.twx-h-14px {
+  height: 14px;
+}
+.twx-w-14px {
+  width: 14px;
+}
+.twx-shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+</style>

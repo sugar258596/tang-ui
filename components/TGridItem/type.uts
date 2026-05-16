@@ -5,7 +5,7 @@
 /**
  * TGridItem Props 接口
  */
-export interface TGridItemProps {
+export type TGridItemProps = {
   /**
    * 图标名称
    */

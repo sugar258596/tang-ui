@@ -15,13 +15,16 @@ export type TPickerOption = {
   /**
    * 子选项（用于级联选择）
    */
-  children?: TPickerOption[]
+  children?: Array<TPickerOption>
 
   /**
    * 是否禁用
    */
   disabled?: boolean
 }
+
+export type TPickerValue = string | number
+export type TPickerSelectedValue = TPickerValue | Array<TPickerValue>
 
 /**
  * TPicker 选择器组件属性类型定义
@@ -35,12 +38,12 @@ export type TPickerProps = {
   /**
    * 选择器数据（单列）
    */
-  options?: TPickerOption[]
+  options?: Array<TPickerOption>
 
   /**
    * 选择器数据（多列）
    */
-  columns?: TPickerOption[][]
+  columns?: Array<Array<TPickerOption>>
 
   /**
    * 是否显示选择器
@@ -86,7 +89,7 @@ export type TPickerEmits = {
   /**
    * 确认选择时触发
    */
-  confirm: (value: any, index: number | number[], option: TPickerOption | TPickerOption[]) => void
+  confirm: (value: TPickerSelectedValue, index: number | Array<number>, option: TPickerOption | Array<TPickerOption>) => void
 
   /**
    * 取消选择时触发
@@ -96,7 +99,7 @@ export type TPickerEmits = {
   /**
    * 选项改变时触发
    */
-  change: (value: any, index: number | number[], columnIndex: number) => void
+  change: (value: TPickerSelectedValue, index: number | Array<number>, columnIndex: number) => void
 
   /**
    * 更新显示状态

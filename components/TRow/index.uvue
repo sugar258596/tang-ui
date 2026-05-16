@@ -59,7 +59,7 @@ const containerStyle = computed((): string => {
   }
 
   // 自定义样式
-  if (props.customStyle) {
+  if (props.customStyle !== '') {
     styles.push(props.customStyle)
   }
 
@@ -72,7 +72,7 @@ const containerStyle = computed((): string => {
 const containerClasses = computed((): string => {
   const classes: string[] = ['flex', 'w-full', 'flex-row']
 
-  if (props.customClass) {
+  if (props.customClass !== '') {
     classes.push(props.customClass)
   }
 

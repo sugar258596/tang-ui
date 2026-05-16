@@ -1,74 +1,102 @@
 <script  setup lang="uts" >
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 卡片组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
+
+const pageTitle = t('examplePages.card.title')
+const pageDescription = t('examplePages.card.description')
+const basicTitle = t('examplePages.card.sections.basic')
+const withSubtitleTitle = t('examplePages.card.sections.withSubtitle')
+const noShadowTitle = t('examplePages.card.sections.noShadow')
+const withBorderTitle = t('examplePages.card.sections.withBorder')
+const paddingTitle = t('examplePages.card.sections.padding')
+const largePaddingTitle = t('examplePages.card.sections.largePadding')
+const radiusTitle = t('examplePages.card.sections.radius')
+const largeRadiusTitle = t('examplePages.card.sections.largeRadius')
+const clickableTitle = t('examplePages.card.sections.clickable')
+const clickedMessage = t('examplePages.card.messages.clicked')
+const basicContent = t('examplePages.card.content.basic')
+const subtitleContent = t('examplePages.card.content.subtitle')
+const anyContent = t('examplePages.card.content.anyContent')
+const noShadowContent = t('examplePages.card.content.noShadow')
+const withBorderContent = t('examplePages.card.content.withBorder')
+const smallPaddingContent = t('examplePages.card.content.smallPadding')
+const largePaddingContent = t('examplePages.card.content.largePadding')
+const noRadiusContent = t('examplePages.card.content.noRadius')
+const largeRadiusContent = t('examplePages.card.content.largeRadius')
+const clickableContent = t('examplePages.card.content.clickable')
+const customHeaderContent = t('examplePages.card.content.customHeader')
+const customSlotContent = t('examplePages.card.content.customSlot')
+const actionText = t('examplePages.card.buttons.action')
+const cancelText = t('examplePages.card.buttons.cancel')
+const confirmText = t('examplePages.card.buttons.confirm')
 
 const handleCardClick = (): void => {
-  console.log($t('examplePages.card.messages.clicked'))
+  console.log(clickedMessage)
 }
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.card.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.card.description') }}</text>
+      <text class="example-title">{{ pageTitle }}</text>
+      <text class="example-desc">{{ pageDescription }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.card.sections.basic')" class="example-section">
-      <text>{{ $t('examplePages.card.content.basic') }}</text>
+    <TCard :title="basicTitle" class="example-section">
+      <text>{{ basicContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.withSubtitle')" :subtitle="$t('examplePages.card.content.subtitle')" class="example-section">
-      <text>{{ $t('examplePages.card.content.anyContent') }}</text>
+    <TCard :title="withSubtitleTitle" :subtitle="subtitleContent" class="example-section">
+      <text>{{ anyContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.noShadow')" :shadow="false" class="example-section">
-      <text>{{ $t('examplePages.card.content.noShadow') }}</text>
+    <TCard :title="noShadowTitle" :shadow="false" class="example-section">
+      <text>{{ noShadowContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.withBorder')" :border="true" :shadow="false" class="example-section">
-      <text>{{ $t('examplePages.card.content.withBorder') }}</text>
+    <TCard :title="withBorderTitle" :border="true" :shadow="false" class="example-section">
+      <text>{{ withBorderContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.padding')" padding="small" class="example-section">
-      <text>{{ $t('examplePages.card.content.smallPadding') }}</text>
+    <TCard :title="paddingTitle" padding="small" class="example-section">
+      <text>{{ smallPaddingContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.largePadding')" padding="large" class="example-section">
-      <text>{{ $t('examplePages.card.content.largePadding') }}</text>
+    <TCard :title="largePaddingTitle" padding="large" class="example-section">
+      <text>{{ largePaddingContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.radius')" radius="none" class="example-section">
-      <text>{{ $t('examplePages.card.content.noRadius') }}</text>
+    <TCard :title="radiusTitle" radius="none" class="example-section">
+      <text>{{ noRadiusContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.largeRadius')" radius="large" class="example-section">
-      <text>{{ $t('examplePages.card.content.largeRadius') }}</text>
+    <TCard :title="largeRadiusTitle" radius="large" class="example-section">
+      <text>{{ largeRadiusContent }}</text>
     </TCard>
 
-    <TCard :title="$t('examplePages.card.sections.clickable')" @click="handleCardClick" class="example-section">
-      <text>{{ $t('examplePages.card.content.clickable') }}</text>
+    <TCard :title="clickableTitle" @click="handleCardClick" class="example-section">
+      <text>{{ clickableContent }}</text>
     </TCard>
 
     <TCard class="example-section">
       <template #header>
-        <view style="display: flex; justify-content: space-between; align-items: center;">
-          <text style="font-size: 18px; font-weight: bold;">{{ $t('examplePages.card.content.customHeader') }}</text>
-          <TButton type="primary" size="small">{{ $t('examplePages.card.buttons.action') }}</TButton>
+        <view class="flex items-center justify-between">
+          <text class="text-lg font-bold">{{ customHeaderContent }}</text>
+          <TButton type="primary" size="small">{{ actionText }}</TButton>
         </view>
       </template>
-      <text>{{ $t('examplePages.card.content.customSlot') }}</text>
+      <text>{{ customSlotContent }}</text>
       <template #footer>
-        <view style="display: flex; justify-content: flex-end;">
-          <TButton plain size="small">{{ $t('examplePages.card.buttons.cancel') }}</TButton>
-          <TButton type="primary" size="small" style="margin-left: 10px;">{{ $t('examplePages.card.buttons.confirm') }}</TButton>
+        <view class="flex justify-end">
+          <TButton plain size="small">{{ cancelText }}</TButton>
+          <TButton type="primary" size="small" class="ml-2.5">{{ confirmText }}</TButton>
         </view>
       </template>
     </TCard>

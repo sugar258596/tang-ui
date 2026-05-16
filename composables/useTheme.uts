@@ -3,8 +3,8 @@
  * @module composables/useTheme
  */
 
-import { ref, reactive, computed, watch } from 'vue'
-import type { ThemeConfig } from '../types/index.uts'
+import { ref, reactive, watch } from 'vue'
+import type { ThemeConfig, UseThemeReturn } from '../types/index.uts'
 
 /** 默认主题配置 */
 const defaultTheme: ThemeConfig = {
@@ -21,274 +21,242 @@ const defaultTheme: ThemeConfig = {
 }
 
 /** 当前主题配置 */
-const currentTheme = reactive<ThemeConfig>({ ...defaultTheme })
+const currentTheme = reactive<ThemeConfig>({
+  primaryColor: defaultTheme.primaryColor,
+  successColor: defaultTheme.successColor,
+  warningColor: defaultTheme.warningColor,
+  dangerColor: defaultTheme.dangerColor,
+  infoColor: defaultTheme.infoColor,
+  textColor: defaultTheme.textColor,
+  borderColor: defaultTheme.borderColor,
+  backgroundColor: defaultTheme.backgroundColor,
+  borderRadius: defaultTheme.borderRadius,
+  fontSize: defaultTheme.fontSize
+})
 
 /** 是否深色模式 */
-const isDarkMode = ref(false)
+const isDarkMode = ref<boolean>(false)
 
-/**
- * 主题管理组合式函数
- * @returns {Object} 主题管理对象
- */
-export function useTheme() {
-  /**
-   * 设置主题
-   * @param {Partial<ThemeConfig>} theme - 主题配置
-   */
-  const setTheme = (theme: Partial<ThemeConfig>) => {
-    Object.assign(currentTheme, theme)
-    applyTheme()
+const copyTheme = (theme: ThemeConfig): void => {
+  currentTheme.primaryColor = theme.primaryColor
+  currentTheme.successColor = theme.successColor
+  currentTheme.warningColor = theme.warningColor
+  currentTheme.dangerColor = theme.dangerColor
+  currentTheme.infoColor = theme.infoColor
+  currentTheme.textColor = theme.textColor
+  currentTheme.borderColor = theme.borderColor
+  currentTheme.backgroundColor = theme.backgroundColor
+  currentTheme.borderRadius = theme.borderRadius
+  currentTheme.fontSize = theme.fontSize
+}
+
+const applyTheme = (): void => {
+  try {
+    // #ifdef H5
+    const root = document.documentElement
+    if (root != null) {
+      root.style.setProperty('--primary-color', currentTheme.primaryColor)
+      root.style.setProperty('--success-color', currentTheme.successColor)
+      root.style.setProperty('--warning-color', currentTheme.warningColor)
+      root.style.setProperty('--danger-color', currentTheme.dangerColor)
+      root.style.setProperty('--info-color', currentTheme.infoColor)
+      root.style.setProperty('--text-color', currentTheme.textColor)
+      root.style.setProperty('--border-color', currentTheme.borderColor)
+      root.style.setProperty('--bg-color', currentTheme.backgroundColor)
+      root.style.setProperty('--border-radius', currentTheme.borderRadius)
+      root.style.setProperty('--font-size', currentTheme.fontSize)
+
+      if (isDarkMode.value) {
+        root.style.setProperty('--tui-page-bg', '#111827')
+        root.style.setProperty('--tui-page-bg-elevated', '#1f2937')
+        root.style.setProperty('--tui-surface', '#1f2937')
+        root.style.setProperty('--tui-surface-muted', '#243041')
+        root.style.setProperty('--tui-surface-soft', '#374151')
+        root.style.setProperty('--tui-surface-overlay', 'rgba(17, 24, 39, 0.82)')
+        root.style.setProperty('--tui-text-primary', '#f3f4f6')
+        root.style.setProperty('--tui-text-secondary', '#d1d5db')
+        root.style.setProperty('--tui-text-tertiary', '#9ca3af')
+        root.style.setProperty('--tui-text-disabled', '#6b7280')
+        root.style.setProperty('--tui-text-inverse', '#111827')
+        root.style.setProperty('--tui-border', '#374151')
+        root.style.setProperty('--tui-border-soft', '#4b5563')
+        root.style.setProperty('--tui-border-strong', '#6b7280')
+        root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.45)')
+        root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.65)')
+        root.style.setProperty('--tui-nav-bg', '#111827')
+        root.style.setProperty('--tui-nav-text', '#f9fafb')
+        root.style.setProperty('--tui-page-gradient-start', '#1f2937')
+        root.style.setProperty('--tui-page-gradient-end', '#111827')
+      } else {
+        root.style.setProperty('--tui-page-bg', '#f5f7fa')
+        root.style.setProperty('--tui-page-bg-elevated', '#ffffff')
+        root.style.setProperty('--tui-surface', '#ffffff')
+        root.style.setProperty('--tui-surface-muted', '#f5f7fa')
+        root.style.setProperty('--tui-surface-soft', '#fafafa')
+        root.style.setProperty('--tui-surface-overlay', 'rgba(255, 255, 255, 0.92)')
+        root.style.setProperty('--tui-text-primary', '#303133')
+        root.style.setProperty('--tui-text-secondary', '#606266')
+        root.style.setProperty('--tui-text-tertiary', '#909399')
+        root.style.setProperty('--tui-text-disabled', '#c0c4cc')
+        root.style.setProperty('--tui-text-inverse', '#ffffff')
+        root.style.setProperty('--tui-border', '#dcdfe6')
+        root.style.setProperty('--tui-border-soft', '#ebeef5')
+        root.style.setProperty('--tui-border-strong', '#c8c9cc')
+        root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.12)')
+        root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.5)')
+        root.style.setProperty('--tui-nav-bg', '#667eea')
+        root.style.setProperty('--tui-nav-text', '#ffffff')
+        root.style.setProperty('--tui-page-gradient-start', '#667eea')
+        root.style.setProperty('--tui-page-gradient-end', '#764ba2')
+      }
+
+      root.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'light')
+      root.classList.toggle('t-dark', isDarkMode.value)
+      root.classList.toggle('t-light', !isDarkMode.value)
+    }
+    // #endif
+
+    uni.setStorageSync('theme-config', JSON.stringify(currentTheme))
+  } catch (e) {
+    console.error('应用主题失败:', e)
+  }
+}
+
+const setTheme = (theme: ThemeConfig): void => {
+  copyTheme(theme)
+  applyTheme()
+}
+
+const resetTheme = (): void => {
+  copyTheme(defaultTheme)
+  applyTheme()
+}
+
+const applyDarkTheme = (): void => {
+  const darkTheme: ThemeConfig = {
+    primaryColor: '#409eff',
+    successColor: '#67c23a',
+    warningColor: '#e6a23c',
+    dangerColor: '#f56c6c',
+    infoColor: '#909399',
+    textColor: '#f0f0f0',
+    borderColor: '#4c4c4c',
+    backgroundColor: '#1a1a1a',
+    borderRadius: '8rpx',
+    fontSize: '28rpx'
+  }
+  setTheme(darkTheme)
+}
+
+const applyLightTheme = (): void => {
+  resetTheme()
+}
+
+const toggleDarkMode = (dark?: boolean): void => {
+  if (dark != null) {
+    isDarkMode.value = dark
+  } else {
+    isDarkMode.value = !isDarkMode.value
   }
 
-  /**
-   * 重置主题
-   */
-  const resetTheme = () => {
-    Object.assign(currentTheme, defaultTheme)
-    applyTheme()
+  if (isDarkMode.value) {
+    applyDarkTheme()
+  } else {
+    applyLightTheme()
   }
+}
 
-  /**
-   * 切换深色模式
-   * @param {boolean} dark - 是否深色模式
-   */
-  const toggleDarkMode = (dark?: boolean) => {
-    isDarkMode.value = dark !== undefined ? dark : !isDarkMode.value
+const loadTheme = (): void => {
+  try {
+    const savedTheme = uni.getStorageSync('theme-config')
+    if (typeof savedTheme === 'string' && savedTheme !== '') {
+      copyTheme(JSON.parse(savedTheme) as ThemeConfig)
+    }
+
+    const savedDarkMode = uni.getStorageSync('dark-mode')
+    if (typeof savedDarkMode === 'string' && savedDarkMode !== '') {
+      isDarkMode.value = savedDarkMode === 'true'
+    }
 
     if (isDarkMode.value) {
       applyDarkTheme()
     } else {
-      applyLightTheme()
+      applyTheme()
     }
+  } catch (e) {
+    console.error('加载主题失败:', e)
   }
+}
 
-  /**
-   * 应用主题到页面
-   */
-  const applyTheme = () => {
-    try {
-      // 在 H5 平台应用 CSS 变量
-      // #ifdef H5
-      const root = document.documentElement
-      if (root != null) {
-        root.style.setProperty('--primary-color', currentTheme.primaryColor)
-        root.style.setProperty('--success-color', currentTheme.successColor)
-        root.style.setProperty('--warning-color', currentTheme.warningColor)
-        root.style.setProperty('--danger-color', currentTheme.dangerColor)
-        root.style.setProperty('--info-color', currentTheme.infoColor)
-        root.style.setProperty('--text-color', currentTheme.textColor)
-        root.style.setProperty('--border-color', currentTheme.borderColor)
-        root.style.setProperty('--bg-color', currentTheme.backgroundColor)
-        root.style.setProperty('--border-radius', currentTheme.borderRadius)
-        root.style.setProperty('--font-size', currentTheme.fontSize)
-
-        if (isDarkMode.value) {
-          root.style.setProperty('--tui-page-bg', '#111827')
-          root.style.setProperty('--tui-page-bg-elevated', '#1f2937')
-          root.style.setProperty('--tui-surface', '#1f2937')
-          root.style.setProperty('--tui-surface-muted', '#243041')
-          root.style.setProperty('--tui-surface-soft', '#374151')
-          root.style.setProperty('--tui-surface-overlay', 'rgba(17, 24, 39, 0.82)')
-          root.style.setProperty('--tui-surface-primary-soft', 'rgba(64, 158, 255, 0.18)')
-          root.style.setProperty('--tui-surface-success-soft', 'rgba(103, 194, 58, 0.18)')
-          root.style.setProperty('--tui-surface-warning-soft', 'rgba(230, 162, 60, 0.18)')
-          root.style.setProperty('--tui-surface-danger-soft', 'rgba(245, 108, 108, 0.18)')
-          root.style.setProperty('--tui-text-primary', '#f3f4f6')
-          root.style.setProperty('--tui-text-secondary', '#d1d5db')
-          root.style.setProperty('--tui-text-tertiary', '#9ca3af')
-          root.style.setProperty('--tui-text-disabled', '#6b7280')
-          root.style.setProperty('--tui-text-inverse', '#111827')
-          root.style.setProperty('--tui-border', '#374151')
-          root.style.setProperty('--tui-border-soft', '#4b5563')
-          root.style.setProperty('--tui-border-strong', '#6b7280')
-          root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.45)')
-          root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.65)')
-          root.style.setProperty('--tui-nav-bg', '#111827')
-          root.style.setProperty('--tui-nav-text', '#f9fafb')
-          root.style.setProperty('--tui-page-gradient-start', '#1f2937')
-          root.style.setProperty('--tui-page-gradient-end', '#111827')
-        } else {
-          root.style.setProperty('--tui-page-bg', '#f5f7fa')
-          root.style.setProperty('--tui-page-bg-elevated', '#ffffff')
-          root.style.setProperty('--tui-surface', '#ffffff')
-          root.style.setProperty('--tui-surface-muted', '#f5f7fa')
-          root.style.setProperty('--tui-surface-soft', '#fafafa')
-          root.style.setProperty('--tui-surface-overlay', 'rgba(255, 255, 255, 0.92)')
-          root.style.setProperty('--tui-surface-primary-soft', '#ecf5ff')
-          root.style.setProperty('--tui-surface-success-soft', '#f0f9ff')
-          root.style.setProperty('--tui-surface-warning-soft', '#fdf6ec')
-          root.style.setProperty('--tui-surface-danger-soft', '#fef0f0')
-          root.style.setProperty('--tui-text-primary', '#303133')
-          root.style.setProperty('--tui-text-secondary', '#606266')
-          root.style.setProperty('--tui-text-tertiary', '#909399')
-          root.style.setProperty('--tui-text-disabled', '#c0c4cc')
-          root.style.setProperty('--tui-text-inverse', '#ffffff')
-          root.style.setProperty('--tui-border', '#dcdfe6')
-          root.style.setProperty('--tui-border-soft', '#ebeef5')
-          root.style.setProperty('--tui-border-strong', '#c8c9cc')
-          root.style.setProperty('--tui-shadow-color', 'rgba(0, 0, 0, 0.12)')
-          root.style.setProperty('--tui-mask', 'rgba(0, 0, 0, 0.5)')
-          root.style.setProperty('--tui-nav-bg', '#667eea')
-          root.style.setProperty('--tui-nav-text', '#ffffff')
-          root.style.setProperty('--tui-page-gradient-start', '#667eea')
-          root.style.setProperty('--tui-page-gradient-end', '#764ba2')
-        }
-
-        root.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'light')
-        root.classList.toggle('t-dark', isDarkMode.value)
-        root.classList.toggle('t-light', !isDarkMode.value)
-      }
-      // #endif
-
-      // 存储到本地
-      uni.setStorageSync('theme-config', JSON.stringify(currentTheme))
-    } catch (e) {
-      console.error('应用主题失败:', e)
-    }
+const getColor = (type: string): string => {
+  switch (type) {
+    case 'primary':
+      return currentTheme.primaryColor
+    case 'success':
+      return currentTheme.successColor
+    case 'warning':
+      return currentTheme.warningColor
+    case 'danger':
+      return currentTheme.dangerColor
+    case 'info':
+      return currentTheme.infoColor
+    case 'text':
+      return currentTheme.textColor
+    case 'border':
+      return currentTheme.borderColor
+    case 'bg':
+    case 'background':
+      return currentTheme.backgroundColor
+    default:
+      return currentTheme.primaryColor
   }
+}
 
-  /**
-   * 应用深色主题
-   */
-  const applyDarkTheme = () => {
-    const darkTheme: Partial<ThemeConfig> = {
-      primaryColor: '#409eff',
-      successColor: '#67c23a',
-      warningColor: '#e6a23c',
-      dangerColor: '#f56c6c',
-      infoColor: '#909399',
-      textColor: '#f0f0f0',
-      borderColor: '#4c4c4c',
-      backgroundColor: '#1a1a1a',
-      borderRadius: '8rpx',
-      fontSize: '28rpx'
-    }
-    setTheme(darkTheme)
-  }
-
-  /**
-   * 应用浅色主题
-   */
-  const applyLightTheme = () => {
-    resetTheme()
-  }
-
-  /**
-   * 从本地存储加载主题
-   */
-  const loadTheme = () => {
-    try {
-      const savedTheme = uni.getStorageSync('theme-config')
-      if (savedTheme !== '') {
-        const theme = JSON.parse(savedTheme)
-        Object.assign(currentTheme, theme)
-      }
-
-      const savedDarkMode = uni.getStorageSync('dark-mode')
-      if (savedDarkMode !== '') {
-        isDarkMode.value = savedDarkMode === 'true'
-      }
-
-      if (isDarkMode.value) {
-        applyDarkTheme()
-      } else {
-        applyTheme()
-      }
-    } catch (e) {
-      console.error('加载主题失败:', e)
-    }
-  }
-
-  /**
-   * 获取主题颜色
-   * @param {string} type - 颜色类型
-   * @returns {string} 颜色值
-   */
-  const getColor = (type: string): string => {
-    switch (type) {
-      case 'primary':
-        return currentTheme.primaryColor
-      case 'success':
-        return currentTheme.successColor
-      case 'warning':
-        return currentTheme.warningColor
-      case 'danger':
-        return currentTheme.dangerColor
-      case 'info':
-        return currentTheme.infoColor
-      case 'text':
-        return currentTheme.textColor
-      case 'border':
-        return currentTheme.borderColor
-      case 'bg':
-      case 'background':
-        return currentTheme.backgroundColor
-      default:
-        return currentTheme.primaryColor
-    }
-  }
-
-  /**
-   * 获取计算后的主题
-   */
-  const computedTheme = computed(() => currentTheme)
-
-  /**
-   * 监听系统主题变化
-   */
-  const watchSystemTheme = () => {
-    // #ifdef H5
-    if (window.matchMedia != null) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      mediaQuery.addListener((e) => {
-        if (e.matches) {
-          toggleDarkMode(true)
-        } else {
-          toggleDarkMode(false)
-        }
-      })
-    }
-    // #endif
-
-    // #ifdef APP-PLUS
-    plus.globalEvent.addEventListener('ThemeChange', (e: any) => {
-      toggleDarkMode(e.dark)
+const watchSystemTheme = (): void => {
+  // #ifdef H5
+  if (window.matchMedia != null) {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addListener((e) => {
+      toggleDarkMode(e.matches)
     })
-    // #endif
   }
+  // #endif
 
-  // 监听深色模式变化
-  watch(isDarkMode, (newValue) => {
-    uni.setStorageSync('dark-mode', String(newValue))
+  // #ifdef APP-PLUS
+  plus.globalEvent.addEventListener('ThemeChange', (e: { dark: boolean }) => {
+    toggleDarkMode(e.dark)
   })
+  // #endif
+}
 
-  // 初始化加载主题
-  loadTheme()
-  watchSystemTheme()
+let initialized = false
+
+export function useTheme(): UseThemeReturn {
+  if (!initialized) {
+    watch(isDarkMode, (newValue: boolean) => {
+      uni.setStorageSync('dark-mode', newValue ? 'true' : 'false')
+    })
+
+    loadTheme()
+    watchSystemTheme()
+    initialized = true
+  }
 
   return {
-    // 状态
-    theme: computedTheme,
+    theme: currentTheme,
     isDarkMode,
-
-    // 方法
     setTheme,
     resetTheme,
     toggleDarkMode,
     getColor,
     loadTheme,
-
-    // 常量
     defaultTheme
   }
 }
 
-/**
- * 获取主题实例（单例模式）
- */
-let themeInstance : any | null = null
+let themeInstance: UseThemeReturn | null = null
 
-export function getThemeInstance() {
+export function getThemeInstance(): UseThemeReturn {
   if (themeInstance == null) {
     themeInstance = useTheme()
   }

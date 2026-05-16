@@ -5,7 +5,7 @@
 /**
  * TEmpty Props 接口
  */
-export interface TEmptyProps {
+export type TEmptyProps = {
   /**
    * 标题
    */

@@ -4,7 +4,7 @@ import type { TNoticeBarProps } from './type.uts'
 
 const props = withDefaults(defineProps<TNoticeBarProps>(), {
   text: '',
-  mode: undefined,
+  mode: null,
   color: '#ed6a0c',
   background: '#fffbe8',
   leftIcon: '📢',
@@ -20,8 +20,8 @@ const emit = defineEmits<{
 
 const visible = ref(true)
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasLeftIcon = computed(() => {

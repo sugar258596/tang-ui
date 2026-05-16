@@ -1,7 +1,8 @@
 <script setup lang="uts">
-import { inject, computed } from 'vue'
-import TBadge from '../TBadge'
-import {TGridItemProps} from './type.uts'
+import { inject, computed, onUnmounted } from 'vue'
+import type { ComputedRef } from 'vue'
+import TBadge from '../TBadge/index.uvue'
+import type { TGridItemProps } from './type.uts'
 
 /**
  * TGridItem 宫格项组件
@@ -25,24 +26,53 @@ const emit = defineEmits<{
   click: []
 }>()
 
-// 注入父组件配置
-const gridBorder = inject('gridBorder', false)
-const gridBorderColor = inject('gridBorderColor', '#e0e0e0')
-const gridSquare = inject('gridSquare', false)
-const gridCenter = inject('gridCenter', true)
-const gridClickable = inject('gridClickable', false)
-const gridIconSize = inject<string | number>('gridIconSize', '28px')
+type GridContext = {
+  columns: number
+  border: boolean
+  borderColor: string
+  square: boolean
+  center: boolean
+  clickable: boolean
+  iconSize: string | number
+}
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const defaultGridContext = computed((): GridContext => {
+  return {
+    columns: 4,
+    border: false,
+    borderColor: '#e0e0e0',
+    square: false,
+    center: true,
+    clickable: false,
+    iconSize: '28px'
+  }
+})
+
+// 注入父组件配置
+const gridContext = inject<ComputedRef<GridContext>>('gridContext', defaultGridContext)
+const registerGridItem = inject<() => number>('gridRegisterItem', () : number => -1)
+const unregisterGridItem = inject<(itemId : number) => void>('gridUnregisterItem', (_itemId : number) : void => {})
+const onGridItemClick = inject<(itemId : number) => void>('gridOnItemClick', (_itemId : number) : void => {})
+const gridItemId = registerGridItem()
+
+onUnmounted(() => {
+  unregisterGridItem(gridItemId)
+})
+
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasBadge = computed(() => {
-  return hasTextValue(props.badge)
+  return props.badge.toString() !== ''
 })
 
 const showBadge = computed(() => {
   return hasBadge.value || props.dot
+})
+
+const badgeValue = computed<string>(() => {
+  return props.badge.toString()
 })
 
 const hasImage = computed(() => {
@@ -64,13 +94,13 @@ const containerStyle = computed((): string => {
   const styles: string[] = []
 
   // 边框
-  if (gridBorder) {
-    styles.push(`border-right: 1px solid ${gridBorderColor}`)
-    styles.push(`border-bottom: 1px solid ${gridBorderColor}`)
+  if (gridContext.value.border) {
+    styles.push(`border-right: 1px solid ${gridContext.value.borderColor}`)
+    styles.push(`border-bottom: 1px solid ${gridContext.value.borderColor}`)
   }
 
   // 正方形
-  if (gridSquare) {
+  if (gridContext.value.square) {
     styles.push('aspect-ratio: 1')
   }
 
@@ -90,16 +120,16 @@ const containerClasses = computed((): string => {
     'relative',
     'box-border',
     'bg-white',
-    'px-[8px]',
-    'py-[16px]'
+    'px-2',
+    'py-4'
   ]
 
-  if (gridCenter) {
+  if (gridContext.value.center) {
     classes.push('flex', 'items-center', 'justify-center')
   }
 
-  if (gridClickable) {
-    classes.push('cursor-pointer', 'transition-colors', 'duration-200', 'active:bg-[#f5f5f5]')
+  if (gridContext.value.clickable) {
+    classes.push('cursor-pointer', 'transition-colors', 'duration-200', 'active:opacity-70')
   }
 
   if (hasTextValue(props.customClass)) {
@@ -116,10 +146,10 @@ const iconStyle = computed((): string => {
   const styles: string[] = []
 
   // 图标大小
-  if (typeof gridIconSize === 'number') {
-    styles.push(`font-size: ${gridIconSize}px`)
+  if (typeof gridContext.value.iconSize === 'number') {
+    styles.push(`font-size: ${gridContext.value.iconSize}px`)
   } else {
-    styles.push(`font-size: ${gridIconSize}`)
+    styles.push(`font-size: ${gridContext.value.iconSize}`)
   }
 
   // 图标颜色
@@ -147,6 +177,7 @@ const textStyle = computed((): string => {
  * 点击事件
  */
 const handleClick = (): void => {
+  onGridItemClick(gridItemId)
   emit('click')
 }
 </script>
@@ -155,23 +186,23 @@ const handleClick = (): void => {
   <view :class="containerClasses" :style="containerStyle" @click="handleClick">
     <view class="flex w-full flex-col items-center">
       <!-- 图标或图片 -->
-      <view class="relative mb-[8px]">
+      <view class="relative mb-2">
         <!-- 徽标 -->
         <TBadge
           v-if="showBadge"
-          :content="badge"
-          :dot="dot"
+          :value="badgeValue"
+          :isDot="dot"
           :offset="[0, 0]"
         >
           <!-- 图片 -->
           <image
             v-if="hasImage"
             :src="image"
-            class="h-[28px] w-[28px]"
+            class="h-7 w-7"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="hasIcon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
+          <text v-else-if="hasIcon" class="leading-none text-primary" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -184,11 +215,11 @@ const handleClick = (): void => {
           <image
             v-if="hasImage"
             :src="image"
-            class="h-[28px] w-[28px]"
+            class="h-7 w-7"
             mode="aspectFit"
           />
           <!-- 图标 -->
-          <text v-else-if="hasIcon" class="text-[28px] leading-none text-[#323233]" :style="iconStyle">
+          <text v-else-if="hasIcon" class="leading-none text-primary" :style="iconStyle">
             {{ icon }}
           </text>
           <!-- 插槽：图标 -->
@@ -197,7 +228,7 @@ const handleClick = (): void => {
       </view>
 
       <!-- 文字 -->
-      <text v-if="hasText" class="break-all text-center text-[12px] text-[#646566]" :style="textStyle">
+      <text v-if="hasText" class="break-all text-center text-xs text-secondary" :style="textStyle">
         {{ text }}
       </text>
 

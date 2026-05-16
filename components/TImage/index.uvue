@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<TImageProps>(), {
   showText: false,
   loadingText: '加载中...',
   errorText: '加载失败',
+  errorImage: '',
   previewable: false,
   previewList: () => [] as string[],
   previewIndex: 0,
@@ -29,8 +30,8 @@ const props = withDefaults(defineProps<TImageProps>(), {
 
 // Emits 定义
 const emit = defineEmits<{
-  load: [event: Event]
-  error: [event: Event]
+  load: [event: object]
+  error: [event: object]
   click: []
   preview: []
 }>()
@@ -39,9 +40,13 @@ const emit = defineEmits<{
 const loading = ref(true)
 const loadError = ref(false)
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
+
+const hasErrorImage = computed((): boolean => {
+  return hasTextValue(props.errorImage)
+})
 
 /**
  * 计算图片容器样式
@@ -68,7 +73,7 @@ const containerStyle = computed((): string => {
     styles.push('border-radius: 8px')
   } else if (props.shape === 'circle') {
     styles.push('border-radius: 50%')
-  } else if (props.radius !== 0 && props.radius !== '0' && props.radius !== '') {
+  } else if (props.radius != 0 && props.radius != '0' && props.radius != '') {
     if (typeof props.radius === 'number') {
       styles.push(`border-radius: ${props.radius}px`)
     } else {
@@ -100,7 +105,7 @@ const imageClasses = computed((): string => {
 /**
  * 图片加载完成
  */
-const handleLoad = (event: Event): void => {
+const handleLoad = (event: object): void => {
   loading.value = false
   loadError.value = false
   emit('load', event)
@@ -109,21 +114,10 @@ const handleLoad = (event: Event): void => {
 /**
  * 图片加载失败
  */
-const handleError = (event: Event): void => {
+const handleError = (event: object): void => {
   loading.value = false
   loadError.value = true
   emit('error', event)
-}
-
-/**
- * 点击图片
- */
-const handleClick = (): void => {
-  emit('click')
-
-  if (props.previewable) {
-    handlePreview()
-  }
 }
 
 /**
@@ -140,11 +134,22 @@ const handlePreview = (): void => {
     current: current
   })
 }
+
+/**
+ * 点击图片
+ */
+const handleClick = (): void => {
+  emit('click')
+
+  if (props.previewable) {
+    handlePreview()
+  }
+}
 </script>
 
 <template>
   <view
-    class="t-image relative inline-block overflow-hidden bg-[#f5f5f5]"
+    class="t-image relative inline-block overflow-hidden bg-gray-100"
     :class="{ 'cursor-pointer': previewable }"
     :style="containerStyle"
     @click="handleClick"
@@ -161,15 +166,21 @@ const handlePreview = (): void => {
     />
 
     <!-- 加载中状态 -->
-    <view v-if="loading && showLoading" class="t-image__loading absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-[#f5f5f5]">
-      <view class="t-image__loading-icon h-8 w-8 animate-spin rounded-full border-[3px] border-solid border-[#e0e0e0] border-t-[#1890ff]"></view>
-      <text v-if="showText" class="t-image__loading-text mt-2 text-xs text-[#999]">{{ loadingText }}</text>
+    <view v-if="loading && showLoading" class="t-image__loading absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-gray-100">
+      <view class="t-image__loading-icon h-8 w-8 animate-spin rounded-full border-2 border-solid border-gray-200 border-t-blue-500"></view>
+      <text v-if="showText" class="t-image__loading-text mt-2 text-xs text-gray-400">{{ loadingText }}</text>
     </view>
 
     <!-- 加载失败状态 -->
-    <view v-if="loadError && showError" class="t-image__error absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-[#f5f5f5]">
-      <text class="t-image__error-icon text-[32px] text-[#ccc]">✕</text>
-      <text v-if="showText" class="t-image__error-text mt-2 text-xs text-[#999]">{{ errorText }}</text>
+    <view v-if="loadError && showError" class="t-image__error absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-gray-100">
+      <image
+        v-if="hasErrorImage"
+        :src="errorImage"
+        :mode="mode"
+        class="h-full w-full block"
+      />
+      <text v-else class="t-image__error-icon text-3xl text-gray-300">✕</text>
+      <text v-if="showText" class="t-image__error-text mt-2 text-xs text-gray-400">{{ errorText }}</text>
     </view>
 
     <!-- 插槽：自定义内容 -->

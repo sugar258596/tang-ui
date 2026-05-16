@@ -16,14 +16,14 @@ const props = withDefaults(defineProps<TBadgeProps>(), {
   type: 'danger',
   bgColor: '',
   color: '',
-  offset: () => [0, 0] as [number, number]
+  offset: () : number[] => [0, 0]
 })
 
 /**
  * 计算显示的内容
  */
-const displayValue = computed(() => {
-  if (props.isDot) {
+const displayValue = computed((): string => {
+  if (props.isDot == true) {
     return ''
   }
 
@@ -32,62 +32,64 @@ const displayValue = computed(() => {
     return `${props.max}+`
   }
 
-  return String(val)
+  return val !== null ? val.toString() : ''
 })
 
 /**
  * 计算徽标样式类
  */
-const badgeClass = computed(() => {
+const badgeClass = computed((): string => {
   const classes: string[] = [
-    't-badge__content absolute right-0 -top-3 z-[1] translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-[10px] px-1.5 py-0.5 text-xs leading-[1.2]',
+    't-badge__content absolute right-0 -top-3 z-10 translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg px-2 py-1 text-xs leading-relaxed',
   ]
 
-  if (props.isDot) {
+  if (props.isDot == true) {
     classes.push('h-2 w-2 rounded-full p-0')
-  }
-
-  switch (props.type) {
-    case 'primary':
-      classes.push('bg-[#409eff] text-white')
-      break
-    case 'success':
-      classes.push('bg-[#67c23a] text-white')
-      break
-    case 'warning':
-      classes.push('bg-[#e6a23c] text-white')
-      break
-    case 'info':
-      classes.push('bg-[#909399] text-white')
-      break
-    default:
-      classes.push('bg-[#f56c6c] text-white')
-      break
   }
 
   return classes.join(' ')
 })
 
+const getTypeBackgroundColor = (): string => {
+  switch (props.type) {
+    case 'primary':
+      return '#3b82f6'
+    case 'success':
+      return '#22c55e'
+    case 'warning':
+      return '#fb923c'
+    case 'info':
+      return '#909399'
+    default:
+      return '#f87171'
+  }
+}
+
 /**
  * 计算徽标样式
  */
-const badgeStyle = computed(() => {
+const badgeStyle = computed((): string => {
   const styles: string[] = []
 
   if (props.bgColor != '') {
     styles.push(`background-color: ${props.bgColor}`)
+  } else {
+    styles.push(`background-color: ${getTypeBackgroundColor()}`)
   }
 
   if (props.color != '') {
     styles.push(`color: ${props.color}`)
+  } else {
+    styles.push('color: #ffffff')
   }
 
-  if (props.offset && props.offset.length === 2) {
-    const [x, y] = props.offset
-    if (x !== 0) {
+  if (props.offset != null && props.offset.length == 2) {
+    const x = props.offset[0] as number
+    const y = props.offset[1] as number
+    if (x != 0) {
       styles.push(`right: ${-x}px`)
     }
-    if (y !== 0) {
+    if (y != 0) {
       styles.push(`top: ${y}px`)
     }
   }
@@ -95,11 +97,18 @@ const badgeStyle = computed(() => {
   return styles.join('; ')
 })
 
+const badgeTextStyle = computed((): string => {
+  if (props.color != '') {
+    return `color: ${props.color}`
+  }
+  return 'color: #ffffff'
+})
+
 /**
  * 是否显示徽标
  */
-const showBadge = computed(() => {
-  return !props.hidden && (props.isDot || props.value !== '' && props.value !== 0)
+const showBadge = computed((): boolean => {
+  return props.hidden != true && (props.isDot == true || (props.value != '' && props.value != 0))
 })
 </script>
 
@@ -107,7 +116,7 @@ const showBadge = computed(() => {
   <view class="t-badge relative inline-block overflow-visible">
     <slot></slot>
     <view v-if="showBadge" :class="badgeClass" :style="badgeStyle">
-      <text v-if="!isDot" class="t-badge__text text-xs">{{ displayValue }}</text>
+      <text v-if="isDot != true" class="t-badge__text text-xs" :style="badgeTextStyle">{{ displayValue }}</text>
     </view>
   </view>
 </template>

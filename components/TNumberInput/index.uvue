@@ -1,8 +1,22 @@
 <script  setup lang="uts" >
 import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { TNumberInputProps } from './type.uts'
 
-const model = defineModel({ default: 0 })
+type NumberInputEventTarget = {
+	value: string | null
+}
+
+type NumberInputEvent = {
+	target: NumberInputEventTarget
+}
+
+type NumberInputKeyboardEvent = {
+	keyCode: number
+	preventDefault: () => void
+}
+
+const model = defineModel({ default: 0 }) as Ref<number>
 
 const props = withDefaults(defineProps<TNumberInputProps>(), {
 	min: 0,
@@ -21,9 +35,9 @@ const emit = defineEmits<{
 /**
  * 处理输入值改变
  */
-const handleInput = (e: any) => {
-	const rawValue = e.target.value as string | null | undefined
-	const value = rawValue !== undefined && rawValue !== null && rawValue !== '' ? parseFloat(rawValue) : 0
+const handleInput = (e: NumberInputEvent): void => {
+	const rawValue = e.target.value as string | null
+	const value = rawValue !== null && rawValue !== '' ? parseFloat(rawValue) : 0
 
 	// 如果输入无效，使用最小值
 	if (isNaN(value)) {
@@ -39,7 +53,7 @@ const handleInput = (e: any) => {
 /**
  * 处理输入框失去焦点
  */
-const handleBlur = () => {
+const handleBlur = (): void => {
 	// 边界检查
 	if (model.value < props.min) {
 		model.value = props.min
@@ -52,7 +66,7 @@ const handleBlur = () => {
 /**
  * 减少
  */
-const handleDecrease = () => {
+const handleDecrease = (): void => {
 	if (props.disabled) return
 
 	const newValue = model.value - props.step
@@ -65,7 +79,7 @@ const handleDecrease = () => {
 /**
  * 增加
  */
-const handleIncrease = () => {
+const handleIncrease = (): void => {
 	if (props.disabled) return
 
 	const newValue = model.value + props.step
@@ -78,7 +92,7 @@ const handleIncrease = () => {
 /**
  * 处理键盘事件
  */
-const handleKeyDown = (e: any) => {
+const handleKeyDown = (e: NumberInputKeyboardEvent): void => {
 	if (props.disabled) return
 
 	// 上箭头增加
@@ -93,43 +107,50 @@ const handleKeyDown = (e: any) => {
 	}
 }
 
+const formatSize = (value: string | number): string => {
+	if (typeof value === 'number') {
+		return `${value}rpx`
+	}
+	return value as string
+}
+
 /**
  * 格式化输入框宽度
  */
-const inputWidth = computed(() => {
-	return typeof props.width === 'number' ? props.width + 'rpx' : props.width
+const inputWidth = computed((): string => {
+	return formatSize(props.width)
 })
 
 /**
  * 格式化按钮尺寸
  */
-const buttonSizeComputed = computed(() => {
-	return typeof props.buttonSize === 'number' ? props.buttonSize + 'rpx' : props.buttonSize
+const buttonSizeComputed = computed((): string => {
+	return formatSize(props.buttonSize)
 })
 
-const canDecrease = computed(() => {
+const canDecrease = computed((): boolean => {
 	return !props.disabled && model.value > props.min
 })
 
-const canIncrease = computed(() => {
+const canIncrease = computed((): boolean => {
 	return !props.disabled && model.value < props.max
 })
 </script>
 
 <template>
-	<view class="flex flex-row items-center gap-[8rpx]">
+	<view class="flex flex-row items-center gap-1">
 		<!-- 减少按钮 -->
 		<view
-			class="flex select-none items-center justify-center rounded-[8rpx] bg-[#f5f5f5] transition-all duration-300"
-			:class="canDecrease ? 'active:scale-95 active:bg-[#e0e0e0]' : 'opacity-40 cursor-not-allowed'"
+			class="flex select-none items-center justify-center rounded twx-bg-muted transition-all duration-300"
+			:class="canDecrease ? 'active:scale-95 twx-active-bg-muted' : 'opacity-40 cursor-not-allowed'"
 			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
 			@tap="handleDecrease">
-			<text class="text-[32rpx] font-bold leading-none text-[#333]">-</text>
+			<text class="text-base font-bold leading-none twx-text-body">-</text>
 		</view>
 
 		<!-- 输入框 -->
 		<input
-			class="h-[64rpx] appearance-none rounded-[8rpx] border-[2rpx] border-solid border-transparent bg-[#f5f5f5] text-center text-[28rpx] text-[#333] transition-all duration-300 focus:border-[#007aff] focus:bg-white"
+			class="h-8 appearance-none rounded border border-solid border-transparent twx-bg-muted text-center text-sm twx-text-body transition-all duration-300 twx-focus-border-primary focus:bg-white"
 			:class="{ 'opacity-60 cursor-not-allowed': disabled }"
 			:style="{ width: inputWidth }"
 			type="number"
@@ -142,11 +163,11 @@ const canIncrease = computed(() => {
 
 		<!-- 增加按钮 -->
 		<view
-			class="flex select-none items-center justify-center rounded-[8rpx] bg-[#f5f5f5] transition-all duration-300"
-			:class="canIncrease ? 'active:scale-95 active:bg-[#e0e0e0]' : 'opacity-40 cursor-not-allowed'"
+			class="flex select-none items-center justify-center rounded twx-bg-muted transition-all duration-300"
+			:class="canIncrease ? 'active:scale-95 twx-active-bg-muted' : 'opacity-40 cursor-not-allowed'"
 			:style="{ width: buttonSizeComputed, height: buttonSizeComputed }"
 			@tap="handleIncrease">
-			<text class="text-[32rpx] font-bold leading-none text-[#333]">+</text>
+			<text class="text-base font-bold leading-none twx-text-body">+</text>
 		</view>
 	</view>
 </template>
@@ -160,5 +181,18 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
 	-moz-appearance: textfield;
+}
+
+.twx-bg-muted {
+	background-color: #f5f5f5;
+}
+.twx-text-body {
+	color: #333333;
+}
+.twx-active-bg-muted:active {
+	background-color: #e0e0e0;
+}
+.twx-focus-border-primary:focus {
+	border-color: #007aff;
 }
 </style>

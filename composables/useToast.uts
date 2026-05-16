@@ -4,15 +4,39 @@
  */
 
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import type { ToastOptions } from '../types/index.uts'
 
 type NormalizedToastOptions = {
   message: string
-  type: NonNullable<ToastOptions['type']>
+  type: string
   duration: number
-  position: NonNullable<ToastOptions['position']>
+  position: string
   mask: boolean
   icon?: string
+}
+
+type ToastDefaultOptions = {
+  duration: number
+  position: string
+  type: string
+  mask: boolean
+}
+
+type UseToastReturn = {
+  isShowing: Ref<boolean>
+  currentToast: Ref<NormalizedToastOptions | null>
+  toastQueue: Ref<NormalizedToastOptions[]>
+  show: (options: string | ToastOptions) => void
+  success: (message: string, duration: number | null) => void
+  error: (message: string, duration: number | null) => void
+  warning: (message: string, duration: number | null) => void
+  info: (message: string, duration: number | null) => void
+  loading: (message: string | null) => () => void
+  hide: () => void
+  clear: () => void
+  setDefaults: (options: ToastDefaultOptions) => void
+  getQueueLength: () => number
 }
 
 /** Toast 队列 */
@@ -25,18 +49,78 @@ const currentToast = ref<NormalizedToastOptions | null>(null)
 const isShowing = ref(false)
 
 /** 默认配置 */
-const defaultOptions: Partial<ToastOptions> = {
+const defaultOptions: ToastDefaultOptions = {
   duration: 2000,
   position: 'center',
   type: 'default',
   mask: false
 }
 
+function showNext(): void {
+  if (toastQueue.value.length === 0) {
+    isShowing.value = false
+    return
+  }
+
+  isShowing.value = true
+  const nextToast = toastQueue.value.shift()
+  currentToast.value = nextToast == null ? null : nextToast
+
+  const activeToast = currentToast.value
+  if (activeToast == null) {
+    isShowing.value = false
+    return
+  }
+
+  // 根据类型选择图标
+  let icon: 'success' | 'error' | 'loading' | 'none' = 'none'
+  let image: string | null = null
+
+  switch (activeToast.type) {
+    case 'success':
+      icon = 'success'
+      break
+    case 'danger':
+      icon = 'error'
+      break
+    case 'warning':
+    case 'info':
+      icon = 'none'
+      break
+    default:
+      icon = 'none'
+      break
+  }
+
+  const activeDuration = activeToast.duration
+
+  uni.showToast({
+    title: activeToast.message,
+    icon,
+    image,
+    duration: activeDuration,
+    mask: activeToast.mask,
+    success: () => {
+      setTimeout(() => {
+        currentToast.value = null
+        showNext()
+      }, activeDuration)
+    },
+    fail: (error) => {
+      console.error('Toast 显示失败:', error)
+      currentToast.value = null
+      isShowing.value = false
+
+      setTimeout(() => showNext(), 100)
+    }
+  })
+}
+
 /**
  * Toast 管理组合式函数
  * @returns {Object} Toast 管理对象
  */
-export function useToast() {
+export function useToast(): UseToastReturn {
   /**
    * 显示 Toast
    * @param {string | ToastOptions} options - 提示内容或配置
@@ -52,10 +136,10 @@ export function useToast() {
       // 合并默认配置
       const config: NormalizedToastOptions = {
         message: toastOptions.message,
-        type: toastOptions.type ?? defaultOptions.type ?? 'default',
-        duration: toastOptions.duration ?? defaultOptions.duration ?? 2000,
-        position: toastOptions.position ?? defaultOptions.position ?? 'center',
-        mask: toastOptions.mask ?? defaultOptions.mask ?? false,
+        type: toastOptions.type ?? defaultOptions.type,
+        duration: toastOptions.duration ?? defaultOptions.duration,
+        position: toastOptions.position ?? defaultOptions.position,
+        mask: toastOptions.mask ?? defaultOptions.mask,
         icon: toastOptions.icon
       }
 
@@ -76,11 +160,11 @@ export function useToast() {
    * @param {string} message - 提示内容
    * @param {number} duration - 显示时长
    */
-  const success = (message: string, duration?: number): void => {
+  const success = (message: string, duration: number | null): void => {
     show({
       message,
       type: 'success',
-      duration: duration || defaultOptions.duration
+      duration: duration != null ? duration : defaultOptions.duration
     })
   }
 
@@ -89,11 +173,11 @@ export function useToast() {
    * @param {string} message - 提示内容
    * @param {number} duration - 显示时长
    */
-  const error = (message: string, duration?: number): void => {
+  const error = (message: string, duration: number | null): void => {
     show({
       message,
       type: 'danger',
-      duration: duration || defaultOptions.duration
+      duration: duration != null ? duration : defaultOptions.duration
     })
   }
 
@@ -102,11 +186,11 @@ export function useToast() {
    * @param {string} message - 提示内容
    * @param {number} duration - 显示时长
    */
-  const warning = (message: string, duration?: number): void => {
+  const warning = (message: string, duration: number | null): void => {
     show({
       message,
       type: 'warning',
-      duration: duration || defaultOptions.duration
+      duration: duration != null ? duration : defaultOptions.duration
     })
   }
 
@@ -115,11 +199,11 @@ export function useToast() {
    * @param {string} message - 提示内容
    * @param {number} duration - 显示时长
    */
-  const info = (message: string, duration?: number): void => {
+  const info = (message: string, duration: number | null): void => {
     show({
       message,
       type: 'info',
-      duration: duration || defaultOptions.duration
+      duration: duration != null ? duration : defaultOptions.duration
     })
   }
 
@@ -128,9 +212,10 @@ export function useToast() {
    * @param {string} message - 提示内容
    * @returns {Function} 关闭函数
    */
-  const loading = (message: string = '加载中...'): (() => void) => {
+  const loading = (message: string | null): (() => void) => {
+    const title = message == null || message === '' ? '加载中...' : message
     uni.showToast({
-      title: message,
+      title,
       icon: 'loading',
       duration: 100000,  // 设置一个很长的时间
       mask: true
@@ -139,73 +224,6 @@ export function useToast() {
     return () => {
       uni.hideToast()
     }
-  }
-
-  /**
-   * 显示下一个 Toast
-   */
-  const showNext = (): void => {
-    if (toastQueue.value.length === 0) {
-      isShowing.value = false
-      return
-    }
-
-    isShowing.value = true
-    currentToast.value = toastQueue.value.shift() || null
-
-    if (!currentToast.value) {
-      isShowing.value = false
-      return
-    }
-
-    // 根据类型选择图标
-    let icon: 'success' | 'error' | 'loading' | 'none' = 'none'
-    let image: string | undefined = undefined
-
-    switch (currentToast.value.type) {
-      case 'success':
-        icon = 'success'
-        break
-      case 'danger':
-        icon = 'error'
-        break
-      case 'warning':
-      case 'info':
-        // 使用自定义图标
-        // image = '/static/icons/warning.png'  // 需要准备图标文件
-        icon = 'none'
-        break
-      default:
-        icon = 'none'
-        break
-    }
-
-    // 处理位置（uni.showToast 不支持自定义位置，这里仅作记录）
-    // 实际项目中可以使用自定义组件来支持更多位置选项
-
-    // 显示 Toast
-    uni.showToast({
-      title: currentToast.value.message,
-      icon,
-      image,
-      duration: currentToast.value.duration,
-      mask: currentToast.value.mask,
-      success: () => {
-        // 设置定时器，在 duration 后显示下一个
-        setTimeout(() => {
-          currentToast.value = null
-          showNext()
-        }, currentToast.value?.duration || 2000)
-      },
-      fail: (error) => {
-        console.error('Toast 显示失败:', error)
-        currentToast.value = null
-        isShowing.value = false
-
-        // 尝试显示下一个
-        setTimeout(() => showNext(), 100)
-      }
-    })
   }
 
   /**
@@ -235,9 +253,9 @@ export function useToast() {
 
   /**
    * 设置默认配置
-   * @param {Partial<ToastOptions>} options - 配置项
+   * @param {ToastDefaultOptions} options - 配置项
    */
-  const setDefaults = (options: Partial<ToastOptions>): void => {
+  const setDefaults = (options: ToastDefaultOptions): void => {
     Object.assign(defaultOptions, options)
   }
 
@@ -272,9 +290,9 @@ export function useToast() {
 /**
  * 获取 Toast 实例（单例模式）
  */
-let toastInstance : any | null = null
+let toastInstance : UseToastReturn | null = null
 
-export function getToastInstance() {
+export function getToastInstance(): UseToastReturn {
   if (toastInstance == null) {
     toastInstance = useToast()
   }
@@ -292,35 +310,35 @@ export function showToast(options: string | ToastOptions): void {
  * 快捷方法：显示成功提示
  */
 export function showSuccess(message: string, duration?: number): void {
-  getToastInstance().success(message, duration)
+  getToastInstance().success(message, duration == null ? null : duration)
 }
 
 /**
  * 快捷方法：显示错误提示
  */
 export function showError(message: string, duration?: number): void {
-  getToastInstance().error(message, duration)
+  getToastInstance().error(message, duration == null ? null : duration)
 }
 
 /**
  * 快捷方法：显示警告提示
  */
 export function showWarning(message: string, duration?: number): void {
-  getToastInstance().warning(message, duration)
+  getToastInstance().warning(message, duration == null ? null : duration)
 }
 
 /**
  * 快捷方法：显示信息提示
  */
 export function showInfo(message: string, duration?: number): void {
-  getToastInstance().info(message, duration)
+  getToastInstance().info(message, duration == null ? null : duration)
 }
 
 /**
  * 快捷方法：显示加载提示
  */
 export function showLoadingToast(message?: string): () => void {
-  return getToastInstance().loading(message)
+  return getToastInstance().loading(message == null ? null : message)
 }
 
 /**

@@ -5,7 +5,7 @@
 /**
  * TCol Props 接口
  */
-export interface TColProps {
+export type TColProps = {
   /**
    * 栅格占据的列数（共24列）
    * @default 24

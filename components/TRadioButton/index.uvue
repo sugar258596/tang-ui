@@ -5,7 +5,7 @@
  */
 import { computed } from 'vue'
 import type { Ref } from 'vue'
-import type { TRadioButtonProps } from './type.uts'
+import type { TRadioButtonProps, FormOption } from './type.uts'
 
 type RadioButtonModelValue = string | number
 type RadioButtonSizeClass = {
@@ -20,7 +20,7 @@ type RadioButtonSizeMap = {
 }
 
 const props = withDefaults(defineProps<TRadioButtonProps>(), {
-  options: () => [],
+  options: () => [] as Array<FormOption>,
   size: 'medium',
   activeColor: '#00bba7',
   inactiveColor: 'var(--tui-border-strong)',
@@ -28,36 +28,36 @@ const props = withDefaults(defineProps<TRadioButtonProps>(), {
   checked: false
 })
 
-const model = defineModel() as Ref<RadioButtonModelValue | null | undefined>
+const model = defineModel() as Ref<RadioButtonModelValue | null>
 
 const emit = defineEmits<{
   change: [value: string | number]
 }>()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 /**
  * 计算样式变量
  */
-const cssVars = computed(() => ({
-  '--radio-active-color': props.activeColor,
-  '--radio-inactive-color': props.inactiveColor
-}))
+const cssVars = computed((): string => {
+  return `--radio-active-color: ${props.activeColor}; --radio-inactive-color: ${props.inactiveColor}`
+})
 
 /**
  * 是否为选项组模式
  */
-const isOptionsMode = computed(() => props.options.length > 0)
+const isOptionsMode = computed((): boolean => props.options.length > 0)
 
 /**
  * 单个按钮模式：判断是否被选中
  */
-const isChecked = computed(() => {
+const isChecked = computed((): boolean => {
+  const currentValue = props.value
   // 优先使用 model.value 判断
-  if (model.value !== undefined && model.value !== null) {
-    return model.value === props.value
+  if (model.value !== null) {
+    return model.value === currentValue
   }
   // 如果没有 model.value，使用 checked 属性
   return props.checked === true
@@ -66,7 +66,7 @@ const isChecked = computed(() => {
 /**
  * 处理变化
  */
-const handleChange = (value: string | number) => {
+const handleChange = (value: string | number): void => {
   model.value = value
   emit('change', value)
 }
@@ -74,11 +74,32 @@ const handleChange = (value: string | number) => {
 /**
  * 处理单个按钮点击
  */
-const handleClick = () => {
+const handleClick = (): void => {
   if (props.disabled || isOptionsMode.value) return
-  if (props.value !== undefined) {
-    handleChange(props.value)
+  const currentValue = props.value
+  if (currentValue !== null) {
+    handleChange(currentValue)
   }
+}
+
+const handleOptionClick = (option: FormOption): void => {
+  if (props.disabled || option.disabled === true) return
+  handleChange(option.value)
+}
+
+const getOptionItemClass = (option: FormOption): string => {
+  return props.disabled || option.disabled === true ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'
+}
+
+const getOptionBorderStyle = (option: FormOption): string => {
+  const borderColor = props.disabled || option.disabled === true
+    ? '#dcdfe6'
+    : model.value === option.value ? 'var(--radio-active-color)' : 'var(--radio-inactive-color)'
+  return `border-width: 2rpx; border-color: ${borderColor}`
+}
+
+const isOptionChecked = (option: FormOption): boolean => {
+  return model.value === option.value
 }
 
 /**
@@ -86,19 +107,19 @@ const handleClick = () => {
  */
 const sizeMap: RadioButtonSizeMap = {
     small: {
-      icon: 'h-[28rpx] w-[28rpx]',
-      dot: 'h-[14rpx] w-[14rpx]',
-      label: 'text-[24rpx]',
+      icon: 'h-1 w-1',
+      dot: 'h-2 w-2',
+      label: 'text-xs',
     },
     medium: {
-      icon: 'h-[36rpx] w-[36rpx]',
-      dot: 'h-[20rpx] w-[20rpx]',
-      label: 'text-[28rpx]',
+      icon: 'h-2 w-2',
+      dot: 'h-2 w-2',
+      label: 'text-sm',
     },
     large: {
-      icon: 'h-[44rpx] w-[44rpx]',
-      dot: 'h-[26rpx] w-[26rpx]',
-      label: 'text-[32rpx]',
+      icon: 'h-5 w-5',
+      dot: 'h-3 w-3',
+      label: 'text-base',
     },
 }
 
@@ -115,49 +136,57 @@ const sizeClass = computed((): RadioButtonSizeClass => {
   }
 })
 
-const labelClass = computed(() => {
-  const classes: string[] = ['transition-colors duration-200 text-[#323233]']
+const labelClass = computed((): string => {
+  const classes: string[] = ['transition-colors duration-200 text-primary']
   const currentSizeClass = sizeClass.value ?? defaultSizeClass
   classes.push(currentSizeClass.label)
   if (props.disabled) {
-    classes.push('text-[#c0c4cc]')
+    classes.push('text-disabled')
   }
   return classes.join(' ')
 })
 
-const hasDisplayLabel = computed(() => {
-  return hasTextValue(props.label) || (props.value !== undefined && props.value !== null)
+const hasDisplayLabel = computed((): boolean => {
+  const currentValue = props.value
+  return hasTextValue(props.label) || (currentValue !== null)
 })
 
-const displayLabel = computed(() => {
-  return hasTextValue(props.label) ? props.label : props.value
+const displayLabel = computed((): string => {
+  if (hasTextValue(props.label)) {
+    return props.label as string
+  }
+  const currentValue = props.value
+  if (currentValue !== null) {
+    return `${currentValue}`
+  }
+  return ''
 })
 </script>
 
 <template>
   <!-- 选项组模式：使用 options 属性 -->
-  <view v-if="isOptionsMode" class="flex flex-col gap-[12rpx]" :style="cssVars">
+  <view v-if="isOptionsMode" class="flex flex-col twx-gap-6px" :style="cssVars">
     <view
-      v-for="option in options"
-      :key="option.value"
-      class="flex flex-row items-center gap-[12rpx] py-[4rpx]"
-      :class="disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'"
-      @click="!disabled && handleChange(option.value)"
+      v-for="(option, index) in options"
+      :key="index"
+      class="flex flex-row items-center twx-gap-6px twx-py-2px"
+      :class="getOptionItemClass(option)"
+      @click="handleOptionClick(option)"
     >
       <view
         class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
         :class="sizeClass.icon"
-        :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : model.value === option.value ? 'var(--radio-active-color)' : 'var(--radio-inactive-color)'}`"
+        :style="getOptionBorderStyle(option)"
       >
         <view
-          v-if="model.value === option.value"
+          v-if="isOptionChecked(option)"
           class="rounded-full"
           :class="sizeClass.dot"
           :style="`background-color: var(--radio-active-color)`"
         ></view>
       </view>
       <text
-        :class="[labelClass, option.disabled ? 'text-[#c0c4cc]' : '']"
+        :class="option.disabled === true ? `${labelClass} text-disabled` : labelClass"
       >{{ option.label }}</text>
     </view>
   </view>
@@ -165,7 +194,7 @@ const displayLabel = computed(() => {
   <!-- 单个按钮模式：使用插槽或默认内容 -->
   <view
     v-else
-    class="flex flex-row items-center gap-[12rpx] py-[4rpx]"
+    class="flex flex-row items-center twx-gap-6px py-1"
     :class="disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'"
     :style="cssVars"
     @tap="handleClick"
@@ -190,3 +219,4 @@ const displayLabel = computed(() => {
     </slot>
   </view>
 </template>
+ 

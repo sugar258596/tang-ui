@@ -1,7 +1,7 @@
 <script  setup lang="uts" >
 import { ref } from 'vue'
-import TSelect from '@/components/TSelect'
-import TCard from '@/components/TCard'
+import TSelect from '@/components/TSelect/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
 import type { SelectOption } from '@/components/TSelect/type.uts'
 import { useI18n } from '@/composables/useI18n.uts'
 
@@ -9,7 +9,7 @@ import { useI18n } from '@/composables/useI18n.uts'
  * 选择器组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const value1 = ref('')
 const value2 = ref('option2')
@@ -30,17 +30,17 @@ const cascadeValue = ref<(string | number)[] | null>(null)
 const cascadeValue2 = ref<(string | number)[] | null>(null)
 
 const options = [
-  { label: $t('examplePages.select.labels.option1'), value: 'option1' },
-  { label: $t('examplePages.select.labels.option2'), value: 'option2' },
-  { label: $t('examplePages.select.labels.option3'), value: 'option3' },
-  { label: $t('examplePages.select.labels.option4'), value: 'option4' },
-  { label: $t('examplePages.select.labels.option5'), value: 'option5' }
+  { label: t('examplePages.select.labels.option1'), value: 'option1' },
+  { label: t('examplePages.select.labels.option2'), value: 'option2' },
+  { label: t('examplePages.select.labels.option3'), value: 'option3' },
+  { label: t('examplePages.select.labels.option4'), value: 'option4' },
+  { label: t('examplePages.select.labels.option5'), value: 'option5' }
 ]
 
 const numberOptions = [
-  { label: $t('examplePages.select.labels.item1'), value: 1 },
-  { label: $t('examplePages.select.labels.item2'), value: 2 },
-  { label: $t('examplePages.select.labels.item3'), value: 3 }
+  { label: t('examplePages.select.labels.item1'), value: 1 },
+  { label: t('examplePages.select.labels.item2'), value: 2 },
+  { label: t('examplePages.select.labels.item3'), value: 3 }
 ]
 
 // 省市区三级级联数据
@@ -146,11 +146,13 @@ const categoryOptions: SelectOption[] = [
   { label: '食品', value: 'food' }
 ]
 
-const handleChange = (value: any): void => {
-  console.log($t('examplePages.select.messages.selected'), value)
+type SelectChangeValue = SelectOption | SelectOption[] | null
+
+const handleChange = (value: SelectChangeValue): void => {
+  console.log(t('examplePages.select.messages.selected'), value)
 }
 
-const handleCascadeChange = (value: any): void => {
+const handleCascadeChange = (value: SelectChangeValue): void => {
   console.log('级联选择变更:', value)
 }
 
@@ -158,75 +160,82 @@ const handleFilterInput = (value: string): void => {
   filterKeyword.value = value
   console.log('Select 搜索输入:', value)
 }
+
+const getCascadeText = (value: Array<string | number> | null, separator: string): string => {
+  if (value === null || value.length === 0) {
+    return '未选择'
+  }
+  return value.join(separator)
+}
 </script>
 
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.select.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.select.description') }}</text>
+      <text class="example-title">{{ t('examplePages.select.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.select.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.select.sections.basic')" class="example-section">
-      <TSelect v-model="value1" :options="options" :placeholder="$t('examplePages.select.placeholder.default')" />
+    <TCard :title="t('examplePages.select.sections.basic')" class="example-section">
+      <TSelect v-model="value1" :options="options" :placeholder="t('examplePages.select.placeholder.default')" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.selected') }}: {{ getDisplayText(value1, $t('examplePages.select.messages.notSelected')) }}
+        {{ t('examplePages.select.messages.selected') }}: {{ getDisplayText(value1, t('examplePages.select.messages.notSelected')) }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.upward')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.upward')" class="example-section">
         <TSelect
           v-model="value2"
           :options="options"
           placement="top"
-          :placeholder="$t('examplePages.select.placeholder.upward')"
+          :placeholder="t('examplePages.select.placeholder.upward')"
         />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.upwardDesc') }}
+        {{ t('examplePages.select.messages.upwardDesc') }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.default')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.default')" class="example-section">
       <TSelect v-model="value2" :options="options" />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.selected') }}: {{ value2 }}
+        {{ t('examplePages.select.messages.selected') }}: {{ value2 }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.disabled')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.disabled')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px;">
-        <TSelect :options="options" disabled :placeholder="$t('examplePages.select.placeholder.disabled')" />
+        <TSelect :options="options" disabled :placeholder="t('examplePages.select.placeholder.disabled')" />
         <TSelect :options="options" value="option1" disabled />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.disabledOptions')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.disabledOptions')" class="example-section">
       <TSelect
         :options="[
-          { label: $t('examplePages.select.labels.available1'), value: '1' },
-          { label: $t('examplePages.select.labels.disabled'), value: '2', disabled: true },
-          { label: $t('examplePages.select.labels.available2'), value: '3' },
-          { label: $t('examplePages.select.labels.disabled'), value: '4', disabled: true },
-          { label: $t('examplePages.select.labels.available3'), value: '5' }
+          { label: t('examplePages.select.labels.available1'), value: '1' },
+          { label: t('examplePages.select.labels.disabled'), value: '2', disabled: true },
+          { label: t('examplePages.select.labels.available2'), value: '3' },
+          { label: t('examplePages.select.labels.disabled'), value: '4', disabled: true },
+          { label: t('examplePages.select.labels.available3'), value: '5' }
         ]"
-        :placeholder="$t('examplePages.select.placeholder.partialDisabled')"
+        :placeholder="t('examplePages.select.placeholder.partialDisabled')"
       />
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.clearable')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.clearable')" class="example-section">
       <TSelect
         v-model="value3"
         :options="numberOptions"
         clearable
-        :placeholder="$t('examplePages.select.placeholder.clearable')"
+        :placeholder="t('examplePages.select.placeholder.clearable')"
       />
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.filterable')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.filterable')" class="example-section">
       <TSelect
         :options="options"
         filterable
-        :placeholder="$t('examplePages.select.placeholder.filterable')"
+        :placeholder="t('examplePages.select.placeholder.filterable')"
         @input="handleFilterInput"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
@@ -234,34 +243,34 @@ const handleFilterInput = (value: string): void => {
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.multiple')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.multiple')" class="example-section">
       <TSelect
         v-model="multiValue"
         :options="options"
         multiple
-        :placeholder="$t('examplePages.select.placeholder.multiple')"
+        :placeholder="t('examplePages.select.placeholder.multiple')"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        {{ $t('examplePages.select.messages.selected') }}: {{ getJoinedText(multiValue, $t('examplePages.select.messages.notSelected')) }}
+        {{ t('examplePages.select.messages.selected') }}: {{ getJoinedText(multiValue, t('examplePages.select.messages.notSelected')) }}
       </text>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.size')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.size')" class="example-section">
       <view style="display: flex; flex-direction: column; gap: 15px; overflow: visible;">
-        <TSelect :options="options" size="small" :placeholder="$t('examplePages.select.labels.small')" />
-        <TSelect :options="options" size="medium" :placeholder="$t('examplePages.select.labels.medium')" />
-        <TSelect :options="options" size="large" :placeholder="$t('examplePages.select.labels.large')" />
+        <TSelect :options="options" size="small" :placeholder="t('examplePages.select.labels.small')" />
+        <TSelect :options="options" size="medium" :placeholder="t('examplePages.select.labels.medium')" />
+        <TSelect :options="options" size="large" :placeholder="t('examplePages.select.labels.large')" />
       </view>
     </TCard>
 
-    <TCard :title="$t('examplePages.select.sections.events')" class="example-section">
+    <TCard :title="t('examplePages.select.sections.events')" class="example-section">
       <TSelect
         :options="options"
-        :placeholder="$t('examplePages.select.placeholder.checkConsole')"
+        :placeholder="t('examplePages.select.placeholder.checkConsole')"
         @change="handleChange"
       />
       <text style="margin-top: 10px; font-size: 12px; color: #909399;">
-        {{ $t('examplePages.select.placeholder.checkConsole') }}
+        {{ t('examplePages.select.placeholder.checkConsole') }}
       </text>
     </TCard>
 
@@ -273,7 +282,7 @@ const handleFilterInput = (value: string): void => {
         @change="handleCascadeChange"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中值: {{ cascadeValue ? (cascadeValue as (string | number)[]).join(' / ') : '未选择' }}
+        选中值: {{ getCascadeText(cascadeValue, ' / ') }}
       </text>
     </TCard>
 
@@ -287,7 +296,7 @@ const handleFilterInput = (value: string): void => {
         @change="handleCascadeChange"
       />
       <text style="margin-top: 10px; font-size: 14px; color: #909399;">
-        选中值: {{ cascadeValue2 ? (cascadeValue2 as (string | number)[]).join(' > ') : '未选择' }}
+        选中值: {{ getCascadeText(cascadeValue2, ' > ') }}
       </text>
       <text style="margin-top: 5px; font-size: 12px; color: #c0c4cc;">
         开启 changeOnSelect，选中中间层级也会更新值

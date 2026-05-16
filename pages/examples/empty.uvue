@@ -1,14 +1,14 @@
 <script  setup lang="uts" >
-import TEmpty from '@/components/TEmpty'
-import TCard from '@/components/TCard'
-import TButton from '@/components/TButton'
+import TEmpty from '@/components/TEmpty/index.uvue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
 import { useI18n } from '@/composables/useI18n.uts'
 
 /**
  * 空状态组件示例页面
  */
 
-const { $t } = useI18n()
+const { t } = useI18n()
 
 const handleClick = (): void => {
   console.log('按钮被点击')
@@ -18,16 +18,16 @@ const handleClick = (): void => {
 <template>
   <view class="example-page">
     <view class="example-header">
-      <text class="example-title">{{ $t('examplePages.empty.title') }}</text>
-      <text class="example-desc">{{ $t('examplePages.empty.description') }}</text>
+      <text class="example-title">{{ t('examplePages.empty.title') }}</text>
+      <text class="example-desc">{{ t('examplePages.empty.description') }}</text>
     </view>
 
-    <TCard :title="$t('examplePages.empty.sections.basic')" class="example-section">
+    <TCard :title="t('examplePages.empty.sections.basic')" class="example-section">
       <TEmpty />
     </TCard>
 
-    <TCard :title="$t('examplePages.empty.sections.custom')" class="example-section">
-      <TEmpty :description="$t('examplePages.empty.text.noData')" />
+    <TCard :title="t('examplePages.empty.sections.custom')" class="example-section">
+      <TEmpty :description="t('examplePages.empty.text.noData')" />
     </TCard>
 
     <TCard title="自定义图片" class="example-section">
@@ -35,7 +35,7 @@ const handleClick = (): void => {
     </TCard>
 
     <TCard title="不同类型" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 30px;">
+      <view class="flex flex-col gap-7">
         <TEmpty type="data" description="暂无数据" />
         <TEmpty type="search" description="没有搜索结果" />
         <TEmpty type="network" description="网络连接失败" />
@@ -44,7 +44,7 @@ const handleClick = (): void => {
     </TCard>
 
     <TCard title="图片大小" class="example-section">
-      <view style="display: flex; flex-direction: column; gap: 30px;">
+      <view class="flex flex-col gap-7">
         <TEmpty imageSize="small" description="小尺寸图片" />
         <TEmpty imageSize="medium" description="中等尺寸图片" />
         <TEmpty imageSize="large" description="大尺寸图片" />
@@ -64,20 +64,20 @@ const handleClick = (): void => {
     <TCard title="自定义内容" class="example-section">
       <TEmpty>
         <template #image>
-          <text style="font-size: 60px;">🎯</text>
+          <text class="twx-text-60">🎯</text>
         </template>
         <template #description>
-          <view style="text-align: center;">
-            <text style="font-size: 16px; color: #303133; display: block; margin-bottom: 8px;">
+          <view class="text-center">
+            <text class="text-base text-primary block mb-2">
               没有找到相关内容
             </text>
-            <text style="font-size: 14px; color: #909399;">
+            <text class="text-sm text-tertiary">
               试试调整搜索条件
             </text>
           </view>
         </template>
         <template #footer>
-          <view style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+          <view class="flex gap-2 justify-center mt-5">
             <TButton size="small">返回</TButton>
             <TButton type="primary" size="small">重新搜索</TButton>
           </view>
@@ -117,5 +117,9 @@ const handleClick = (): void => {
 
 .example-section {
   margin-bottom: 20px;
+}
+
+.twx-text-60 {
+  font-size: 60px;
 }
 </style>

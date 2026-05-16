@@ -23,8 +23,8 @@ const emit = defineEmits<{
   click: []
 }>()
 
-const hasTextValue = (value: string | null | undefined): boolean => {
-  return value !== undefined && value !== null && value !== ''
+const hasTextValue = (value: string | null): boolean => {
+  return value !== null && value !== ''
 }
 
 const hasIcon = computed(() => {
@@ -49,15 +49,15 @@ const hasExtra = computed(() => {
 const itemClass = computed(() => {
   const classes: string[] = [
     't-list-item',
-    "relative flex flex-row items-center gap-[24rpx] bg-white px-4 py-3 after:absolute after:bottom-0 after:left-4 after:right-0 after:h-px after:bg-[#ebeef5] after:content-[''] last:after:hidden",
+    'relative flex flex-row items-center bg-surface px-4 py-3 border-b border-border-soft',
   ]
 
   if (props.clickable && !props.disabled) {
-    classes.push('cursor-pointer transition-colors duration-300 active:bg-[#f5f7fa]')
+    classes.push('transition-bg duration-300')
   }
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed opacity-50')
+    classes.push('opacity-50')
   }
 
   return classes.join(' ')
@@ -76,22 +76,22 @@ const handleClick = (): void => {
 <template>
   <view :class="itemClass" @click="handleClick">
     <!-- 左侧图标 -->
-    <view v-if="hasIcon" class="t-list-item__icon flex items-center justify-center">
-      <text class="t-list-item__icon-text text-[20px] text-[#909399]">{{ icon }}</text>
+    <view v-if="hasIcon" class="t-list-item__icon mr-3 flex w-icon items-center justify-center">
+      <text class="t-list-item__icon-text text-xl text-tertiary">{{ icon }}</text>
     </view>
 
     <!-- 中间内容 -->
     <view class="t-list-item__content flex flex-1 flex-col">
       <slot>
-        <text v-if="hasTitle" class="t-list-item__title text-base leading-6 text-[#303133]">{{ title }}</text>
-        <text v-if="hasDescription" class="t-list-item__description mt-1 text-sm leading-5 text-[#909399]">{{ description }}</text>
+        <text v-if="hasTitle" class="t-list-item__title text-base leading-6 text-primary">{{ title }}</text>
+        <text v-if="hasDescription" class="t-list-item__description mt-xs text-sm leading-5 text-tertiary">{{ description }}</text>
       </slot>
     </view>
 
     <!-- 右侧内容 -->
-    <view class="t-list-item__extra ml-3 flex items-center">
-      <text v-if="hasExtra" class="t-list-item__extra-text text-sm text-[#909399]">{{ extra }}</text>
-      <text v-if="arrow" class="t-list-item__arrow ml-2 text-[20px] text-[#c0c4cc]">›</text>
+    <view class="t-list-item__extra ml-3 flex flex-row items-center">
+      <text v-if="hasExtra" class="t-list-item__extra-text text-sm text-tertiary">{{ extra }}</text>
+      <text v-if="arrow" class="t-list-item__arrow ml-2 text-xl text-disabled">›</text>
     </view>
   </view>
 </template>

@@ -5,15 +5,15 @@
 export type RadioDirection = 'horizontal' | 'vertical'
 export type RadioSize = 'small' | 'medium' | 'large'
 
-export interface RadioOption {
+export type RadioOption = {
   label: string
   value: string | number
   disabled?: boolean
 }
 
-export interface TRadioGroupProps {
+export type TRadioGroupProps = {
   modelValue?: string | number
-  options?: RadioOption[]
+  options?: Array<RadioOption>
   direction?: RadioDirection
   /** 按钮尺寸 */
   size?: RadioSize

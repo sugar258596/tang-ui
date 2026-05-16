@@ -14,7 +14,7 @@ export type SelectOption = {
 	/** 是否禁用该选项，默认为 false */
 	disabled ?: boolean
 	/** 子级选项列表，存在时启用级联选择，最多支持四级 */
-	children ?: SelectOption[]
+	children ?: Array<SelectOption>
 }
 
 /**
@@ -25,19 +25,19 @@ export type SingleSelectValue = string | number | null
 /**
  * 多选模式下的值类型
  */
-export type MultipleSelectValue = (string | number)[]
+export type MultipleSelectValue = Array<string | number>
 
 /**
  * 级联选择模式下的值类型，数组中每个元素对应一个层级的选中值
  */
-export type CascadeSelectValue = (string | number)[]
+export type CascadeSelectValue = Array<string | number>
 
 /**
  * Props 类型定义
  */
 export type SelectProps = {
 	/** 选项列表，SelectOption 数组 */
-	options ?: SelectOption[]
+	options ?: Array<SelectOption>
 	/** 是否启用搜索，启用后会在下拉面板中显示搜索输入框，默认为 false */
 	filterable ?: boolean
 	/** 搜索输入框占位符，默认跟随 i18n searchBar.placeholder */

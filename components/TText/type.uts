@@ -25,7 +25,7 @@ export type TextAlign = 'left' | 'center' | 'right' | 'justify'
 /**
  * 文本 Props 接口
  */
-export interface TTextProps {
+export type TTextProps = {
   /**
    * 文本内容
    */
@@ -64,7 +64,7 @@ export interface TTextProps {
    * 行高
    * @default 1.5
    */
-  lineHeight?: number | string
+  lineHeight?: string
 
   /**
    * 最大行数

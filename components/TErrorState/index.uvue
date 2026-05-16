@@ -21,12 +21,12 @@ const handleRetry = () => {
 </script>
 
 <template>
-	<view class="flex flex-col items-center justify-center py-[200rpx]">
-		<text class="mb-[32rpx] text-xl">😕</text>
-		<text class="mb-2 text-lg font-medium text-[#6b7280]">
+	<view class="flex flex-col items-center justify-center py-24">
+		<text class="mb-4 text-xl">😕</text>
+		<text class="mb-2 text-lg font-medium text-gray-500">
 			{{ isError ? errorTitle : normalTitle }}
 		</text>
-		<text class="text-sm text-[#9ca3af]">
+		<text class="text-sm text-gray-400">
 			{{ isError ? errorDesc : normalDesc }}
 		</text>
 		<view v-if="isError && showRetry"
