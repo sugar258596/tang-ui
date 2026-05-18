@@ -1,6 +1,6 @@
 {
   "name": "tang-ui-x",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
   "main": "index.uts",
   "module": "index.uts",
@@ -13,10 +13,20 @@
       "import": "./index.uts",
       "default": "./index.uts"
     },
-    "./components/*": "./components/*/index.uvue",
-    "./components/*/index.uvue": "./components/*/index.uvue",
+    "./components/*": {
+      "types": "./types/component.d.ts",
+      "import": "./components/*/index.uvue",
+      "default": "./components/*/index.uvue"
+    },
+    "./components/*/index.uvue": {
+      "types": "./types/component.d.ts",
+      "import": "./components/*/index.uvue",
+      "default": "./components/*/index.uvue"
+    },
     "./composables/*": "./composables/*.uts",
     "./composables/i18n/*": "./composables/i18n/*.uts",
+    "./utils/*": "./utils/*.uts",
+    "./utils": "./utils/index.uts",
     "./locales": "./locales/index.uts",
     "./locales/*": "./locales/*",
     "./static/*": "./static/*",

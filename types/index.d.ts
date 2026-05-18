@@ -1,4 +1,15 @@
 import type { App, ComputedRef, Ref } from 'vue';
+import type { DefineComponent } from 'vue';
+
+declare module 'tang-ui-x/components/*' {
+  const component: DefineComponent<any, any, any>;
+  export default component;
+}
+
+declare module 'tang-ui-x/components/*/index.uvue' {
+  const component: DefineComponent<any, any, any>;
+  export default component;
+}
 
 export type ComponentType = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
 export type PositionType = 'top' | 'center' | 'bottom';
@@ -44,6 +55,7 @@ export interface ModularLocaleMessages {
 }
 
 export type LocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | string;
+export type TranslateParams = Record<string, string | number>;
 
 export interface I18nConfig {
   locale: LocaleCode;
@@ -51,10 +63,9 @@ export interface I18nConfig {
   messages: Record<string, LocaleMessages>;
 }
 
-export type TranslateParams = Record<string, string | number>;
-
 export interface UseI18nReturn {
-  $t: (key: string, params?: TranslateParams) => string;
+  $t: (key: string, params?: TranslateParams | null) => string;
+  t: (key: string, params?: TranslateParams | null) => string;
   locale: ComputedRef<string>;
   availableLocales: ComputedRef<string[]>;
   setLocale: (locale: string) => boolean;
@@ -75,12 +86,12 @@ export interface ToastController {
   isShowing: Ref<boolean>;
   currentToast: Ref<ToastOptions | null>;
   toastQueue: Ref<ToastOptions[]>;
-  show: (options: string | ToastOptions) => void;
-  success: (message: string, duration?: number) => void;
-  error: (message: string, duration?: number) => void;
-  warning: (message: string, duration?: number) => void;
-  info: (message: string, duration?: number) => void;
-  loading: (message?: string) => () => void;
+  show: (options: string | ToastOptions, duration?: number | null) => void;
+  success: (message: string, duration?: number | null) => void;
+  error: (message: string, duration?: number | null) => void;
+  warning: (message: string, duration?: number | null) => void;
+  info: (message: string, duration?: number | null) => void;
+  loading: (message?: string | null) => () => void;
   hide: () => void;
   clear: () => void;
   setDefaults: (options: Partial<ToastOptions>) => void;
@@ -110,7 +121,6 @@ export interface HttpInitOptions {
   showLoading?: boolean;
   autoAuth?: boolean;
   timeout?: number;
-  [key: string]: any;
 }
 
 export interface HttpRequestOptions {
@@ -122,8 +132,11 @@ export interface HttpRequestOptions {
   showLoading?: boolean;
   loadingText?: string;
   disableAuth?: boolean;
-  [key: string]: any;
+  customError?: boolean;
+  isTotal?: boolean;
 }
+
+export type HttpRequestExtraOptions = Omit<HttpRequestOptions, 'url' | 'data' | 'method'>;
 
 export interface ResponseData<T = any> {
   code: number;
@@ -139,7 +152,7 @@ export interface DataResponse<T = any> {
 
 export interface HttpInterceptors {
   request?: (options: HttpRequestOptions) => HttpRequestOptions;
-  response?: <T>(response: ResponseData<T>, options: HttpRequestOptions) => DataResponse<T> | T;
+  response?: (response: ResponseData<any>, options: HttpRequestOptions) => any;
   error?: (err: any, options: HttpRequestOptions) => void;
 }
 
@@ -154,69 +167,185 @@ export class HttpRequest {
   postFormData<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
 }
 
-export function hexToRgb(hex: string): { r: number; g: number; b: number } | null;
-export function rgbToHex(r: number, g: number, b: number): string;
-export function darken(color: string, amount: number): string;
-export function lighten(color: string, amount: number): string;
-export function addOpacity(color: string, opacity: number): string;
-export function isLightColor(color: string): boolean;
+export interface ValidationResult {
+  isValid: boolean;
+  message: string;
+}
 
-export function isEmpty(value: any): boolean;
-export function isPhone(phone: string): boolean;
-export function isEmail(email: string): boolean;
-export function isIdCard(idCard: string): boolean;
-export function isUrl(url: string): boolean;
-export function isChinese(str: string): boolean;
-export function isNumber(value: any): boolean;
-export function isInteger(value: any): boolean;
-export function isPositiveInteger(value: any): boolean;
-export function isDecimal(value: any, decimal?: number): boolean;
-export function isPasswordStrong(password: string, level?: number): boolean;
-export function isBankCard(cardNo: string): boolean;
-export function isPlateNo(plateNo: string): boolean;
-
-export function debounce<T extends (...args: any[]) => any>(fn: T, delay?: number): (...args: Parameters<T>) => void;
-export function throttle<T extends (...args: any[]) => any>(fn: T, delay?: number): (...args: Parameters<T>) => void;
+export function copyToClipboard(text: string, success?: () => void, fail?: (error?: any) => void): void;
+export function copyToClipboardAsync(text: string): Promise<void>;
+export function formatChatTime(date: Date): string;
+export function debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void;
+export function throttle(func: (...args: any[]) => void, delay: number): (...args: any[]) => void;
+export function formatNumber(num: number | string): string;
+export function formatBytes(bytes: number, decimals?: number): string;
+export function get(obj: any, path: string, defaultValue?: any | null): any | null;
 export function deepClone<T>(obj: T): T;
-export function generateId(prefix?: string): string;
-export function formatFileSize(bytes: number, decimals?: number): string;
-export function formatDate(date: Date | number, format?: string): string;
-export function getUrlParams(url: string): Record<string, string>;
-export function objectToUrlParams(obj: Record<string, any>): string;
-export function unique<T>(arr: T[]): T[];
-export function chunk<T>(arr: T[], size: number): T[][];
-export function sleep(ms: number): Promise<void>;
-export function random(min: number, max: number): number;
-export function randomString(length: number): string;
+export function toQueryString(obj: Record<string, any>, prefix?: string): string;
+export function truncate(str: string, length: number): string;
+export function randomString(length?: number): string;
+export function generateUUID(): string;
+export function isEmpty(value: any): boolean;
+export function isValid(value: any): boolean;
+export function isValidPhone(phone: string): boolean;
+export function isValidEmail(email: string): boolean;
+export function blobToBase64(blob: Blob): Promise<string>;
+export function pathToBase64(path: string, mimeType?: string): Promise<string>;
 
-export function getRect(selector: string, instance: any): Promise<any>;
-export function getRectAll(selector: string, instance: any): Promise<any[]>;
-export function getScrollOffset(selector: string, instance: any): Promise<any>;
-export function getSystemInfo(): any;
-export function pxToRpx(px: number): number;
-export function rpxToPx(rpx: number): number;
-export function addUnit(value: string | number, unit?: string): string;
-export function getStyle(element: any, property: string): string;
-export function setStyle(element: any, property: string, value: string): void;
-export function setStyles(element: any, styles: Record<string, string>): void;
-export function supportsCss(property: string): boolean;
-export function getComputedStyle(element: any): any;
-export function isInViewport(rect: any, offset?: number): boolean;
-export function getNodeInfo(selector: string, instance: any): Promise<any>;
-export function smoothScrollTo(scrollTop: number, duration?: number, selector?: string): void;
-export function getSafeArea(): any;
+export function setStorage(key: string, value: any): boolean;
+export function getStorage(key: string, defaultValue?: any): any;
+export function hasStorage(key: string): boolean;
+export function removeStorage(key: string): boolean;
+export function clearStorage(): boolean;
+
+export function validatePhone(phone: string): ValidationResult;
+export function validateEmail(email: string): ValidationResult;
+export function validateVerifyCode(code: string): ValidationResult;
+export function validatePassword(password: string, minLen?: number, maxLen?: number): ValidationResult;
+export function validateUsername(username: string, minLen?: number, maxLen?: number): ValidationResult;
+export function validateIdCard(idCard: string): ValidationResult;
+export function validateBankCard(bankCard: string): ValidationResult;
+export function validateUrl(url: string): ValidationResult;
+export function validateChineseName(name: string): ValidationResult;
+export function validateRequired(value: any, fieldName?: string): ValidationResult;
+export function validateNumberRange(
+  value: number | null,
+  min: number,
+  max: number,
+  fieldName?: string
+): ValidationResult;
+export function validateLengthRange(value: any, min: number, max: number, fieldName?: string): ValidationResult;
+export function validateBatch(validations: ValidationResult[]): ValidationResult;
+export function validatePattern(value: string, pattern: RegExp, message: string): ValidationResult;
+export function validateEquality(value1: any, value2: any, fieldName?: string): ValidationResult;
+export function validateDate(date: string, format?: string): ValidationResult;
+export function getFirstErrorMessage(validations: ValidationResult[]): string;
+export function validatePostalCode(postalCode: string): ValidationResult;
+export function validateLandline(phone: string): ValidationResult;
+export function validatePhoneOrEmail(value: string): ValidationResult;
+export function validateUrlSafeString(value: string): ValidationResult;
+
+export type StorageItemValue<T = any> = {
+  value: T;
+  expireTime: string | number;
+};
+
+export type StorageData = Record<string, any>;
+
+export type StorageOptions = {
+  defaultExpireTime?: number;
+  storageType?: 'sync';
+  autoCleanup?: boolean;
+  cleanupInterval?: number;
+  prefix?: string;
+  compress?: boolean;
+  maxSize?: number;
+};
+
+export type StorageResult<T = any> = {
+  success: boolean;
+  value?: T;
+  error?: string;
+  expired?: boolean;
+};
+
+export type StoragePromise<T = any> = Promise<StorageResult<T>>;
+
+export type BatchStorageItem<T = any> = {
+  key: string;
+  storageKey: string;
+  value: T;
+  expireTime?: number;
+};
+
+export type StorageStats = {
+  totalKeys: number;
+  totalStorageKeys: number;
+  totalSize: number;
+  expiredKeys: number;
+  validKeys: number;
+};
+
+export type StorageEventType = 'set' | 'get' | 'remove' | 'clear' | 'expire';
+
+export type StorageEvent<T = any> = {
+  type: StorageEventType;
+  key?: string;
+  storageKey?: string;
+  value?: T;
+  timestamp: number;
+};
+
+export type StorageListener<T = any> = (event: StorageEvent<T>) => void;
+
+export type StorageQuery = {
+  keyPattern?: string;
+  storageKeyPattern?: string;
+  onlyValid?: boolean;
+  limit?: number;
+  sortBy?: 'key' | 'storageKey' | 'expireTime' | 'createTime';
+  sortOrder?: 'asc' | 'desc';
+};
+
+export type StorageExportData = {
+  version: string;
+  timestamp: number;
+  data: Record<string, any>;
+};
+
+export type StorageMigration = {
+  version: string;
+  migrate: (data: any) => StorageData;
+};
+
+export type UniStorageData = Record<string, any> | string | number | boolean | null;
+
+export type UniStorageOptions = {
+  encrypt?: boolean;
+  dataType?: 'json' | 'string' | 'number' | 'boolean';
+};
+
+export class CustomStorage {
+  constructor(options?: StorageOptions);
+  set<T = any>(storageKey: string, value: T, expireTime?: number): StoragePromise<T>;
+  get<T = any>(storageKey: string): StoragePromise<T>;
+  remove(storageKey?: string): StoragePromise<boolean>;
+  has(storageKey: string): Promise<boolean>;
+  getKeys(): Promise<string[]>;
+  getAllKeys(): string[];
+  setBatch(items: Record<string, any>[]): StorageResult<boolean>;
+  getBatch<T = any>(storageKeys: string[]): StorageResult<T[]>;
+  cleanup(): StoragePromise;
+  clear(): StoragePromise<boolean>;
+  getStats(): StorageStats;
+  addEventListener(listener: StorageListener): void;
+  removeEventListener(listener: StorageListener): void;
+  destroy(): void;
+}
+
+export function setCustomStorage<T = any>(storageKey: string, value: T, expireTime?: number): StoragePromise<T>;
+export function getCustomStorage<T = any>(storageKey: string): StoragePromise<T>;
+export function removeCustomStorage(storageKey?: string): StoragePromise<boolean>;
+export function hasCustomStorage(storageKey: string): Promise<boolean>;
+export function clearCustomStorage(): StoragePromise<boolean>;
+export function getStorageKeys(): Promise<string[]>;
+export function getAllStorageKeys(): string[];
+export function getStorageStats(): StorageStats;
+export function cleanupStorage(): StoragePromise;
+export function setBatchStorage(items: Record<string, any>[]): StorageResult<boolean>;
+export function getBatchStorage<T = any>(storageKeys: string[]): StorageResult<T[]>;
 
 export function useTheme(): ThemeController;
 export function getThemeInstance(): ThemeController;
 
 export function useToast(): ToastController;
 export function getToastInstance(): ToastController;
-export function showToast(options: string | ToastOptions): void;
-export function showSuccess(message: string, duration?: number): void;
-export function showError(message: string, duration?: number): void;
-export function showWarning(message: string, duration?: number): void;
-export function showInfo(message: string, duration?: number): void;
-export function showLoadingToast(message?: string): () => void;
+export function showToast(options: string | ToastOptions, duration?: number | null): void;
+export function showSuccess(message: string, duration?: number | null): void;
+export function showError(message: string, duration?: number | null): void;
+export function showWarning(message: string, duration?: number | null): void;
+export function showInfo(message: string, duration?: number | null): void;
+export function showLoadingToast(message?: string | null): () => void;
 export function hideToast(): void;
 export function clearToast(): void;
 
