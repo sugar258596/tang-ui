@@ -1,10 +1,28 @@
 {
   "name": "tang-ui-x",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "UniApp X UI 组件库 - 基于 uni-app x 的移动端 UI 组件库",
   "main": "index.uts",
   "module": "index.uts",
   "types": "types/index.d.ts",
+  "style": "static/tailwind.css",
+  "sass": "uni.scss",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./index.uts",
+      "default": "./index.uts"
+    },
+    "./components/*": "./components/*/index.uvue",
+    "./components/*/index.uvue": "./components/*/index.uvue",
+    "./composables/*": "./composables/*.uts",
+    "./composables/i18n/*": "./composables/i18n/*.uts",
+    "./locales": "./locales/index.uts",
+    "./locales/*": "./locales/*",
+    "./static/*": "./static/*",
+    "./uni.scss": "./uni.scss",
+    "./package.json": "./package.json"
+  },
   "files": [
     "components",
     "composables/useI18n.uts",
@@ -41,6 +59,20 @@
   ],
   "author": "sugar258596",
   "license": "MIT",
+  "packageManager": "pnpm@10.26.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "*.scss",
+    "*.css",
+    "*.uvue",
+    "static/**",
+    "uni.scss"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sugar258596/tang-ui.git"
@@ -72,9 +104,9 @@
     "vue-eslint-parser": "^10.2.0"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "prepare": "husky",
-    "prepublishOnly": "pnpm run lint && pnpm run build",
+    "prepublishOnly": "pnpm run lint",
+    "prepack": "pnpm run build",
     "build": "pnpm run tailwind:build",
     "lint": "pnpm exec eslint .",
     "lint:staged": "pnpm exec lint-staged --relative --concurrent false --max-arg-length 5000",

@@ -1,0 +1,38 @@
+/**
+ * 截取字符串并添加省略号
+ * @param str 字符串
+ * @param length 最大长度
+ * @returns 截取后的字符串
+ */
+export function truncate(str: string, length: number): string {
+  if (str == '') return ''
+  if (str.length <= length) return str
+  return str.substring(0, length) + '...'
+}
+
+/**
+ * 生成随机字符串
+ * @param length 长度
+ * @returns 随机字符串
+ */
+export function randomString(length: number = 8): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
+/**
+ * 生成UUID
+ * @returns UUID字符串
+ */
+export function generateUUID(): string {
+  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0
+    const v = c == 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+  return uuid
+}

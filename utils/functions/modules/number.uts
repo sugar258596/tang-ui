@@ -1,0 +1,44 @@
+/**
+ * 格式化数字（添加千分位分隔符）
+ * @param num 数字
+ * @returns 格式化后的字符串
+ */
+export function formatNumber(num: number | string): string {
+  const text = `${num}`
+  const n = parseFloat(text)
+  if (isNaN(n)) return text
+
+  const parts = text.split('.')
+  const integerPart = parts[0]
+  const decimalPart = parts.length > 1 ? '.' + parts[1] : ''
+  const negative = integerPart.length > 0 && integerPart.charAt(0) == '-'
+  const digits = negative ? integerPart.substring(1) : integerPart
+  let formatted = ''
+  let count = 0
+
+  for (let i = digits.length - 1; i >= 0; i--) {
+    formatted = digits.charAt(i) + formatted
+    count++
+    if (i > 0 && count % 3 == 0) {
+      formatted = ',' + formatted
+    }
+  }
+
+  return (negative ? '-' : '') + formatted + decimalPart
+}
+
+/**
+ * 将字节转换为可读大小
+ * @param bytes 字节数
+ * @param decimals 小数位数
+ * @returns 可读大小字符串
+ */
+export function formatBytes(bytes: number, decimals: number = 2): string {
+  if (bytes === 0) return '0 B'
+
+  const k: number = 1024
+  const sizes: Array<string> = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`
+}

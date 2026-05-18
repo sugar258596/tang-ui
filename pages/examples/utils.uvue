@@ -1,0 +1,188 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
+import {
+  clearStorage,
+  formatBytes,
+  formatChatTime,
+  formatNumber,
+  getStorage,
+  hasStorage,
+  isEmpty,
+  randomString,
+  removeStorage,
+  setStorage,
+  toQueryString,
+  truncate,
+  validatePhone,
+} from '@/utils/functions/index.uts'
+
+const storageKey = 'ui-utils-demo'
+const nowText = formatChatTime(new Date())
+const numberText = formatNumber(1286000)
+const bytesText = formatBytes(5242880)
+const shortText = truncate('UniApp X 工具函数统一导出示例页面', 14)
+const randomText = ref(randomString(10))
+const emptyText = isEmpty('') ? '空字符串：是空值' : '空字符串：不是空值'
+const phoneResult = validatePhone('13800138000')
+const phoneText = phoneResult.isValid ? '手机号校验：通过' : phoneResult.message
+const queryText = toQueryString({
+  page: 1,
+  keyword: 'utils',
+  type: 'demo',
+})
+const storageValue = ref('暂无缓存')
+const storageStatus = ref(hasStorage(storageKey) ? '已存在缓存' : '未写入缓存')
+
+const refreshStorageValue = (): void => {
+  const value = getStorage(storageKey, '暂无缓存')
+  storageValue.value = value as string
+  storageStatus.value = hasStorage(storageKey) ? '已存在缓存' : '未写入缓存'
+}
+
+const handleRandom = (): void => {
+  randomText.value = randomString(10)
+}
+
+const handleSetStorage = (): void => {
+  const value = `保存于 ${formatChatTime(new Date())}`
+  const ok = setStorage(storageKey, value)
+  storageStatus.value = ok ? '写入成功' : '写入失败'
+  refreshStorageValue()
+}
+
+const handleReadStorage = (): void => {
+  refreshStorageValue()
+}
+
+const handleRemoveStorage = (): void => {
+  const ok = removeStorage(storageKey)
+  storageStatus.value = ok ? '已移除缓存' : '移除失败'
+  refreshStorageValue()
+}
+
+const handleClearStorage = (): void => {
+  const ok = clearStorage()
+  storageStatus.value = ok ? '已清空全部缓存' : '清空失败'
+  refreshStorageValue()
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <view class="demo-header">
+      <text class="demo-title">Utils 工具方法</text>
+      <text class="demo-desc">展示 utils/functions 统一导出的常用方法和 storage 封装。</text>
+    </view>
+
+    <TCard title="格式化与字符串" class="demo-section">
+      <view class="result-list">
+        <text class="result-item">{{ nowText }}</text>
+        <text class="result-item">{{ numberText }}</text>
+        <text class="result-item">{{ bytesText }}</text>
+        <text class="result-item">{{ shortText }}</text>
+        <view class="result-row">
+          <text class="result-item result-flex">{{ randomText }}</text>
+          <TButton text="刷新" size="small" type="primary" @click="handleRandom" />
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="校验与对象" class="demo-section">
+      <view class="result-list">
+        <text class="result-item">{{ emptyText }}</text>
+        <text class="result-item">{{ phoneText }}</text>
+        <text class="result-item">{{ queryText }}</text>
+      </view>
+    </TCard>
+
+    <TCard title="Storage 缓存" class="demo-section">
+      <view class="result-list">
+        <text class="result-item">{{ storageStatus }}</text>
+        <text class="result-item">{{ storageValue }}</text>
+      </view>
+      <view class="button-grid">
+        <view class="button-item">
+          <TButton text="写入" type="primary" @click="handleSetStorage" />
+        </view>
+        <view class="button-item">
+          <TButton text="读取" type="success" @click="handleReadStorage" />
+        </view>
+        <view class="button-item">
+          <TButton text="移除" type="warning" @click="handleRemoveStorage" />
+        </view>
+        <view class="button-item">
+          <TButton text="清空" type="danger" @click="handleClearStorage" />
+        </view>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.demo-header {
+  margin-bottom: 20px;
+}
+
+.demo-title {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.demo-desc {
+  display: block;
+  font-size: 14px;
+  color: #606266;
+  line-height: 22px;
+}
+
+.demo-section {
+  margin-bottom: 20px;
+}
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-item {
+  display: block;
+  font-size: 14px;
+  color: #303133;
+  line-height: 22px;
+  margin-bottom: 10px;
+}
+
+.result-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.result-flex {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.button-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.button-item {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+</style>

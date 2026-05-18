@@ -1,0 +1,119 @@
+/**
+ * 自定义本地存储类型定义
+ */
+
+// 存储项的值结构
+export type StorageItemValue<T = any> = {
+  value: T
+  expireTime: string | number // 过期时间，支持时间戳或ISO字符串
+}
+
+// 完整的存储结构 - 使用UTSJSONObject类型
+export type StorageData = UTSJSONObject
+
+// 存储配置选项
+export type StorageOptions = {
+  // 默认过期时间（毫秒）
+  defaultExpireTime?: number
+  // 存储类型 - uni-app x 只支持 sync 异步存储
+  storageType?: 'sync'
+  // 是否自动清理过期数据
+  autoCleanup?: boolean
+  // 清理间隔（毫秒）
+  cleanupInterval?: number
+  // 存储前缀
+  prefix?: string
+  // 是否启用压缩
+  compress?: boolean
+  // 最大存储大小（字节）
+  maxSize?: number
+}
+
+// 存储操作结果
+export type StorageResult<T = any> = {
+  /** 操作是否成功 */
+  success: boolean
+  /** 存储的值 */
+  value?: T
+  /** 错误信息 */
+  error?: string
+  /** 是否已过期 */
+  expired?: boolean
+}
+
+// Promise版本的存储操作结果
+export type StoragePromise<T = any> = Promise<StorageResult<T>>
+
+// 批量操作的项
+export type BatchStorageItem<T = any> = {
+  key: string
+  storageKey: string
+  value: T
+  expireTime?: number
+}
+
+// 存储统计信息
+export type StorageStats = {
+  totalKeys: number
+  totalStorageKeys: number
+  totalSize: number
+  expiredKeys: number
+  validKeys: number
+}
+
+// 存储事件类型
+export type StorageEventType = 'set' | 'get' | 'remove' | 'clear' | 'expire'
+
+// 存储事件数据
+export type StorageEvent<T = any> = {
+  type: StorageEventType
+  key?: string
+  storageKey?: string
+  value?: T
+  timestamp: number
+}
+
+// 存储监听器
+export type StorageListener<T = any> = {
+  (event: StorageEvent<T>): void
+}
+
+// 存储查询条件
+export type StorageQuery = {
+  // 按键名模糊匹配
+  keyPattern?: string
+  // 按存储键模糊匹配
+  storageKeyPattern?: string
+  // 只返回未过期的数据
+  onlyValid?: boolean
+  // 限制返回数量
+  limit?: number
+  // 排序方式
+  sortBy?: 'key' | 'storageKey' | 'expireTime' | 'createTime'
+  // 排序方向
+  sortOrder?: 'asc' | 'desc'
+}
+
+// 存储导出/导入格式
+export type StorageExportData = {
+  version: string
+  timestamp: number
+  data: UTSJSONObject // 使用UTSJSONObject替代Record
+}
+
+// 存储迁移配置
+export type StorageMigration = {
+  version: string
+  migrate: (data: any) => StorageData
+}
+
+// uni-app x 存储数据类型
+export type UniStorageData = UTSJSONObject | string | number | boolean | null
+
+// uni-app x 存储操作选项
+export type UniStorageOptions = {
+  // 是否加密存储
+  encrypt?: boolean
+  // 存储数据类型
+  dataType?: 'json' | 'string' | 'number' | 'boolean'
+}

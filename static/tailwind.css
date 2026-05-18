@@ -251,12 +251,6 @@
 .h-9 {
     height: 36px
 }
-.h-\[80rpx\] {
-    height: 80rpx
-}
-.h-\[88rpx\] {
-    height: 88rpx
-}
 .h-auto {
     height: auto
 }
@@ -454,6 +448,7 @@
 }
 .select-none {
     -webkit-user-select: none;
+       -moz-user-select: none;
             user-select: none
 }
 .resize-none {
@@ -461,6 +456,7 @@
 }
 .appearance-none {
     -webkit-appearance: none;
+       -moz-appearance: none;
             appearance: none
 }
 .flex-row {
@@ -549,17 +545,14 @@
 .rounded {
     border-radius: 4px
 }
-.rounded-\[12rpx\] {
-    border-radius: 12rpx
-}
-.rounded-\[8rpx\] {
-    border-radius: 8rpx
-}
 .rounded-full {
     border-radius: 9999px
 }
 .rounded-lg {
     border-radius: 8px
+}
+.rounded-md {
+    border-radius: 6px
 }
 .rounded-none {
     border-radius: 0px
@@ -569,9 +562,6 @@
 }
 .rounded-xl {
     border-radius: 12px
-}
-.rounded-md {
-    border-radius: 6px
 }
 .rounded-t-xl {
     border-top-left-radius: 12px;
@@ -585,9 +575,6 @@
 }
 .border-2 {
     border-width: 2px
-}
-.border-\[2rpx\] {
-    border-width: 2rpx
 }
 .border-y {
     border-top-width: 1px;
@@ -610,18 +597,6 @@
 }
 .border-none {
     border-style: none
-}
-.border-\[\#007aff\] {
-    --tw-border-opacity: 1;
-    border-color: rgb(0 122 255 / var(--tw-border-opacity, 1))
-}
-.border-\[\#e0e0e0\] {
-    --tw-border-opacity: 1;
-    border-color: rgb(224 224 224 / var(--tw-border-opacity, 1))
-}
-.border-\[\#ff4d4f\] {
-    --tw-border-opacity: 1;
-    border-color: rgb(255 77 79 / var(--tw-border-opacity, 1))
 }
 .border-blue-200 {
     --tw-border-opacity: 1;
@@ -703,25 +678,13 @@
     --tw-border-opacity: 1;
     border-top-color: rgb(59 130 246 / var(--tw-border-opacity, 1))
 }
-.bg-\[\#007aff\] {
-    --tw-bg-opacity: 1;
-    background-color: rgb(0 122 255 / var(--tw-bg-opacity, 1))
-}
 .bg-\[\#c0c4cc\] {
     --tw-bg-opacity: 1;
     background-color: rgb(192 196 204 / var(--tw-bg-opacity, 1))
 }
-.bg-\[\#f5f5f5\] {
-    --tw-bg-opacity: 1;
-    background-color: rgb(245 245 245 / var(--tw-bg-opacity, 1))
-}
 .bg-\[\#f5f7fa\] {
     --tw-bg-opacity: 1;
     background-color: rgb(245 247 250 / var(--tw-bg-opacity, 1))
-}
-.bg-\[\#fff1f0\] {
-    --tw-bg-opacity: 1;
-    background-color: rgb(255 241 240 / var(--tw-bg-opacity, 1))
 }
 .bg-black\/50 {
     background-color: rgb(0 0 0 / 0.5)
@@ -992,12 +955,6 @@
     font-size: 30px;
     line-height: 36px
 }
-.text-\[28rpx\] {
-    font-size: 28rpx
-}
-.text-\[32rpx\] {
-    font-size: 32rpx
-}
 .text-base {
     font-size: 16px;
     line-height: 24px
@@ -1064,21 +1021,6 @@
 }
 .leading-relaxed {
     line-height: 1.625
-}
-.tracking-\[0\.1em\] {
-    letter-spacing: 0.1em
-}
-.text-\[\#007aff\] {
-    --tw-text-opacity: 1;
-    color: rgb(0 122 255 / var(--tw-text-opacity, 1))
-}
-.text-\[\#333333\] {
-    --tw-text-opacity: 1;
-    color: rgb(51 51 51 / var(--tw-text-opacity, 1))
-}
-.text-\[\#c0c4cc\] {
-    --tw-text-opacity: 1;
-    color: rgb(192 196 204 / var(--tw-text-opacity, 1))
 }
 .text-blue-500 {
     --tw-text-opacity: 1;
@@ -1156,12 +1098,10 @@
     color: rgb(161 161 170 / var(--tw-text-opacity, 1))
 }
 .underline {
-    -webkit-text-decoration-line: underline;
-            text-decoration-line: underline
+    text-decoration-line: underline
 }
 .line-through {
-    -webkit-text-decoration-line: line-through;
-            text-decoration-line: line-through
+    text-decoration-line: line-through
 }
 .opacity-0 {
     opacity: 0
@@ -1243,12 +1183,6 @@
 .transition-bg {
     transition-property: background-color
 }
-.\[text-align-last\:justify\] {
-    text-align-last: justify
-}
-.\[text-justify\:inter-ideograph\] {
-    text-justify: inter-ideograph
-}
 .last\:mr-0:last-child {
     margin-right: 0px
 }
@@ -1268,15 +1202,6 @@
     --tw-scale-x: .95;
     --tw-scale-y: .95;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
-}
-.active\:scale-\[0\.98\]:active {
-    --tw-scale-x: 0.98;
-    --tw-scale-y: 0.98;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
-}
-.active\:border-\[\#007aff\]:active {
-    --tw-border-opacity: 1;
-    border-color: rgb(0 122 255 / var(--tw-border-opacity, 1))
 }
 .active\:bg-\[\#909399\]:active {
     --tw-bg-opacity: 1;

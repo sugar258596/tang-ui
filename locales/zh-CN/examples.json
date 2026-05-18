@@ -218,6 +218,16 @@
       "name": "多语言测试",
       "enName": "I18n",
       "description": "国际化多语言功能演示"
+    },
+    "Request": {
+      "name": "请求封装",
+      "enName": "Request",
+      "description": "HttpRequest 请求封装、拦截器与响应处理示例"
+    },
+    "Utils": {
+      "name": "工具方法",
+      "enName": "Utils",
+      "description": "常用工具函数与 storage 封装示例"
     }
   }
 }

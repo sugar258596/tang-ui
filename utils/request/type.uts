@@ -1,0 +1,107 @@
+/**
+ * HTTP 请求相关类型定义
+ * @module utils/request/type
+ */
+
+/**
+ * 请求方法类型
+ */
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT'
+
+/**
+ * 基础配置
+ */
+export type HttpInitOptions = {
+	/** 基础 URL */
+	baseURL : string
+	/** 请求头 */
+	header ?: UTSJSONObject
+	/** 是否显示加载提示 */
+	showLoading ?: boolean
+	/** 是否自动附加 Token */
+	autoAuth ?: boolean
+	/** 超时时间（毫秒） */
+	timeout ?: number
+}
+
+/**
+ * 请求配置
+ */
+export type HttpRequestOptions = {
+	/** 请求 URL */
+	url : string
+	/** 请求数据 */
+	data ?: UTSJSONObject | null
+	/** 请求头 */
+	header ?: UTSJSONObject | null
+	/** 请求方法 */
+	method ?: HttpMethod
+	/** 超时时间（毫秒） */
+	timeout ?: number
+	/** 是否显示加载提示 */
+	showLoading ?: boolean
+	/** 加载提示文字 */
+	loadingText ?: string
+	/** 是否禁用自动认证 */
+	disableAuth ?: boolean
+	/** 是否自定义处理错误 */
+	customError ?: boolean
+	/** 是否返回分页总数结构 */
+	isTotal ?: boolean
+}
+
+/**
+ * 请求额外配置
+ */
+export type HttpRequestExtraOptions = {
+	/** 请求头 */
+	header ?: UTSJSONObject | null
+	/** 超时时间（毫秒） */
+	timeout ?: number
+	/** 是否显示加载提示 */
+	showLoading ?: boolean
+	/** 加载提示文字 */
+	loadingText ?: string
+	/** 是否禁用自动认证 */
+	disableAuth ?: boolean
+	/** 是否自定义处理错误 */
+	customError ?: boolean
+	/** 是否返回分页总数结构 */
+	isTotal ?: boolean
+}
+
+/**
+ * 响应体结构
+ */
+export type ResponseData<T = any> = {
+	/** 业务状态码 */
+	code : number
+	/** 提示信息 */
+	msg : string
+	/** 响应数据 */
+	data : T
+	/** 数据总数（分页时使用） */
+	count : number
+}
+
+/**
+ * 分页数据响应格式
+ */
+export type DataResponse<T = any> = {
+	/** 数据列表 */
+	data : T | []
+	/** 数据总数 */
+	total ?: number
+}
+
+/**
+ * HTTP 拦截器接口
+ */
+export type HttpInterceptors = {
+	/** 请求拦截器 */
+	request ?: (options : HttpRequestOptions) => HttpRequestOptions
+	/** 响应拦截器 */
+	response ?: (response : ResponseData<any>, options : HttpRequestOptions) => any
+	/** 错误拦截器 */
+	error ?: (err : any, options : HttpRequestOptions) => void
+}

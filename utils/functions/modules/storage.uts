@@ -1,0 +1,91 @@
+/**
+ * 设置本地缓存
+ * @param key 缓存键
+ * @param value 缓存值
+ * @returns 是否设置成功
+ */
+export function setStorage(key: string, value: any): boolean {
+  if (key == '') {
+    return false
+  }
+
+  try {
+    uni.setStorageSync(key, value)
+    return true
+  } catch (error) {
+    console.error('setStorage failed:', error)
+    return false
+  }
+}
+
+/**
+ * 获取本地缓存
+ * @param key 缓存键
+ * @param defaultValue 默认值
+ * @returns 缓存值或默认值
+ */
+export function getStorage(key: string, defaultValue: any | null = null): any | null {
+  if (key == '') {
+    return defaultValue
+  }
+
+  try {
+    const value = uni.getStorageSync(key)
+    return value == '' ? defaultValue : value
+  } catch (error) {
+    console.error('getStorage failed:', error)
+    return defaultValue
+  }
+}
+
+/**
+ * 判断本地缓存是否存在
+ * @param key 缓存键
+ * @returns 是否存在
+ */
+export function hasStorage(key: string): boolean {
+  if (key == '') {
+    return false
+  }
+
+  try {
+    const value = uni.getStorageSync(key)
+    return value != ''
+  } catch (error) {
+    console.error('hasStorage failed:', error)
+    return false
+  }
+}
+
+/**
+ * 移除本地缓存
+ * @param key 缓存键
+ * @returns 是否移除成功
+ */
+export function removeStorage(key: string): boolean {
+  if (key == '') {
+    return false
+  }
+
+  try {
+    uni.removeStorageSync(key)
+    return true
+  } catch (error) {
+    console.error('removeStorage failed:', error)
+    return false
+  }
+}
+
+/**
+ * 清空全部本地缓存
+ * @returns 是否清空成功
+ */
+export function clearStorage(): boolean {
+  try {
+    uni.clearStorageSync()
+    return true
+  } catch (error) {
+    console.error('clearStorage failed:', error)
+    return false
+  }
+}

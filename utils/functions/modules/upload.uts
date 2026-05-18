@@ -1,0 +1,130 @@
+/**
+ * Blob 转 Base64（UniAppX 全端兼容）
+ * @param blob Blob 对象
+ * @returns Promise<string> Base64 字符串（含 data: 前缀）
+ */
+export const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (blob == null) {
+      reject(new Error('Blob 对象不能为空'))
+      return
+    }
+
+    // #ifdef H5
+    // ✅ H5 端使用 FileReader
+    try {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const result = reader.result
+        if (typeof result === 'string') {
+          resolve(result)
+        } else {
+          reject(new Error('读取结果无效'))
+        }
+      }
+      reader.onerror = () => {
+        reject(new Error(`Blob 转 Base64 失败: ${reader.error?.message || '未知错误'}`))
+      }
+      reader.readAsDataURL(blob)
+    } catch (err) {
+      reject(err)
+    }
+    // #endif
+
+    // #ifdef APP-PLUS
+    // ✅ App 端需要借助临时文件路径转换
+    try {
+      const tempPath = `${plus.io.convertLocalFileSystemURL('_doc/')}${Date.now()}.tmp`
+      const reader = new plus.io.FileReader()
+
+      // 将 blob 转成本地文件再读取
+      const task = plus.io.getFileSystemManager()
+      task.writeFile({
+        filePath: tempPath,
+        data: blob,
+        success: () => {
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(tempPath)
+        },
+        fail: reject,
+      })
+    } catch (err) {
+      reject(err)
+    }
+    // #endif
+
+    // #ifdef MP-WEIXIN
+    // ✅ 微信小程序端
+    try {
+      const f = new FileReader()
+      f.onloadend = () => resolve(f.result as string)
+      f.onerror = reject
+      f.readAsDataURL(blob)
+    } catch (err) {
+      reject(err)
+    }
+    // #endif
+  })
+}
+
+/**
+ * 路径转 Base64
+ * @param path 文件路径或网络 URL
+ * @param mimeType 可选 MIME 类型（默认根据扩展名推测）
+ */
+export const pathToBase64 = (path: string, mimeType?: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (path == '') {
+      reject(new Error('文件路径不能为空'))
+      return
+    }
+
+    // 1️⃣ 微信小程序端
+    // #ifdef MP-WEIXIN
+    try {
+      const fs = uni.getFileSystemManager()
+      const ext = path.split('.').pop()?.toLowerCase()
+      const mime =
+        mimeType ||
+        (ext === 'jpg' || ext === 'jpeg'
+          ? 'image/jpeg'
+          : ext === 'png'
+            ? 'image/png'
+            : ext === 'gif'
+              ? 'image/gif'
+              : 'application/octet-stream')
+
+      fs.readFile({
+        filePath: path,
+        encoding: 'base64',
+        success: (res) => resolve(`data:${mime};base64,${res.data}`),
+        fail: (err) => reject(err),
+      })
+    } catch (err) {
+      reject(err)
+    }
+    // #endif
+
+    // 2️⃣ App、H5 通用
+    // #ifdef APP-PLUS || H5
+    try {
+      if (path === '') {
+        reject(new Error('文件路径不能为空'))
+        return
+      }
+      fetch(path)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(blob)
+        })
+        .catch((err) => reject(err))
+    } catch (err) {
+      reject(err)
+    }
+    // #endif
+  })
+}

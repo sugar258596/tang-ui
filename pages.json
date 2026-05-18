@@ -195,6 +195,12 @@
 			}
 		},
 		{
+			"path": "pages/examples/request",
+			"style": {
+				"navigationBarTitleText": "Request 请求封装"
+			}
+		},
+		{
 			"path": "pages/examples/search-bar",
 			"style": {
 				"navigationBarTitleText": "SearchBar 搜索框"
@@ -246,6 +252,12 @@
 			"path": "pages/examples/toast",
 			"style": {
 				"navigationBarTitleText": "Toast 轻提示"
+			}
+		},
+		{
+			"path": "pages/examples/utils",
+			"style": {
+				"navigationBarTitleText": "Utils 工具方法"
 			}
 		},
 		{

@@ -1,0 +1,461 @@
+/**
+ * 表单验证模块
+ * 提供常用的表单验证函数和规则
+ */
+
+/**
+ * 验证结果接口
+ */
+export type ValidationResult = {
+  isValid: boolean
+  message: string
+}
+
+const hasText = (value: string | null): boolean => {
+  return value != null && value.trim().length > 0
+}
+
+/**
+ * 手机号验证
+ * @param phone 手机号
+ * @returns 验证结果
+ */
+export function validatePhone(phone: string): ValidationResult {
+  if (!hasText(phone)) {
+    return { isValid: false, message: '请输入手机号' }
+  }
+
+  if (!/^1[3-9]\d{9}$/.test(phone)) {
+    return { isValid: false, message: '请输入正确的手机号格式' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 邮箱验证
+ * @param email 邮箱地址
+ * @returns 验证结果
+ */
+export function validateEmail(email: string): ValidationResult {
+  if (!hasText(email)) {
+    return { isValid: false, message: '请输入邮箱地址' }
+  }
+
+  if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    return { isValid: false, message: '请输入正确的邮箱格式' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 验证码验证
+ * @param code 验证码
+ * @returns 验证结果
+ */
+export function validateVerifyCode(code: string): ValidationResult {
+  if (!hasText(code)) {
+    return { isValid: false, message: '请输入验证码' }
+  }
+
+  if (!/^\d{6}$/.test(code)) {
+    return { isValid: false, message: '验证码应为6位数字' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 密码验证
+ * @param password 密码
+ * @param minLen 最小长度（默认6）
+ * @param maxLen 最大长度（默认20）
+ * @returns 验证结果
+ */
+export function validatePassword(
+  password: string,
+  minLen: number = 6,
+  maxLen: number = 20
+): ValidationResult {
+  if (!hasText(password)) {
+    return { isValid: false, message: '请输入密码' }
+  }
+
+  if (password.length < minLen) {
+    return { isValid: false, message: `密码长度不能小于${minLen}位` }
+  }
+
+  if (password.length > maxLen) {
+    return { isValid: false, message: `密码长度不能超过${maxLen}位` }
+  }
+
+  // 密码强度验证（至少包含字母和数字）
+  if (!/(?=.*[a-zA-Z])(?=.*\d).+/.test(password)) {
+    return { isValid: false, message: '密码必须包含字母和数字' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 用户名验证
+ * @param username 用户名
+ * @param minLen 最小长度（默认2）
+ * @param maxLen 最大长度（默认20）
+ * @returns 验证结果
+ */
+export function validateUsername(
+  username: string,
+  minLen: number = 2,
+  maxLen: number = 20
+): ValidationResult {
+  if (!hasText(username)) {
+    return { isValid: false, message: '请输入用户名' }
+  }
+
+  if (username.length < minLen) {
+    return { isValid: false, message: `用户名长度不能小于${minLen}位` }
+  }
+
+  if (username.length > maxLen) {
+    return { isValid: false, message: `用户名长度不能超过${maxLen}位` }
+  }
+
+  // 用户名只能包含中文、字母、数字、下划线
+  if (!/^[\u4e00-\u9fa5a-zA-Z0-9_]+$/.test(username)) {
+    return { isValid: false, message: '用户名只能包含中文、字母、数字和下划线' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 身份证号验证
+ * @param idCard 身份证号
+ * @returns 验证结果
+ */
+export function validateIdCard(idCard: string): ValidationResult {
+  if (!hasText(idCard)) {
+    return { isValid: false, message: '请输入身份证号' }
+  }
+
+  // 18位身份证号验证
+  if (!/^\d{17}[\dXx]$/.test(idCard)) {
+    return { isValid: false, message: '请输入正确的身份证号格式' }
+  }
+
+  // 校验码验证
+  const weights: Array<number> = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+  const checkCodes: Array<string> = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
+
+  let sum = 0
+  for (let i = 0; i < 17; i++) {
+    sum += parseInt(idCard[i]) * weights[i]
+  }
+
+  const checkCode = checkCodes[sum % 11]
+  if (idCard[17].toUpperCase() !== checkCode) {
+    return { isValid: false, message: '身份证号校验码错误' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 银行卡号验证
+ * @param bankCard 银行卡号
+ * @returns 验证结果
+ */
+export function validateBankCard(bankCard: string): ValidationResult {
+  if (!hasText(bankCard)) {
+    return { isValid: false, message: '请输入银行卡号' }
+  }
+
+  // 银行卡号通常为16-19位数字
+  if (!/^\d{16,19}$/.test(bankCard)) {
+    return { isValid: false, message: '请输入正确的银行卡号' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * URL验证
+ * @param url URL地址
+ * @returns 验证结果
+ */
+export function validateUrl(url: string): ValidationResult {
+  if (!hasText(url)) {
+    return { isValid: false, message: '请输入URL地址' }
+  }
+
+  if (!/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(url)) {
+    return { isValid: false, message: '请输入正确的URL格式' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 中文姓名验证
+ * @param name 姓名
+ * @returns 验证结果
+ */
+export function validateChineseName(name: string): ValidationResult {
+  if (!hasText(name)) {
+    return { isValid: false, message: '请输入姓名' }
+  }
+
+  // 中文姓名，2-20个字符，可以包含少数民族名字中的点
+  if (!/^[\u4e00-\u9fa5]{2,20}(?:·[\u4e00-\u9fa5]{2,20})*$/.test(name)) {
+    return { isValid: false, message: '请输入正确的中文姓名' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 通用非空验证
+ * @param value 要验证的值
+ * @param fieldName 字段名称（用于提示）
+ * @returns 验证结果
+ */
+export function validateRequired(value: any, fieldName: string = '该字段'): ValidationResult {
+  if (value == null) {
+    return { isValid: false, message: `请输入${fieldName}` }
+  }
+
+  if (typeof value === 'string' && value.trim().length === 0) {
+    return { isValid: false, message: `请输入${fieldName}` }
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    return { isValid: false, message: `请选择${fieldName}` }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 数字范围验证
+ * @param value 数字值
+ * @param min 最小值
+ * @param max 最大值
+ * @param fieldName 字段名称
+ * @returns 验证结果
+ */
+export function validateNumberRange(
+  value: number | null,
+  min: number,
+  max: number,
+  fieldName: string = '数值'
+): ValidationResult {
+  if (value == null) {
+    return { isValid: false, message: `请输入${fieldName}` }
+  }
+
+  if (isNaN(value)) {
+    return { isValid: false, message: `${fieldName}必须是数字` }
+  }
+
+  if (value < min || value > max) {
+    return { isValid: false, message: `${fieldName}必须在${min}到${max}之间` }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 长度范围验证
+ * @param value 字符串或数组
+ * @param min 最小长度
+ * @param max 最大长度
+ * @param fieldName 字段名称
+ * @returns 验证结果
+ */
+export function validateLengthRange(
+  value: any,
+  min: number,
+  max: number,
+  fieldName: string = '内容'
+): ValidationResult {
+  if (value == null || value.length === 0) {
+    return { isValid: false, message: `请输入${fieldName}` }
+  }
+
+  if (value.length < min) {
+    return { isValid: false, message: `${fieldName}长度不能小于${min}` }
+  }
+
+  if (value.length > max) {
+    return { isValid: false, message: `${fieldName}长度不能超过${max}` }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 批量验证
+ * @param validations 验证结果数组
+ * @returns 联合验证结果
+ */
+export function validateBatch(validations: Array<ValidationResult>): ValidationResult {
+  const failed = validations.find((v) => !v.isValid)
+  return failed != null ? failed : { isValid: true, message: '' }
+}
+
+/**
+ * 自定义正则验证
+ * @param value 要验证的值
+ * @param pattern 正则表达式
+ * @param message 错误消息
+ * @returns 验证结果
+ */
+export function validatePattern(value: string, pattern: RegExp, message: string): ValidationResult {
+  if (!hasText(value)) {
+    return { isValid: false, message: '请输入值' }
+  }
+
+  if (!pattern.test(value)) {
+    return { isValid: false, message }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 一致验证（用于确认密码等）
+ * @param value1 第一个值
+ * @param value2 第二个值
+ * @param fieldName 字段名称
+ * @returns 验证结果
+ */
+export function validateEquality(
+  value1: any,
+  value2: any,
+  fieldName: string = '两次输入'
+): ValidationResult {
+  if (value1 !== value2) {
+    return { isValid: false, message: `${fieldName}不一致` }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 日期格式验证
+ * @param date 日期字符串
+ * @param format 期望格式（'YYYY-MM-DD', 'YYYY-MM-DD HH:mm:ss'）
+ * @returns 验证结果
+ */
+export function validateDate(
+  date: string,
+  format: string = 'YYYY-MM-DD'
+): ValidationResult {
+  if (!hasText(date)) {
+    return { isValid: false, message: '请输入日期' }
+  }
+
+  let regex: RegExp
+  if (format === 'YYYY-MM-DD') {
+    regex = /^\d{4}-\d{2}-\d{2}$/
+  } else {
+    regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+  }
+
+  if (!regex.test(date)) {
+    return { isValid: false, message: `请输入正确的日期格式（${format}）` }
+  }
+
+  // 验证日期有效性
+  const dateObj = new Date(date)
+  if (isNaN(dateObj.getTime())) {
+    return { isValid: false, message: '请输入有效的日期' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 提取验证错误消息
+ * @param validations 验证结果数组
+ * @returns 第一个错误消息或空字符串
+ */
+export function getFirstErrorMessage(validations: Array<ValidationResult>): string {
+  const failed = validations.find((v) => !v.isValid)
+  return failed != null ? failed.message : ''
+}
+
+/**
+ * 邮政编码验证
+ * @param postalCode 邮政编码
+ * @returns 验证结果
+ */
+export function validatePostalCode(postalCode: string): ValidationResult {
+  if (!hasText(postalCode)) {
+    return { isValid: false, message: '请输入邮政编码' }
+  }
+
+  if (!/^\d{6}$/.test(postalCode)) {
+    return { isValid: false, message: '请输入正确的邮政编码（6位数字）' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 固定电话验证
+ * @param phone 固定电话
+ * @returns 验证结果
+ */
+export function validateLandline(phone: string): ValidationResult {
+  if (!hasText(phone)) {
+    return { isValid: false, message: '请输入固定电话' }
+  }
+
+  // 区号-号码 的格式：010-12345678 或 12345678
+  if (!/^(\d{3,4}-)?\d{7,8}$/.test(phone)) {
+    return { isValid: false, message: '请输入正确的固定电话格式' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
+/**
+ * 手机号或邮箱验证
+ * @param value 手机号或邮箱
+ * @returns 验证结果
+ */
+export function validatePhoneOrEmail(value: string): ValidationResult {
+  if (!hasText(value)) {
+    return { isValid: false, message: '请输入手机号或邮箱' }
+  }
+
+  const phoneResult = validatePhone(value)
+  const emailResult = validateEmail(value)
+
+  if (phoneResult.isValid || emailResult.isValid) {
+    return { isValid: true, message: '' }
+  }
+
+  return { isValid: false, message: '请输入正确的手机号或邮箱格式' }
+}
+
+/**
+ * 验证URL参数中的中文字符
+ * @param value 要验证的值
+ * @returns 验证结果
+ */
+export function validateUrlSafeString(value: string): ValidationResult {
+  if (!hasText(value)) {
+    return { isValid: false, message: '请输入内容' }
+  }
+
+  // 只允许字母、数字、下划线、连字符、点
+  if (!/^[a-zA-Z0-9_\-.]+$/.test(value)) {
+    return { isValid: false, message: '只允许字母、数字、下划线、连字符和点' }
+  }
+
+  return { isValid: true, message: '' }
+}

@@ -1,6 +1,24 @@
 # 更新日志
 
-## [未发布] - 2026-05-16
+## [1.3.5] - 2026-05-18
+
+### 新增
+
+- **工具页面**: 新增 `pages/examples/utils.uvue`，展示 `utils/functions` 统一导出的常用方法，并支持 `storage` 的写入、读取、移除与清空演示
+
+- **存储模块**: 新增 `utils/functions/modules/storage.uts`，统一封装 `setStorage`、`getStorage`、`hasStorage`、`removeStorage` 与 `clearStorage`
+
+### 优化
+
+- **导出结构**: 新增 `utils/functions/modules/index.uts` 统一聚合模块导出，并由 `utils/functions/index.uts` 统一转发
+
+- **首页入口**: 更新 `pages/index/index.uvue`，新增 `Utils 工具方法` 跳转入口
+
+### 修复
+
+- **模块整理**: 将原有混合命名的工具文件按功能拆分为日期、字符串、数字、类型、函数、校验、剪贴板、对象与上传模块
+
+## [1.3.4] - 2026-05-16
 
 ### 新增
 

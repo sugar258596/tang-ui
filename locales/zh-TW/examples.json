@@ -218,6 +218,16 @@
       "name": "多語言測試",
       "enName": "I18n",
       "description": "國際化多語言功能演示"
+    },
+    "Request": {
+      "name": "請求封裝",
+      "enName": "Request",
+      "description": "HttpRequest 請求封裝、攔截器與響應處理示例"
+    },
+    "Utils": {
+      "name": "工具方法",
+      "enName": "Utils",
+      "description": "常用工具函數與 storage 封裝示例"
     }
   }
 }

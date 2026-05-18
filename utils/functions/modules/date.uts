@@ -1,0 +1,13 @@
+/**
+ * 格式化时间为上午/下午格式
+ * @param date 日期对象
+ * @returns 格式化后的时间字符串，如 "上午 8:10"
+ */
+export function formatChatTime(date: Date): string {
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const period = hours < 12 ? '上午' : '下午'
+  const h = hours % 12 === 0 ? 12 : hours % 12
+  const m = minutes < 10 ? '0' + minutes : minutes.toString()
+  return `${period} ${h}:${m}`
+}

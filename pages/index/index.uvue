@@ -84,7 +84,9 @@ const componentPaths: ComponentPath[] = [
   { name: 'TActionSheet', path: '/pages/examples/action-sheet' },
   { name: 'Tabs', path: '/pages/examples/tabs' },
   { name: 'TNavBar', path: '/pages/examples/navbar' },
-  { name: 'I18nDemo', path: '/pages/i18n-demo/index' }
+  { name: 'I18nDemo', path: '/pages/i18n-demo/index' },
+  { name: 'Request', path: '/pages/examples/request' },
+  { name: 'Utils', path: '/pages/examples/utils' }
 ]
 
 // 组件分组配置（分组key -> 组件名列表）
@@ -95,7 +97,7 @@ const groupConfig: ComponentGroupConfig[] = [
   { key: 'display', names: ['TBadge', 'TAvatar', 'TProgress', 'TNoticeBar', 'TCollapse', 'TSwiper', 'TEmpty', 'TErrorState'] },
   { key: 'feedback', names: ['TLoading', 'TToast', 'TDialog', 'TPopup', 'TActionSheet'] },
   { key: 'navigation', names: ['Tabs', 'TNavBar'] },
-  { key: 'tools', names: ['I18nDemo'] }
+  { key: 'tools', names: ['I18nDemo', 'Request', 'Utils'] }
 ]
 
 const getComponentPath = (componentName: string): string => {
@@ -119,7 +121,6 @@ const componentGroups = computed<ComponentGroup[]>(() => {
       const enName = $t(`examples.components.${componentName}.enName`, null)
       const description = $t(`examples.components.${componentName}.description`, null)
       const path = getComponentPath(componentName)
-      
       const componentItem: ComponentItem = {
         name: componentName,
         title: `${name} ${enName}`,

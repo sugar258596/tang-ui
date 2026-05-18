@@ -218,6 +218,16 @@
       "name": "I18n Demo",
       "enName": "I18n",
       "description": "Internationalization demo"
+    },
+    "Request": {
+      "name": "Request",
+      "enName": "Request",
+      "description": "HttpRequest wrapper, interceptor, and response handling demo"
+    },
+    "Utils": {
+      "name": "Utils",
+      "enName": "Utils",
+      "description": "Common utility functions and storage wrapper demo"
     }
   }
 }

@@ -1,0 +1,113 @@
+/**
+ * 复制文本到剪贴板（跨平台支持）
+ * @param text 要复制的文本
+ * @param success 成功回调
+ * @param fail 失败回调
+ */
+export function copyToClipboard(text: string, success?: () => void, fail?: (error?: any) => void) {
+  if (text == '') {
+    fail && fail('文本不能为空')
+    return
+  }
+
+  /* eslint-disable no-unreachable */
+  // #ifdef H5
+  try {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.top = '-9999px'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    textarea.setSelectionRange(0, text.length)
+
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textarea)
+
+    if (successful) {
+      uni.showToast({
+        title: '复制成功',
+        icon: 'success',
+        duration: 2000,
+      })
+      success && success()
+    } else {
+      throw new Error('复制失败')
+    }
+    return
+  } catch (error) {
+    console.error('H5 复制失败:', error)
+    uni.showToast({
+      title: '复制失败',
+      icon: 'error',
+      duration: 2000,
+    })
+    fail && fail(error)
+    return
+  }
+  // #endif
+
+  // #ifdef APP-ANDROID || APP-IOS || APP-HARMONY
+  uni.setClipboardData({
+    data: text,
+    success: () => {
+      uni.showToast({
+        title: '复制成功',
+        icon: 'success',
+        duration: 2000,
+      })
+      success && success()
+    },
+    fail: (error) => {
+      console.error('App 复制失败:', error)
+      uni.showToast({
+        title: '复制失败',
+        icon: 'error',
+        duration: 2000,
+      })
+      fail && fail(error)
+    },
+  })
+  return
+  // #endif
+
+  // #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-QQ || MP-TOUTIAO || MP-KUAISHOU
+  uni.setClipboardData({
+    data: text,
+    success: () => {
+      uni.showToast({
+        title: '复制成功',
+        icon: 'success',
+        duration: 2000,
+      })
+      success && success()
+    },
+    fail: (error) => {
+      console.error('小程序复制失败:', error)
+      uni.showToast({
+        title: '复制失败',
+        icon: 'error',
+        duration: 2000,
+      })
+      fail && fail(error)
+    },
+  })
+  // #endif
+  /* eslint-enable no-unreachable */
+}
+
+/**
+ * 复制文本到剪贴板（Promise 版本，跨平台支持）
+ * @param text 要复制的文本
+ * @returns Promise<void>
+ */
+export function copyToClipboardAsync(text: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    copyToClipboard(
+      text,
+      () => resolve(),
+      (error) => reject(error)
+    )
+  })
+}

@@ -1,0 +1,177 @@
+<script setup lang="uts">
+import { ref } from 'vue'
+import TCard from '@/components/TCard/index.uvue'
+import TButton from '@/components/TButton/index.uvue'
+import { HttpRequest } from '@/utils/request/index.uts'
+import type { HttpRequestOptions, ResponseData } from '@/utils/request/index.uts'
+
+const requestStatus = ref('等待请求')
+const requestUrl = ref('https://jsonplaceholder.typicode.com/todos/1')
+const requestMethod = ref('GET')
+const responseTitle = ref('暂无数据')
+const responseDetail = ref('点击下方按钮发起请求')
+const responseRaw = ref('')
+
+const http = new HttpRequest({
+  baseURL: 'https://jsonplaceholder.typicode.com',
+  showLoading: true,
+  autoAuth: false,
+  timeout: 10000,
+})
+
+http.setInterceptors({
+  request: (options: HttpRequestOptions): HttpRequestOptions => {
+    requestStatus.value = '请求中'
+    requestMethod.value = options.method != null ? options.method : 'GET'
+    requestUrl.value = options.url
+    return options
+  },
+  response: (response: ResponseData<any>, _options: HttpRequestOptions): any => {
+    return response
+  },
+  error: (_err: any, _options: HttpRequestOptions): void => {
+    requestStatus.value = '请求失败'
+  },
+})
+
+const handleGetTodo = (): void => {
+  requestStatus.value = '请求中'
+  responseTitle.value = '加载中'
+  responseDetail.value = '正在通过 utils/request 发起 GET 请求'
+  responseRaw.value = ''
+
+  http.get<any>('/todos/1', null, {
+    showLoading: true,
+    disableAuth: true,
+    loadingText: '请求中...',
+  }).then((res: any): any => {
+    const response = res as UTSJSONObject
+    requestStatus.value = '请求成功'
+    responseTitle.value = response['title'] as string
+    const completed = response['completed'] as boolean
+    responseDetail.value = completed ? '任务状态：已完成' : '任务状态：未完成'
+    responseRaw.value = JSON.stringify(response)
+    return res
+  }).catch((error: any | null): any | null => {
+    requestStatus.value = '请求失败'
+    responseTitle.value = '请求失败'
+    responseDetail.value = `${error}`
+    responseRaw.value = ''
+    return error
+  })
+}
+
+const handleReset = (): void => {
+  requestStatus.value = '等待请求'
+  requestUrl.value = 'https://jsonplaceholder.typicode.com/todos/1'
+  requestMethod.value = 'GET'
+  responseTitle.value = '暂无数据'
+  responseDetail.value = '点击下方按钮发起请求'
+  responseRaw.value = ''
+}
+</script>
+
+<template>
+  <view class="demo-page">
+    <view class="demo-header">
+      <text class="demo-title">Request 请求封装</text>
+      <text class="demo-desc">使用 utils/request 中的 HttpRequest 演示请求、拦截器和响应处理。</text>
+    </view>
+
+    <TCard title="请求配置" class="demo-section">
+      <view class="result-list">
+        <text class="result-item">状态：{{ requestStatus }}</text>
+        <text class="result-item">方法：{{ requestMethod }}</text>
+        <text class="result-item">地址：{{ requestUrl }}</text>
+      </view>
+      <view class="button-row">
+        <view class="button-item">
+          <TButton text="发起 GET 请求" type="primary" @click="handleGetTodo" />
+        </view>
+        <view class="button-item">
+          <TButton text="重置" type="default" @click="handleReset" />
+        </view>
+      </view>
+    </TCard>
+
+    <TCard title="响应结果" class="demo-section">
+      <view class="result-list">
+        <text class="result-title">{{ responseTitle }}</text>
+        <text class="result-item">{{ responseDetail }}</text>
+        <text class="result-raw">{{ responseRaw }}</text>
+      </view>
+    </TCard>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.demo-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.demo-header {
+  margin-bottom: 20px;
+}
+
+.demo-title {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.demo-desc {
+  display: block;
+  font-size: 14px;
+  color: #606266;
+  line-height: 22px;
+}
+
+.demo-section {
+  margin-bottom: 20px;
+}
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-title {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #303133;
+  line-height: 24px;
+  margin-bottom: 10px;
+}
+
+.result-item {
+  display: block;
+  font-size: 14px;
+  color: #303133;
+  line-height: 22px;
+  margin-bottom: 10px;
+}
+
+.result-raw {
+  display: block;
+  font-size: 12px;
+  color: #606266;
+  line-height: 20px;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.button-item {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+</style>
