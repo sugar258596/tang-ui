@@ -38,7 +38,7 @@ const hasItemIcon = (item: TabItem): boolean => {
 }
 
 const hasItemBadge = (item: TabItem): boolean => {
-  return item.badge !== null && item.badge !== ''
+  return item.badge != null && item.badge !== ''
 }
 
 /** 获取默认激活项的 key */

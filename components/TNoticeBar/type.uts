@@ -6,7 +6,7 @@ export type NoticeBarMode = 'closeable' | 'link'
 
 export type TNoticeBarProps = {
   text?: string
-  mode?: NoticeBarMode | null
+  mode?: NoticeBarMode | undefined
   color?: string
   background?: string
   leftIcon?: string
