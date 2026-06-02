@@ -4,6 +4,8 @@
 export type FormOption = {
   label: string
   value: string | number
+  disabled?: boolean
+  children?: FormOption[] | null
 }
 
 /**
@@ -46,6 +48,12 @@ export type ComponentProps = {
   showValue?: boolean
   /** 方向（用于单选/多选组扩展透传） */
   direction?: string
+  /** 尺寸（用于选择器等组件扩展透传） */
+  size?: string
+  /** 弹出位置（用于选择器等组件扩展透传） */
+  placement?: string
+  /** 是否允许选择中间层级（用于级联选择） */
+  changeOnSelect?: boolean
 }
 
 /**

@@ -6,11 +6,11 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import type { TPopupProps } from './type.uts'
 
-const model = defineModel({ default: false })
+const model = defineModel<boolean>({ default: false })
 // 内部渲染状态，用于控制 DOM 显示
-const rendered = ref(false)
+const rendered = ref<boolean>(false)
 // 是否显示遮罩层和内容
-const showOverlay = ref(false)
+const showOverlay = ref<boolean>(false)
 
 const props = withDefaults(defineProps<TPopupProps>(), {
 	height: '50%',

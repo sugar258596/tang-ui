@@ -44,7 +44,7 @@ const hasItemBadge = (item: TabItem): boolean => {
 /** 获取默认激活项的 key */
 const getDefaultKey = (): string | number => {
   const defaultActiveKey = props.defaultActiveKey
-  if (defaultActiveKey !== null) {
+  if (defaultActiveKey != null) {
     return defaultActiveKey
   }
   if (props.items.length > 0) {
@@ -61,17 +61,17 @@ const getDefaultKey = (): string | number => {
 
 /** 初始化默认激活项 */
 onMounted(() => {
-  if (model.value == null || model.value == '') {
+  if (model.value == null || model.value === '') {
     model.value = getDefaultKey()
   }
 })
 
 const isItemActive = (item: TabItem): boolean => {
   const currentKey = model.value
-  if (currentKey == null || currentKey == '') {
+  if (currentKey == null || currentKey === '') {
     return false
   }
-  if (item.key == null || item.key == '') {
+  if (item.key == null || item.key === '') {
     return false
   }
   return item.key == currentKey

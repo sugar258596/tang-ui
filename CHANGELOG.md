@@ -1,5 +1,28 @@
 # 更新日志
 
+## [1.3.8] - 2026-06-02
+
+### 新增
+
+- **Tabs**: 示例页新增数字 `key` 场景，覆盖 `0`、`1`、`2` 的默认选中和切换验证
+
+### 优化
+
+- **TForm**: 扩展 `FormOption` 与 `ComponentProps` 类型，支持 `disabled`、`children`、`size`、`placement`、`changeOnSelect` 等选择器和级联选择透传配置
+- **HttpRequest**: 调整请求方法为 UTS 兼容的重载写法，支持省略 `data` / `options` 调用，并统一转换 `url` 与请求数据
+- **Storage**: 优化 `CustomStorage` 默认配置合并、批量读写、过期清理、统计和事件监听逻辑，提升 UTS 编译链路兼容性
+- **类型声明**: 同步更新 `types/index.d.ts` 中请求、存储、校验和 i18n 相关声明格式与导出
+- **文档**: 统一 `TButton`、`TForm`、`TInput`、`TRadioButton`、`TText` README 示例和 API 表格格式
+
+### 调整
+
+- **utils/storage**: `utils/index.uts` 不再转发默认存储实例的便捷方法，统一保留 `CustomStorage` 类和存储类型导出
+
+### 修复
+
+- **Tabs**: 修复 `key` 为数字 `0` 时被空字符串判断误判为空值，导致无法默认选中和切换的问题
+- **TPopup**: 补充 `defineModel` 与响应式状态泛型，减少 UTS 类型推断告警
+
 ## [1.3.7] - 2026-05-19
 
 ### 修复

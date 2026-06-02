@@ -84,28 +84,28 @@
 
 ## Props
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-|------|------|------|--------|--------|
-| type | 按钮类型 | string | primary / success / warning / danger / info / default | default |
-| size | 按钮尺寸 | string | large / medium / small / mini | medium |
-| shape | 按钮形状 | string | square / round / circle | square |
-| plain | 是否为朴素按钮 | boolean | - | false |
-| disabled | 是否禁用 | boolean | - | false |
-| loading | 是否加载中 | boolean | - | false |
-| block | 是否为块级按钮 | boolean | - | false |
-| text | 按钮文本 | string | - | - |
-| icon | 图标 | string | - | - |
-| customClass | 自定义类名 | string | - | - |
-| customStyle | 自定义样式 | string | - | - |
+| 参数        | 说明           | 类型    | 可选值                                                | 默认值  |
+| ----------- | -------------- | ------- | ----------------------------------------------------- | ------- |
+| type        | 按钮类型       | string  | primary / success / warning / danger / info / default | default |
+| size        | 按钮尺寸       | string  | large / medium / small / mini                         | medium  |
+| shape       | 按钮形状       | string  | square / round / circle                               | square  |
+| plain       | 是否为朴素按钮 | boolean | -                                                     | false   |
+| disabled    | 是否禁用       | boolean | -                                                     | false   |
+| loading     | 是否加载中     | boolean | -                                                     | false   |
+| block       | 是否为块级按钮 | boolean | -                                                     | false   |
+| text        | 按钮文本       | string  | -                                                     | -       |
+| icon        | 图标           | string  | -                                                     | -       |
+| customClass | 自定义类名     | string  | -                                                     | -       |
+| customStyle | 自定义样式     | string  | -                                                     | -       |
 
 ## Events
 
-| 事件名 | 说明 | 回调参数 |
-|--------|------|----------|
-| click | 点击按钮时触发 | - |
+| 事件名 | 说明           | 回调参数 |
+| ------ | -------------- | -------- |
+| click  | 点击按钮时触发 | -        |
 
 ## Slots
 
-| 名称 | 说明 |
-|------|------|
+| 名称    | 说明     |
+| ------- | -------- |
 | default | 按钮内容 |

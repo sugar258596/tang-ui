@@ -10,8 +10,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const value = ref('')
+import { ref } from "vue";
+const value = ref("");
 </script>
 ```
 
@@ -66,7 +66,12 @@ const value = ref('')
 
 ```vue
 <template>
-  <TInput v-model="value" maxlength="20" show-count placeholder="最多输入20个字符" />
+  <TInput
+    v-model="value"
+    maxlength="20"
+    show-count
+    placeholder="最多输入20个字符"
+  />
 </template>
 ```
 
@@ -90,30 +95,30 @@ const value = ref('')
 
 ## Props
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-|------|------|------|--------|--------|
-| v-model | 绑定值 (使用 defineModel) | string / number | - | - |
-| type | 输入框类型 | string | text / number / password / tel / textarea | text |
-| size | 输入框尺寸 | string | large / medium / small / mini | medium |
-| placeholder | 占位文本 | string | - | - |
-| disabled | 是否禁用 | boolean | - | false |
-| readonly | 是否只读 | boolean | - | false |
-| clearable | 是否显示清除按钮 | boolean | - | false |
-| showCount | 是否显示字数统计 | boolean | - | false |
-| maxlength | 最大输入长度 | number | - | -1 |
-| prefixIcon | 前缀图标 | string | - | - |
-| suffixIcon | 后缀图标 | string | - | - |
-| rows | 文本域行数 | number | - | 3 |
-| autoHeight | 文本域自动高度 | boolean | - | false |
-| customClass | 自定义类名 | string | - | - |
-| customStyle | 自定义样式 | string | - | - |
+| 参数        | 说明                      | 类型            | 可选值                                    | 默认值 |
+| ----------- | ------------------------- | --------------- | ----------------------------------------- | ------ |
+| v-model     | 绑定值 (使用 defineModel) | string / number | -                                         | -      |
+| type        | 输入框类型                | string          | text / number / password / tel / textarea | text   |
+| size        | 输入框尺寸                | string          | large / medium / small / mini             | medium |
+| placeholder | 占位文本                  | string          | -                                         | -      |
+| disabled    | 是否禁用                  | boolean         | -                                         | false  |
+| readonly    | 是否只读                  | boolean         | -                                         | false  |
+| clearable   | 是否显示清除按钮          | boolean         | -                                         | false  |
+| showCount   | 是否显示字数统计          | boolean         | -                                         | false  |
+| maxlength   | 最大输入长度              | number          | -                                         | -1     |
+| prefixIcon  | 前缀图标                  | string          | -                                         | -      |
+| suffixIcon  | 后缀图标                  | string          | -                                         | -      |
+| rows        | 文本域行数                | number          | -                                         | 3      |
+| autoHeight  | 文本域自动高度            | boolean         | -                                         | false  |
+| customClass | 自定义类名                | string          | -                                         | -      |
+| customStyle | 自定义样式                | string          | -                                         | -      |
 
 ## Events
 
-| 事件名 | 说明 | 回调参数 |
-|--------|------|----------|
-| input | 输入时触发 | (value: string \| number) |
-| change | 值改变时触发 | (value: string \| number) |
-| focus | 获得焦点时触发 | - |
-| blur | 失去焦点时触发 | - |
-| clear | 点击清除按钮时触发 | - |
+| 事件名 | 说明               | 回调参数                  |
+| ------ | ------------------ | ------------------------- |
+| input  | 输入时触发         | (value: string \| number) |
+| change | 值改变时触发       | (value: string \| number) |
+| focus  | 获得焦点时触发     | -                         |
+| blur   | 失去焦点时触发     | -                         |
+| clear  | 点击清除按钮时触发 | -                         |

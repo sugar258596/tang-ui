@@ -3,7 +3,7 @@
  * @module utils/request
  */
 
-import type {
+import {
 	HttpMethod,
 	HttpInitOptions,
 	HttpRequestOptions,
@@ -14,7 +14,7 @@ import type {
 } from './type.uts'
 
 // 导出类型供外部使用
-export type {
+export {
 	HttpMethod,
 	HttpInitOptions,
 	HttpRequestOptions,
@@ -248,14 +248,16 @@ class HttpRequest {
 	}
 
 	private createRequestConfig(
-		url : string,
-		data : UTSJSONObject | null,
+		url : any,
+		data : any | null,
 		method : HttpMethod,
 		options : HttpRequestExtraOptions | null
 	) : HttpRequestOptions {
+		const requestUrl : string = url.toString()
+		const requestData : UTSJSONObject | null = data != null ? data as UTSJSONObject : null
 		const config : HttpRequestOptions = {
-			url: url,
-			data: data,
+			url: requestUrl,
+			data: requestData,
 			method: method
 		}
 		if (options != null) {
@@ -276,8 +278,16 @@ class HttpRequest {
 	 * @param data 请求参数
 	 * @param options 额外配置
 	 */
-	public get<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestExtraOptions | null) : Promise<T> {
-		const config = this.createRequestConfig(url, data != null ? data : null, 'GET', options != null ? options : null)
+	public get<T>(url : any) : Promise<T> {
+		return this.get<T>(url, null, null)
+	}
+
+	public get<T>(url : any, data : any | null) : Promise<T> {
+		return this.get<T>(url, data, null)
+	}
+
+	public get<T>(url : any, data : any | null, options : HttpRequestExtraOptions | null) : Promise<T> {
+		const config = this.createRequestConfig(url, data, 'GET', options)
 		return this.coreRequest<T>(config)
 	}
 
@@ -287,8 +297,16 @@ class HttpRequest {
 	 * @param data 请求数据
 	 * @param options 额外配置
 	 */
-	public post<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestExtraOptions | null) : Promise<T> {
-		const config = this.createRequestConfig(url, data != null ? data : null, 'POST', options != null ? options : null)
+	public post<T>(url : any) : Promise<T> {
+		return this.post<T>(url, null, null)
+	}
+
+	public post<T>(url : any, data : any | null) : Promise<T> {
+		return this.post<T>(url, data, null)
+	}
+
+	public post<T>(url : any, data : any | null, options : HttpRequestExtraOptions | null) : Promise<T> {
+		const config = this.createRequestConfig(url, data, 'POST', options)
 		return this.coreRequest<T>(config)
 	}
 
@@ -298,8 +316,16 @@ class HttpRequest {
 	 * @param data 请求数据
 	 * @param options 额外配置
 	 */
-	public put<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestExtraOptions | null) : Promise<T> {
-		const config = this.createRequestConfig(url, data != null ? data : null, 'PUT', options != null ? options : null)
+	public put<T>(url : any) : Promise<T> {
+		return this.put<T>(url, null, null)
+	}
+
+	public put<T>(url : any, data : any | null) : Promise<T> {
+		return this.put<T>(url, data, null)
+	}
+
+	public put<T>(url : any, data : any | null, options : HttpRequestExtraOptions | null) : Promise<T> {
+		const config = this.createRequestConfig(url, data, 'PUT', options)
 		return this.coreRequest<T>(config)
 	}
 
@@ -309,8 +335,16 @@ class HttpRequest {
 	 * @param data 请求数据
 	 * @param options 额外配置
 	 */
-	public delete<T>(url : string, data ?: UTSJSONObject | null, options ?: HttpRequestExtraOptions | null) : Promise<T> {
-		const config = this.createRequestConfig(url, data != null ? data : null, 'DELETE', options != null ? options : null)
+	public delete<T>(url : any) : Promise<T> {
+		return this.delete<T>(url, null, null)
+	}
+
+	public delete<T>(url : any, data : any | null) : Promise<T> {
+		return this.delete<T>(url, data, null)
+	}
+
+	public delete<T>(url : any, data : any | null, options : HttpRequestExtraOptions | null) : Promise<T> {
+		const config = this.createRequestConfig(url, data, 'DELETE', options)
 		return this.coreRequest<T>(config)
 	}
 
@@ -320,10 +354,18 @@ class HttpRequest {
 	 * @param data 表单数据，需包含 File 字段（文件路径）
 	 * @param options 额外配置
 	 */
+	public upload<T>(url : any) : Promise<T> {
+		return this.upload<T>(url, null, null)
+	}
+
+	public upload<T>(url : any, data : any | null) : Promise<T> {
+		return this.upload<T>(url, data, null)
+	}
+
 	public upload<T>(
-		url : string,
-		data ?: UTSJSONObject | null,
-		options ?: HttpRequestExtraOptions | null
+		url : any,
+		data : any | null,
+		options : HttpRequestExtraOptions | null
 	) : Promise<T> {
 		const config = this.createRequestConfig(url, data != null ? data : null, 'POST', options != null ? options : null)
 
@@ -376,10 +418,18 @@ class HttpRequest {
 	 * @param data 表单数据
 	 * @param options 额外配置
 	 */
+	public postFormData<T>(url : any) : Promise<T> {
+		return this.postFormData<T>(url, null, null)
+	}
+
+	public postFormData<T>(url : any, data : any | null) : Promise<T> {
+		return this.postFormData<T>(url, data, null)
+	}
+
 	public postFormData<T>(
-		url : string,
-		data ?: UTSJSONObject | null,
-		options ?: HttpRequestExtraOptions | null
+		url : any,
+		data : any | null,
+		options : HttpRequestExtraOptions | null
 	) : Promise<T> {
 		const config = this.createRequestConfig(url, data != null ? data : null, 'POST', options != null ? options : null)
 		if (options == null || options.header == null) {

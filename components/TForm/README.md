@@ -23,50 +23,50 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const formData = ref({})
+const formData = ref({});
 
 const schemas = [
   {
-    field: 'name',
-    label: '姓名',
-    component: 'Input',
+    field: "name",
+    label: "姓名",
+    component: "Input",
     required: true,
     componentProps: {
-      placeholder: '请输入姓名',
+      placeholder: "请输入姓名",
       maxlength: 20,
-      type: 'text'
-    }
+      type: "text",
+    },
   },
   {
-    field: 'age',
-    label: '年龄',
-    component: 'InputNumber',
+    field: "age",
+    label: "年龄",
+    component: "InputNumber",
     required: true,
     componentProps: {
-      placeholder: '请输入年龄',
+      placeholder: "请输入年龄",
       min: 1,
-      max: 120
-    }
+      max: 120,
+    },
   },
   {
-    field: 'gender',
-    label: '性别',
-    component: 'Radio',
+    field: "gender",
+    label: "性别",
+    component: "Radio",
     required: true,
     componentProps: {
       options: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' }
-      ]
-    }
-  }
-]
+        { label: "男", value: "male" },
+        { label: "女", value: "female" },
+      ],
+    },
+  },
+];
 
 const handleSubmit = (values) => {
-  console.log('表单数据:', values)
-}
+  console.log("表单数据:", values);
+};
 </script>
 ```
 
@@ -98,59 +98,59 @@ const handleSubmit = (values) => {
 
 ### 通用属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| placeholder | 占位符 | String | - |
-| disabled | 是否禁用 | Boolean | false |
-| options | 选项列表 | FormOption[] | - |
+| 属性        | 说明     | 类型         | 默认值 |
+| ----------- | -------- | ------------ | ------ |
+| placeholder | 占位符   | String       | -      |
+| disabled    | 是否禁用 | Boolean      | false  |
+| options     | 选项列表 | FormOption[] | -      |
 
 ### Input / Number 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| type | 输入类型 | String | 'text' |
-| maxlength | 最大长度 | Number | - |
-| min | 最小值 | Number | - |
-| max | 最大值 | Number | - |
-| focus | 是否自动聚焦 | Boolean | false |
-| confirmType | 确认按钮文字 | String | 'done' |
+| 属性        | 说明         | 类型    | 默认值 |
+| ----------- | ------------ | ------- | ------ |
+| type        | 输入类型     | String  | 'text' |
+| maxlength   | 最大长度     | Number  | -      |
+| min         | 最小值       | Number  | -      |
+| max         | 最大值       | Number  | -      |
+| focus       | 是否自动聚焦 | Boolean | false  |
+| confirmType | 确认按钮文字 | String  | 'done' |
 
 ### Textarea 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| maxlength | 最大长度 | Number | - |
-| autoHeight | 是否自动高度 | Boolean | false |
-| showConfirmBar | 是否显示确认栏 | Boolean | true |
+| 属性           | 说明           | 类型    | 默认值 |
+| -------------- | -------------- | ------- | ------ |
+| maxlength      | 最大长度       | Number  | -      |
+| autoHeight     | 是否自动高度   | Boolean | false  |
+| showConfirmBar | 是否显示确认栏 | Boolean | true   |
 
 ### Date / Time 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| start | 开始日期 | String | - |
-| end | 结束日期 | String | - |
+| 属性  | 说明     | 类型   | 默认值 |
+| ----- | -------- | ------ | ------ |
+| start | 开始日期 | String | -      |
+| end   | 结束日期 | String | -      |
 
 ### Switch 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
+| 属性  | 说明     | 类型   | 默认值    |
+| ----- | -------- | ------ | --------- |
 | color | 激活颜色 | String | '#007aff' |
 
 ### Rate 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| max | 最大值 | Number | 5 |
-| allowHalf | 是否允许半星 | Boolean | false |
+| 属性      | 说明         | 类型    | 默认值 |
+| --------- | ------------ | ------- | ------ |
+| max       | 最大值       | Number  | 5      |
+| allowHalf | 是否允许半星 | Boolean | false  |
 
 ### Slider 属性
 
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| min | 最小值 | Number | 0 |
-| max | 最大值 | Number | 100 |
-| step | 步长 | Number | 1 |
-| showValue | 是否显示值 | Boolean | false |
+| 属性      | 说明       | 类型    | 默认值 |
+| --------- | ---------- | ------- | ------ |
+| min       | 最小值     | Number  | 0      |
+| max       | 最大值     | Number  | 100    |
+| step      | 步长       | Number  | 1      |
+| showValue | 是否显示值 | Boolean | false  |
 
 ### 常用属性示例
 
@@ -292,28 +292,29 @@ const handleSubmit = (values) => {
 
 ## Props
 
-| 参数 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| v-model | 表单数据 | Object | {} |
-| schemas | 表单配置 | FormSchema[] | [] |
-| labelWidth | 标签宽度 | String | '160rpx' |
-| hideButtons | 隐藏默认按钮 | Boolean | false |
+| 参数        | 说明         | 类型         | 默认值   |
+| ----------- | ------------ | ------------ | -------- |
+| v-model     | 表单数据     | Object       | {}       |
+| schemas     | 表单配置     | FormSchema[] | []       |
+| labelWidth  | 标签宽度     | String       | '160rpx' |
+| hideButtons | 隐藏默认按钮 | Boolean      | false    |
 
 ## FormSchema 配置
 
-| 参数 | 说明 | 类型 | 必填 |
-|------|------|------|------|
-| field | 字段名 | String | 是 |
-| label | 标签文本 | String | 是 |
-| component | 组件类型 | String | 是 |
-| required | 是否必填 | Boolean | 否 |
-| componentProps | 组件属性（包含 placeholder、options 等） | Object | 否 |
+| 参数           | 说明                                     | 类型    | 必填 |
+| -------------- | ---------------------------------------- | ------- | ---- |
+| field          | 字段名                                   | String  | 是   |
+| label          | 标签文本                                 | String  | 是   |
+| component      | 组件类型                                 | String  | 是   |
+| required       | 是否必填                                 | Boolean | 否   |
+| componentProps | 组件属性（包含 placeholder、options 等） | Object  | 否   |
 
 ## Slots
 
 支持为每个字段自定义插槽，插槽名为字段的 `field` 值。
 
 插槽参数：
+
 - `item` - 当前字段配置
 - `value` - 当前字段值
 - `error` - 当前字段错误信息
@@ -340,34 +341,35 @@ const handleSubmit = (values) => {
 
 ## Events
 
-| 事件名 | 说明 | 回调参数 |
-|--------|------|----------|
+| 事件名 | 说明     | 回调参数         |
+| ------ | -------- | ---------------- |
 | submit | 提交表单 | (values: Object) |
-| reset | 重置表单 | - |
+| reset  | 重置表单 | -                |
 
 ## Methods
 
-| 方法名 | 说明 | 参数 | 返回值 |
-|--------|------|------|--------|
-| submit | 提交表单 | - | Promise<{valid, values}> |
-| reset | 重置表单 | - | - |
-| validate | 验证表单 | - | Boolean |
-| getFormData | 获取表单数据 | - | Object |
-| getErrors | 获取错误信息 | - | Object |
+| 方法名      | 说明         | 参数 | 返回值                   |
+| ----------- | ------------ | ---- | ------------------------ |
+| submit      | 提交表单     | -    | Promise<{valid, values}> |
+| reset       | 重置表单     | -    | -                        |
+| validate    | 验证表单     | -    | Boolean                  |
+| getFormData | 获取表单数据 | -    | Object                   |
+| getErrors   | 获取错误信息 | -    | Object                   |
 
 ## 完整示例
 
 ```vue
 <template>
   <view>
-    <TForm 
+    <TForm
       ref="formRef"
-      v-model="formData" 
+      v-model="formData"
       :schemas="schemas"
       label-width="180rpx"
       @submit="handleSubmit"
-      @reset="handleReset" />
-    
+      @reset="handleReset"
+    />
+
     <view class="custom-buttons">
       <button @click="handleCustomSubmit">自定义提交</button>
       <button @click="handleValidate">验证</button>
@@ -376,124 +378,124 @@ const handleSubmit = (values) => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const formRef = ref(null)
-const formData = ref({})
+const formRef = ref(null);
+const formData = ref({});
 
 const schemas = [
   {
-    field: 'username',
-    label: '用户名',
-    component: 'input',
+    field: "username",
+    label: "用户名",
+    component: "input",
     required: true,
-    placeholder: '请输入用户名'
+    placeholder: "请输入用户名",
   },
   {
-    field: 'password',
-    label: '密码',
-    component: 'input',
-    type: 'password',
-    required: true
+    field: "password",
+    label: "密码",
+    component: "input",
+    type: "password",
+    required: true,
   },
   {
-    field: 'age',
-    label: '年龄',
-    component: 'number',
+    field: "age",
+    label: "年龄",
+    component: "number",
     min: 1,
-    max: 120
+    max: 120,
   },
   {
-    field: 'bio',
-    label: '简介',
-    component: 'textarea',
-    placeholder: '请输入个人简介'
+    field: "bio",
+    label: "简介",
+    component: "textarea",
+    placeholder: "请输入个人简介",
   },
   {
-    field: 'city',
-    label: '城市',
-    component: 'select',
+    field: "city",
+    label: "城市",
+    component: "select",
     required: true,
     options: [
-      { label: '北京', value: 'beijing' },
-      { label: '上海', value: 'shanghai' },
-      { label: '广州', value: 'guangzhou' }
-    ]
+      { label: "北京", value: "beijing" },
+      { label: "上海", value: "shanghai" },
+      { label: "广州", value: "guangzhou" },
+    ],
   },
   {
-    field: 'birthday',
-    label: '生日',
-    component: 'date'
+    field: "birthday",
+    label: "生日",
+    component: "date",
   },
   {
-    field: 'gender',
-    label: '性别',
-    component: 'radio',
+    field: "gender",
+    label: "性别",
+    component: "radio",
     options: [
-      { label: '男', value: 'male' },
-      { label: '女', value: 'female' }
-    ]
+      { label: "男", value: "male" },
+      { label: "女", value: "female" },
+    ],
   },
   {
-    field: 'hobbies',
-    label: '爱好',
-    component: 'checkbox',
+    field: "hobbies",
+    label: "爱好",
+    component: "checkbox",
     options: [
-      { label: '阅读', value: 'reading' },
-      { label: '运动', value: 'sports' },
-      { label: '音乐', value: 'music' }
-    ]
+      { label: "阅读", value: "reading" },
+      { label: "运动", value: "sports" },
+      { label: "音乐", value: "music" },
+    ],
   },
   {
-    field: 'notify',
-    label: '接收通知',
-    component: 'switch'
+    field: "notify",
+    label: "接收通知",
+    component: "switch",
   },
   {
-    field: 'rating',
-    label: '评分',
-    component: 'rate',
-    max: 5
+    field: "rating",
+    label: "评分",
+    component: "rate",
+    max: 5,
   },
   {
-    field: 'volume',
-    label: '音量',
-    component: 'slider',
+    field: "volume",
+    label: "音量",
+    component: "slider",
     min: 0,
     max: 100,
-    step: 1
-  }
-]
+    step: 1,
+  },
+];
 
 const handleSubmit = (values) => {
-  console.log('提交:', values)
+  console.log("提交:", values);
   uni.showToast({
-    title: '提交成功',
-    icon: 'success'
-  })
-}
+    title: "提交成功",
+    icon: "success",
+  });
+};
 
 const handleReset = () => {
-  console.log('重置')
-}
+  console.log("重置");
+};
 
 const handleCustomSubmit = async () => {
-  const result = await formRef.value.submit()
+  const result = await formRef.value.submit();
   if (result.valid) {
-    console.log('验证通过:', result.values)
+    console.log("验证通过:", result.values);
   } else {
-    console.log('验证失败')
+    console.log("验证失败");
   }
-}
+};
 
 const handleValidate = () => {
-  const isValid = formRef.value.validate()
-  console.log('验证结果:', isValid)
+  const isValid = formRef.value.validate();
+  console.log("验证结果:", isValid);
   if (!isValid) {
-    const errors = formRef.value.getErrors()
-    console.log('错误信息:', errors)
+    const errors = formRef.value.getErrors();
+    console.log("错误信息:", errors);
   }
-}
+};
 </script>
 ```
 
@@ -505,31 +507,31 @@ const handleValidate = () => {
     <!-- 自定义用户名输入 -->
     <template #username="{ item, value, error }">
       <view class="custom-field">
-        <input 
-          v-model="formData.username" 
+        <input
+          v-model="formData.username"
           placeholder="请输入用户名"
-          class="custom-input" />
+          class="custom-input"
+        />
         <text class="hint">用户名长度 4-16 位</text>
         <text v-if="error" class="error">{{ error }}</text>
       </view>
     </template>
-    
+
     <!-- 自定义头像上传 -->
     <template #avatar="{ item, value }">
       <view class="avatar-upload">
-        <image 
-          :src="value || '/static/default-avatar.png'" 
-          class="avatar-preview" />
-        <button @click="handleUploadAvatar" class="upload-btn">
-          上传头像
-        </button>
+        <image
+          :src="value || '/static/default-avatar.png'"
+          class="avatar-preview"
+        />
+        <button @click="handleUploadAvatar" class="upload-btn">上传头像</button>
       </view>
     </template>
-    
+
     <!-- 自定义地址选择 -->
     <template #address="{ item, value }">
       <view class="address-picker">
-        <text>{{ value || '请选择地址' }}</text>
+        <text>{{ value || "请选择地址" }}</text>
         <button @click="handleSelectAddress">选择地址</button>
       </view>
     </template>
@@ -537,56 +539,56 @@ const handleValidate = () => {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
 const formData = ref({
-  username: '',
-  avatar: '',
-  address: ''
-})
+  username: "",
+  avatar: "",
+  address: "",
+});
 
 const schemas = [
   {
-    field: 'username',
-    label: '用户名',
-    component: 'input',
-    required: true
+    field: "username",
+    label: "用户名",
+    component: "input",
+    required: true,
   },
   {
-    field: 'avatar',
-    label: '头像',
-    component: 'input', // 使用插槽时 component 类型不重要
-    required: false
+    field: "avatar",
+    label: "头像",
+    component: "input", // 使用插槽时 component 类型不重要
+    required: false,
   },
   {
-    field: 'address',
-    label: '地址',
-    component: 'input',
-    required: true
-  }
-]
+    field: "address",
+    label: "地址",
+    component: "input",
+    required: true,
+  },
+];
 
 const handleSubmit = (values) => {
-  console.log('提交:', values)
-}
+  console.log("提交:", values);
+};
 
 const handleUploadAvatar = () => {
   uni.chooseImage({
     count: 1,
     success: (res) => {
-      formData.value.avatar = res.tempFilePaths[0]
-    }
-  })
-}
+      formData.value.avatar = res.tempFilePaths[0];
+    },
+  });
+};
 
 const handleSelectAddress = () => {
   // 打开地址选择器
   uni.chooseLocation({
     success: (res) => {
-      formData.value.address = res.address
-    }
-  })
-}
+      formData.value.address = res.address;
+    },
+  });
+};
 </script>
 
 <style>

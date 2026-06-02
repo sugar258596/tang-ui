@@ -74,7 +74,10 @@
 ```vue
 <template>
   <TText ellipsis text="这是一段很长的文本，超出部分会显示省略号" />
-  <TText :max-lines="2" text="这是一段很长的文本，最多显示两行，超出部分会被隐藏" />
+  <TText
+    :max-lines="2"
+    text="这是一段很长的文本，最多显示两行，超出部分会被隐藏"
+  />
 </template>
 ```
 
@@ -91,34 +94,32 @@
 
 ```vue
 <template>
-  <TText type="primary">
-    这是通过插槽传入的文本内容
-  </TText>
+  <TText type="primary"> 这是通过插槽传入的文本内容 </TText>
 </template>
 ```
 
 ## Props
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-|------|------|------|--------|--------|
-| text | 文本内容 | string | - | - |
-| type | 文本类型 | string | primary / success / warning / danger / info / default | default |
-| size | 文本尺寸 | string | large / medium / small / mini | medium |
-| weight | 文本粗细 | string | lighter / normal / medium / bold | normal |
-| align | 文本对齐 | string | left / center / right / justify | left |
-| color | 自定义颜色 | string | - | - |
-| lineHeight | 行高 | string | - | 1.5 |
-| maxLines | 最大行数 | number | - | 0 |
-| ellipsis | 是否显示省略号 | boolean | - | false |
-| bold | 是否加粗 | boolean | - | false |
-| italic | 是否斜体 | boolean | - | false |
-| underline | 是否显示下划线 | boolean | - | false |
-| strikethrough | 是否显示删除线 | boolean | - | false |
-| customClass | 自定义类名 | string | - | - |
-| customStyle | 自定义样式 | string | - | - |
+| 参数          | 说明           | 类型    | 可选值                                                | 默认值  |
+| ------------- | -------------- | ------- | ----------------------------------------------------- | ------- |
+| text          | 文本内容       | string  | -                                                     | -       |
+| type          | 文本类型       | string  | primary / success / warning / danger / info / default | default |
+| size          | 文本尺寸       | string  | large / medium / small / mini                         | medium  |
+| weight        | 文本粗细       | string  | lighter / normal / medium / bold                      | normal  |
+| align         | 文本对齐       | string  | left / center / right / justify                       | left    |
+| color         | 自定义颜色     | string  | -                                                     | -       |
+| lineHeight    | 行高           | string  | -                                                     | 1.5     |
+| maxLines      | 最大行数       | number  | -                                                     | 0       |
+| ellipsis      | 是否显示省略号 | boolean | -                                                     | false   |
+| bold          | 是否加粗       | boolean | -                                                     | false   |
+| italic        | 是否斜体       | boolean | -                                                     | false   |
+| underline     | 是否显示下划线 | boolean | -                                                     | false   |
+| strikethrough | 是否显示删除线 | boolean | -                                                     | false   |
+| customClass   | 自定义类名     | string  | -                                                     | -       |
+| customStyle   | 自定义样式     | string  | -                                                     | -       |
 
 ## Slots
 
-| 名称 | 说明 |
-|------|------|
+| 名称    | 说明     |
+| ------- | -------- |
 | default | 文本内容 |

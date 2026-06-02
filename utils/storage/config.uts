@@ -4,6 +4,48 @@
 
 import type { StorageOptions } from './types'
 
+type StorageMetaKeys = {
+  METADATA: string
+  LAST_CLEANUP: string
+  VERSION: string
+}
+
+type TimeFormats = {
+  ISO: string
+  TIMESTAMP: string
+}
+
+type StorageErrorMessages = {
+  INVALID_KEY: string
+  INVALID_STORAGE_KEY: string
+  INVALID_VALUE: string
+  EXPIRED_DATA: string
+  STORAGE_FULL: string
+  PARSE_ERROR: string
+  STORAGE_NOT_SUPPORTED: string
+  QUOTA_EXCEEDED: string
+  DATA_TOO_LARGE: string
+}
+
+type StorageSizeLimits = {
+  MAX_VALUE_SIZE: number
+  MAX_KEY_LENGTH: number
+  MAX_STORAGE_KEY_LENGTH: number
+}
+
+type CleanupStrategies = {
+  IMMEDIATE: string
+  DEFERRED: string
+  MANUAL: string
+}
+
+type LogLevels = {
+  ERROR: string
+  WARN: string
+  INFO: string
+  DEBUG: string
+}
+
 // 从配置读取存储前缀
 const getStoragePrefix = (): string => {
   return 'tang_ui_x'
@@ -42,28 +84,28 @@ export const DEFAULT_STORAGE_OPTIONS: StorageOptions = {
 export { getStoragePrefix, getMainStorageKey }
 
 // 存储系统内部元数据键常量
-export const STORAGE_META_KEYS = {
+export const STORAGE_META_KEYS: StorageMetaKeys = {
   // 元数据键
   METADATA: '__tang_ui_',
   // 清理时间记录
   LAST_CLEANUP: '__last_cleanup__',
   // 版本信息
   VERSION: '__storage_version__',
-} as const
+}
 
 // 当前存储版本
 export const STORAGE_VERSION = '1.0.0'
 
 // 时间格式常量
-export const TIME_FORMATS = {
+export const TIME_FORMATS: TimeFormats = {
   // ISO字符串格式
   ISO: 'iso',
   // 时间戳格式
   TIMESTAMP: 'timestamp',
-} as const
+}
 
 // 错误消息常量
-export const ERROR_MESSAGES = {
+export const ERROR_MESSAGES: StorageErrorMessages = {
   INVALID_KEY: '无效的存储键',
   INVALID_STORAGE_KEY: '无效的存储子键',
   INVALID_VALUE: '无效的存储值',
@@ -73,35 +115,35 @@ export const ERROR_MESSAGES = {
   STORAGE_NOT_SUPPORTED: '设备不支持本地存储',
   QUOTA_EXCEEDED: '存储配额已超出',
   DATA_TOO_LARGE: '数据过大',
-} as const
+}
 
 // 存储大小限制（字节）
-export const SIZE_LIMITS = {
+export const SIZE_LIMITS: StorageSizeLimits = {
   // 单个值的最大大小：1MB
   MAX_VALUE_SIZE: 1024 * 1024,
   // 单个键的最大长度
   MAX_KEY_LENGTH: 200,
   // 存储键的最大长度
   MAX_STORAGE_KEY_LENGTH: 100,
-} as const
+}
 
 // 清理策略
-export const CLEANUP_STRATEGIES = {
+export const CLEANUP_STRATEGIES: CleanupStrategies = {
   // 立即清理
   IMMEDIATE: 'immediate',
   // 延迟清理
   DEFERRED: 'deferred',
   // 手动清理
   MANUAL: 'manual',
-} as const
+}
 
 // 日志级别
-export const LOG_LEVELS = {
+export const LOG_LEVELS: LogLevels = {
   ERROR: 'error',
   WARN: 'warn',
   INFO: 'info',
   DEBUG: 'debug',
-} as const
+}
 
 // 获取当前时间戳
 export function getCurrentTimestamp(): number {
@@ -116,7 +158,7 @@ export function getCurrentISOString(): string {
 // 检查时间是否过期
 export function isExpired(expireTime: string | number): boolean {
   const now = getCurrentTimestamp()
-  const expire = typeof expireTime === 'string' ? new Date(expireTime).getTime() : expireTime
+  const expire = typeof expireTime == 'string' ? new Date(expireTime).getTime() : expireTime
 
   return now > expire
 }
@@ -126,7 +168,7 @@ export function formatExpireTime(
   expireTime: number,
   format: 'iso' | 'timestamp' = 'timestamp'
 ): string | number {
-  if (format === 'iso') {
+  if (format == 'iso') {
     return new Date(expireTime).toISOString()
   }
   return expireTime
@@ -134,7 +176,7 @@ export function formatExpireTime(
 
 // 解析过期时间
 export function parseExpireTime(expireTime: string | number): number {
-  if (typeof expireTime === 'string') {
+  if (typeof expireTime == 'string') {
     return new Date(expireTime).getTime()
   }
   return expireTime
@@ -186,7 +228,7 @@ export function setStorageData(key: string, data: any): Promise<boolean> {
   })
 }
 
-export function getStorageData(key: string): Promise<any> {
+export function getStorageData(key: string): Promise<any | null> {
   return new Promise((resolve) => {
     try {
       uni.getStorage({
@@ -217,7 +259,8 @@ export function removeStorageData(key: string): Promise<boolean> {
 // 安全的JSON解析
 export function safeJSONParse<T = any>(jsonString: string, defaultValue: T): T {
   try {
-    return JSON.parse(jsonString)
+    const parsed = JSON.parse(jsonString)
+    return parsed != null ? (parsed as T) : defaultValue
   } catch {
     return defaultValue
   }

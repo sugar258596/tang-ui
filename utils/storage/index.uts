@@ -8,7 +8,6 @@ import type {
   StorageOptions,
   StorageData,
   StorageItemValue,
-  StorageResult,
   StoragePromise,
   StorageStats,
   StorageEvent,
@@ -36,12 +35,23 @@ import {
  */
 class CustomStorage {
   private options: StorageOptions
-  private listeners: Set<StorageListener> = new Set()
-  private cleanupTimer?: number
+  private listeners: Set<StorageListener<any>> = new Set()
+  private cleanupTimer: number | null = null
   private readonly MAIN_STORAGE_KEY: string // 统一的主存储键
 
-  constructor(options: StorageOptions = {}) {
-    this.options = { ...DEFAULT_STORAGE_OPTIONS, ...options }
+  constructor(options: StorageOptions | null) {
+    const merged = new UTSJSONObject()
+    const defaults = DEFAULT_STORAGE_OPTIONS as UTSJSONObject
+    for (const key in defaults) {
+      merged[key] = defaults[key]
+    }
+    if (options != null) {
+      const opts = options as UTSJSONObject
+      for (const key in opts) {
+        merged[key] = opts[key]
+      }
+    }
+    this.options = merged as StorageOptions
 
     // 设置统一的主存储键
     this.MAIN_STORAGE_KEY = this.options.prefix + getMainStorageKey()
@@ -76,7 +86,7 @@ class CustomStorage {
    * @param value 存储值
    * @param expireTime 过期时间（毫秒时间戳）
    */
-  async set<T = any>(storageKey: string, value: T, expireTime?: number): StoragePromise<T> {
+  async set<T = any>(storageKey: string, value: T, expireTime: number | null = null): StoragePromise<T> {
     try {
       // 参数验证
       if (!this.validateStorageKey(storageKey)) {
@@ -84,8 +94,10 @@ class CustomStorage {
       }
 
       // 计算过期时间
-      const finalExpireTime =
-        expireTime != null ? expireTime : getCurrentTimestamp() + this.options.defaultExpireTime
+      let finalExpireTime = getCurrentTimestamp() + this.options.defaultExpireTime
+      if (expireTime != null) {
+        finalExpireTime = expireTime as number
+      }
 
       // 获取现有的统一存储数据
       const existingData = await this.getUnifiedStorageData()
@@ -136,7 +148,7 @@ class CustomStorage {
    */
   private async getUnifiedStorageData(): Promise<StorageData> {
     const rawData = await getStorageData(this.MAIN_STORAGE_KEY)
-    if (rawData === null || rawData === undefined || rawData === '') {
+    if (rawData == null || rawData == '') {
       return this.createStorageData(getCurrentTimestamp() + this.options.defaultExpireTime)
     }
 
@@ -168,7 +180,7 @@ class CustomStorage {
       const item = storageData[storageKey]
 
       // 类型检查：确保是StorageItemValue类型
-      if (typeof item === 'string' || typeof item === 'number') {
+      if (typeof item == 'string' || typeof item == 'number') {
         return { success: false, error: '存储数据格式错误' }
       }
 
@@ -205,7 +217,7 @@ class CustomStorage {
    * 删除存储数据 - Promise版本
    * @param storageKey 存储键（可选，不传则清空所有数据）
    */
-  async remove(storageKey?: string): StoragePromise<boolean> {
+  async remove(storageKey: string | null = null): StoragePromise<boolean> {
     try {
       if (storageKey == null || storageKey == '') {
         // 删除整个统一存储
@@ -225,7 +237,7 @@ class CustomStorage {
       if (storageData[storageKey] != null) {
         const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
         for (const key in storageData) {
-          if (key !== storageKey && key !== 'expireTime') {
+          if (key != storageKey && key != 'expireTime') {
             nextStorageData[key] = storageData[key]
           }
         }
@@ -233,11 +245,11 @@ class CustomStorage {
         // 如果没有其他存储键了，删除整个统一存储
         const remainingKeys: string[] = []
         for (const key in nextStorageData) {
-          if (key !== 'expireTime') {
+          if (key != 'expireTime') {
             remainingKeys.push(key)
           }
         }
-        if (remainingKeys.length === 0) {
+        if (remainingKeys.length == 0) {
           await removeStorageData(this.MAIN_STORAGE_KEY)
         } else {
           await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
@@ -266,23 +278,24 @@ class CustomStorage {
    */
   private validateStorageKey(storageKey: string): boolean {
     return (
-      typeof storageKey === 'string' &&
+      typeof storageKey == 'string' &&
       storageKey.length > 0 &&
       storageKey.length <= SIZE_LIMITS.MAX_STORAGE_KEY_LENGTH &&
-      storageKey !== 'expireTime'
+      storageKey != 'expireTime'
     ) // 保留字段
   }
 
   /**
    * 触发事件
    */
-  private emitEvent(event: StorageEvent): void {
-    this.listeners.forEach((listener) => {
+  private emitEvent(event: StorageEvent<any>): void {
+    this.listeners.forEach((listener : StorageListener<any>) : void => {
       try {
         listener(event)
       } catch (error) {
         console.error('存储事件监听器错误:', error)
       }
+      return
     })
   }
 
@@ -290,21 +303,23 @@ class CustomStorage {
    * 启动自动清理
    */
   private startAutoCleanup(): void {
+    this.scheduleAutoCleanup()
+  }
+
+  private scheduleAutoCleanup(): void {
     // uni-app x 中使用 setTimeout 模拟 setInterval
-    const scheduleCleanup = () => {
-      this.cleanupTimer = setTimeout(() => {
-        this.cleanup()
-        scheduleCleanup() // 递归调用实现循环
-      }, this.options.cleanupInterval)
-    }
-    scheduleCleanup()
+    this.cleanupTimer = setTimeout(() : void => {
+      this.cleanup()
+      this.scheduleAutoCleanup()
+      return
+    }, this.options.cleanupInterval)
   }
 
   /**
    * 检查存储键是否存在 - Promise版本
    */
   async has(storageKey: string): Promise<boolean> {
-    const result = await this.get(storageKey)
+    const result = await this.get<any>(storageKey)
     return result.success
   }
 
@@ -316,7 +331,7 @@ class CustomStorage {
       const storageData = await this.getUnifiedStorageData()
       const keys: string[] = []
       for (const key in storageData) {
-        if (key !== 'expireTime') {
+        if (key != 'expireTime') {
           keys.push(key)
         }
       }
@@ -331,39 +346,50 @@ class CustomStorage {
    */
   getAllKeys(): string[] {
     // 检查统一主键是否存在
-    const exists = getStorageData(this.MAIN_STORAGE_KEY)
-    return exists !== null && exists !== undefined && exists !== '' ? [this.MAIN_STORAGE_KEY] : []
+    const exists = uni.getStorageSync(this.MAIN_STORAGE_KEY)
+    return exists != null && exists != '' ? [this.MAIN_STORAGE_KEY] : []
   }
 
   /**
    * 批量设置数据
    */
-  setBatch(items: UTSJSONObject[]): StorageResult<boolean> {
+  async setBatch(items: UTSJSONObject[]): StoragePromise<boolean> {
     const results: boolean[] = []
 
     for (const item of items) {
-      const result = this.set(item.storageKey, item.value, item.expireTime)
+      const storageKey = item.get('storageKey') as string | null
+      const value = item.get('value')
+      const expireTime = item.get('expireTime') as number | null
+      if (storageKey == null || storageKey == '') {
+        results.push(false)
+        continue
+      }
+      const key = storageKey as string
+      const result = await this.set<any>(key, value as any, expireTime)
       results.push(result.success)
     }
 
-    const allSuccess = results.every((r) => r)
-    return {
-      success: allSuccess,
-      value: allSuccess,
-      error: allSuccess ? undefined : '部分批量操作失败',
+    let allSuccess = true
+    results.forEach((value : boolean) : void => {
+      if (!value) allSuccess = false
+      return
+    })
+    if (allSuccess) {
+      return { success: true, value: true }
     }
+    return { success: false, value: false, error: '部分批量操作失败' }
   }
 
   /**
    * 批量获取数据
    */
-  getBatch<T = any>(storageKeys: string[]): StorageResult<T[]> {
+  async getBatch<T = any>(storageKeys: string[]): StoragePromise<T[]> {
     const results: T[] = []
 
     for (const storageKey of storageKeys) {
-      const result = this.get<T>(storageKey)
-      if (result.success && result.value !== undefined) {
-        results.push(result.value)
+      const result = await this.get<T>(storageKey)
+      if (result.success && result.value != null) {
+        results.push(result.value as T)
       }
     }
 
@@ -373,7 +399,7 @@ class CustomStorage {
   /**
    * 清理过期数据 - Promise版本
    */
-  async cleanup(): StoragePromise {
+  async cleanup(): StoragePromise<number> {
     let cleanedCount = 0
 
     try {
@@ -392,14 +418,11 @@ class CustomStorage {
       // 检查各个存储键的过期时间
       const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
       for (const storageKey in storageData) {
-        if (storageKey !== 'expireTime') {
+        if (storageKey != 'expireTime') {
           const item = storageData[storageKey]
-          if (
-            typeof item === 'object' &&
-            item !== null &&
-            'expireTime' in item &&
-            isExpired((item as StorageItemValue).expireTime)
-          ) {
+          const itemObject = item != null ? (item as UTSJSONObject) : null
+          const itemExpireTime = itemObject != null ? (itemObject.get('expireTime') as string | number | null) : null
+          if (itemExpireTime != null && isExpired(itemExpireTime)) {
             hasChanges = true
             cleanedCount++
           } else {
@@ -412,11 +435,11 @@ class CustomStorage {
       if (hasChanges) {
         const remainingKeys: string[] = []
         for (const key in nextStorageData) {
-          if (key !== 'expireTime') {
+          if (key != 'expireTime') {
             remainingKeys.push(key)
           }
         }
-        if (remainingKeys.length === 0) {
+        if (remainingKeys.length == 0) {
           await removeStorageData(this.MAIN_STORAGE_KEY)
         } else {
           await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
@@ -463,9 +486,9 @@ class CustomStorage {
     let validKeys = 0
 
     try {
-      const rawData = getStorageData(this.MAIN_STORAGE_KEY)
+      const rawData = uni.getStorageSync(this.MAIN_STORAGE_KEY)
 
-      if (rawData !== null && rawData !== undefined && rawData !== '') {
+      if (rawData != null && rawData != '') {
         const rawDataString = rawData as string
         totalSize = rawDataString.length
         const storageData = safeJSONParse<StorageData>(rawDataString, this.createStorageData(0))
@@ -482,7 +505,7 @@ class CustomStorage {
         // 统计存储键数量
         const storageKeys: string[] = []
         for (const key in storageData) {
-          if (key !== 'expireTime') {
+          if (key != 'expireTime') {
             storageKeys.push(key)
           }
         }
@@ -506,14 +529,14 @@ class CustomStorage {
   /**
    * 添加事件监听器
    */
-  addEventListener(listener: StorageListener): void {
+  addEventListener(listener: StorageListener<any>): void {
     this.listeners.add(listener)
   }
 
   /**
    * 移除事件监听器
    */
-  removeEventListener(listener: StorageListener): void {
+  removeEventListener(listener: StorageListener<any>): void {
     this.listeners.delete(listener)
   }
 
@@ -521,9 +544,9 @@ class CustomStorage {
    * 销毁存储实例
    */
   destroy(): void {
-    if (this.cleanupTimer) {
-      clearTimeout(this.cleanupTimer)
-      this.cleanupTimer = undefined
+    if (this.cleanupTimer != null) {
+      clearTimeout(this.cleanupTimer as number)
+      this.cleanupTimer = null
     }
 
     this.listeners.clear()
@@ -531,72 +554,7 @@ class CustomStorage {
   }
 }
 
-// 创建默认存储实例
-const defaultStorage = new CustomStorage()
-
-// 导出便捷方法 - Promise版本
-export function setStorage<T = any>(
-  storageKey: string,
-  value: T,
-  expireTime?: number
-): StoragePromise<T> {
-  return defaultStorage.set<T>(storageKey, value, expireTime)
-}
-
-/** 获取存储项 */
-export function getStorage<T = any>(storageKey: string): StoragePromise<T> {
-  return defaultStorage.get<T>(storageKey)
-}
-
-/** 获取存储项 */
-export const removeStorage = (storageKey?: string): StoragePromise<boolean> => {
-  return defaultStorage.remove(storageKey)
-}
-
-/** 检查存储项是否存在 */
-export const hasStorage = (storageKey: string): Promise<boolean> => {
-  return defaultStorage.has(storageKey)
-}
-
-/** 清空存储 */
-export const clearStorage = (): StoragePromise<boolean> => {
-  return defaultStorage.clear()
-}
-
-/** 获取存储键列表 */
-export const getStorageKeys = (): Promise<string[]> => {
-  return defaultStorage.getKeys()
-}
-
-/** 获取所有存储键列表 */
-export const getAllStorageKeys = (): string[] => {
-  return defaultStorage.getAllKeys()
-}
-
-/** 获取存储统计信息 */
-export const getStorageStats = (): StorageStats => {
-  return defaultStorage.getStats()
-}
-
-/** 清理存储 */
-export const cleanupStorage = (): StoragePromise => {
-  return defaultStorage.cleanup()
-}
-
-/** 批量设置存储项 */
-export const setBatchStorage = (items: UTSJSONObject[]): StorageResult<boolean> => {
-  return defaultStorage.setBatch(items)
-}
-
-/** 批量获取存储项 */
-export function getBatchStorage<T = any>(storageKeys: string[]): StorageResult<T[]> {
-  return defaultStorage.getBatch<T>(storageKeys)
-}
-
 // 导出类和类型
 export { CustomStorage }
 export type * from './types'
 export * from './config'
-
-// 默认导出
-export default defaultStorage

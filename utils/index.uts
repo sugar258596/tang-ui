@@ -1,19 +1,6 @@
 export * from './functions/index.uts'
 export * from './request/index.uts'
 
-export {
-  CustomStorage,
-  cleanupStorage,
-  clearStorage as clearCustomStorage,
-  getAllStorageKeys,
-  getBatchStorage,
-  getStorage as getCustomStorage,
-  getStorageKeys,
-  getStorageStats,
-  hasStorage as hasCustomStorage,
-  removeStorage as removeCustomStorage,
-  setBatchStorage,
-  setStorage as setCustomStorage,
-} from './storage/index.uts'
+export { CustomStorage } from './storage/index.uts'
 
 export type * from './storage/types.uts'

@@ -14,19 +14,19 @@ export type StorageData = UTSJSONObject
 // 存储配置选项
 export type StorageOptions = {
   // 默认过期时间（毫秒）
-  defaultExpireTime?: number
+  defaultExpireTime: number
   // 存储类型 - uni-app x 只支持 sync 异步存储
-  storageType?: 'sync'
+  storageType: 'sync'
   // 是否自动清理过期数据
-  autoCleanup?: boolean
+  autoCleanup: boolean
   // 清理间隔（毫秒）
-  cleanupInterval?: number
+  cleanupInterval: number
   // 存储前缀
-  prefix?: string
+  prefix: string
   // 是否启用压缩
-  compress?: boolean
+  compress: boolean
   // 最大存储大小（字节）
-  maxSize?: number
+  maxSize: number
 }
 
 // 存储操作结果
@@ -74,9 +74,7 @@ export type StorageEvent<T = any> = {
 }
 
 // 存储监听器
-export type StorageListener<T = any> = {
-  (event: StorageEvent<T>): void
-}
+export type StorageListener<T = any> = (event: StorageEvent<T>) => void
 
 // 存储查询条件
 export type StorageQuery = {

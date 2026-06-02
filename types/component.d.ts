@@ -1,4 +1,4 @@
-import type { DefineComponent } from 'vue';
+import type { DefineComponent } from "vue";
 
 declare const component: DefineComponent<any, any, any>;
 

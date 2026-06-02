@@ -12,8 +12,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const value = ref('option1')
+import { ref } from "vue";
+const value = ref("option1");
 </script>
 ```
 
@@ -23,13 +23,13 @@ const value = ref('option1')
 
 ```vue
 <template>
-  <TRadioButton 
-    v-model="value" 
+  <TRadioButton
+    v-model="value"
     :options="[
       { label: '选项一', value: 'option1' },
       { label: '选项二', value: 'option2' },
-      { label: '选项三', value: 'option3' }
-    ]" 
+      { label: '选项三', value: 'option3' },
+    ]"
   />
 </template>
 ```
@@ -44,16 +44,20 @@ const value = ref('option1')
 
 ```vue
 <TRadioButton v-model="value" value="small" size="small">小尺寸</TRadioButton>
-<TRadioButton v-model="value" value="medium" size="medium">中等尺寸</TRadioButton>
+<TRadioButton
+  v-model="value"
+  value="medium"
+  size="medium"
+>中等尺寸</TRadioButton>
 <TRadioButton v-model="value" value="large" size="large">大尺寸</TRadioButton>
 ```
 
 ## 自定义颜色
 
 ```vue
-<TRadioButton 
-  v-model="value" 
-  value="option1" 
+<TRadioButton
+  v-model="value"
+  value="option1"
   activeColor="#f56c6c"
   inactiveColor="#909399"
 >
@@ -63,32 +67,32 @@ const value = ref('option1')
 
 ## Props
 
-| 参数 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| modelValue (v-model) | 绑定值 | `string \| number` | - |
-| value | 单选按钮的值 | `string \| number` | - |
-| label | 显示的标签文本 | `string` | - |
-| options | 选项组模式的选项列表 | `FormOption[]` | `[]` |
-| size | 按钮尺寸 | `'small' \| 'medium' \| 'large'` | `'medium'` |
-| activeColor | 激活状态颜色 | `string` | `'#00bba7'` |
-| inactiveColor | 非激活状态颜色 | `string` | `'#666666'` |
-| disabled | 是否禁用 | `boolean` | `false` |
-| checked | 是否选中（仅单个按钮模式） | `boolean` | `false` |
-| name | 原生 name 属性 | `string` | - |
+| 参数                 | 说明                       | 类型                             | 默认值      |
+| -------------------- | -------------------------- | -------------------------------- | ----------- |
+| modelValue (v-model) | 绑定值                     | `string \| number`               | -           |
+| value                | 单选按钮的值               | `string \| number`               | -           |
+| label                | 显示的标签文本             | `string`                         | -           |
+| options              | 选项组模式的选项列表       | `FormOption[]`                   | `[]`        |
+| size                 | 按钮尺寸                   | `'small' \| 'medium' \| 'large'` | `'medium'`  |
+| activeColor          | 激活状态颜色               | `string`                         | `'#00bba7'` |
+| inactiveColor        | 非激活状态颜色             | `string`                         | `'#666666'` |
+| disabled             | 是否禁用                   | `boolean`                        | `false`     |
+| checked              | 是否选中（仅单个按钮模式） | `boolean`                        | `false`     |
+| name                 | 原生 name 属性             | `string`                         | -           |
 
 ## Events
 
-| 事件名 | 说明 | 回调参数 |
-|--------|------|----------|
+| 事件名 | 说明             | 回调参数                    |
+| ------ | ---------------- | --------------------------- |
 | change | 选中值改变时触发 | `(value: string \| number)` |
 
 ## FormOption 类型
 
 ```typescript
 type FormOption = {
-  label: string
-  value: string | number
-}
+  label: string;
+  value: string | number;
+};
 ```
 
 ## 在 TForm 中使用
@@ -101,17 +105,17 @@ TRadioButton 可以在 TForm 组件中使用：
 <script setup>
 const schemas = [
   {
-    field: 'gender',
-    label: '性别',
-    component: 'Radio',
+    field: "gender",
+    label: "性别",
+    component: "Radio",
     required: true,
     componentProps: {
       options: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' }
-      ]
-    }
-  }
-]
+        { label: "男", value: "male" },
+        { label: "女", value: "female" },
+      ],
+    },
+  },
+];
 </script>
 ```

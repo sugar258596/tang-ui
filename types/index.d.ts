@@ -1,18 +1,24 @@
-import type { App, ComputedRef, Ref } from 'vue';
-import type { DefineComponent } from 'vue';
+import type { App, ComputedRef, Ref } from "vue";
+import type { DefineComponent } from "vue";
 
-declare module 'tang-ui-x/components/*' {
+declare module "tang-ui-x/components/*" {
   const component: DefineComponent<any, any, any>;
   export default component;
 }
 
-declare module 'tang-ui-x/components/*/index.uvue' {
+declare module "tang-ui-x/components/*/index.uvue" {
   const component: DefineComponent<any, any, any>;
   export default component;
 }
 
-export type ComponentType = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
-export type PositionType = 'top' | 'center' | 'bottom';
+export type ComponentType =
+  | "default"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info";
+export type PositionType = "top" | "center" | "bottom";
 
 export interface ToastOptions {
   message: string;
@@ -54,7 +60,7 @@ export interface ModularLocaleMessages {
   [moduleName: string]: Record<string, string>;
 }
 
-export type LocaleCode = 'zh-CN' | 'en-US' | 'zh-TW' | string;
+export type LocaleCode = "zh-CN" | "en-US" | "zh-TW" | string;
 export type TranslateParams = Record<string, string | number>;
 
 export interface I18nConfig {
@@ -105,7 +111,11 @@ export interface ModalController {
   show: (options: ModalOptions) => Promise<boolean>;
   confirm: (content: string, title?: string) => Promise<boolean>;
   alert: (content: string, title?: string) => Promise<boolean>;
-  prompt: (title: string, placeholder?: string, defaultValue?: string) => Promise<string | null>;
+  prompt: (
+    title: string,
+    placeholder?: string,
+    defaultValue?: string,
+  ) => Promise<string | null>;
   loading: (title?: string, mask?: boolean) => () => void;
   actionSheet: (items: string[], title?: string) => Promise<number>;
   close: () => void;
@@ -113,7 +123,15 @@ export interface ModalController {
   getQueueLength: () => number;
 }
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT';
+export type HttpMethod =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "OPTIONS"
+  | "HEAD"
+  | "TRACE"
+  | "CONNECT";
 
 export interface HttpInitOptions {
   baseURL: string;
@@ -136,7 +154,10 @@ export interface HttpRequestOptions {
   isTotal?: boolean;
 }
 
-export type HttpRequestExtraOptions = Omit<HttpRequestOptions, 'url' | 'data' | 'method'>;
+export type HttpRequestExtraOptions = Omit<
+  HttpRequestOptions,
+  "url" | "data" | "method"
+>;
 
 export interface ResponseData<T = any> {
   code: number;
@@ -159,12 +180,36 @@ export interface HttpInterceptors {
 export class HttpRequest {
   constructor(options: HttpInitOptions);
   setInterceptors(interceptors: HttpInterceptors): void;
-  get<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
-  post<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
-  put<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
-  delete<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
-  upload<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
-  postFormData<T>(url: string, data?: Record<string, any> | null, options?: HttpRequestOptions | null): Promise<T>;
+  get<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
+  post<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
+  put<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
+  delete<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
+  upload<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
+  postFormData<T>(
+    url: string,
+    data?: Record<string, any> | null,
+    options?: HttpRequestOptions | null,
+  ): Promise<T>;
 }
 
 export interface ValidationResult {
@@ -172,16 +217,33 @@ export interface ValidationResult {
   message: string;
 }
 
-export function copyToClipboard(text: string, success?: () => void, fail?: (error?: any) => void): void;
+export function copyToClipboard(
+  text: string,
+  success?: () => void,
+  fail?: (error?: any) => void,
+): void;
 export function copyToClipboardAsync(text: string): Promise<void>;
 export function formatChatTime(date: Date): string;
-export function debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void;
-export function throttle(func: (...args: any[]) => void, delay: number): (...args: any[]) => void;
+export function debounce(
+  func: (...args: any[]) => void,
+  delay: number,
+): (...args: any[]) => void;
+export function throttle(
+  func: (...args: any[]) => void,
+  delay: number,
+): (...args: any[]) => void;
 export function formatNumber(num: number | string): string;
 export function formatBytes(bytes: number, decimals?: number): string;
-export function get(obj: any, path: string, defaultValue?: any | null): any | null;
+export function get(
+  obj: any,
+  path: string,
+  defaultValue?: any | null,
+): any | null;
 export function deepClone<T>(obj: T): T;
-export function toQueryString(obj: Record<string, any>, prefix?: string): string;
+export function toQueryString(
+  obj: Record<string, any>,
+  prefix?: string,
+): string;
 export function truncate(str: string, length: number): string;
 export function randomString(length?: number): string;
 export function generateUUID(): string;
@@ -201,23 +263,49 @@ export function clearStorage(): boolean;
 export function validatePhone(phone: string): ValidationResult;
 export function validateEmail(email: string): ValidationResult;
 export function validateVerifyCode(code: string): ValidationResult;
-export function validatePassword(password: string, minLen?: number, maxLen?: number): ValidationResult;
-export function validateUsername(username: string, minLen?: number, maxLen?: number): ValidationResult;
+export function validatePassword(
+  password: string,
+  minLen?: number,
+  maxLen?: number,
+): ValidationResult;
+export function validateUsername(
+  username: string,
+  minLen?: number,
+  maxLen?: number,
+): ValidationResult;
 export function validateIdCard(idCard: string): ValidationResult;
 export function validateBankCard(bankCard: string): ValidationResult;
 export function validateUrl(url: string): ValidationResult;
 export function validateChineseName(name: string): ValidationResult;
-export function validateRequired(value: any, fieldName?: string): ValidationResult;
+export function validateRequired(
+  value: any,
+  fieldName?: string,
+): ValidationResult;
 export function validateNumberRange(
   value: number | null,
   min: number,
   max: number,
-  fieldName?: string
+  fieldName?: string,
 ): ValidationResult;
-export function validateLengthRange(value: any, min: number, max: number, fieldName?: string): ValidationResult;
-export function validateBatch(validations: ValidationResult[]): ValidationResult;
-export function validatePattern(value: string, pattern: RegExp, message: string): ValidationResult;
-export function validateEquality(value1: any, value2: any, fieldName?: string): ValidationResult;
+export function validateLengthRange(
+  value: any,
+  min: number,
+  max: number,
+  fieldName?: string,
+): ValidationResult;
+export function validateBatch(
+  validations: ValidationResult[],
+): ValidationResult;
+export function validatePattern(
+  value: string,
+  pattern: RegExp,
+  message: string,
+): ValidationResult;
+export function validateEquality(
+  value1: any,
+  value2: any,
+  fieldName?: string,
+): ValidationResult;
 export function validateDate(date: string, format?: string): ValidationResult;
 export function getFirstErrorMessage(validations: ValidationResult[]): string;
 export function validatePostalCode(postalCode: string): ValidationResult;
@@ -234,7 +322,7 @@ export type StorageData = Record<string, any>;
 
 export type StorageOptions = {
   defaultExpireTime?: number;
-  storageType?: 'sync';
+  storageType?: "sync";
   autoCleanup?: boolean;
   cleanupInterval?: number;
   prefix?: string;
@@ -266,7 +354,7 @@ export type StorageStats = {
   validKeys: number;
 };
 
-export type StorageEventType = 'set' | 'get' | 'remove' | 'clear' | 'expire';
+export type StorageEventType = "set" | "get" | "remove" | "clear" | "expire";
 
 export type StorageEvent<T = any> = {
   type: StorageEventType;
@@ -283,8 +371,8 @@ export type StorageQuery = {
   storageKeyPattern?: string;
   onlyValid?: boolean;
   limit?: number;
-  sortBy?: 'key' | 'storageKey' | 'expireTime' | 'createTime';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "key" | "storageKey" | "expireTime" | "createTime";
+  sortOrder?: "asc" | "desc";
 };
 
 export type StorageExportData = {
@@ -298,16 +386,25 @@ export type StorageMigration = {
   migrate: (data: any) => StorageData;
 };
 
-export type UniStorageData = Record<string, any> | string | number | boolean | null;
+export type UniStorageData =
+  | Record<string, any>
+  | string
+  | number
+  | boolean
+  | null;
 
 export type UniStorageOptions = {
   encrypt?: boolean;
-  dataType?: 'json' | 'string' | 'number' | 'boolean';
+  dataType?: "json" | "string" | "number" | "boolean";
 };
 
 export class CustomStorage {
   constructor(options?: StorageOptions);
-  set<T = any>(storageKey: string, value: T, expireTime?: number): StoragePromise<T>;
+  set<T = any>(
+    storageKey: string,
+    value: T,
+    expireTime?: number,
+  ): StoragePromise<T>;
   get<T = any>(storageKey: string): StoragePromise<T>;
   remove(storageKey?: string): StoragePromise<boolean>;
   has(storageKey: string): Promise<boolean>;
@@ -323,24 +420,39 @@ export class CustomStorage {
   destroy(): void;
 }
 
-export function setCustomStorage<T = any>(storageKey: string, value: T, expireTime?: number): StoragePromise<T>;
-export function getCustomStorage<T = any>(storageKey: string): StoragePromise<T>;
-export function removeCustomStorage(storageKey?: string): StoragePromise<boolean>;
+export function setCustomStorage<T = any>(
+  storageKey: string,
+  value: T,
+  expireTime?: number,
+): StoragePromise<T>;
+export function getCustomStorage<T = any>(
+  storageKey: string,
+): StoragePromise<T>;
+export function removeCustomStorage(
+  storageKey?: string,
+): StoragePromise<boolean>;
 export function hasCustomStorage(storageKey: string): Promise<boolean>;
 export function clearCustomStorage(): StoragePromise<boolean>;
 export function getStorageKeys(): Promise<string[]>;
 export function getAllStorageKeys(): string[];
 export function getStorageStats(): StorageStats;
 export function cleanupStorage(): StoragePromise;
-export function setBatchStorage(items: Record<string, any>[]): StorageResult<boolean>;
-export function getBatchStorage<T = any>(storageKeys: string[]): StorageResult<T[]>;
+export function setBatchStorage(
+  items: Record<string, any>[],
+): StorageResult<boolean>;
+export function getBatchStorage<T = any>(
+  storageKeys: string[],
+): StorageResult<T[]>;
 
 export function useTheme(): ThemeController;
 export function getThemeInstance(): ThemeController;
 
 export function useToast(): ToastController;
 export function getToastInstance(): ToastController;
-export function showToast(options: string | ToastOptions, duration?: number | null): void;
+export function showToast(
+  options: string | ToastOptions,
+  duration?: number | null,
+): void;
 export function showSuccess(message: string, duration?: number | null): void;
 export function showError(message: string, duration?: number | null): void;
 export function showWarning(message: string, duration?: number | null): void;
@@ -354,17 +466,26 @@ export function getModalInstance(): ModalController;
 export function showConfirm(content: string, title?: string): Promise<boolean>;
 export function showAlert(content: string, title?: string): Promise<boolean>;
 export function showLoading(title?: string, mask?: boolean): () => void;
-export function showActionSheet(items: string[], title?: string): Promise<number>;
+export function showActionSheet(
+  items: string[],
+  title?: string,
+): Promise<number>;
 
 export function useI18n(): UseI18nReturn;
 export function setLanguage(locale: string): boolean;
-export function registerLocale(locale: string, messages: ModularLocaleMessages): void;
+export function registerLocale(
+  locale: string,
+  messages: ModularLocaleMessages,
+): void;
 export function registerLocaleWithMode(
   locale: string,
   messages: ModularLocaleMessages,
-  mode: 'merge' | 'replace'
+  mode: "merge" | "replace",
 ): void;
-export function replaceLocale(locale: string, messages: ModularLocaleMessages): void;
+export function replaceLocale(
+  locale: string,
+  messages: ModularLocaleMessages,
+): void;
 export function getCurrentLocale(): string;
 export function getAvailableLocales(): string[];
 

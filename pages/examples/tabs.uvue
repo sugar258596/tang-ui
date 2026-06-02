@@ -77,6 +77,14 @@ const chineseKeyTabs: TabItem[] = [
 ]
 const activeTab8 = ref<string | number>('首页')
 
+// 数字 key 场景
+const numberKeyTabs: TabItem[] = [
+  { key: 0, label: '全部' },
+  { key: 1, label: '待处理' },
+  { key: 2, label: '已完成' }
+]
+const activeTab9 = ref<string | number>(0)
+
 /**
  * 标签切换事件处理
  */
@@ -338,6 +346,26 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         </Tabs>
 
         <text class="current-value">当前选中: {{ activeTab8 }}</text>
+      </TCard>
+    </view>
+
+    <!-- 数字 key -->
+    <view class="example-section">
+      <TCard title="数字 Key" description="key 为数字 0、1、2">
+        <Tabs
+          :items="numberKeyTabs"
+          v-model="activeTab9"
+          @change="handleTabChange"
+        >
+          <template #default="{ activeKey }">
+            <view class="tab-content">
+              <text class="content-text">当前激活 key: {{ activeKey }}</text>
+              <text class="content-desc">这个示例用于验证 key 为数字 0 时可以正常默认选中和切换。</text>
+            </view>
+          </template>
+        </Tabs>
+
+        <text class="current-value">当前选中: {{ activeTab9 }}</text>
       </TCard>
     </view>
 
