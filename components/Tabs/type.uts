@@ -10,7 +10,6 @@ export type TabItem = {
   label: string
   disabled?: boolean
   badge?: number | string
-  icon?: string
 }
 
 /**
@@ -64,6 +63,12 @@ export type TTabsProps = {
    * @default false
    */
   centered?: boolean
+
+  /**
+   * 是否均分标签宽度
+   * @default false
+   */
+  equal?: boolean
 
   /**
    * 是否可滑动

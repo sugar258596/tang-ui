@@ -1,18 +1,44 @@
 <script setup lang="uts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
-import type { TabItem, TTabsProps } from './type.uts'
 
 type TabsModelValue = string | number | null
+
+type TabItem = {
+  key: string | number
+  label: string
+  disabled?: boolean
+  badge?: number | string
+}
+
+type TabType = 'basic' | 'card' | 'line'
+type TabPosition = 'top' | 'bottom'
+type TabSize = 'small' | 'medium' | 'large'
+
+type TabsProps = {
+  items: any[]
+  activeKey?: string | number
+  defaultActiveKey?: string | number
+  type?: TabType
+  tabPosition?: TabPosition
+  centered?: boolean
+  equal?: boolean
+  scrollable?: boolean
+  activeColor?: string
+  inactiveColor?: string
+  size?: TabSize
+  animated?: boolean
+}
 
 // v-model 绑定当前激活 key
 const model = defineModel({ default: null }) as Ref<TabsModelValue>
 
-const props = withDefaults(defineProps<TTabsProps>(), {
-  items: () => [] as Array<TabItem>,
+const props = withDefaults(defineProps<TabsProps>(), {
+  items: () => [] as any[],
   type: 'basic',
   tabPosition: 'top',
   centered: false,
+  equal: false,
   scrollable: true,
   activeColor: '#00bba7',
   inactiveColor: '#666666',
@@ -29,13 +55,109 @@ const emit = defineEmits<{
   tabClick: [key: string |number, item: TabItem]
 }>()
 
-const hasTextValue = (value: string | null): boolean => {
-  return value !== null && value !== ''
+const toTabObject = (value: any | null): UTSJSONObject => {
+  if (value == null) return new UTSJSONObject()
+  if (typeof value == 'string') {
+    const parsed = JSON.parse(value as string)
+    return parsed != null ? (parsed as UTSJSONObject) : new UTSJSONObject()
+  }
+  const text = JSON.stringify(value)
+  if (text == null || text == '') return new UTSJSONObject()
+  const parsed = JSON.parse(text)
+  return parsed != null ? (parsed as UTSJSONObject) : new UTSJSONObject()
 }
 
-const hasItemIcon = (item: TabItem): boolean => {
-  return hasTextValue(item.icon)
+const toTabArray = (value: any | null): any[] => {
+  if (value == null) return []
+  let parsed: any | null = null
+  if (typeof value == 'string') {
+    parsed = JSON.parse(value as string)
+  } else {
+    const text = JSON.stringify(value)
+    if (text == null || text == '') return []
+    parsed = JSON.parse(text)
+  }
+  return parsed != null && Array.isArray(parsed) ? (parsed as any[]) : []
 }
+
+const readTabValue = (data: UTSJSONObject, key: string): any | null => {
+  const value = data[key]
+  return value != null ? value : null
+}
+
+const readTabFirstValue = (data: UTSJSONObject, keys: string[]): any | null => {
+  let result: any | null = null
+  for (let i = 0; i < keys.length; i++) {
+    const value = readTabValue(data, keys[i])
+    if (value != null) {
+      result = value
+      break
+    }
+  }
+  return result
+}
+
+const readTabKey = (data: UTSJSONObject): string | number => {
+  const value = readTabFirstValue(data, ['key', 'Key', 'value', 'Value'])
+  if (value == null) return ''
+  if (typeof value == 'number') return value as number
+  return `${value}`
+}
+
+const readTabString = (data: UTSJSONObject, keys: string[]): string => {
+  const value = readTabFirstValue(data, keys)
+  return value != null ? `${value}` : ''
+}
+
+const readTabBoolean = (data: UTSJSONObject, keys: string[]): boolean | null => {
+  const value = readTabFirstValue(data, keys)
+  if (value == null) return null
+  if (typeof value == 'boolean') return value as boolean
+  const text = `${value}`
+  return text == 'true' || text == '1'
+}
+
+const readTabBadge = (data: UTSJSONObject): number | string | null => {
+  const value = readTabFirstValue(data, ['badge', 'Badge'])
+  if (value == null) return null
+  if (typeof value == 'number') return value as number
+  return `${value}`
+}
+
+const mapTabItem = (value: any | null): TabItem => {
+  const data = toTabObject(value)
+  const result: TabItem = {
+    key: readTabKey(data),
+    label: readTabString(data, ['label', 'Label', 'title', 'Title', 'name', 'Name']),
+  }
+
+  const disabled = readTabBoolean(data, ['disabled', 'Disabled'])
+  if (disabled != null) {
+    result.disabled = disabled
+  }
+
+  const badge = readTabBadge(data)
+  if (badge != null) {
+    result.badge = badge
+  }
+
+  const icon = readTabString(data, ['icon', 'Icon'])
+  if (icon != '') {
+    result.icon = icon
+  }
+
+  return result
+}
+
+const tabItems = computed((): TabItem[] => {
+  const result: TabItem[] = []
+  const source = toTabArray(props.items)
+  source.forEach((item: any): void => {
+    result.push(mapTabItem(item))
+    return
+  })
+  return result
+})
 
 const hasItemBadge = (item: TabItem): boolean => {
   return item.badge != null && item.badge !== ''
@@ -47,14 +169,14 @@ const getDefaultKey = (): string | number => {
   if (defaultActiveKey != null) {
     return defaultActiveKey
   }
-  if (props.items.length > 0) {
-    for (let i = 0; i < props.items.length; i++) {
-      const item = props.items[i]
+  if (tabItems.value.length > 0) {
+    for (let i = 0; i < tabItems.value.length; i++) {
+      const item = tabItems.value[i]
       if (item.disabled != true) {
         return item.key
       }
     }
-    return props.items[0].key
+    return tabItems.value[0].key
   }
   return ''
 }
@@ -117,8 +239,7 @@ const getNavListClass = (isBottom: boolean): string => {
     'flex-row',
     'items-center',
     'overflow-x-auto',
-    'overflow-y-hidden',
-    'whitespace-nowrap'
+    'overflow-y-hidden'
   ]
 
   if (props.type == 'card') {
@@ -131,11 +252,19 @@ const getNavListClass = (isBottom: boolean): string => {
     classes.push('justify-center')
   }
 
+  if (props.equal) {
+    classes.push('w-full')
+  }
+
   if (isBottom) {
     classes.push('border-t', 'border-divider')
   }
 
   return classes.join(' ')
+}
+
+const getNavListStyle = (): string => {
+  return props.equal ? 'width: 100%' : ''
 }
 
 const navLabelClass = computed((): string => {
@@ -145,7 +274,7 @@ const navLabelClass = computed((): string => {
 const getNavItemClass = (item: TabItem): string => {
   const classes: string[] = [
     'relative',
-    'inline-flex',
+    'flex',
     'items-center',
     'justify-center',
     'origin-center',
@@ -195,6 +324,12 @@ const getNavItemStyle = (item: TabItem): string => {
     styles.push(`background-color: rgba(${activeColorRgb.value}, 0.1)`)
   }
 
+  if (props.equal) {
+    styles.push('flex: 1')
+    styles.push('min-width: 0')
+    styles.push(`width: ${100 / tabItems.value.length}%`)
+  }
+
   return styles.join('; ')
 }
 
@@ -240,7 +375,7 @@ const getActiveLineStyle = (item: TabItem): string => {
 }
 
 const badgeClass = computed((): string => {
-  return 'absolute flex flex-row items-center justify-center rounded-pill bg-danger px-1 text-center text-white'
+  return 'absolute flex flex-row items-center justify-center rounded-pill bg-danger px-1 text-center'
 })
 
 const badgeStyle = computed((): string => {
@@ -249,8 +384,6 @@ const badgeStyle = computed((): string => {
     'min-width: 28rpx',
     'height: 28rpx',
     'border-radius: 14rpx',
-    'font-size: 18rpx',
-    'line-height: 28rpx',
     'padding-left: 6rpx',
     'padding-right: 6rpx'
   ]
@@ -266,32 +399,34 @@ const badgeStyle = computed((): string => {
   return styles.join('; ')
 })
 
+const badgeTextStyle = computed((): string => {
+  return 'font-size: 18rpx; line-height: 28rpx'
+})
+
 </script>
 
 <template>
   <view
-    :class="containerClass"
+    :class="[containerClass, 'tabs_box']"
   >
     <scroll-view
       v-if="tabPosition === 'top'"
       ref="navListRef"
-      class="w-full whitespace-nowrap"
+      class="w-full"
       :scroll-x="true"
       :show-scrollbar="false"
     >
-      <view :class="getNavListClass(false)">
+      <view :class="getNavListClass(false)" :style="getNavListStyle()">
         <view
-          v-for="(item, index) in items"
+          v-for="(item, index) in tabItems"
           :key="item.key"
-          :class="getNavItemClass(item)"
-          :style="getNavItemStyle(item)"
           :ref="'navItem' + index"
+          :class="['tab_item', getNavItemClass(item)]"
+          :style="getNavItemStyle(item)"
           @click="handleClick(item, index, $event as UniPointerEvent)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
-
           <text
-            :class="navLabelClass"
+            :class="['tab_label',navLabelClass]"
             :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
@@ -302,7 +437,7 @@ const badgeStyle = computed((): string => {
             :class="badgeClass"
             :style="badgeStyle"
           >
-            {{ item.badge }}
+            <text class="text-white" :style="badgeTextStyle">{{ item.badge }}</text>
           </view>
 
           <view
@@ -322,22 +457,20 @@ const badgeStyle = computed((): string => {
     <scroll-view
       v-if="tabPosition === 'bottom'"
       ref="navListRef"
-      class="w-full whitespace-nowrap"
+      class="w-full"
       :scroll-x="true"
       :show-scrollbar="false"
     >
-      <view :class="getNavListClass(true)">
+      <view :class="getNavListClass(true)" :style="getNavListStyle()">
         <view
-          v-for="(item, index) in items"
+          v-for="(item, index) in tabItems"
           :key="item.key"
-          :class="getNavItemClass(item)"
+          :class="['tab_item',getNavItemClass(item)]"
           :style="getNavItemStyle(item)"
           @click="handleClick(item, index, $event as UniPointerEvent)"
         >
-          <image v-if="hasItemIcon(item)" class="mr-sm h-9 w-9 transition-all duration-300" :src="item.icon" mode="aspectFit" />
-
           <text
-            :class="navLabelClass"
+            :class="['tab_label',navLabelClass]"
             :style="getNavLabelStyle(item)"
           >
             {{ item.label }}
@@ -348,7 +481,7 @@ const badgeStyle = computed((): string => {
             :class="badgeClass"
             :style="badgeStyle"
           >
-            {{ item.badge }}
+            <text class="text-white" :style="badgeTextStyle">{{ item.badge }}</text>
           </view>
 
           <view

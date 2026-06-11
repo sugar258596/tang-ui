@@ -85,6 +85,9 @@ const numberKeyTabs: TabItem[] = [
 ]
 const activeTab9 = ref<string | number>(0)
 
+// 均分模式
+const activeTab10 = ref<string | number>('home')
+
 /**
  * 标签切换事件处理
  */
@@ -366,6 +369,28 @@ const handleTabClick = (key: string | number, item: TabItem): void => {
         </Tabs>
 
         <text class="current-value">当前选中: {{ activeTab9 }}</text>
+      </TCard>
+    </view>
+
+    <!-- 均分模式 -->
+    <view class="example-section">
+      <TCard title="均分模式" description="equal">
+        <Tabs
+          :items="basicTabs"
+          v-model="activeTab10"
+          equal
+          type="line"
+          @change="handleTabChange"
+        >
+          <template #default="{ activeKey }">
+            <view class="tab-content">
+              <text class="content-text">当前激活 key: {{ activeKey }}</text>
+              <text class="content-desc">每个标签按容器宽度均分显示。</text>
+            </view>
+          </template>
+        </Tabs>
+
+        <text class="current-value">当前选中: {{ activeTab10 }}</text>
       </TCard>
     </view>
 

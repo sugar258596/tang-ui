@@ -1,5 +1,5 @@
 <script setup lang="uts">
-import { computed } from 'vue'
+import { computed, useAttrs } from 'vue'
 import type { Ref } from 'vue'
 import TPopup from '../TPopup/index.uvue'
 import type { ActionSheetAction } from './type.uts'
@@ -25,11 +25,17 @@ const props = withDefaults(defineProps<ActionSheetViewProps>(), {
   actions: () => [] as ActionSheetAction[],
   title: '',
   description: '',
+  cancelText: '',
   closeOnClickAction: true,
   closeOnClickOverlay: true,
   customClass: '',
   customStyle: ''
 })
+
+const popupAttrs = useAttrs()
+
+const actionItemHeight = 56
+const maxActionListHeight = 400
 
 // 使用 defineModel 管理显示状态 (v-model)
 const visible = defineModel({ default: false }) as Ref<boolean>
@@ -43,8 +49,8 @@ const emit = defineEmits<{
 // 使用 i18n
 const { $t } = useI18n()
 
-const hasTextValue = (value: string | null): boolean => {
-  return value !== null && value !== ''
+const hasTextValue = (value: string | null | undefined): boolean => {
+  return value != null && value !== ''
 }
 
 const hasTitle = computed((): boolean => {
@@ -61,15 +67,20 @@ const showHeader = computed((): boolean => {
 
 // 优先使用用户传入的值，否则使用翻译
 const displayCancelText = computed((): string => {
-  // 如果用户明确传入了 cancelText（即使是空字符串），使用用户的值
-  // 否则使用翻译
-  return props.cancelText !== null && props.cancelText !== '' 
+  // 优先使用用户传入的非空 cancelText，否则使用翻译
+  return hasTextValue(props.cancelText)
     ? props.cancelText as string
     : $t('actionSheet.cancelText', {})
 })
 
 const canCloseOnClickAction = computed((): boolean => {
   return props.closeOnClickAction == true
+})
+
+const actionListStyle = computed((): string => {
+  const totalHeight = props.actions.length * actionItemHeight
+  const height = totalHeight > maxActionListHeight ? maxActionListHeight : totalHeight
+  return `height: ${height}px`
 })
 
 const getActionClass = (action: ActionSheetAction): string => {
@@ -110,22 +121,23 @@ const handleClose = (): void => {
   <TPopup
     v-model="visible"
     position="bottom"
+    height="auto"
     :show-title="false"
     :show-close="false"
     :close-on-click-overlay="closeOnClickOverlay"
     :border-radius="16"
-    height="auto"
     @close="handleClose"
+    v-bind="popupAttrs"
   >
-    <view class="t-action-sheet bg-transparent p-0" :class="customClass" :style="customStyle">
+    <view class="t-action-sheet flex min-h-0 flex-col overflow-hidden bg-transparent p-0" :class="customClass" :style="customStyle">
       <!-- 头部：标题和描述 -->
-      <view v-if="showHeader" class="t-action-sheet__header border-b border-border-soft p-4 text-center">
+      <view v-if="showHeader" class="t-action-sheet__header shrink-0 border-b border-border-soft p-4 text-center">
         <text v-if="hasTitle" class="t-action-sheet__title mb-2 text-base font-medium text-title">{{ title }}</text>
         <text v-if="hasDescription" class="t-action-sheet__description text-sm text-desc">{{ description }}</text>
       </view>
 
       <!-- 操作列表 -->
-      <view class="t-action-sheet__actions max-h-actions overflow-y-auto">
+      <scroll-view class="t-action-sheet__actions min-h-0" scroll-y :style="actionListStyle">
         <view
           v-for="(action, index) in actions"
           :key="index"
@@ -139,10 +151,10 @@ const handleClose = (): void => {
             {{ action.name }}
           </text>
         </view>
-      </view>
+      </scroll-view>
 
       <!-- 取消按钮 -->
-      <view class="t-action-sheet__cancel flex items-center justify-center border-t-8 border-action-divider p-4 text-center" @click="handleCancel">
+      <view class="t-action-sheet__cancel flex shrink-0 items-center justify-center border-t-8 border-action-divider p-4 text-center" @click="handleCancel">
         <text class="t-action-sheet__cancel-text text-base text-title">{{ displayCancelText }}</text>
       </view>
     </view>

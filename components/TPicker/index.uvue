@@ -189,9 +189,9 @@ const handleChange = (e: PickerChangeEvent): void => {
 </script>
 
 <template>
-  <view v-if="visible" class="t-picker fixed inset-0 z-9999">
+  <view v-if="visible" class="t-picker fixed top-0 right-0 bottom-0 left-0 z-9999">
     <!-- 遮罩层 -->
-    <view class="t-picker__mask absolute inset-0 bg-black/50" @click="handleMaskClick"></view>
+    <view class="t-picker__mask absolute top-0 right-0 bottom-0 left-0 bg-black/50" @click="handleMaskClick"></view>
 
     <!-- 选择器容器 -->
     <view class="t-picker__container absolute bottom-0 left-0 right-0 rounded-t-xl bg-white">

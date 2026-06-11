@@ -4,7 +4,25 @@
  * 支持 bottom、top、left、right、center 五种位置
  */
 import { computed, nextTick, ref, watch } from 'vue'
-import type { TPopupProps } from './type.uts'
+
+type PopupPosition = 'bottom' | 'top' | 'left' | 'right' | 'center'
+
+type TPopupProps = {
+	height ?: string | number
+	width ?: string | number
+	position ?: PopupPosition
+	mode ?: PopupPosition | ''
+	showTitle ?: boolean
+	title ?: string
+	showClose ?: boolean
+	safeAreaInsetTop ?: boolean
+	round ?: boolean
+	borderRadius ?: string | number
+	closeOnClickOverlay ?: boolean
+	zIndex ?: number
+	background ?: string
+	backgroundColor ?: string
+}
 
 const model = defineModel<boolean>({ default: false })
 // 内部渲染状态，用于控制 DOM 显示
@@ -16,6 +34,7 @@ const props = withDefaults(defineProps<TPopupProps>(), {
 	height: '50%',
 	width: '100%',
 	position: 'bottom',
+	mode: '',
 	showTitle: true,
 	title: '',
 	showClose: true,
@@ -24,10 +43,25 @@ const props = withDefaults(defineProps<TPopupProps>(), {
 	borderRadius: 32,
 	closeOnClickOverlay: true,
 	zIndex: 999,
-	background: 'var(--tui-surface)'
+	background: '#ffffff',
+	backgroundColor: ''
 })
 
 const titleBarHeight = 48
+
+const currentPosition = computed(() : PopupPosition => {
+	if (props.mode != null && props.mode !== '') {
+		return props.mode as PopupPosition
+	}
+	return props.position
+})
+
+const popupBackground = computed(() : string => {
+	if (props.backgroundColor != null && props.backgroundColor !== '') {
+		return props.backgroundColor
+	}
+	return props.background
+})
 
 const getSystemTopInset = () : number => {
 	const systemInfo = uni.getSystemInfoSync() as UTSJSONObject
@@ -57,7 +91,7 @@ const topSafeArea = computed(() : number => {
 		return 0
 	}
 
-	if (props.position === 'bottom' || props.position === 'center') {
+	if (currentPosition.value === 'bottom' || currentPosition.value === 'center') {
 		return 0
 	}
 
@@ -104,10 +138,10 @@ const popupStyle = computed(() : string => {
 	const styles : string[] = []
 
 	// 根据位置设置尺寸
-	if (props.position === 'left' || props.position === 'right') {
+	if (currentPosition.value === 'left' || currentPosition.value === 'right') {
 		styles.push(`width: ${popupWidth.value}`)
 		styles.push(`height: 100%`)
-	} else if (props.position === 'center') {
+	} else if (currentPosition.value === 'center') {
 		styles.push(`width: ${popupWidth.value}`)
 		styles.push(`height: ${popupHeight.value}`)
 	} else {
@@ -115,12 +149,12 @@ const popupStyle = computed(() : string => {
 		styles.push(`width: 100%`)
 	}
 
-	styles.push(`z-index: ${props.zIndex}`)
-	styles.push(`background-color: ${props.background}`)
+	styles.push(`z-index: ${props.zIndex + 1}`)
+	styles.push(`background-color: ${popupBackground.value}`)
 
 	// 根据位置设置圆角
 	if (props.round) {
-		switch (props.position) {
+		switch (currentPosition.value) {
 			case 'bottom':
 				styles.push(`border-top-left-radius: ${popupBorderRadius.value}`)
 				styles.push(`border-top-right-radius: ${popupBorderRadius.value}`)
@@ -150,7 +184,7 @@ const popupStyle = computed(() : string => {
 const popupMotionStyle = computed(() : string => {
 	const styles : string[] = []
 
-	switch (props.position) {
+	switch (currentPosition.value) {
 		case 'top':
 			styles.push(`transform: ${showOverlay.value ? 'translateY(0)' : 'translateY(-100%)'}`)
 			styles.push('transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)')
@@ -178,7 +212,39 @@ const popupMotionStyle = computed(() : string => {
 })
 
 const contentStyle = computed(() : string => {
-	const styles : string[] = []
+	const styles : string[] = [
+		'position: absolute',
+		'display: flex',
+		'flex-direction: column',
+		'overflow: hidden'
+	]
+
+	switch (currentPosition.value) {
+		case 'top':
+			styles.push('left: 0')
+			styles.push('right: 0')
+			styles.push('top: 0')
+			break
+		case 'left':
+			styles.push('left: 0')
+			styles.push('top: 0')
+			styles.push('bottom: 0')
+			break
+		case 'right':
+			styles.push('right: 0')
+			styles.push('top: 0')
+			styles.push('bottom: 0')
+			break
+		case 'center':
+			styles.push('left: 50%')
+			styles.push('top: 50%')
+			break
+		default:
+			styles.push('left: 0')
+			styles.push('right: 0')
+			styles.push('bottom: 0')
+			break
+	}
 
 	if (popupStyle.value != '') {
 		styles.push(popupStyle.value)
@@ -194,6 +260,16 @@ const contentStyle = computed(() : string => {
 const titleBarStyle = computed(() : string => {
 	const safeTop = topSafeArea.value
 	const styles : string[] = [
+		'position: relative',
+		'display: flex',
+		'align-items: center',
+		'justify-content: center',
+		'flex-shrink: 0',
+		'border-bottom-width: 1px',
+		'border-bottom-style: solid',
+		'border-bottom-color: #e5e7eb',
+		'padding-left: 16px',
+		'padding-right: 16px',
 		`height: ${titleBarHeight + safeTop}px`
 	]
 
@@ -206,62 +282,16 @@ const titleBarStyle = computed(() : string => {
 })
 
 const closeStyle = computed(() : string => {
-	return `top: ${topSafeArea.value + titleBarHeight / 2}px; transform: translateY(-50%)`
+	return `position: absolute; right: 8px; top: ${topSafeArea.value + titleBarHeight / 2}px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 9999px; transform: translateY(-50%)`
 })
 
 // 计算遮罩层样式
 const overlayStyle = computed(() : string => {
-	return `z-index: ${props.zIndex - 1}; transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+	return `position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: ${props.zIndex}; background-color: #000000; opacity: ${showOverlay.value ? '0.5' : '0'}; transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)`
 })
 
-// 计算内容动画类名
-const contentClass = computed(() => {
-	const classes : string[] = ['fixed flex flex-col overflow-hidden bg-white']
-
-	switch (props.position) {
-		case 'top':
-			classes.push('left-0 right-0 top-0')
-			break
-		case 'left':
-			classes.push('bottom-0 left-0 top-0')
-			break
-		case 'right':
-			classes.push('bottom-0 right-0 top-0')
-			break
-		case 'center':
-			classes.push('left-1/2 top-1/2')
-			break
-		default:
-			classes.push('bottom-0 left-0 right-0')
-			break
-	}
-
-	return classes.join(' ')
-})
-
-// 计算容器样式类名
-const wrapperClass = computed(() => {
-	const classes : string[] = ['flex']
-
-	switch (props.position) {
-		case 'top':
-			classes.push('items-start')
-			break
-		case 'left':
-			classes.push('justify-start')
-			break
-		case 'right':
-			classes.push('justify-end')
-			break
-		case 'center':
-			classes.push('items-center justify-center')
-			break
-		default:
-			classes.push('items-end')
-			break
-	}
-
-	return classes.join(' ')
+const wrapperStyle = computed(() : string => {
+	return `position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: ${props.zIndex}`
 })
 
 /**
@@ -315,10 +345,6 @@ const handleOverlayClick = () => {
 /**
  * 阻止事件冒泡
  */
-const stopPropagation = (_e : object) => {
-	// 阻止点击弹窗内容时触发遮罩层点击事件
-}
-
 watch(model, (newVal : boolean) => {
 	if (newVal) {
 		// 打开时立即渲染 DOM
@@ -344,44 +370,68 @@ watch(model, (newVal : boolean) => {
 </script>
 
 <template>
-  <view v-if="rendered" :class="wrapperClass">
+  <view v-if="rendered" class="t-popup" :style="wrapperStyle">
     <!-- 遮罩层 -->
     <view
-      class="fixed inset-0 overflow-hidden bg-black/50 touch-none select-none"
-      :class="{ 'opacity-0': !showOverlay, 'opacity-100': showOverlay }"
+      class="t-popup__overlay"
       :style="overlayStyle"
-      @click="handleOverlayClick"
+      @tap="handleOverlayClick"
     ></view>
 
     <!-- 弹窗主体 -->
     <view
-      :class="contentClass"
+      class="t-popup__content"
       :style="contentStyle"
-      @click="stopPropagation"
     >
       <!-- 标题栏 -->
-      <view v-if="showTitle" class="relative flex shrink-0 items-center justify-center border-b border-border px-4" :style="titleBarStyle">
-        <view class="flex flex-1 items-center justify-center">
+      <view v-if="props.showTitle" class="t-popup__title" :style="titleBarStyle">
+        <view class="t-popup__title-content">
           <slot name="title">
-            <text class="text-2 font-semibold text-primary">{{ title }}</text>
+            <text class="t-popup__title-text">{{ props.title }}</text>
           </slot>
         </view>
 
         <!-- 关闭按钮 -->
         <view
-          v-if="showClose"
-          class="absolute right-2 flex h-14 w-14 items-center justify-center rounded-full transition-colors duration-300 active:bg-black/5"
+          v-if="props.showClose"
+          class="t-popup__close"
           :style="closeStyle"
-          @click="handleClose"
+          @tap="handleClose"
         >
-          <text class="text-5 leading-none text-tertiary">✕</text>
+          <text class="t-popup__close-text">✕</text>
         </view>
       </view>
 
       <!-- 内容区域 -->
-      <view class="flex-1 overflow-y-auto p-2">
+      <scroll-view class="t-popup__body" scroll-y>
         <slot></slot>
-      </view>
+      </scroll-view>
     </view>
   </view>
 </template>
+
+<style>
+.t-popup__title-content {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.t-popup__title-text {
+	font-size: 16px;
+	font-weight: 600;
+	color: #111827;
+}
+
+.t-popup__close-text {
+	font-size: 20px;
+	line-height: 20px;
+	color: #6b7280;
+}
+
+.t-popup__body {
+	flex: 1;
+	padding: 8px;
+}
+</style>

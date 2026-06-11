@@ -113,7 +113,7 @@ const showBadge = computed((): boolean => {
 </script>
 
 <template>
-  <view class="t-badge relative inline-block overflow-visible">
+  <view class="t-badge relative flex overflow-visible">
     <slot></slot>
     <view v-if="showBadge" :class="badgeClass" :style="badgeStyle">
       <text v-if="isDot != true" class="t-badge__text text-xs" :style="badgeTextStyle">{{ displayValue }}</text>

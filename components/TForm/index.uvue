@@ -10,6 +10,7 @@
 	import TSelect from '../TSelect/index.uvue'
 	import TDateTimePicker from '../TDateTimePicker/index.uvue'
 	import type { FormOption, FormSchema, TFormProps } from './type.uts'
+	import type { TDateTimePickerRangeValue } from '../TDateTimePicker/type.uts'
 	import { useI18n } from '../../composables/useI18n.uts'
 
 	type FormModelValue = UTSJSONObject
@@ -33,7 +34,9 @@
 	const errors = reactive({}) as UTSJSONObject
 	const pickerVisible = reactive({}) as UTSJSONObject
 	const pickerValues = reactive({}) as UTSJSONObject
+	const pickerRangeValues = reactive({}) as UTSJSONObject
 	const shakeFields = reactive({}) as UTSJSONObject
+	const shakeOffsets = reactive({}) as UTSJSONObject
 
 	// 使用 i18n
 	const { $t } = useI18n()
@@ -73,9 +76,14 @@
 
 	function triggerShake(field : string) : void {
 		setShakeField(field, true)
+		shakeOffsets[field] = -4
+		setTimeout(() => { shakeOffsets[field] = 4 }, 100)
+		setTimeout(() => { shakeOffsets[field] = -2 }, 200)
+		setTimeout(() => { shakeOffsets[field] = 2 }, 300)
 		setTimeout(() => {
+			shakeOffsets[field] = 0
 			setShakeField(field, false)
-		}, 500)
+		}, 400)
 	}
 
 	function validateField(item : FormSchema) : void {
@@ -115,8 +123,19 @@
 			: $t('form.resetButton', null)
 	})
 
-	const hasTextValue = (value : string | null) : boolean => {
+	const hasTextValue = (value : string | null | undefined) : boolean => {
 		return value !== null && value !== ''
+	}
+
+	const getComponentProps = (item : FormSchema) : UTSJSONObject => {
+		const value = item.componentProps
+		return value == null ? {} as UTSJSONObject : value as UTSJSONObject
+	}
+
+	const getDateTimePickerProps = (item : FormSchema, fallbackMode : string) : UTSJSONObject => {
+		const value = { mode: fallbackMode } as UTSJSONObject
+		UTSJSONObject.assign(value, getComponentProps(item))
+		return value
 	}
 
 	// 获取单个配置项的布局方向（单个配置优先）
@@ -199,6 +218,19 @@
 		return item.componentProps?.disabled === true
 	}
 
+	const getGroupDirection = (item : FormSchema) : string => {
+		const value = item.componentProps?.direction
+		return value === 'horizontal' ? 'horizontal' : 'vertical'
+	}
+
+	const getGroupSize = (item : FormSchema) : string => {
+		const value = item.componentProps?.size
+		if (value === 'small' || value === 'large') {
+			return value
+		}
+		return 'medium'
+	}
+
 	const getMaxLength = (item : FormSchema) : number => {
 		const value = item.componentProps?.maxlength
 		return value == null ? -1 : value
@@ -236,6 +268,11 @@
 		return value == null ? 0 : value as number
 	}
 
+	const getPickerRangeValue = (field : string) : TDateTimePickerRangeValue | null => {
+		const value = pickerRangeValues[field]
+		return value == null ? null : value as TDateTimePickerRangeValue
+	}
+
 	const getInputModelValue = (field : string) : string | number => {
 		const value = getModelField(field)
 		return value == null ? '' : value as string | number
@@ -259,6 +296,14 @@
 		pickerValues[field] = value
 	}
 
+	const setPickerRangeValue = (field : string, value : any) : void => {
+		pickerRangeValues[field] = value
+	}
+
+	const onPickerRangeValueUpdateAny = (value : any, item : FormSchema) : void => {
+		setPickerRangeValue(item.field, value)
+	}
+
 	const openPicker = (field : string) => {
 		setPickerVisible(field, true)
 	}
@@ -270,8 +315,17 @@
 		validateField(item)
 	}
 
-	const onDateTimeCancel = (field : string) => {
-		setPickerVisible(field, false)
+	const onDateTimeConfirmRange = (value : TDateTimePickerRangeValue, formatted : string[], item : FormSchema) => {
+		setPickerRangeValue(item.field, value)
+		if (formatted.length > 0) {
+			setModelField(item.field, formatted[0])
+		}
+		setPickerVisible(item.field, false)
+		validateField(item)
+	}
+
+	const onDateTimeCancel = (item : FormSchema) => {
+		setPickerVisible(item.field, false)
 	}
 
 	const getDefaultFieldValue = (item : FormSchema) : any => {
@@ -331,10 +385,13 @@
 		if (hasFieldError(field)) {
 			classes.push('border-danger bg-danger-soft')
 		}
-		if (isFieldShaking(field)) {
-			classes.push('animate-shake-soft')
-		}
 		return classes.join(' ')
+	}
+
+	const getItemShakeStyle = (field : string) : string => {
+		const offset = shakeOffsets[field]
+		if (offset == null || offset == 0) return ''
+		return `transform: translateX(${offset}px)`
 	}
 
 	const getItemWrapperClass = (field : string) : string => {
@@ -351,7 +408,7 @@
 
 	const getLabelWrapperClass = (item : FormSchema) : string => {
 		const layoutClass = getItemLayout(item) === 'horizontal' ? 'text-right' : 'mb-4 mr-0 text-left'
-		return `mb-3 mr-2 flex flex-row gap-1 text-base font-medium ${layoutClass}`
+		return `mb-3 mr-2 flex flex-row text-base font-medium ${layoutClass}`
 	}
 
 	const getControlWrapperClass = (item : FormSchema) : string => {
@@ -432,6 +489,7 @@
 			<view
 				v-for="(item, index) in schemas"
 				:class="getItemWrapperClass(item.field)"
+				:style="getItemShakeStyle(item.field)"
 				:key="index">
 				<view
 					:class="getLayoutWrapperClass(item)">
@@ -440,7 +498,7 @@
 						<text
 							class="w-full break-all text-justify twx-text-align-last-justify twx-text-justify-ideograph twx-tracking-01em"
 							:style="getItemLabelStyle(item)">{{ item.label }}</text>
-							<view  class="w-2">
+							<view  class="ml-1 w-2">
 								<text v-if="item.required === true" class="text-red-500">*</text>
 							</view>
 					</view>
@@ -452,6 +510,7 @@
 
 					<!-- 输入框 -->
 					<TInput v-if="item.component === 'Input'"
+						v-bind="getComponentProps(item)"
 						:model-value="getInputModelValue(item.field)"
 						:type="getInputType(item)"
 						:placeholder="handlePlaceholder(item)"
@@ -464,6 +523,7 @@
 
 					<!-- 数字输入 -->
 					<TInput v-else-if="item.component === 'InputNumber'"
+						v-bind="getComponentProps(item)"
 						:model-value="getInputModelValue(item.field)"
 						type="number"
 						:placeholder="handlePlaceholder(item)"
@@ -476,6 +536,7 @@
 
 					<!-- 文本域 -->
 					<TInput v-else-if="item.component === 'Textarea'"
+						v-bind="getComponentProps(item)"
 						:model-value="getInputModelValue(item.field)"
 						type="textarea"
 						:placeholder="handlePlaceholder(item)"
@@ -489,6 +550,7 @@
 
 					<!-- 下拉选择 -->
 					<TSelect v-else-if="item.component === 'Select'"
+						v-bind="getComponentProps(item)"
 						:model-value="getSelectModelValue(item.field)"
 						:options="getSelectOptions(item)"
 						:placeholder="getSelectPlaceholder(item)"
@@ -505,12 +567,15 @@
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Date'"
+						v-bind="getDateTimePickerProps(item, 'date')"
 						:model-value="getPickerVisible(item.field)"
 						:value="getPickerValue(item.field)"
-						mode="date"
+						:range-value="getPickerRangeValue(item.field)"
 						@update:modelValue="onPickerVisibleUpdateAny($event, item)"
+						@update:range-value="onPickerRangeValueUpdateAny($event, item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
-						@cancel="onDateTimeCancel(item.field)"
+						@confirm-range="(value: TDateTimePickerRangeValue, formatted: string[]) => onDateTimeConfirmRange(value, formatted, item)"
+						@cancel="onDateTimeCancel(item)"
 					/>
 
 					<!-- 时间选择 -->
@@ -522,35 +587,54 @@
 					</view>
 					<TDateTimePicker
 						v-if="item.component === 'Time'"
+						v-bind="getDateTimePickerProps(item, 'datetime')"
 						:model-value="getPickerVisible(item.field)"
 						:value="getPickerValue(item.field)"
-						mode="datetime"
+						:range-value="getPickerRangeValue(item.field)"
 						@update:modelValue="onPickerVisibleUpdateAny($event, item)"
+						@update:range-value="onPickerRangeValueUpdateAny($event, item)"
 						@confirm="(value: number, formatted: string) => onDateTimeConfirm(value, formatted, item)"
-						@cancel="onDateTimeCancel(item.field)"
+						@confirm-range="(value: TDateTimePickerRangeValue, formatted: string[]) => onDateTimeConfirmRange(value, formatted, item)"
+						@cancel="onDateTimeCancel(item)"
 					/>
 
 					<!-- 单选 -->
-					<TRadioGroup v-else-if="item.component === 'Radio'" :model-value="getRadioModelValue(item.field)"
+					<TRadioGroup v-else-if="item.component === 'Radio'"
+						v-bind="getComponentProps(item)"
+						:model-value="getRadioModelValue(item.field)"
 						:options="getSelectOptions(item)"
+						:direction="getGroupDirection(item)"
+						:size="getGroupSize(item)"
+						:disabled="getDisabled(item)"
 						@update:modelValue="onFieldValueUpdate($event, item)" @change="validateField(item)" />
 
 					<!-- 多选 -->
-					<TCheckboxGroup v-else-if="item.component === 'Checkbox'" :model-value="getStringArrayFieldValue(item.field)"
+					<TCheckboxGroup v-else-if="item.component === 'Checkbox'"
+						v-bind="getComponentProps(item)"
+						:model-value="getStringArrayFieldValue(item.field)"
 						:options="getSelectOptions(item)" :name="item.field"
+						:direction="getGroupDirection(item)"
+						:size="getGroupSize(item)"
+						:disabled="getDisabled(item)"
 						@update:modelValue="onFieldValueUpdate($event, item)" @change="validateField(item)" />
 
 					<!-- 开关 -->
-					<TSwitch v-else-if="item.component === 'Switch'" :model-value="getBooleanFieldValue(item.field)"
+					<TSwitch v-else-if="item.component === 'Switch'"
+						v-bind="getComponentProps(item)"
+						:model-value="getBooleanFieldValue(item.field)"
 						@change="onSwitchChangeAny($event, item)" />
 
 					<!-- 评分 -->
-					<TRate v-else-if="item.component === 'Rate'" :model-value="getNumericFieldValue(item.field)"
+					<TRate v-else-if="item.component === 'Rate'"
+						v-bind="getComponentProps(item)"
+						:model-value="getNumericFieldValue(item.field)"
 						:max="getMax(item, 5)"
 						@change="onRateChangeAny($event, item)" />
 
 					<!-- 滑块 -->
-					<TSlider v-else-if="item.component === 'Slider'" :model-value="getNumericFieldValue(item.field)"
+					<TSlider v-else-if="item.component === 'Slider'"
+						v-bind="getComponentProps(item)"
+						:model-value="getNumericFieldValue(item.field)"
 						:min="getMin(item)"
 						:max="getMax(item, 100)"
 						:step="getStep(item)"
@@ -566,13 +650,17 @@
 			</view>
 
 			<!-- 按钮区域 -->
-			<view v-if="!hideButtons" class="mt-12 flex flex-row gap-6">
-				<button
-					class="h-11 flex-1 rounded-lg bg-primary-color text-center text-base text-white transition-all duration-300 active:scale-95 active:opacity-70"
-					form-type="submit">{{ submitButtonText }}</button>
-				<button
-					class="h-11 flex-1 rounded-lg border border-solid border-primary-color bg-white text-center text-base text-primary-color transition-all duration-300 active:scale-95 active:opacity-70"
-					form-type="reset">{{ resetButtonText }}</button>
+			<view v-if="!hideButtons" class="mt-12 flex flex-row">
+				<view class="mr-3 flex-1">
+					<button
+						class="h-11 w-full rounded-lg bg-primary-color text-center text-base text-white transition-all duration-300 active:scale-95 active:opacity-70"
+						form-type="submit">{{ submitButtonText }}</button>
+				</view>
+				<view class="flex-1">
+					<button
+						class="h-11 w-full rounded-lg border border-solid border-primary-color bg-white text-center text-base text-primary-color transition-all duration-300 active:scale-95 active:opacity-70"
+						form-type="reset">{{ resetButtonText }}</button>
+				</view>
 			</view>
 		</form>
 	</view>

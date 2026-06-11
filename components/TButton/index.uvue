@@ -1,11 +1,28 @@
 <script  setup lang="uts" >
-import { computed } from 'vue'
-import type { TButtonProps } from './type.uts'
+import { computed, ref, watch, onUnmounted } from 'vue'
 
 /**
  * TButton 按钮组件
  * @description 支持多种类型、尺寸、形状的按钮组件
  */
+
+type ButtonType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default'
+type ButtonSize = 'large' | 'medium' | 'small' | 'mini'
+type ButtonShape = 'square' | 'round' | 'circle'
+
+type TButtonProps = {
+  type?: ButtonType
+  size?: ButtonSize
+  shape?: ButtonShape
+  plain?: boolean
+  disabled?: boolean
+  loading?: boolean
+  block?: boolean
+  text?: string
+  icon?: string
+  customClass?: string
+  customStyle?: string
+}
 
 const props = withDefaults(defineProps<TButtonProps>(), {
   type: 'default',
@@ -30,99 +47,7 @@ const emit = defineEmits<{
  * 计算按钮类名
  */
 const buttonClasses = computed((): string => {
-  const classes: string[] = [
-    'relative inline-flex shrink-0 grow-0 basis-auto select-none items-center justify-center box-border min-h-0 min-w-0 border border-solid border-transparent bg-none text-center outline-none transition-all duration-300 appearance-none',
-  ]
-
-  switch (props.size) {
-    case 'large':
-      classes.push('h-11 px-5 text-base')
-      break
-    case 'small':
-      classes.push('h-7 px-3 text-xs')
-      break
-    case 'mini':
-      classes.push('h-6 px-2 text-xs')
-      break
-    default:
-      classes.push('h-9 px-4 text-sm')
-      break
-  }
-
-  switch (props.shape) {
-    case 'round':
-      classes.push('rounded-full')
-      break
-    case 'circle':
-      classes.push('rounded-full p-0')
-      switch (props.size) {
-        case 'large':
-          classes.push('w-11')
-          break
-        case 'small':
-          classes.push('w-7')
-          break
-        case 'mini':
-          classes.push('w-6')
-          break
-        default:
-          classes.push('w-9')
-          break
-      }
-      break
-    default:
-      classes.push('rounded')
-      break
-  }
-
-  if (props.block) {
-    classes.push('flex w-full')
-  }
-
-  if (props.disabled) {
-    classes.push('cursor-not-allowed opacity-60')
-  }
-
-  switch (props.type) {
-    case 'primary':
-      classes.push(
-        props.plain
-          ? 'border-blue-200 bg-blue-50 text-blue-500'
-          : 'border-blue-500 bg-blue-500 text-white'
-      )
-      break
-    case 'success':
-      classes.push(
-        props.plain
-          ? 'border-green-200 bg-green-50 text-green-500'
-          : 'border-green-500 bg-green-500 text-white'
-      )
-      break
-    case 'warning':
-      classes.push(
-        props.plain
-          ? 'border-orange-200 bg-orange-50 text-orange-400'
-          : 'border-orange-400 bg-orange-400 text-white'
-      )
-      break
-    case 'danger':
-      classes.push(
-        props.plain
-          ? 'border-red-200 bg-red-50 text-red-400'
-          : 'border-red-400 bg-red-400 text-white'
-      )
-      break
-    case 'info':
-      classes.push(
-        props.plain
-          ? 'border-zinc-300 bg-zinc-100 text-zinc-400'
-          : 'border-zinc-400 bg-zinc-400 text-white'
-      )
-      break
-    default:
-      classes.push('border-gray-300 bg-white text-gray-600')
-      break
-  }
+  const classes: string[] = []
 
   // 自定义类名
   if (props.customClass !== '') {
@@ -136,7 +61,156 @@ const buttonClasses = computed((): string => {
  * 计算按钮样式
  */
 const buttonStyles = computed((): string => {
-  return props.customStyle
+  const styles: string[] = [
+    'position: relative',
+    'display: flex',
+    'align-items: center',
+    'justify-content: center',
+    'box-sizing: border-box',
+    'min-width: 0',
+    'border-width: 1px',
+    'border-style: solid',
+    'overflow: hidden',
+    'transition-property: all',
+    'transition-duration: 300ms',
+    'flex-shrink: 0',
+    'flex-grow: 0'
+  ]
+
+  switch (props.size) {
+    case 'large':
+      styles.push('height: 44px')
+      styles.push('padding-left: 20px')
+      styles.push('padding-right: 20px')
+      break
+    case 'small':
+      styles.push('height: 28px')
+      styles.push('padding-left: 12px')
+      styles.push('padding-right: 12px')
+      break
+    case 'mini':
+      styles.push('height: 24px')
+      styles.push('padding-left: 8px')
+      styles.push('padding-right: 8px')
+      break
+    default:
+      styles.push('height: 36px')
+      styles.push('padding-left: 16px')
+      styles.push('padding-right: 16px')
+      break
+  }
+
+  switch (props.shape) {
+    case 'round':
+      styles.push('border-radius: 9999px')
+      break
+    case 'circle':
+      styles.push('border-radius: 9999px')
+      styles.push('padding-left: 0')
+      styles.push('padding-right: 0')
+      switch (props.size) {
+        case 'large':
+          styles.push('width: 44px')
+          break
+        case 'small':
+          styles.push('width: 28px')
+          break
+        case 'mini':
+          styles.push('width: 24px')
+          break
+        default:
+          styles.push('width: 36px')
+          break
+      }
+      break
+    default:
+      styles.push('border-radius: 4px')
+      break
+  }
+
+  if (props.block) {
+    styles.push('width: 100%')
+  }
+
+  if (props.disabled) {
+    styles.push('opacity: 0.6')
+  }
+
+  switch (props.type) {
+    case 'primary':
+      styles.push(props.plain ? 'border-color: #bfdbfe' : 'border-color: #3b82f6')
+      styles.push(props.plain ? 'background-color: #eff6ff' : 'background-color: #3b82f6')
+      break
+    case 'success':
+      styles.push(props.plain ? 'border-color: #bbf7d0' : 'border-color: #22c55e')
+      styles.push(props.plain ? 'background-color: #f0fdf4' : 'background-color: #22c55e')
+      break
+    case 'warning':
+      styles.push(props.plain ? 'border-color: #fed7aa' : 'border-color: #fb923c')
+      styles.push(props.plain ? 'background-color: #fff7ed' : 'background-color: #fb923c')
+      break
+    case 'danger':
+      styles.push(props.plain ? 'border-color: #fecaca' : 'border-color: #f87171')
+      styles.push(props.plain ? 'background-color: #fef2f2' : 'background-color: #f87171')
+      break
+    case 'info':
+      styles.push(props.plain ? 'border-color: #d4d4d8' : 'border-color: #a1a1aa')
+      styles.push(props.plain ? 'background-color: #f4f4f5' : 'background-color: #a1a1aa')
+      break
+    default:
+      styles.push('border-color: #d1d5db')
+      styles.push('background-color: #ffffff')
+      break
+  }
+
+  if (props.customStyle !== '') {
+    styles.push(props.customStyle)
+  }
+
+  return styles.join('; ')
+})
+
+const buttonTextStyles = computed((): string => {
+  const styles: string[] = [
+    'line-height: 1',
+    'text-align: center'
+  ]
+
+  switch (props.size) {
+    case 'large':
+      styles.push('font-size: 16px')
+      break
+    case 'small':
+    case 'mini':
+      styles.push('font-size: 12px')
+      break
+    default:
+      styles.push('font-size: 14px')
+      break
+  }
+
+  switch (props.type) {
+    case 'primary':
+      styles.push(props.plain ? 'color: #3b82f6' : 'color: #ffffff')
+      break
+    case 'success':
+      styles.push(props.plain ? 'color: #22c55e' : 'color: #ffffff')
+      break
+    case 'warning':
+      styles.push(props.plain ? 'color: #fb923c' : 'color: #ffffff')
+      break
+    case 'danger':
+      styles.push(props.plain ? 'color: #f87171' : 'color: #ffffff')
+      break
+    case 'info':
+      styles.push(props.plain ? 'color: #a1a1aa' : 'color: #ffffff')
+      break
+    default:
+      styles.push('color: #4b5563')
+      break
+  }
+
+  return styles.join('; ')
 })
 
 /**
@@ -147,6 +221,78 @@ const hoverClass = computed((): string => {
     return 'none'
   }
   return 'opacity-90'
+})
+
+const hasText = computed((): boolean => {
+  return props.text !== ''
+})
+
+const spinAngle = ref(0)
+let spinTimer: number | null = null
+
+const startSpin = () => {
+  if (spinTimer !== null) return
+  spinTimer = setInterval(() => {
+    spinAngle.value = (spinAngle.value + 12) % 360
+  }, 16)
+}
+
+const stopSpin = () => {
+  if (spinTimer !== null) {
+    clearInterval(spinTimer)
+    spinTimer = null
+    spinAngle.value = 0
+  }
+}
+
+watch(() => props.loading, (val: boolean) => {
+  if (val) {
+    startSpin()
+  } else {
+    stopSpin()
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  stopSpin()
+})
+
+const loadingIconStyle = computed((): string => {
+  const styles: string[] = []
+  switch (props.size) {
+    case 'large':
+      styles.push('font-size: 16px')
+      break
+    case 'small':
+    case 'mini':
+      styles.push('font-size: 12px')
+      break
+    default:
+      styles.push('font-size: 14px')
+      break
+  }
+  switch (props.type) {
+    case 'primary':
+      styles.push(props.plain ? 'color: #3b82f6' : 'color: #ffffff')
+      break
+    case 'success':
+      styles.push(props.plain ? 'color: #22c55e' : 'color: #ffffff')
+      break
+    case 'warning':
+      styles.push(props.plain ? 'color: #fb923c' : 'color: #ffffff')
+      break
+    case 'danger':
+      styles.push(props.plain ? 'color: #f87171' : 'color: #ffffff')
+      break
+    case 'info':
+      styles.push(props.plain ? 'color: #a1a1aa' : 'color: #ffffff')
+      break
+    default:
+      styles.push('color: #4b5563')
+      break
+  }
+  styles.push(`transform: rotate(${spinAngle.value}deg)`)
+  return styles.join('; ')
 })
 
 /**
@@ -161,29 +307,34 @@ const handleClick = () => {
 </script>
 
 <template>
-  <button
+  <view
     class="t-button"
     :class="buttonClasses"
     :style="buttonStyles"
-    :disabled="disabled || loading"
     :hover-class="hoverClass"
-    @click="handleClick"
+    @tap="handleClick"
   >
-    <!-- 加载图标 -->
-    <view v-if="loading" class="t-button__loading mr-1 flex items-center">
-      <text class="t-button__loading-icon inline-block animate-spin text-sm">⟳</text>
-    </view>
+    <view class="t-button__content h-full flex flex-row items-center justify-center">
+      <!-- 加载图标 -->
+      <view v-if="props.loading" class="t-button__loading mr-1 flex items-center">
+        <text class="t-button__loading-icon text-sm" :style="loadingIconStyle">⟳</text>
+      </view>
 
-    <!-- 自定义图标 -->
-    <view v-else-if="icon !== ''" class="t-button__icon mr-1 flex items-center">
-      <text class="t-button__icon-text text-base">{{ icon }}</text>
-    </view>
+      <!-- 自定义图标 -->
+      <view v-else-if="props.icon !== ''" class="t-button__icon mr-1 flex items-center">
+        <text class="t-button__icon-text text-base" :style="buttonTextStyles">{{ props.icon }}</text>
+      </view>
 
-    <!-- 按钮文本 -->
-    <view class="t-button__text flex items-center">
-      <slot>{{ text }}</slot>
+      <!-- 按钮文本 -->
+      <view class="t-button__text flex items-center">
+        <text v-if="hasText" :style="buttonTextStyles">{{ props.text }}</text>
+        <!-- slot 模式不要用 <text> 包裹：小程序里 slot 内含 <view>/<TIcon> 等块级元素会被吞掉 -->
+        <view v-else class="t-button__slot flex flex-row items-center" :style="buttonTextStyles">
+          <slot></slot>
+        </view>
+      </view>
     </view>
-  </button>
+  </view>
 </template>
 
 <style>

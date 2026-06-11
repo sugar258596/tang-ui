@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<TTextProps>(), {
  * 计算文本类名
  */
 const textClasses = computed((): string => {
-  const classes: string[] = ['t-text inline m-0 p-0 break-words text-left leading-normal']
+  const classes: string[] = ['t-text break-words text-left leading-normal']
 
   switch (props.type) {
     case 'primary':

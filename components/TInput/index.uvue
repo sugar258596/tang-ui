@@ -60,6 +60,29 @@ const hasTextValue = (value: string | null): boolean => {
   return value !== null && value !== ''
 }
 
+const isInputTextClass = (className: string): boolean => {
+  return (
+    className.startsWith('text-') ||
+    className.startsWith('font-') ||
+    className.startsWith('leading-') ||
+    className.startsWith('line-')
+  )
+}
+
+const splitCustomClass = (value: string | null, inputOnly: boolean): string => {
+  if (!hasTextValue(value)) return ''
+  const result: string[] = []
+  const classNames = value!.split(' ')
+  classNames.forEach((item: string): void => {
+    const className = item.trim()
+    if (className != '' && isInputTextClass(className) == inputOnly) {
+      result.push(className)
+    }
+    return
+  })
+  return result.join(' ')
+}
+
 const hasModelValue = computed((): boolean => {
   return model.value !== null && model.value.toString() !== ''
 })
@@ -84,6 +107,14 @@ const canShowClearButton = computed((): boolean => {
   return props.clearable && hasModelValue.value && !props.disabled && !props.readonly
 })
 
+const wrapperCustomClass = computed((): string => {
+  return splitCustomClass(props.customClass, false)
+})
+
+const inputCustomClass = computed((): string => {
+  return splitCustomClass(props.customClass, true)
+})
+
 /**
  * 计算输入框包装类名
  */
@@ -94,16 +125,16 @@ const inputWrapperClasses = computed((): string => {
 
   switch (props.size) {
     case 'large':
-      classes.push('h-11 rounded text-base')
+      classes.push('h-11 rounded')
       break
     case 'small':
-      classes.push('h-7 rounded text-xs')
+      classes.push('h-7 rounded')
       break
     case 'mini':
-      classes.push('h-6 rounded text-xs')
+      classes.push('h-6 rounded')
       break
     default:
-      classes.push('h-9 rounded text-sm')
+      classes.push('h-9 rounded')
       break
   }
 
@@ -112,7 +143,7 @@ const inputWrapperClasses = computed((): string => {
   }
 
   if (props.disabled) {
-    classes.push('cursor-not-allowed border-border-soft bg-page text-disabled')
+    classes.push('cursor-not-allowed border-border-soft bg-page')
   }
 
   if (props.readonly) {
@@ -124,8 +155,8 @@ const inputWrapperClasses = computed((): string => {
   }
 
   // 自定义类名
-  if (hasTextValue(props.customClass)) {
-    classes.push(props.customClass)
+  if (hasTextValue(wrapperCustomClass.value)) {
+    classes.push(wrapperCustomClass.value)
   }
 
   return classes.join(' ')
@@ -173,6 +204,10 @@ const inputInnerClasses = computed((): string => {
     classes.push('cursor-default')
   }
 
+  if (hasTextValue(inputCustomClass.value)) {
+    classes.push(inputCustomClass.value)
+  }
+
   return classes.join(' ')
 })
 
@@ -185,6 +220,10 @@ const textareaClasses = computed((): string => {
     classes.push('cursor-not-allowed text-disabled')
   } else if (props.readonly) {
     classes.push('cursor-default')
+  }
+
+  if (hasTextValue(inputCustomClass.value)) {
+    classes.push(inputCustomClass.value)
   }
 
   return classes.join(' ')

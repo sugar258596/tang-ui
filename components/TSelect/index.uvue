@@ -722,7 +722,7 @@
 		<!-- 遮罩层 -->
 		<view
 			v-if="showPopup"
-			class="fixed inset-0 z-[99] bg-transparent touch-none"
+			class="fixed top-0 right-0 bottom-0 left-0 z-[99] bg-transparent touch-none"
 			@tap="handleMaskClick"
 			@touchmove.stop.prevent></view>
 
@@ -735,7 +735,7 @@
 			@tap="handleDropdownClick">
 
 				<view v-if="isFilterable" class="border-b border-solid twx-border-light twx-bg-light px-2.5 py-2">
-					<view class="flex flex-row items-center gap-4 rounded border border-solid twx-border-base bg-white px-2">
+					<view class="flex flex-row items-center rounded border border-solid twx-border-base bg-white px-2">
 						<Icon name="icon-sousuo" :size="18" color="#999999" />
 						<input
 							class="ml-1.5 twx-h-34px flex-1 border-none bg-transparent twx-text-13px text-primary"

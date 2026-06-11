@@ -60,7 +60,7 @@
 	})
 
 	const wrapperClass = computed((): string => {
-		const classes : string[] = ['t-switch-wrapper inline-flex flex-row items-center']
+		const classes : string[] = ['t-switch-wrapper flex flex-row items-center']
 
 		if (props.disabled) {
 			classes.push('cursor-not-allowed opacity-60')

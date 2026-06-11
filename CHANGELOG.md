@@ -1,5 +1,43 @@
 # 更新日志
 
+## [1.3.9] - 2026-06-11
+
+### 优化
+
+- **TButton**: 重构样式系统，从 Tailwind class 切换为内联 style 计算，解决 App 端原子类不生效的兼容性问题
+  - 元素从 `<button>` 改为 `<view>`，使用 `@tap` 替代 `@click`
+  - 新增 `buttonTextStyles` 独立计算文字颜色和字号
+  - 文本与插槽内容分离渲染，修复小程序 slot 内含块级元素被吞掉的问题
+- **TPopup**: 重构布局系统，从 Tailwind class 切换为内联 style 定位，提升多端一致性
+  - 新增 `mode` 属性作为 `position` 别名，新增 `backgroundColor` 属性
+  - 默认背景从 CSS 变量回退为 `#ffffff`，避免未注入变量时透明
+  - 遮罩层与内容层使用显式 `z-index` 分层
+- **Tabs**: 重构数据解析层，支持多种字段命名约定（key/value、label/title/name）
+  - 新增通用 `mapTabItem` 解析器，兼容非标准数据结构输入
+  - Badge 文字改用独立 `<text>` 元素并显式设置字号，修复 App 端样式继承失效
+  - 移除 `icon` 字段支持（从 `TabItem` 类型中删除）
+- **TInput**: 新增 `customClass` 智能拆分逻辑，文字类样式（text-/font-/leading-/line-）自动透传至内部 input 元素
+- **TForm**: 所有表单子组件统一通过 `v-bind="getComponentProps(item)"` 透传配置
+  - 新增 `direction`、`size` 透传支持（Radio/Checkbox 组件）
+  - 按钮区域外层增加 `<view>` 包裹，修复 flex 布局在部分端的表现
+- **TActionSheet**: 操作列表改用 `<scroll-view>` 并设置最大高度，防止选项过多撑出屏幕
+  - 新增 `useAttrs` 透传属性至内部 TPopup
+- **TSearchBar**: 将输入框字号和颜色移入 CSS 类声明，移除容器固定 padding
+
+### 新增
+
+- **TForm**: 支持日期时间范围选择（`range` 模式）
+  - 新增 `TDateTimePickerRangeValue` 类型集成
+  - `ComponentProps` 类型扩展日期时间选择器全部可配置属性（mode、range、minDate、maxDate、activeColor 等）
+- **TPopup**: 新增 `mode` 属性（position 别名）、`backgroundColor` 属性
+
+### 修复
+
+- **TIcon**: 补充缺失的 `import { computed } from 'vue'`
+- **TActionSheet**: 修复 `hasTextValue` 对 `undefined` 值的兼容判断
+- **TForm**: 修复 `onDateTimeCancel` 参数类型，传入完整 item 对象
+- **Storage**: 重构代码缩进格式（空格转 Tab），统一编码风格
+
 ## [1.3.8] - 2026-06-02
 
 ### 新增

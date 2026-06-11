@@ -165,16 +165,16 @@ const displayLabel = computed((): string => {
 
 <template>
   <!-- 选项组模式：使用 options 属性 -->
-  <view v-if="isOptionsMode" class="flex flex-col twx-gap-6px" :style="cssVars">
+  <view v-if="isOptionsMode" class="flex flex-col" :style="cssVars">
     <view
       v-for="(option, index) in options"
       :key="index"
-      class="flex flex-row items-center twx-gap-6px twx-py-2px"
+      class="flex flex-row items-center mb-2"
       :class="getOptionItemClass(option)"
       @click="handleOptionClick(option)"
     >
       <view
-        class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
+        class="mr-2 flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
         :class="sizeClass.icon"
         :style="getOptionBorderStyle(option)"
       >
@@ -194,13 +194,13 @@ const displayLabel = computed((): string => {
   <!-- 单个按钮模式：使用插槽或默认内容 -->
   <view
     v-else
-    class="flex flex-row items-center twx-gap-6px py-1"
+    class="flex flex-row items-center py-1"
     :class="disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'"
     :style="cssVars"
     @tap="handleClick"
   >
     <view
-      class="flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
+      class="mr-2 flex items-center justify-center rounded-full border border-solid bg-white transition-all duration-200"
       :class="sizeClass.icon"
       :style="`border-width: 2rpx; border-color: ${disabled ? '#dcdfe6' : isChecked ? 'var(--radio-active-color)' : 'var(--radio-inactive-color)'}`"
     >

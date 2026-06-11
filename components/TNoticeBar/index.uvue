@@ -1,5 +1,5 @@
 <script setup lang="uts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import type { TNoticeBarProps } from './type.uts'
 
 const props = withDefaults(defineProps<TNoticeBarProps>(), {
@@ -36,6 +36,50 @@ const handleClose = (): void => {
   visible.value = false
   emit('close')
 }
+
+const scrollOffset = ref(0)
+let scrollTimer: number | null = null
+
+const startScroll = () => {
+  if (scrollTimer !== null) return
+  scrollTimer = setInterval(() => {
+    scrollOffset.value -= 1
+    if (scrollOffset.value < -100) {
+      scrollOffset.value = 0
+    }
+  }, 30)
+}
+
+const stopScroll = () => {
+  if (scrollTimer !== null) {
+    clearInterval(scrollTimer)
+    scrollTimer = null
+  }
+}
+
+const scrollStyle = computed((): string => {
+  if (!props.scrollable) return ''
+  return `transform: translateX(${scrollOffset.value}%)`
+})
+
+watch(() => props.scrollable, (val: boolean) => {
+  if (val) {
+    startScroll()
+  } else {
+    stopScroll()
+    scrollOffset.value = 0
+  }
+}, { immediate: true })
+
+onMounted(() => {
+  if (props.scrollable) {
+    startScroll()
+  }
+})
+
+onUnmounted(() => {
+  stopScroll()
+})
 </script>
 
 <template>
@@ -49,8 +93,8 @@ const handleClose = (): void => {
     <text v-if="hasLeftIcon" class="t-notice-bar__icon mr-2">{{ leftIcon }}</text>
     <view class="t-notice-bar__content flex-1 overflow-hidden">
       <text
-        class="t-notice-bar__text inline-block whitespace-nowrap"
-        :class="scrollable ? 'animate-notice-scroll' : ''"
+        class="t-notice-bar__text flex whitespace-nowrap"
+        :style="scrollStyle"
       >{{ text }}</text>
     </view>
     <text v-if="mode === 'closeable'" class="t-notice-bar__close ml-2 cursor-pointer text-base" @click.stop="handleClose">✕</text>

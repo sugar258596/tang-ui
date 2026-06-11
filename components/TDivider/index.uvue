@@ -114,7 +114,7 @@ const containerClasses = computed((): string => {
   const classes: string[] = ['relative', 'flex', 'items-center']
 
   if (props.direction === 'vertical') {
-    classes.push('inline-flex h-full flex-col')
+    classes.push('flex h-full flex-col')
   } else {
     classes.push('w-full flex-row')
   }

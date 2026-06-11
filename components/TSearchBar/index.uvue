@@ -74,7 +74,7 @@ let debounceTimer: number | null = null
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['t-search-bar flex flex-row items-center px-3 py-2']
+  const classes: string[] = ['t-search-bar flex flex-row items-center']
 
   if (props.shape === 'round') {
     classes.push('t-search-bar--round')
@@ -181,7 +181,7 @@ const hasInputValue = computed((): boolean => {
 
       <!-- 输入框 -->
       <input
-        class="t-search-bar__input flex-1 border-none bg-transparent text-sm text-primary outline-none"
+        class="t-search-bar__input flex-1 border-none bg-transparent outline-none"
         type="text"
         :value="modelValue"
         :placeholder="displayPlaceholder"
@@ -205,7 +205,7 @@ const hasInputValue = computed((): boolean => {
     </view>
 
     <!-- 取消按钮 -->
-    <view v-if="showCancel" class="t-search-bar__cancel cursor-pointer px-3 active:opacity-70" @click="handleCancel">
+    <view v-if="showCancel" class="t-search-bar__cancel cursor-pointer active:opacity-70" @click="handleCancel">
       <slot name="cancel">
         <text class="t-search-bar__cancel-text whitespace-nowrap text-sm text-primary">{{ displayCancelText }}</text>
       </slot>
@@ -225,5 +225,9 @@ const hasInputValue = computed((): boolean => {
 }
 .twx-bg-gray-ccc {
   background-color: #c8c9cc;
+}
+.t-search-bar__input {
+  font-size: 14px;
+  color: var(--tui-text-primary);
 }
 </style>

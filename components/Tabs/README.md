@@ -74,6 +74,14 @@ const tabItems: TabItem[] = [
 </template>
 ```
 
+## 均分显示
+
+```vue
+<template>
+  <Tabs :items="tabItems" equal />
+</template>
+```
+
 ## 自定义颜色
 
 ```vue
@@ -148,6 +156,7 @@ card 类型的激活标签会自动应用：
 | type                          | 选项卡类型         | `'line' \| 'card'`               | `'line'`     |
 | tabPosition                   | 选项卡位置         | `'top' \| 'bottom'`              | `'top'`      |
 | centered                      | 是否居中显示       | `boolean`                        | `false`      |
+| equal                         | 是否均分标签宽度   | `boolean`                        | `false`      |
 | scrollable                    | 是否可滑动         | `boolean`                        | `true`       |
 | activeColor                   | 激活标签的颜色     | `string`                         | `'#1677ff'`  |
 | inactiveColor                 | 未激活标签的颜色   | `string`                         | `'#666666'`  |
@@ -283,6 +292,8 @@ type TabsProps = {
   tabPosition?: "top" | "bottom";
   /** 是否居中显示 */
   centered?: boolean;
+  /** 是否均分标签宽度 */
+  equal?: boolean;
   /** 是否可滑动 */
   scrollable?: boolean;
   /** 激活标签的颜色 */

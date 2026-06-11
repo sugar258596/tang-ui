@@ -118,7 +118,7 @@ const handleClick = (): void => {
     </view>
 
     <!-- 卡片内容 -->
-    <view class="t-card__body overflow-visible text-sm leading-6 text-secondary">
+    <view class="t-card__body overflow-visible">
       <slot></slot>
     </view>
 

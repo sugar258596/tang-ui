@@ -12,6 +12,7 @@ docs/
 
 # 开发文档（不上传到 GitHub）
 todo.md
+css.md
 BUGFIX_REPORT.md
 CLAUDE.md
 AGENTS.md

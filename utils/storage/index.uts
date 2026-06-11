@@ -5,553 +5,573 @@
  */
 
 import type {
-  StorageOptions,
-  StorageData,
-  StorageItemValue,
-  StoragePromise,
-  StorageStats,
-  StorageEvent,
-  StorageListener,
+	StorageOptions,
+	StorageData,
+	StoragePromise,
+	StorageStats,
+	StorageEvent,
+	StorageListener,
 } from './types'
 
 import {
-  DEFAULT_STORAGE_OPTIONS,
-  ERROR_MESSAGES,
-  SIZE_LIMITS,
-  getCurrentTimestamp,
-  isExpired,
-  calculateDataSize,
-  checkStorageSupport,
-  setStorageData,
-  getStorageData,
-  removeStorageData,
-  safeJSONParse,
-  safeJSONStringify,
-  getMainStorageKey,
+	DEFAULT_STORAGE_OPTIONS,
+	ERROR_MESSAGES,
+	SIZE_LIMITS,
+	getCurrentTimestamp,
+	isExpired,
+	calculateDataSize,
+	checkStorageSupport,
+	setStorageData,
+	getStorageData,
+	removeStorageData,
+	safeJSONParse,
+	safeJSONStringify,
+	getMainStorageKey,
 } from './config'
 
 /**
  * 自定义存储类
  */
 class CustomStorage {
-  private options: StorageOptions
-  private listeners: Set<StorageListener<any>> = new Set()
-  private cleanupTimer: number | null = null
-  private readonly MAIN_STORAGE_KEY: string // 统一的主存储键
-
-  constructor(options: StorageOptions | null) {
-    const merged = new UTSJSONObject()
-    const defaults = DEFAULT_STORAGE_OPTIONS as UTSJSONObject
-    for (const key in defaults) {
-      merged[key] = defaults[key]
-    }
-    if (options != null) {
-      const opts = options as UTSJSONObject
-      for (const key in opts) {
-        merged[key] = opts[key]
-      }
-    }
-    this.options = merged as StorageOptions
-
-    // 设置统一的主存储键
-    this.MAIN_STORAGE_KEY = this.options.prefix + getMainStorageKey()
-
-    // 检查存储支持
-    if (!checkStorageSupport(this.options.storageType)) {
-      throw new Error(ERROR_MESSAGES.STORAGE_NOT_SUPPORTED)
-    }
-
-    // 启动自动清理
-    if (this.options.autoCleanup) {
-      this.startAutoCleanup()
-    }
-
-    console.log('🗄️ uni-app x 存储初始化成功，使用统一主键:', this.MAIN_STORAGE_KEY)
-  }
-
-  private createStorageData(expireTime: string | number): StorageData {
-    const data = {} as UTSJSONObject
-    data['expireTime'] = expireTime
-    return data as StorageData
-  }
-
-  private getStorageExpireTime(storageData: StorageData): string | number {
-    const expireTime = storageData['expireTime']
-    return expireTime != null ? (expireTime as string | number) : 0
-  }
-
-  /**
-   * 设置存储数据 - Promise版本
-   * @param storageKey 存储键（原来的key参数，现在作为存储键）
-   * @param value 存储值
-   * @param expireTime 过期时间（毫秒时间戳）
-   */
-  async set<T = any>(storageKey: string, value: T, expireTime: number | null = null): StoragePromise<T> {
-    try {
-      // 参数验证
-      if (!this.validateStorageKey(storageKey)) {
-        return { success: false, error: ERROR_MESSAGES.INVALID_STORAGE_KEY }
-      }
-
-      // 计算过期时间
-      let finalExpireTime = getCurrentTimestamp() + this.options.defaultExpireTime
-      if (expireTime != null) {
-        finalExpireTime = expireTime as number
-      }
-
-      // 获取现有的统一存储数据
-      const existingData = await this.getUnifiedStorageData()
-
-      // 构建新的存储结构
-      const storageData = this.createStorageData(finalExpireTime)
-      for (const key in existingData) {
-        storageData[key] = existingData[key]
-      }
-      storageData[storageKey] = {
-        value,
-        expireTime: finalExpireTime,
-      }
-      storageData['expireTime'] = finalExpireTime
-
-      // 检查存储大小
-      const dataSize = calculateDataSize(storageData)
-      if (dataSize > SIZE_LIMITS.MAX_VALUE_SIZE) {
-        return { success: false, error: ERROR_MESSAGES.STORAGE_FULL }
-      }
-
-      // 存储数据到统一主键 - 使用 uni-app x API
-      const success = await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(storageData))
-
-      if (!success) {
-        return { success: false, error: '存储失败' }
-      }
-
-      // 触发事件
-      this.emitEvent({
-        type: 'set',
-        key: this.MAIN_STORAGE_KEY,
-        storageKey,
-        value,
-        timestamp: getCurrentTimestamp(),
-      })
-
-      console.log(`💾 uni-app x 存储成功: ${storageKey} -> 统一主键`)
-      return { success: true, value }
-    } catch (error: any) {
-      console.error('❌ 存储失败:', error)
-      return { success: false, error: error.message }
-    }
-  }
-
-  /**
-   * 获取统一存储数据 - Promise版本
-   */
-  private async getUnifiedStorageData(): Promise<StorageData> {
-    const rawData = await getStorageData(this.MAIN_STORAGE_KEY)
-    if (rawData == null || rawData == '') {
-      return this.createStorageData(getCurrentTimestamp() + this.options.defaultExpireTime)
-    }
-
-    return safeJSONParse<StorageData>(
-      rawData as string,
-      this.createStorageData(getCurrentTimestamp() + this.options.defaultExpireTime)
-    )
-  }
-
-  /**
-   * 获取存储数据 - Promise版本
-   * @param storageKey 存储键
-   */
-  async get<T = any>(storageKey: string): StoragePromise<T> {
-    try {
-      // 参数验证
-      if (!this.validateStorageKey(storageKey)) {
-        return { success: false, error: ERROR_MESSAGES.INVALID_STORAGE_KEY }
-      }
-
-      // 获取统一存储数据
-      const storageData = await this.getUnifiedStorageData()
-
-      // 检查存储键是否存在
-      if (storageData[storageKey] == null) {
-        return { success: false, error: '存储键不存在' }
-      }
-
-      const item = storageData[storageKey]
-
-      // 类型检查：确保是StorageItemValue类型
-      if (typeof item == 'string' || typeof item == 'number') {
-        return { success: false, error: '存储数据格式错误' }
-      }
-
-      const storageItem = item as StorageItemValue<T>
-
-      // 检查是否过期
-      if (isExpired(storageItem.expireTime)) {
-        // 删除过期数据
-        await this.remove(storageKey)
-        return {
-          success: false,
-          error: ERROR_MESSAGES.EXPIRED_DATA,
-          expired: true,
-        }
-      }
-
-      // 触发事件
-      this.emitEvent({
-        type: 'get',
-        key: this.MAIN_STORAGE_KEY,
-        storageKey,
-        value: storageItem.value,
-        timestamp: getCurrentTimestamp(),
-      })
-
-      return { success: true, value: storageItem.value }
-    } catch (error: any) {
-      console.error('❌ 获取数据失败:', error)
-      return { success: false, error: error.message }
-    }
-  }
-
-  /**
-   * 删除存储数据 - Promise版本
-   * @param storageKey 存储键（可选，不传则清空所有数据）
-   */
-  async remove(storageKey: string | null = null): StoragePromise<boolean> {
-    try {
-      if (storageKey == null || storageKey == '') {
-        // 删除整个统一存储
-        await removeStorageData(this.MAIN_STORAGE_KEY)
-        this.emitEvent({
-          type: 'remove',
-          key: this.MAIN_STORAGE_KEY,
-          timestamp: getCurrentTimestamp(),
-        })
-        console.log(`🗑️ 删除整个统一存储`)
-        return { success: true, value: true }
-      }
-
-      // 删除特定的存储键
-      const storageData = await this.getUnifiedStorageData()
-
-      if (storageData[storageKey] != null) {
-        const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
-        for (const key in storageData) {
-          if (key != storageKey && key != 'expireTime') {
-            nextStorageData[key] = storageData[key]
-          }
-        }
-
-        // 如果没有其他存储键了，删除整个统一存储
-        const remainingKeys: string[] = []
-        for (const key in nextStorageData) {
-          if (key != 'expireTime') {
-            remainingKeys.push(key)
-          }
-        }
-        if (remainingKeys.length == 0) {
-          await removeStorageData(this.MAIN_STORAGE_KEY)
-        } else {
-          await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
-        }
-
-        this.emitEvent({
-          type: 'remove',
-          key: this.MAIN_STORAGE_KEY,
-          storageKey,
-          timestamp: getCurrentTimestamp(),
-        })
-
-        console.log(`🗑️ 删除存储键: ${storageKey}`)
-        return { success: true, value: true }
-      }
-
-      return { success: false, error: '存储键不存在' }
-    } catch (error: any) {
-      console.error('❌ 删除数据失败:', error)
-      return { success: false, error: error.message }
-    }
-  }
-
-  /**
-   * 验证存储键
-   */
-  private validateStorageKey(storageKey: string): boolean {
-    return (
-      typeof storageKey == 'string' &&
-      storageKey.length > 0 &&
-      storageKey.length <= SIZE_LIMITS.MAX_STORAGE_KEY_LENGTH &&
-      storageKey != 'expireTime'
-    ) // 保留字段
-  }
-
-  /**
-   * 触发事件
-   */
-  private emitEvent(event: StorageEvent<any>): void {
-    this.listeners.forEach((listener : StorageListener<any>) : void => {
-      try {
-        listener(event)
-      } catch (error) {
-        console.error('存储事件监听器错误:', error)
-      }
-      return
-    })
-  }
-
-  /**
-   * 启动自动清理
-   */
-  private startAutoCleanup(): void {
-    this.scheduleAutoCleanup()
-  }
-
-  private scheduleAutoCleanup(): void {
-    // uni-app x 中使用 setTimeout 模拟 setInterval
-    this.cleanupTimer = setTimeout(() : void => {
-      this.cleanup()
-      this.scheduleAutoCleanup()
-      return
-    }, this.options.cleanupInterval)
-  }
-
-  /**
-   * 检查存储键是否存在 - Promise版本
-   */
-  async has(storageKey: string): Promise<boolean> {
-    const result = await this.get<any>(storageKey)
-    return result.success
-  }
-
-  /**
-   * 获取所有存储键 - Promise版本
-   */
-  async getKeys(): Promise<string[]> {
-    try {
-      const storageData = await this.getUnifiedStorageData()
-      const keys: string[] = []
-      for (const key in storageData) {
-        if (key != 'expireTime') {
-          keys.push(key)
-        }
-      }
-      return keys
-    } catch {
-      return []
-    }
-  }
-
-  /**
-   * 获取所有主键（现在只返回统一主键）
-   */
-  getAllKeys(): string[] {
-    // 检查统一主键是否存在
-    const exists = uni.getStorageSync(this.MAIN_STORAGE_KEY)
-    return exists != null && exists != '' ? [this.MAIN_STORAGE_KEY] : []
-  }
-
-  /**
-   * 批量设置数据
-   */
-  async setBatch(items: UTSJSONObject[]): StoragePromise<boolean> {
-    const results: boolean[] = []
-
-    for (const item of items) {
-      const storageKey = item.get('storageKey') as string | null
-      const value = item.get('value')
-      const expireTime = item.get('expireTime') as number | null
-      if (storageKey == null || storageKey == '') {
-        results.push(false)
-        continue
-      }
-      const key = storageKey as string
-      const result = await this.set<any>(key, value as any, expireTime)
-      results.push(result.success)
-    }
-
-    let allSuccess = true
-    results.forEach((value : boolean) : void => {
-      if (!value) allSuccess = false
-      return
-    })
-    if (allSuccess) {
-      return { success: true, value: true }
-    }
-    return { success: false, value: false, error: '部分批量操作失败' }
-  }
-
-  /**
-   * 批量获取数据
-   */
-  async getBatch<T = any>(storageKeys: string[]): StoragePromise<T[]> {
-    const results: T[] = []
-
-    for (const storageKey of storageKeys) {
-      const result = await this.get<T>(storageKey)
-      if (result.success && result.value != null) {
-        results.push(result.value as T)
-      }
-    }
-
-    return { success: true, value: results }
-  }
-
-  /**
-   * 清理过期数据 - Promise版本
-   */
-  async cleanup(): StoragePromise<number> {
-    let cleanedCount = 0
-
-    try {
-      // 获取统一存储数据
-      const storageData = await this.getUnifiedStorageData()
-      let hasChanges = false
-
-      // 检查整体过期时间
-      if (isExpired(this.getStorageExpireTime(storageData))) {
-        await removeStorageData(this.MAIN_STORAGE_KEY)
-        cleanedCount++
-        console.log(`🧹 uni-app x 清理完成，删除了整个统一存储（已过期）`)
-        return { success: true, value: cleanedCount }
-      }
-
-      // 检查各个存储键的过期时间
-      const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
-      for (const storageKey in storageData) {
-        if (storageKey != 'expireTime') {
-          const item = storageData[storageKey]
-          const itemObject = item != null ? (item as UTSJSONObject) : null
-          const itemExpireTime = itemObject != null ? (itemObject.get('expireTime') as string | number | null) : null
-          if (itemExpireTime != null && isExpired(itemExpireTime)) {
-            hasChanges = true
-            cleanedCount++
-          } else {
-            nextStorageData[storageKey] = item
-          }
-        }
-      }
-
-      // 如果有变化，更新存储
-      if (hasChanges) {
-        const remainingKeys: string[] = []
-        for (const key in nextStorageData) {
-          if (key != 'expireTime') {
-            remainingKeys.push(key)
-          }
-        }
-        if (remainingKeys.length == 0) {
-          await removeStorageData(this.MAIN_STORAGE_KEY)
-        } else {
-          await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
-        }
-      }
-
-      console.log(`🧹 uni-app x 清理完成，删除了 ${cleanedCount} 个过期项`)
-      return { success: true, value: cleanedCount }
-    } catch (error: any) {
-      console.error('❌ 清理失败:', error)
-      return { success: false, error: error.message }
-    }
-  }
-
-  /**
-   * 清空所有数据 - Promise版本
-   */
-  async clear(): StoragePromise<boolean> {
-    try {
-      // 删除统一存储
-      await removeStorageData(this.MAIN_STORAGE_KEY)
-
-      this.emitEvent({
-        type: 'clear',
-        timestamp: getCurrentTimestamp(),
-      })
-
-      console.log('🗑️ uni-app x 已清空统一存储数据')
-      return { success: true, value: true }
-    } catch (error: any) {
-      console.error('❌ 清空失败:', error)
-      return { success: false, error: error.message }
-    }
-  }
-
-  /**
-   * 获取存储统计信息
-   */
-  getStats(): StorageStats {
-    let totalKeys = 1 // 统一主键
-    let totalStorageKeys = 0
-    let totalSize = 0
-    let expiredKeys = 0
-    let validKeys = 0
-
-    try {
-      const rawData = uni.getStorageSync(this.MAIN_STORAGE_KEY)
-
-      if (rawData != null && rawData != '') {
-        const rawDataString = rawData as string
-        totalSize = rawDataString.length
-        const storageData = safeJSONParse<StorageData>(rawDataString, this.createStorageData(0))
-
-        // 检查整体是否过期
-        if (isExpired(this.getStorageExpireTime(storageData))) {
-          expiredKeys = 1
-          validKeys = 0
-        } else {
-          expiredKeys = 0
-          validKeys = 1
-        }
-
-        // 统计存储键数量
-        const storageKeys: string[] = []
-        for (const key in storageData) {
-          if (key != 'expireTime') {
-            storageKeys.push(key)
-          }
-        }
-        totalStorageKeys = storageKeys.length
-      } else {
-        totalKeys = 0
-      }
-    } catch (error) {
-      console.error('获取统计信息失败:', error)
-    }
-
-    return {
-      totalKeys,
-      totalStorageKeys,
-      totalSize,
-      expiredKeys,
-      validKeys,
-    }
-  }
-
-  /**
-   * 添加事件监听器
-   */
-  addEventListener(listener: StorageListener<any>): void {
-    this.listeners.add(listener)
-  }
-
-  /**
-   * 移除事件监听器
-   */
-  removeEventListener(listener: StorageListener<any>): void {
-    this.listeners.delete(listener)
-  }
-
-  /**
-   * 销毁存储实例
-   */
-  destroy(): void {
-    if (this.cleanupTimer != null) {
-      clearTimeout(this.cleanupTimer as number)
-      this.cleanupTimer = null
-    }
-
-    this.listeners.clear()
-    console.log('🗄️ uni-app x 存储实例已销毁')
-  }
+	private options : StorageOptions
+	private listeners : Set<StorageListener<any>> = new Set()
+	private cleanupTimer : number | null = null
+	private readonly MAIN_STORAGE_KEY : string // 统一的主存储键
+
+	constructor(options : StorageOptions | null) {
+		const sourceOptions = options != null ? options : DEFAULT_STORAGE_OPTIONS
+		this.options = {
+			defaultExpireTime: sourceOptions.defaultExpireTime,
+			storageType: sourceOptions.storageType,
+			autoCleanup: sourceOptions.autoCleanup,
+			cleanupInterval: sourceOptions.cleanupInterval,
+			prefix: sourceOptions.prefix,
+			compress: sourceOptions.compress,
+			maxSize: sourceOptions.maxSize,
+		}
+
+		// 设置统一的主存储键
+		this.MAIN_STORAGE_KEY = this.options.prefix + getMainStorageKey()
+
+		// 检查存储支持
+		if (!checkStorageSupport(this.options.storageType)) {
+			throw new Error(ERROR_MESSAGES.STORAGE_NOT_SUPPORTED)
+		}
+
+		// 启动自动清理
+		if (this.options.autoCleanup) {
+			this.startAutoCleanup()
+		}
+
+		console.log('🗄️ uni-app x 存储初始化成功，使用统一主键:', this.MAIN_STORAGE_KEY)
+	}
+
+	private createStorageData(expireTime : string | number) : StorageData {
+		const data = {} as UTSJSONObject
+		data['expireTime'] = expireTime
+		return data as StorageData
+	}
+
+	private getStorageExpireTime(storageData : StorageData) : string | number {
+		const expireTime = storageData['expireTime']
+		return expireTime != null ? (expireTime as string | number) : 0
+	}
+
+	private getStorageItemObject(item : any | null) : UTSJSONObject | null {
+		if (
+			item == null ||
+			typeof item == 'string' ||
+			typeof item == 'number' ||
+			typeof item == 'boolean'
+		) {
+			return null
+		}
+		return item as UTSJSONObject
+	}
+
+	private getStorageItemExpireTime(itemObject : UTSJSONObject) : string | number | null {
+		const expireTime = itemObject.get('expireTime')
+		if (typeof expireTime == 'string' || typeof expireTime == 'number') {
+			return expireTime as string | number
+		}
+		return null
+	}
+
+	/**
+	 * 设置存储数据 - Promise版本
+	 * @param storageKey 存储键（原来的key参数，现在作为存储键）
+	 * @param value 存储值
+	 * @param expireTime 过期时间（毫秒时间戳）
+	 */
+	async set<T = any>(storageKey : string, value : T, expireTime : number | null = null) : StoragePromise<T> {
+		try {
+			// 参数验证
+			if (!this.validateStorageKey(storageKey)) {
+				return { success: false, error: ERROR_MESSAGES.INVALID_STORAGE_KEY }
+			}
+
+			// 计算过期时间
+			let finalExpireTime = getCurrentTimestamp() + this.options.defaultExpireTime
+			if (expireTime != null) {
+				finalExpireTime = expireTime as number
+			}
+
+			// 获取现有的统一存储数据
+			const existingData = await this.getUnifiedStorageData()
+
+			// 构建新的存储结构
+			const storageData = this.createStorageData(finalExpireTime)
+			for (const key in existingData) {
+				storageData[key] = existingData[key]
+			}
+			storageData[storageKey] = {
+				value,
+				expireTime: finalExpireTime,
+			}
+			storageData['expireTime'] = finalExpireTime
+
+			// 检查存储大小
+			const dataSize = calculateDataSize(storageData)
+			if (dataSize > SIZE_LIMITS.MAX_VALUE_SIZE) {
+				return { success: false, error: ERROR_MESSAGES.STORAGE_FULL }
+			}
+
+			// 存储数据到统一主键 - 使用 uni-app x API
+			const success = await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(storageData))
+
+			if (!success) {
+				return { success: false, error: '存储失败' }
+			}
+
+			// 触发事件
+			this.emitEvent({
+				type: 'set',
+				key: this.MAIN_STORAGE_KEY,
+				storageKey,
+				value,
+				timestamp: getCurrentTimestamp(),
+			})
+
+			console.log(`💾 uni-app x 存储成功: ${storageKey} -> 统一主键`)
+			return { success: true, value }
+		} catch (error : any) {
+			console.error('❌ 存储失败:', error)
+			return { success: false, error: error.message }
+		}
+	}
+
+	/**
+	 * 获取统一存储数据 - Promise版本
+	 */
+	private async getUnifiedStorageData() : Promise<StorageData> {
+		const rawData = await getStorageData(this.MAIN_STORAGE_KEY)
+		if (rawData == null || rawData == '') {
+			return this.createStorageData(getCurrentTimestamp() + this.options.defaultExpireTime)
+		}
+
+		return safeJSONParse<StorageData>(
+			rawData as string,
+			this.createStorageData(getCurrentTimestamp() + this.options.defaultExpireTime)
+		)
+	}
+
+	/**
+	 * 获取存储数据 - Promise版本
+	 * @param storageKey 存储键
+	 */
+	async get<T = any>(storageKey : string) : StoragePromise<T> {
+		try {
+			// 参数验证
+			if (!this.validateStorageKey(storageKey)) {
+				return { success: false, error: ERROR_MESSAGES.INVALID_STORAGE_KEY }
+			}
+
+			// 获取统一存储数据
+			const storageData = await this.getUnifiedStorageData()
+
+			// 检查存储键是否存在
+			if (storageData[storageKey] == null) {
+				return { success: false, error: '存储键不存在' }
+			}
+
+			const itemObject = this.getStorageItemObject(storageData[storageKey])
+			if (itemObject == null) {
+				return { success: false, error: '存储数据格式错误' }
+			}
+
+			const itemExpireTime = this.getStorageItemExpireTime(itemObject)
+			if (itemExpireTime == null) {
+				return { success: false, error: '存储数据格式错误' }
+			}
+
+			// 检查是否过期
+			if (isExpired(itemExpireTime)) {
+				// 删除过期数据
+				await this.remove(storageKey)
+				return {
+					success: false,
+					error: ERROR_MESSAGES.EXPIRED_DATA,
+					expired: true,
+				}
+			}
+
+			const itemValue = itemObject.get('value') as T
+
+			// 触发事件
+			this.emitEvent({
+				type: 'get',
+				key: this.MAIN_STORAGE_KEY,
+				storageKey,
+				value: itemValue,
+				timestamp: getCurrentTimestamp(),
+			})
+
+			return { success: true, value: itemValue }
+		} catch (error : any) {
+			console.error('❌ 获取数据失败:', error)
+			return { success: false, error: error.message }
+		}
+	}
+
+	/**
+	 * 删除存储数据 - Promise版本
+	 * @param storageKey 存储键（可选，不传则清空所有数据）
+	 */
+	async remove(storageKey : string | null = null) : StoragePromise<boolean> {
+		try {
+			if (storageKey == null || storageKey == '') {
+				// 删除整个统一存储
+				await removeStorageData(this.MAIN_STORAGE_KEY)
+				this.emitEvent({
+					type: 'remove',
+					key: this.MAIN_STORAGE_KEY,
+					timestamp: getCurrentTimestamp(),
+				})
+				console.log(`🗑️ 删除整个统一存储`)
+				return { success: true, value: true }
+			}
+
+			// 删除特定的存储键
+			const storageData = await this.getUnifiedStorageData()
+
+			if (storageData[storageKey] != null) {
+				const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
+				for (const key in storageData) {
+					if (key != storageKey && key != 'expireTime') {
+						nextStorageData[key] = storageData[key]
+					}
+				}
+
+				// 如果没有其他存储键了，删除整个统一存储
+				const remainingKeys : string[] = []
+				for (const key in nextStorageData) {
+					if (key != 'expireTime') {
+						remainingKeys.push(key)
+					}
+				}
+				if (remainingKeys.length == 0) {
+					await removeStorageData(this.MAIN_STORAGE_KEY)
+				} else {
+					await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
+				}
+
+				this.emitEvent({
+					type: 'remove',
+					key: this.MAIN_STORAGE_KEY,
+					storageKey,
+					timestamp: getCurrentTimestamp(),
+				})
+
+				console.log(`🗑️ 删除存储键: ${storageKey}`)
+				return { success: true, value: true }
+			}
+
+			return { success: false, error: '存储键不存在' }
+		} catch (error : any) {
+			console.error('❌ 删除数据失败:', error)
+			return { success: false, error: error.message }
+		}
+	}
+
+	/**
+	 * 验证存储键
+	 */
+	private validateStorageKey(storageKey : string) : boolean {
+		return (
+			typeof storageKey == 'string' &&
+			storageKey.length > 0 &&
+			storageKey.length <= SIZE_LIMITS.MAX_STORAGE_KEY_LENGTH &&
+			storageKey != 'expireTime'
+		) // 保留字段
+	}
+
+	/**
+	 * 触发事件
+	 */
+	private emitEvent(event : StorageEvent<any>) : void {
+		this.listeners.forEach((listener : StorageListener<any>) : void => {
+			try {
+				listener(event)
+			} catch (error) {
+				console.error('存储事件监听器错误:', error)
+			}
+			return
+		})
+	}
+
+	/**
+	 * 启动自动清理
+	 */
+	private startAutoCleanup() : void {
+		this.scheduleAutoCleanup()
+	}
+
+	private scheduleAutoCleanup() : void {
+		// uni-app x 中使用 setTimeout 模拟 setInterval
+		this.cleanupTimer = setTimeout(() : void => {
+			this.cleanup()
+			this.scheduleAutoCleanup()
+			return
+		}, this.options.cleanupInterval)
+	}
+
+	/**
+	 * 检查存储键是否存在 - Promise版本
+	 */
+	async has(storageKey : string) : Promise<boolean> {
+		const result = await this.get<any>(storageKey)
+		return result.success
+	}
+
+	/**
+	 * 获取所有存储键 - Promise版本
+	 */
+	async getKeys() : Promise<string[]> {
+		try {
+			const storageData = await this.getUnifiedStorageData()
+			const keys : string[] = []
+			for (const key in storageData) {
+				if (key != 'expireTime') {
+					keys.push(key)
+				}
+			}
+			return keys
+		} catch {
+			return []
+		}
+	}
+
+	/**
+	 * 获取所有主键（现在只返回统一主键）
+	 */
+	getAllKeys() : string[] {
+		// 检查统一主键是否存在
+		const exists = uni.getStorageSync(this.MAIN_STORAGE_KEY)
+		return exists != null && exists != '' ? [this.MAIN_STORAGE_KEY] : []
+	}
+
+	/**
+	 * 批量设置数据
+	 */
+	async setBatch(items : UTSJSONObject[]) : StoragePromise<boolean> {
+		const results : boolean[] = []
+
+		for (const item of items) {
+			const storageKey = item.get('storageKey') as string | null
+			const value = item.get('value')
+			const expireTime = item.get('expireTime') as number | null
+			if (storageKey == null || storageKey == '') {
+				results.push(false)
+				continue
+			}
+			const key = storageKey as string
+			const result = await this.set<any>(key, value as any, expireTime)
+			results.push(result.success)
+		}
+
+		let allSuccess = true
+		results.forEach((value : boolean) : void => {
+			if (!value) allSuccess = false
+			return
+		})
+		if (allSuccess) {
+			return { success: true, value: true }
+		}
+		return { success: false, value: false, error: '部分批量操作失败' }
+	}
+
+	/**
+	 * 批量获取数据
+	 */
+	async getBatch<T = any>(storageKeys : string[]) : StoragePromise<T[]> {
+		const results : T[] = []
+
+		for (const storageKey of storageKeys) {
+			const result = await this.get<T>(storageKey)
+			if (result.success && result.value != null) {
+				results.push(result.value as T)
+			}
+		}
+
+		return { success: true, value: results }
+	}
+
+	/**
+	 * 清理过期数据 - Promise版本
+	 */
+	async cleanup() : StoragePromise<number> {
+		let cleanedCount = 0
+
+		try {
+			// 获取统一存储数据
+			const storageData = await this.getUnifiedStorageData()
+			let hasChanges = false
+
+			// 检查整体过期时间
+			if (isExpired(this.getStorageExpireTime(storageData))) {
+				await removeStorageData(this.MAIN_STORAGE_KEY)
+				cleanedCount++
+				console.log(`🧹 uni-app x 清理完成，删除了整个统一存储（已过期）`)
+				return { success: true, value: cleanedCount }
+			}
+
+			// 检查各个存储键的过期时间
+			const nextStorageData = this.createStorageData(this.getStorageExpireTime(storageData))
+			for (const storageKey in storageData) {
+				if (storageKey != 'expireTime') {
+					const item = storageData[storageKey]
+					const itemObject = this.getStorageItemObject(item)
+					const itemExpireTime = itemObject != null ? this.getStorageItemExpireTime(itemObject) : null
+					if (itemExpireTime != null && isExpired(itemExpireTime)) {
+						hasChanges = true
+						cleanedCount++
+					} else {
+						nextStorageData[storageKey] = item
+					}
+				}
+			}
+
+			// 如果有变化，更新存储
+			if (hasChanges) {
+				const remainingKeys : string[] = []
+				for (const key in nextStorageData) {
+					if (key != 'expireTime') {
+						remainingKeys.push(key)
+					}
+				}
+				if (remainingKeys.length == 0) {
+					await removeStorageData(this.MAIN_STORAGE_KEY)
+				} else {
+					await setStorageData(this.MAIN_STORAGE_KEY, safeJSONStringify(nextStorageData))
+				}
+			}
+
+			console.log(`🧹 uni-app x 清理完成，删除了 ${cleanedCount} 个过期项`)
+			return { success: true, value: cleanedCount }
+		} catch (error : any) {
+			console.error('❌ 清理失败:', error)
+			return { success: false, error: error.message }
+		}
+	}
+
+	/**
+	 * 清空所有数据 - Promise版本
+	 */
+	async clear() : StoragePromise<boolean> {
+		try {
+			// 删除统一存储
+			await removeStorageData(this.MAIN_STORAGE_KEY)
+
+			this.emitEvent({
+				type: 'clear',
+				timestamp: getCurrentTimestamp(),
+			})
+
+			console.log('🗑️ uni-app x 已清空统一存储数据')
+			return { success: true, value: true }
+		} catch (error : any) {
+			console.error('❌ 清空失败:', error)
+			return { success: false, error: error.message }
+		}
+	}
+
+	/**
+	 * 获取存储统计信息
+	 */
+	getStats() : StorageStats {
+		let totalKeys = 1 // 统一主键
+		let totalStorageKeys = 0
+		let totalSize = 0
+		let expiredKeys = 0
+		let validKeys = 0
+
+		try {
+			const rawData = uni.getStorageSync(this.MAIN_STORAGE_KEY)
+
+			if (rawData != null && rawData != '') {
+				const rawDataString = rawData as string
+				totalSize = rawDataString.length
+				const storageData = safeJSONParse<StorageData>(rawDataString, this.createStorageData(0))
+
+				// 检查整体是否过期
+				if (isExpired(this.getStorageExpireTime(storageData))) {
+					expiredKeys = 1
+					validKeys = 0
+				} else {
+					expiredKeys = 0
+					validKeys = 1
+				}
+
+				// 统计存储键数量
+				const storageKeys : string[] = []
+				for (const key in storageData) {
+					if (key != 'expireTime') {
+						storageKeys.push(key)
+					}
+				}
+				totalStorageKeys = storageKeys.length
+			} else {
+				totalKeys = 0
+			}
+		} catch (error) {
+			console.error('获取统计信息失败:', error)
+		}
+
+		return {
+			totalKeys,
+			totalStorageKeys,
+			totalSize,
+			expiredKeys,
+			validKeys,
+		}
+	}
+
+	/**
+	 * 添加事件监听器
+	 */
+	addEventListener(listener : StorageListener<any>) : void {
+		this.listeners.add(listener)
+	}
+
+	/**
+	 * 移除事件监听器
+	 */
+	removeEventListener(listener : StorageListener<any>) : void {
+		this.listeners.delete(listener)
+	}
+
+	/**
+	 * 销毁存储实例
+	 */
+	destroy() : void {
+		if (this.cleanupTimer != null) {
+			clearTimeout(this.cleanupTimer as number)
+			this.cleanupTimer = null
+		}
+
+		this.listeners.clear()
+		console.log('🗄️ uni-app x 存储实例已销毁')
+	}
 }
 
 // 导出类和类型

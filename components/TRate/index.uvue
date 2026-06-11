@@ -84,17 +84,17 @@ const handleStarClick = (index: number): void => {
 </script>
 
 <template>
-  <view class="select-none flex flex-row items-center gap-1">
+  <view class="select-none flex flex-row items-center">
     <view class="flex flex-row items-center">
       <view
         v-for="star in stars"
         :key="star.index"
-        class="inline-block transition-transform duration-150 active:scale-90 last:mr-0"
+        class="mr-1 transition-transform duration-150"
         :style="baseStarStyle"
         @tap="handleStarClick(star.index)"
       >
         <text
-          class="inline-block font-semibold leading-none transition-colors duration-200"
+          class="font-semibold leading-none transition-colors duration-200"
           :style="{
             color: star.percentage === 100 ? activeColor : inactiveColor
           }"

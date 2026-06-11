@@ -1,5 +1,5 @@
 <script  setup lang="uts" >
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import type { TLoadingProps } from './type.uts'
 
 /**
@@ -26,7 +26,7 @@ const hasText = computed(() => {
  * 计算加载容器样式类
  */
 const loadingClass = computed(() => {
-  const classes: string[] = ['t-loading inset-0 flex items-center justify-center']
+  const classes: string[] = ['t-loading top-0 right-0 bottom-0 left-0 flex items-center justify-center']
 
   if (props.fullscreen) {
     classes.push('fixed z-999')
@@ -54,7 +54,7 @@ const maskStyle = computed(() => {
  * 计算加载图标样式类
  */
 const spinnerClass = computed(() => {
-  const classes: string[] = ['t-loading__spinner animate-spin rounded-full border-2 border-solid']
+  const classes: string[] = ['t-loading__spinner rounded-full border-2 border-solid']
 
   switch (props.size) {
     case 'small':
@@ -71,6 +71,22 @@ const spinnerClass = computed(() => {
   return classes.join(' ')
 })
 
+const spinAngle = ref(0)
+let spinTimer: number | null = null
+
+onMounted(() => {
+  spinTimer = setInterval(() => {
+    spinAngle.value = (spinAngle.value + 12) % 360
+  }, 16)
+})
+
+onUnmounted(() => {
+  if (spinTimer !== null) {
+    clearInterval(spinTimer)
+    spinTimer = null
+  }
+})
+
 /**
  * 计算加载图标样式
  */
@@ -82,13 +98,15 @@ const spinnerStyle = computed(() => {
     styles.push(`border-top-color: transparent`)
   }
 
+  styles.push(`transform: rotate(${spinAngle.value}deg)`)
+
   return styles.join('; ')
 })
 </script>
 
 <template>
   <view v-if="loading" :class="loadingClass">
-    <view v-if="mask" class="t-loading__mask absolute inset-0" :style="maskStyle"></view>
+    <view v-if="mask" class="t-loading__mask absolute top-0 right-0 bottom-0 left-0" :style="maskStyle"></view>
     <view class="t-loading__content relative z-1 flex flex-col items-center justify-center">
       <view :class="spinnerClass" :style="spinnerStyle"></view>
       <text v-if="hasText" class="t-loading__text mt-3 text-sm text-secondary">{{ text }}</text>

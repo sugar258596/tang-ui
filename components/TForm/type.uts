@@ -1,3 +1,5 @@
+import type { TDateTimePickerMode, TDateTimePickerRangeValue } from '../TDateTimePicker/type.uts'
+
 /**
  * 表单选项类型
  */
@@ -54,6 +56,48 @@ export type ComponentProps = {
   placement?: string
   /** 是否允许选择中间层级（用于级联选择） */
   changeOnSelect?: boolean
+  /** 日期时间选择器模式 */
+  mode?: TDateTimePickerMode
+  /** 是否为日期时间范围选择 */
+  range?: boolean
+  /** 日期时间选择器标题 */
+  title?: string
+  /** 最小可选日期（时间戳，毫秒） */
+  minDate?: number
+  /** 最大可选日期（时间戳，毫秒） */
+  maxDate?: number
+  /** 日期时间选择器确认按钮文字 */
+  confirmText?: string
+  /** 日期时间选择器取消按钮文字 */
+  cancelText?: string
+  /** 日期时间选项高度 */
+  itemHeight?: string
+  /** 日期时间可见选项数量 */
+  visibleItemCount?: number
+  /** 日期时间选择器是否显示工具栏 */
+  showToolbar?: boolean
+  /** 日期时间选中颜色 */
+  activeColor?: string
+  /** 日期时间选中文字颜色 */
+  activeTextColor?: string
+  /** 今天日期文字颜色 */
+  todayColor?: string
+  /** 日期时间确认按钮颜色 */
+  confirmColor?: string
+  /** 日期范围背景颜色 */
+  rangeColor?: string
+  /** 范围开始提示文字 */
+  startText?: string
+  /** 范围结束提示文字 */
+  endText?: string
+  /** 日期时间单选确认回调 */
+  onConfirm?: (value: number, formatted: string) => void
+  /** 日期时间范围确认回调 */
+  onConfirmRange?: (value: TDateTimePickerRangeValue, formatted: string[]) => void
+  /** 日期时间取消回调 */
+  onCancel?: () => void
+  /** 日期时间改变回调 */
+  onChange?: (value: number) => void
 }
 
 /**

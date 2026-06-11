@@ -16,15 +16,15 @@
 
 </script>
 <template>
-	<view class="flex flex-col gap-4" @tap="handleClick">
-		<view class="flex-row justify-between gap-4 p-2 m-2">
+	<view class="flex flex-col" @tap="handleClick">
+		<view class="flex-row justify-between pt-2 pb-2 pl-2 pr-2 mt-2 mb-2 ml-2 mr-2">
 			<slot name="title">
 				<view class="text-zice-900 font-bold"> {{ title }}</view>
 			</slot>
 			<slot name="right">
-				<view class="flex-row gap-4">
+				<view class="flex-row">
           <slot name="content">
-            <text class="text-zice-600  ">{{ content }}</text>
+            <text class="text-zice-600 mr-4">{{ content }}</text>
           </slot>
 					<Icon v-if="showIcon" :name="icon" color="#a1a1aa" :size="24" />
 				</view>
