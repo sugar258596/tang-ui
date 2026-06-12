@@ -179,6 +179,20 @@ const handleEchoArrayRangeConfirm = (value: TDateTimePickerRangeValue, formatted
   console.log('数据回显数组范围确认:', formatted, value)
 }
 
+// 内联模式
+const inlineValue = ref(0)
+const inlineText = ref('未选择')
+
+const handleInlineChange = (value: number): void => {
+  inlineValue.value = value
+  const date = new Date(value)
+  const y = date.getFullYear()
+  const m = date.getMonth() + 1
+  const d = date.getDate()
+  inlineText.value = `${y}-${m < 10 ? '0' + m : m}-${d < 10 ? '0' + d : d}`
+  console.log('内联模式选择:', inlineText.value, value)
+}
+
 // 计算自定义范围的最小最大日期（2024年全年）
 const minRangeDate = new Date(2024, 0, 1).getTime()
 const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
@@ -285,6 +299,24 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
         </view>
       </view>
 
+      <!-- 内联模式 -->
+      <view class="section">
+        <view class="section-title">
+          <text class="section-title-text">内联模式 (inline) - 无遮罩和工具栏</text>
+        </view>
+        <view class="section-content">
+          <view v-if="inlineValue > 0" class="result-text" style="margin-bottom: 12px; margin-top: 0;">
+            <text class="result-label">已选择：{{ inlineText }}</text>
+          </view>
+          <TDateTimePicker
+            :inline="true"
+            v-model:value="inlineValue"
+            mode="date"
+            @change="handleInlineChange"
+          />
+        </view>
+      </view>
+
       <!-- 数据回选 (单选) -->
       <view class="section">
         <view class="section-title">
@@ -344,6 +376,7 @@ const maxRangeDate = new Date(2024, 11, 31, 23, 59).getTime()
             <text class="tip-text">• mode="date" - 选择年月日</text>
             <text class="tip-text">• mode="datetime" - 选择年月日时分</text>
             <text class="tip-text">• range - 开启日期范围选择模式</text>
+            <text class="tip-text">• inline - 内联模式，无遮罩和工具栏</text>
             <text class="tip-text">• 支持 minDate/maxDate 限制日期范围</text>
             <text class="tip-text">• 使用 v-model:value 绑定时间戳</text>
             <text class="tip-text">• confirm 事件返回时间戳和格式化字符串</text>

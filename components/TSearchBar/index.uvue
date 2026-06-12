@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import type { Ref } from 'vue'
 import type { TSearchBarProps } from './type.uts'
 import { useI18n } from '../../composables/useI18n.uts'
-import TIcon from '../TIcon/index.uvue'
 
 /**
  * TSearchBar 搜索框组件
@@ -176,7 +175,7 @@ const hasInputValue = computed((): boolean => {
     >
       <!-- 左侧搜索图标 -->
       <view v-if="showLeftIcon" class="t-search-bar__icon-wrapper mr-2 flex items-center justify-center">
-        <TIcon name="icon-sousuo" :size="32" color="#969799" />
+        <svg class="icon" viewBox="0 0 1024 1024" style="width: 32rpx; height: 32rpx; color: #969799;"><path d="M446.112323 177.545051c137.567677 0.219798 252.612525 104.59798 266.162424 241.493333 13.562828 136.895354-78.778182 261.818182-213.617777 289.008485-134.852525 27.203232-268.386263-52.156768-308.945455-183.608889s25.018182-272.252121 151.738182-325.779394A267.235556 267.235556 0 0 1 446.112323 177.545051z" fill="currentColor"></path></svg>
       </view>
 
       <!-- 输入框 -->
@@ -200,7 +199,7 @@ const hasInputValue = computed((): boolean => {
         class="t-search-bar__clear ml-2 flex twx-h-18px twx-w-18px items-center justify-center rounded-full twx-bg-gray-ccc"
         @click="handleClear"
       >
-        <TIcon name="icon-shanchu" color="#ffffff" />
+        <svg class="icon" viewBox="0 0 1024 1024" style="width: 18rpx; height: 18rpx; color: #ffffff;"><path d="M512 883.2A371.2 371.2 0 1 0 140.8 512 371.2 371.2 0 0 0 512 883.2z m0 64a435.2 435.2 0 1 1 435.2-435.2 435.2 435.2 0 0 1-435.2 435.2z" fill="currentColor"></path><path d="M557.056 512l122.368 122.368a31.744 31.744 0 1 1-45.056 45.056L512 557.056l-122.368 122.368a31.744 31.744 0 1 1-45.056-45.056L466.944 512 344.576 389.632a31.744 31.744 0 1 1 45.056-45.056L512 466.944l122.368-122.368a31.744 31.744 0 1 1 45.056 45.056z" fill="currentColor"></path></svg>
       </view>
     </view>
 

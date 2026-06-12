@@ -26,6 +26,7 @@ type Props = TDateTimePickerProps
 const props = withDefaults(defineProps<Props>(), {
   mode: 'date',
   range: false,
+  inline: false,
   itemHeight: '44px',
   visibleItemCount: 5,
   showToolbar: true,
@@ -934,10 +935,182 @@ const handleToday = (): void => {
   viewMonth.value = now.getMonth() + 1
 }
 
+// inline 模式下立即初始化
+if (props.inline) {
+  if (props.range) {
+    const parsedRange = parseRangeValue(selectedRangeValue.value)
+    if (parsedRange != null) {
+      rangeStart.value = parsedRange.start
+      rangeEnd.value = parsedRange.end
+      selectingRange.value = 'start'
+      const startDate = new Date(rangeStart.value as number)
+      viewYear.value = startDate.getFullYear()
+      viewMonth.value = startDate.getMonth() + 1
+    }
+  } else {
+    setValueByTimestamp(selectedValue.value !== 0 ? selectedValue.value : Date.now())
+  }
+  if (props.mode === 'month') {
+    panelMode.value = 'month'
+  } else {
+    panelMode.value = 'date'
+  }
+}
+
 </script>
 
 <template>
-  <view v-if="rendered" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
+  <!-- 内联模式：直接渲染日历，无遮罩和工具栏 -->
+  <view v-if="inline" class="t-datetime-picker t-datetime-picker--inline">
+    <!-- 日历头部 -->
+    <view class="t-datetime-picker__header">
+      <view class="t-datetime-picker__header-btn" @click="handlePrev">
+        <text class="t-datetime-picker__header-arrow">‹</text>
+      </view>
+      <view class="t-datetime-picker__header-title" @click="handleHeaderClick">
+        <text class="t-datetime-picker__header-title-text">{{ headerTitle }}</text>
+      </view>
+      <view class="t-datetime-picker__header-btn" @click="handleNext">
+        <text class="t-datetime-picker__header-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 范围选择提示 -->
+    <view v-if="range" class="t-datetime-picker__range-info">
+      <view class="t-datetime-picker__range-item" :class="getRangeItemClass('start')">
+        <text class="t-datetime-picker__range-label">{{ startText }}</text>
+        <text class="t-datetime-picker__range-value">{{ rangeStart !== null ? formatTimestamp(rangeStart) : '请选择' }}</text>
+      </view>
+      <text class="t-datetime-picker__range-separator">~</text>
+      <view class="t-datetime-picker__range-item" :class="getRangeItemClass('end')">
+        <text class="t-datetime-picker__range-label">{{ endText }}</text>
+        <text class="t-datetime-picker__range-value">{{ rangeEnd !== null ? formatTimestamp(rangeEnd) : '请选择' }}</text>
+      </view>
+    </view>
+
+    <!-- 年份选择面板 -->
+    <view v-if="panelMode === 'year'" class="t-datetime-picker__panel">
+      <view class="t-datetime-picker__year-grid">
+        <view
+          v-for="(year, index) in yearList"
+          :key="index"
+          class="t-datetime-picker__year-item"
+          :class="getYearItemClass(year)"
+          @click="handleYearSelect(year)"
+        >
+          <text
+            class="t-datetime-picker__year-text"
+            :style="getSelectedItemStyle(year === selectedYear)"
+          >{{ year }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 月份选择面板 -->
+    <view v-else-if="panelMode === 'month' || mode === 'month'" class="t-datetime-picker__panel">
+      <view class="t-datetime-picker__month-grid">
+        <view
+          v-for="(name, index) in monthNames"
+          :key="index"
+          class="t-datetime-picker__month-item"
+          :class="getMonthItemClass(index + 1)"
+          @click="handleMonthSelect(index + 1)"
+        >
+          <text
+            class="t-datetime-picker__month-text"
+            :style="getSelectedItemStyle((index + 1) === selectedMonth && viewYear === selectedYear)"
+          >{{ name }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 日期选择面板 -->
+    <view v-else class="t-datetime-picker__panel">
+      <!-- 星期标题 -->
+      <view class="t-datetime-picker__weekdays">
+        <view v-for="(day, index) in weekDays" :key="index" class="t-datetime-picker__weekday">
+          <text class="t-datetime-picker__weekday-text">{{ day }}</text>
+        </view>
+      </view>
+
+      <!-- 日期网格 -->
+      <view class="t-datetime-picker__days">
+        <view
+          v-for="(item, index) in calendarDays"
+          :key="index"
+          class="t-datetime-picker__day"
+          :class="getDayClass(item)"
+          @click="handleDaySelect(item)"
+        >
+          <!-- 日期插槽 -->
+          <slot name="day" :item="item">
+            <text
+              class="t-datetime-picker__day-text"
+              :style="getDayStyle(item)"
+            >{{ item.day }}</text>
+          </slot>
+        </view>
+      </view>
+    </view>
+
+    <!-- 时间选择器（datetime 模式） -->
+    <view v-if="mode === 'datetime' && panelMode === 'date'" class="t-datetime-picker__time">
+      <view class="t-datetime-picker__time-label">
+        <text class="t-datetime-picker__time-label-text">选择时间</text>
+      </view>
+      <view class="t-datetime-picker__time-picker">
+        <!-- 小时选择 -->
+        <scroll-view
+          class="t-datetime-picker__time-scroll"
+          scroll-y
+          :scroll-top="hourScrollTop"
+          :scroll-with-animation="true"
+        >
+          <view
+            v-for="hour in hourList"
+            :key="hour"
+            :id="`hour-${hour}`"
+            class="t-datetime-picker__time-item"
+            :class="getTimeItemClass(hour === selectedHour)"
+            :style="getTimeItemStyle(hour === selectedHour)"
+            @click="handleHourSelect(hour)"
+          >
+            <text class="t-datetime-picker__time-item-text">{{ padZero(hour) }}</text>
+          </view>
+        </scroll-view>
+        <text class="t-datetime-picker__time-separator">:</text>
+        <!-- 分钟选择 -->
+        <scroll-view
+          class="t-datetime-picker__time-scroll"
+          scroll-y
+          :scroll-top="minuteScrollTop"
+          :scroll-with-animation="true"
+        >
+          <view
+            v-for="minute in minuteList"
+            :key="minute"
+            :id="`minute-${minute}`"
+            class="t-datetime-picker__time-item"
+            :class="getTimeItemClass(minute === selectedMinute)"
+            :style="getTimeItemStyle(minute === selectedMinute)"
+            @click="handleMinuteSelect(minute)"
+          >
+            <text class="t-datetime-picker__time-item-text">{{ padZero(minute) }}</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <!-- 底部快捷操作 -->
+    <view v-if="mode !== 'month'" class="t-datetime-picker__footer">
+      <view class="t-datetime-picker__footer-btn" @click="handleToday">
+        <text class="t-datetime-picker__footer-btn-text" :style="confirmBtnStyle">今天</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 弹出模式：带遮罩和工具栏 -->
+  <view v-else-if="rendered" class="t-datetime-picker" @touchmove.stop.prevent="() => {}">
     <!-- 遮罩层 -->
     <view
       class="t-datetime-picker__mask"
@@ -1122,6 +1295,17 @@ const handleToday = (): void => {
   right: 0;
   bottom: 0;
   z-index: 9999;
+
+  &--inline {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
 
   &__mask {
     position: absolute;

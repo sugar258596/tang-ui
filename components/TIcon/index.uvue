@@ -77,18 +77,13 @@
 </script>
 
 <template>
-	<view class="flex justify-center items-center">
+	<view class="flex justify-center items-center t-icon ">
 		<text :class="iconClass" :style="iconStyle" @click="handleClick"></text>
 	</view>
 </template>
 
 
 <style lang="scss" scoped>
-	/* 导入字体图标 */
-	@import '../../static/font/iconfont.css';
 
-	.t-icon {
-		display: flex;
-		line-height: 1;
-	}
+ 
 </style>

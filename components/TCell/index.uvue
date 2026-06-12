@@ -17,16 +17,16 @@
 </script>
 <template>
 	<view class="flex flex-col" @tap="handleClick">
-		<view class="flex-row justify-between pt-2 pb-2 pl-2 pr-2 mt-2 mb-2 ml-2 mr-2">
+		<view class="flex flex-row justify-between pt-2 pb-2 pl-2 pr-2 mt-2 mb-2 ml-2 mr-2">
 			<slot name="title">
 				<view class="text-zice-900 font-bold"> {{ title }}</view>
 			</slot>
 			<slot name="right">
-				<view class="flex-row">
+				<view class="flex flex-row">
           <slot name="content">
             <text class="text-zice-600 mr-4">{{ content }}</text>
           </slot>
-					<Icon v-if="showIcon" :name="icon" color="#a1a1aa" :size="24" />
+					<svg t="1781272967395" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5255" width="14" height="14"><path d="M236.552013 926.853955a55.805997 55.805997 0 0 0 0 80.454996 59.682997 59.682997 0 0 0 82.794996 0l468.099978-455.081978a55.805997 55.805997 0 0 0 0-80.453996L319.348009 16.689999a59.682997 59.682997 0 0 0-82.794996 0 55.805997 55.805997 0 0 0 0 80.454996L663.401993 511.999975 236.624013 926.853955z" fill="#9b9b9bff" p-id="5256"></path></svg>
 				</view>
 			</slot>
 		</view>

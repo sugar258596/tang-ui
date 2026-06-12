@@ -7,11 +7,6 @@
  */
 export type TTextareaProps = {
   /**
-   * 输入框的值
-   */
-  modelValue?: string
-
-  /**
    * 占位符
    * @default ''
    */
@@ -63,6 +58,22 @@ export type TTextareaProps = {
    * @default false
    */
   clearable?: boolean
+
+  /**
+   * 聚焦时的边框颜色
+   * @default '#409eff'
+   */
+  focusBorderColor?: string
+
+  /**
+   * 聚焦时的背景颜色
+   */
+  focusBackgroundColor?: string
+
+  /**
+   * 聚焦时的阴影
+   */
+  focusBoxShadow?: string
 
   /**
    * 自定义类名

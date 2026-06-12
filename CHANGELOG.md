@@ -1,5 +1,51 @@
 # 更新日志
 
+## [1.4.1] - 2026-06-12
+
+### 优化
+
+- **TGrid**: 重构布局系统，移除 `grid-template-columns` 和 `gap` 属性
+  - 改用 `display: flex` + `flex-wrap: wrap` 实现宫格布局
+  - 通过 `width: 100% / columns` 动态计算每个格子宽度
+- **TGridItem**: 适配 TGrid 布局重构
+  - 使用 `padding` 代替 `gap` 属性（App 不支持 gap）
+  - 添加动态宽度计算适配 flex 布局
+- **TInput**: 图标从 TIcon 组件替换为内联 SVG
+  - 搜索图标和删除图标直接使用 `<svg>` 标签
+  - 移除 TIcon 组件依赖
+- **TSearchBar**: 图标从 TIcon 组件替换为内联 SVG
+  - 搜索图标和删除图标直接使用 `<svg>` 标签
+  - 移除 TIcon 组件依赖
+- **TCell**: 修复 flex 布局类名，添加缺失的 `flex` 类
+- **TTextarea**: 新增聚焦样式属性
+  - 新增 `focusBorderColor` 属性（聚焦时边框颜色）
+  - 新增 `focusBackgroundColor` 属性（聚焦时背景颜色）
+  - 新增 `focusBoxShadow` 属性（聚焦时阴影）
+
+### 修复
+
+- **TIcon**: 移除对 iconfont 字体文件的依赖
+
+### 调整
+
+- 移除 `static/font/` 目录下的字体图标文件
+- 更新 `static/tailwind.css`，移除未使用的 gap 类
+
+## [1.4.0] - 2026-06-12
+
+### 修复
+
+- **TGrid**: 重构布局系统，移除 `grid-template-columns` 和 `gap` 属性
+  - 改用 `display: flex` + `flex-wrap: wrap` 实现宫格布局
+  - 通过 `width: 100% / columns` 动态计算每个格子宽度
+- **TGridItem**: 适配 TGrid 布局重构
+  - 使用 `padding` 代替 `gap` 属性（App 不支持 gap）
+  - 添加动态宽度计算适配 flex 布局
+
+### 优化
+
+- **TRate**: 确认使用 `margin-right` 代替 `gap`，App 兼容性良好
+
 ## [1.3.9] - 2026-06-11
 
 ### 优化

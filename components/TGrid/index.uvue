@@ -26,6 +26,7 @@ const emit = defineEmits<{
 
 type GridContext = {
   columns: number
+  gap: number
   border: boolean
   borderColor: string
   square: boolean
@@ -37,6 +38,7 @@ type GridContext = {
 const gridContext = computed((): GridContext => {
   return {
     columns: props.columns,
+    gap: props.gap,
     border: props.border,
     borderColor: props.borderColor,
     square: props.square,
@@ -82,15 +84,10 @@ provide('gridOnItemClick', handleGridItemClick)
 const containerStyle = computed((): string => {
   const styles: string[] = []
 
-  // 列数
-  styles.push(`grid-template-columns: repeat(${props.columns}, 1fr)`)
-
-  // 间距
-  if (typeof props.gap === 'number') {
-    styles.push(`gap: ${props.gap}px`)
-  } else if (props.gap !== '') {
-    styles.push(`gap: ${props.gap}`)
-  }
+  // 使用 flex 布局代替 grid（App 不支持 grid-template-columns 和 gap）
+  styles.push('display: flex')
+  styles.push('flex-wrap: wrap')
+  styles.push('width: 100%')
 
   // 边框颜色
   if (props.border) {
@@ -109,7 +106,7 @@ const containerStyle = computed((): string => {
  * 计算容器类名
  */
 const containerClasses = computed((): string => {
-  const classes: string[] = ['grid', 'w-full']
+  const classes: string[] = ['w-full']
 
   if (props.border) {
     classes.push('border-l', 'border-t')

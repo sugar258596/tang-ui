@@ -21,6 +21,9 @@ const props = withDefaults(defineProps<Props>(), {
   rows: 3,
   autoFocus: false,
   clearable: false,
+  focusBorderColor: '#409eff',
+  focusBackgroundColor: '',
+  focusBoxShadow: '',
   customClass: '',
   customStyle: ''
 })
@@ -77,10 +80,6 @@ const containerClasses = computed((): string => {
     classes.push('cursor-not-allowed border-border-soft bg-[#f5f7fa]')
   }
 
-  if (isFocused.value) {
-    classes.push('border-brand')
-  }
-
   if (hasTextValue(props.customClass)) {
     classes.push(props.customClass)
   }
@@ -93,6 +92,18 @@ const containerClasses = computed((): string => {
  */
 const containerStyle = computed((): string => {
   const styles: string[] = []
+
+  if (isFocused.value) {
+    if (hasTextValue(props.focusBorderColor)) {
+      styles.push(`border-color: ${props.focusBorderColor}`)
+    }
+    if (hasTextValue(props.focusBackgroundColor)) {
+      styles.push(`background-color: ${props.focusBackgroundColor}`)
+    }
+    if (hasTextValue(props.focusBoxShadow)) {
+      styles.push(`box-shadow: ${props.focusBoxShadow}`)
+    }
+  }
 
   if (hasTextValue(props.customStyle)) {
     styles.push(props.customStyle)

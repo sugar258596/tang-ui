@@ -4,73 +4,78 @@
 
 /**
  * 可用的图标名称
- * 来自 iconfont 字体图标库
+ * 支持 SVG 内联图标
  */
-export type TIconName = 
-  | 'shanchu'   // 删除
-  | 'sousuo'    // 搜索
-  | string      // 支持自定义图标名
+export type TIconName =
+	| 'arrow-left'  // 返回箭头
+	| 'xiajiantou'  // 下箭头
+	| 'tianjia'     // 添加
+	| 'shanchu'     // 删除
+	| 'sousuo'      // 搜索
+	| string        // 支持自定义图标名
 
 /**
  * TIcon Props 接口
  */
 export type TIconProps = {
-  /**
-   * 图标名称
-   * 可以传入 'shanchu' 或 'icon-shanchu'
-   * @example 'shanchu' | 'icon-shanchu'
-   */
-  name: TIconName
+	/**
+	 * 图标名称
+	 * 可以传入 'shanchu' 或 'icon-shanchu'
+	 * @example 'shanchu' | 'icon-shanchu'
+	 */
+	name: TIconName
 
-  /**
-   * 图标大小
-   * @default 48
-   */
-  size?: string | number
+	/**
+	 * 图标大小
+	 * @default 48
+	 */
+	size?: string | number
 
-  /**
-   * 图标颜色
-   * @default '#333333'
-   */
-  color?: string
+	/**
+	 * 图标颜色
+	 * @default 'var(--tui-text-primary)'
+	 */
+	color?: string
 
-  /**
-   * 是否加粗
-   * @default false
-   */
-  bold?: boolean
+	/**
+	 * 是否加粗
+	 * @default false
+	 */
+	bold?: boolean
 
-  /**
-   * 自定义类名
-   */
-  customClass?: string
+	/**
+	 * 自定义类名
+	 */
+	customClass?: string
 
-  /**
-   * 自定义样式
-   */
-  customStyle?: string
+	/**
+	 * 自定义样式
+	 */
+	customStyle?: string
 }
 
 /**
  * TIcon 事件接口
  */
 export interface TIconEmits {
-  /**
-   * 点击事件
-   */
-  click: () => void
+	/**
+	 * 点击事件
+	 */
+	click: () => void
 }
 
 /**
  * 图标列表（用于文档和自动补全）
  */
 export type TIconItem = {
-  name: string
-  label: string
-  unicode: string
+	name: string
+	label: string
 }
 
 export const ICON_LIST: Array<TIconItem> = [
-  { name: 'shanchu', label: '删除', unicode: 'e61a' },
-  { name: 'sousuo', label: '搜索', unicode: 'e602' }
+	{ name: 'arrow-left', label: '返回箭头' },
+	{ name: 'xiajiantou', label: '下箭头' },
+	{ name: 'tianjia', label: '添加' },
+	{ name: 'shanchu', label: '删除' },
+	{ name: 'sousuo', label: '搜索' }
 ]

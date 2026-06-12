@@ -39,6 +39,7 @@ type GridContext = {
 const defaultGridContext = computed((): GridContext => {
   return {
     columns: 4,
+    gap: 0,
     border: false,
     borderColor: '#e0e0e0',
     square: false,
@@ -92,6 +93,17 @@ const hasText = computed(() => {
  */
 const containerStyle = computed((): string => {
   const styles: string[] = []
+
+  // 使用 flex 布局，每个 item 宽度为 100% / columns
+  const itemWidth = (100 / gridContext.value.columns).toFixed(4)
+  styles.push(`width: ${itemWidth}%`)
+  styles.push(`flex-shrink: 0`)
+
+  // 使用 margin 代替 gap（App 不支持 gap 属性）
+  const gap = gridContext.value.gap
+  if (typeof gap === 'number' && gap > 0) {
+    styles.push(`padding: ${gap}px`)
+  }
 
   // 边框
   if (gridContext.value.border) {
